@@ -317,7 +317,7 @@ MonoBehaviour:
   Name: Player Melee
   Icon: {fileID: 21300000, guid: 16d47974b79ddaf4886e53951e987eab, type: 3}
   mHealth: 150
-  bAtk: 25
+  bAtk: 28
   bDef: 25
   bRes: 5
   defPen: 0
@@ -369,5 +369,5 @@ MonoBehaviour:
   HealPerSecond_HpPercentage: 0.06
   DefBoost: 2
   ResBoost: 20
-  AtkBoost: 0.4
+  AtkBoost: 0.35
   SpeedBoost: 0.35

@@ -28,6 +28,8 @@ public class CameraMovement : MonoBehaviour
 
     public IEnumerator MoveShowcases(float showcaseSize, Transform[] points, float[] waittimes)
     {
+        if (points.Length <= 0 || waittimes.Length <= 0) yield break;
+
         yield return new WaitForSeconds(waittimes[0]);
 
         bool scaleToSize = true;

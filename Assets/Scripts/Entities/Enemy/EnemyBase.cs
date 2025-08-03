@@ -58,7 +58,6 @@ public class EnemyBase : EntityBase
     protected bool IsGuarding = true;
     private short CurrentCheckpointIndex = 0;
 
-    private short SearchCnt = 0, MoveCnt = 0;
     Coroutine MovelockoutCoroutine = null;
     TMP_Text DetectSymbol;
 
@@ -96,6 +95,7 @@ public class EnemyBase : EntityBase
 
     public void ForceSpotPlayer() => SpottedPlayer = FindObjectOfType<PlayerBase>();
 
+    private short ScanPlayerCnt = 0, MoveCnt = 0, PathfindCnt = 0;
     public override void FixedUpdate()
     {
         if (!IsAlive()) return;
@@ -134,6 +134,15 @@ public class EnemyBase : EntityBase
 
     private void UpdatePathfinding()
     {
+        if (PathfindCnt < 5)
+        {
+            PathfindCnt++;
+            return;
+        }
+        PathfindCnt = 0;
+
+        if (IsFrozen || IsStunned || !IsAlive()) return;
+
         Vector2 currentPos = transform.position;
         Vector2 desiredDestination = GetUniversalDestination();
         float distanceToDestination = Vector2.Distance(currentPos, desiredDestination);
@@ -384,6 +393,8 @@ public class EnemyBase : EntityBase
         }
         MoveCnt = 0;
 
+        if (IsFrozen || IsStunned || !IsAlive()) return;
+
         if (!SpottedPlayer && MoveToOverridePosition && Vector3.Distance(AttackPosition.position, OverridePosition) <= OverridePositionCheckRadius)
         {
             MoveToOverridePosition = false;
@@ -521,10 +532,14 @@ public class EnemyBase : EntityBase
 
     public void ScanPlayer()
     {
-        SearchCnt++;
-        if (SearchCnt < 15 || IsFrozen || IsStunned) return;
+        if (ScanPlayerCnt < 20)
+        {
+            ScanPlayerCnt++;
+            return;
+        }
+        ScanPlayerCnt = 0;
 
-        SearchCnt = 0;
+        if (IsFrozen || IsStunned) return;
 
         bool spottedViaAlert = false;
         if (!SpottedPlayer)

@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/StageDemo.unity
-    guid: 46531bf0c44455e48a917bd76f67c89b
+    path: Assets/Scenes/Level_Selection.unity
+    guid: c4f6624eb86ef984284f63f218a2b70c
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: e0dd4615b705e87488dfc30fc8b562cd, type: 2}

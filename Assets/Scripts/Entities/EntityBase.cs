@@ -70,7 +70,7 @@ public class EntityBase : MonoBehaviour
 
     [SerializeField] protected float preferredMoveAnimationPlaySpeed = 1.0f, preferredAttackAnimationSpeed = 1.0f;
 
-    private short UpdateCounter = 0;
+    protected short UpdateCounter = 0;
     protected EntityManager EntityManager;
 
     protected Coroutine AttackCoroutine = null, LockoutMovementOnAttackCoroutine = null;
@@ -98,7 +98,7 @@ public class EntityBase : MonoBehaviour
 
         ShadowSprite = spriteRenderer.transform.Find("Shadow").gameObject;
 
-        InitSpriteColor = spriteRenderer.color;
+        InitSpriteColor = Color.white;
         PrevPosition = transform.position;
 
         health = mHealth;
@@ -182,7 +182,7 @@ public class EntityBase : MonoBehaviour
         float deltaX = CurrentPos.x - PrevPosition.x;
 
         bool PrevFlipX = spriteRenderer.flipX;
-        if (Mathf.Abs(deltaX) > 0.1f)
+        if (Mathf.Abs(deltaX) > 0.25f)
         {
             spriteRenderer.flipX = deltaX <= 0;
         }

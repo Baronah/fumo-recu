@@ -20,6 +20,7 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private Transform PlayerSpawnpoint;
     [SerializeField] private GameObject SwapEffect;
     [SerializeField] private float SwapCooldown = 20f;
+
     [SerializeField] private Image Swapsymbol, AttackSprite, AttackCD, SkillSprite, SkillCD, SpecialSprite, SpecialCD, SwapCD, ActivePlayer, SwapToPlayer;
     [SerializeField] private Sprite MeleeIcon, RangedIcon;
     [SerializeField] private TMP_Text txtViewKey, txtAttackKey, txtSpecialKey, txtSkillKey;
@@ -28,8 +29,13 @@ public class PlayerManager : MonoBehaviour
 
     private PlayerBase player;
     [SerializeField] private float swapCooldownTimer = 0f;
-    [SerializeField] GameObject SwapReadyEffect;
 
+    private float SwapOverflowTimer = 0f;
+    private short SwapStacks = 0;
+    [SerializeField] private short SwapMaxStacks = 2;
+    [SerializeField] GameObject SwapReadyEffect;
+    [SerializeField] private Image[] SwapStacksImg;
+    [SerializeField] private Sprite SwapStackAvailable, SwapStackUnavailable;
     [SerializeField] private GameObject SkillView_Overlay, SkillView;
     [SerializeField] private Image PlayerIcon, SkillView_Attack, SkillView_Skill, SkillView_Special;
     [SerializeField] private TMP_Text SkillView_Attributes, SkillView_AttackText, SkillView_SkillName, SkillView_SkillText, SkillView_SpecialName, SkillView_SpecialText;
@@ -74,7 +80,23 @@ public class PlayerManager : MonoBehaviour
             mainCamera.UpdatePlayerMovement(player.transform);
         }
 
+        for (int i = 0; i < SwapStacksImg.Length; ++i)
+        {
+            SwapStacksImg[i].sprite = CanSwapPlayer && SwapStacks >= (i + 1) ? SwapStackAvailable : SwapStackUnavailable;
+        }
+
         swapCooldownTimer += Time.deltaTime;
+        if (CanSwapPlayer)
+        {
+            SwapOverflowTimer += Time.deltaTime;
+            if (SwapOverflowTimer >= SwapCooldown)
+            {
+                SwapOverflowTimer = 0;
+                SwapStacks = (short) Mathf.Min(SwapStacks + 1, SwapMaxStacks);
+            }
+        }
+        else SwapOverflowTimer = 0;
+        
         SwapReadyEffect.SetActive(CanSwapPlayer);
 
         if (Input.GetKeyDown(SwapKey) && CanSwapPlayer)
@@ -90,7 +112,13 @@ public class PlayerManager : MonoBehaviour
     public void SwapPlayer()
     {
         if (IsStageStarted && (!CanSwapPlayer || !player || !player.IsAlive())) return;
-        if (IsStageStarted) swapCooldownTimer = 0f;
+        if (IsStageStarted)
+        {
+            if (SwapStacks > 0) SwapStacks--;
+            else swapCooldownTimer = 0f;
+
+            SwapOverflowTimer = 0f;
+        }
 
         ResetAllCooldown();
 

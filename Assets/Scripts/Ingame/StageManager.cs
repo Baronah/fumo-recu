@@ -5,6 +5,7 @@ using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static EnemyBase;
@@ -22,7 +23,6 @@ public class StageManager : MonoBehaviour
     [SerializeField] private TMP_Text LoadingState;
     [SerializeField] private CharacterPrefabsStorage prefabStorage;
 
-    
     [SerializeField] private CameraMovement mainCamera;
     [SerializeField] private float ShowcaseSize;
     [SerializeField] private Transform[] CameraShowcases;
@@ -31,6 +31,7 @@ public class StageManager : MonoBehaviour
     [SerializeField] private Image PauseButton;
     [SerializeField] private Sprite PausedSprite, UnpausedSprite;
 
+    private string LevelName;
     protected AudioSource BGM;
     private EnemySpawnpointScript[] enemySpawnpoints;
     
@@ -57,6 +58,10 @@ public class StageManager : MonoBehaviour
 
     private void Start()
     {
+        LevelName = SceneManager.GetActiveScene().name;
+
+        StartCoroutine(OnStartOverlayFadeout());
+
         BGM = GetComponent<AudioSource>();
 
         enemySpawnpoints = FindObjectsOfType<EnemySpawnpointScript>();
@@ -65,6 +70,24 @@ public class StageManager : MonoBehaviour
         StartCoroutine(LoadRequiredPrefabs());
         EnemyTooltipsScript.isAnyTooltipsShowing = false;
         Time.timeScale = 0f;
+    }
+
+    IEnumerator OnStartOverlayFadeout()
+    {
+        GameObject Overlay = GameObject.Find("StageOverlayTransition");
+        if (!Overlay) yield break;
+
+        Image image = Overlay.GetComponentInChildren<Image>();
+        float fadeOutTime = 1f, c = 0, cJump = 0.02f;
+        while (c < fadeOutTime)
+        {
+            image.color = Color.Lerp(Color.black, Color.clear, c * 1.0f / fadeOutTime);
+            c += cJump;
+            yield return new WaitForSecondsRealtime(cJump);
+        }
+
+        image.color = Color.clear;
+        Destroy(Overlay);
     }
 
     private IEnumerator LoadRequiredPrefabs()
@@ -183,6 +206,16 @@ public class StageManager : MonoBehaviour
     public virtual void OnStageEnd(bool resultIsWin)
     {
         IsStageEnd = true;
+
+        if (resultIsWin)
+        {
+            List<string> CompletedLevels = PlayerPrefs.GetString("CompletedLevels", string.Empty).Split(" ").ToList();
+            if (!CompletedLevels.Contains(LevelName))
+                CompletedLevels.Add(LevelName);
+
+            PlayerPrefs.SetString("CompletedLevels", string.Join(' ', CompletedLevels.ToArray()));
+        }
+
         StartCoroutine(FadeIn(resultIsWin));
     }
 
@@ -217,7 +250,8 @@ public class StageManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         EnemySpawnpointScript.OnStageRetry();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        string currentSceneName = SceneManager.GetActiveScene().name;
+        Addressables.LoadSceneAsync(currentSceneName, LoadSceneMode.Single, true);
     }
 
     public void QuitStage()
@@ -226,15 +260,9 @@ public class StageManager : MonoBehaviour
         CharacterPrefabsStorage.EnemyPrefabs.Clear();
         CharacterPrefabsStorage.PlayerPrefabs.Clear();
 
-        var menuScene = SceneManager.GetSceneByName("MainMenu");
-        if (menuScene.IsValid())
-        {
-            SceneManager.LoadScene("MainMenu");
-        }
-        else
-        {
-            Application.Quit();
-        }
+        Time.timeScale = 1f;
+
+        SceneManager.LoadScene("Level_Selection");
     }
 
     public void OnPlayerFumoPickup(PlayerBase player)

@@ -77,11 +77,7 @@ public class PlayerBase : EntityBase
 
     public override IEnumerator LockoutMovementsOnAttack()
     {
-        StartCoroutine(playerManager.AttackCooldown(Mathf.Max(
-                attackWindupTime,
-                attackInterval,
-                animator.GetCurrentAnimatorClipInfo(0).Length / preferredAttackAnimationSpeed / animator.GetFloat("a_speed_value"))
-            ));
+        StartCoroutine(playerManager.AttackCooldown(GetAttackLockoutTime()));
         return base.LockoutMovementsOnAttack();
     }
 

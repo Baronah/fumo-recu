@@ -196,7 +196,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Bloodthirsty Heir
   Icon: {fileID: 21300000, guid: 34023941c46cc37408c4b83eb4cd8ec0, type: 3}
-  mHealth: 80
+  mHealth: 55
   bAtk: 10
   bDef: 0
   bRes: 40
@@ -204,7 +204,7 @@ MonoBehaviour:
   defIgn: 0
   resPen: 0
   resIgn: 0
-  lifeSteal: 0.8
+  lifeSteal: 1.2
   b_moveSpeed: 90
   b_attackRange: 30
   b_attackWindupTime: 0.11
@@ -235,7 +235,7 @@ MonoBehaviour:
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
   TooltipsPriority: 0
   TooltipsHoldtime: 6
-  DetectionRange: 130
+  DetectionRange: 110
   DangerRange_RatioOfAttackRange: 1
   MinimumDistanceFromPlayer: 10
   showTooltips: 1
@@ -255,7 +255,7 @@ MonoBehaviour:
   OverridePositionCheckRadius: 50
   MoveToOverridePositionSpeedMultiplier: 1
   MoveToOverridePositionSpeedMultiplierJump: 0
-  speedMultiplierOnPlayerSpot: 3
+  speedMultiplierOnPlayerSpot: 3.2
 --- !u!82 &7424751633068628821
 AudioSource:
   m_ObjectHideFlags: 0

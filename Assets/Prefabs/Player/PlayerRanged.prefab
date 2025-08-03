@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8954746861170658156
 Transform:
   m_ObjectHideFlags: 0
@@ -688,7 +688,7 @@ MonoBehaviour:
   FreezeDurationMin: 0.5
   FreeDurationMax: 4
   MinDistanceForFreezeDuration: 100
-  FreezeCooldown: 11.5
+  FreezeCooldown: 10.5
   FreezeCastDuration: 0.1
 --- !u!4 &6558327838760169379 stripped
 Transform:
