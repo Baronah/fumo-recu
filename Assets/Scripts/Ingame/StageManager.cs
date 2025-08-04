@@ -35,6 +35,8 @@ public class StageManager : MonoBehaviour
     protected AudioSource BGM;
     private EnemySpawnpointScript[] enemySpawnpoints;
     
+    private float timeScaleSlow = 0.3f;
+
     private bool IsEnemyAlive => EntityManager.Enemies.Any(e => e && e.IsAlive()) || enemySpawnpoints.Any(e => !e.IsSpawnpointSpawned);
 
     public enum StageCompleteCondition

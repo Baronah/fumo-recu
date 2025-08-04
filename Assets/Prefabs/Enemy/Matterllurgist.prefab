@@ -216,11 +216,11 @@ MonoBehaviour:
   DangerRange_RatioOfAttackRange: 0.75
   MinimumDistanceFromPlayer: 20
   showTooltips: 1
-  gridCellSize: 35
+  gridCellSize: 40
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 256
-  pathfindingRadius: 500
+  pathfindingRadius: 800
   pathUpdateInterval: 1
   waypointReachDistance: 50
   showPathGizmos: 1

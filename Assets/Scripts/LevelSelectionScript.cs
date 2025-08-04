@@ -49,7 +49,7 @@ public class LevelSelectionScript : MonoBehaviour
             TMP_Text nameText = level.GetComponentInChildren<TMP_Text>();
             Image completionStatus = level.transform.Find("CompletionStatus").GetComponent<Image>();
 
-            string displayName = GetSceneName(levelIndex + 1);
+            string displayName = GetSceneName(levelIndex);
             nameText.text = displayName;
 
             if (CompletedLevels.Contains(displayName))

@@ -15,6 +15,8 @@ public class EnemyBase : EntityBase
         ZEALOT,
         HEIR,
         BLOODBOIL_KNIGHT,
+        ARCHER,
+        WETWORK,
     }
 
     public EnemyCode enemyCode;
@@ -32,9 +34,9 @@ public class EnemyBase : EntityBase
     [SerializeField] private bool showTooltips = false;
 
     [Header("A* Pathfinding")]
-    [SerializeField] private float gridCellSize = 30f;
+    [SerializeField] private float gridCellSize = 50f;
     [SerializeField] private LayerMask obstacleLayer = 7;
-    [SerializeField] private float pathfindingRadius = 500f;
+    [SerializeField] private float pathfindingRadius = 1500f;
     [SerializeField] private float pathUpdateInterval = 0.5f;
     [SerializeField] private float waypointReachDistance = 50f; 
     [SerializeField] private bool showPathGizmos = true;
@@ -128,13 +130,13 @@ public class EnemyBase : EntityBase
         }
         else
         {
-            return Checkpoints[CurrentCheckpointIndex].transform.position;
+            return Checkpoints.Count > 1 ? Checkpoints[CurrentCheckpointIndex].transform.position : transform.position;
         }
     }
 
     private void UpdatePathfinding()
     {
-        if (PathfindCnt < 5)
+        if (PathfindCnt <= 10)
         {
             PathfindCnt++;
             return;
@@ -285,12 +287,16 @@ public class EnemyBase : EntityBase
                 if (PlayerIsNearby)
                 {
                     Vector2 dirAwayFromPlayer = (enemyPos - playerPos).normalized;
-                    return enemyPos + dirAwayFromPlayer * (attackRange * 0.8f);
+                    return enemyPos + dirAwayFromPlayer * (attackRange * DangerRange_RatioOfAttackRange);
+                }
+                else if (RecentlyScannedPlayer)
+                {
+                    return enemyPos;
                 }
                 else
                 {
                     dirToPlayer = (playerPos - enemyPos).normalized;
-                    return playerPos - dirToPlayer * (attackRange * 0.7f);
+                    return playerPos - dirToPlayer * (attackRange * DangerRange_RatioOfAttackRange);
                 }
 
             default:

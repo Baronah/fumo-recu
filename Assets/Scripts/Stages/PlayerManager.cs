@@ -29,6 +29,7 @@ public class PlayerManager : MonoBehaviour
 
     private PlayerBase player;
     [SerializeField] private float swapCooldownTimer = 0f;
+    private float swapCurrentRotation = 0;
 
     private float SwapOverflowTimer = 0f;
     private short SwapStacks = 0;
@@ -224,8 +225,10 @@ public class PlayerManager : MonoBehaviour
     IEnumerator RotateSwapSymbol(float duration)
     {
         float elapsed = 0f;
-        Quaternion startRotation = Swapsymbol.transform.rotation;
+        Quaternion startRotation = Quaternion.Euler(0, 0, swapCurrentRotation);
         Quaternion endRotation = startRotation * Quaternion.Euler(0, 0, 180);
+        swapCurrentRotation += 180;
+
         while (elapsed < duration)
         {
             Swapsymbol.transform.rotation = Quaternion.Lerp(startRotation, endRotation, elapsed / duration);

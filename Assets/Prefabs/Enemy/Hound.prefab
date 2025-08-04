@@ -230,7 +230,7 @@ MonoBehaviour:
   DangerRange_RatioOfAttackRange: 1
   MinimumDistanceFromPlayer: 20
   showTooltips: 0
-  gridCellSize: 30
+  gridCellSize: 40
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 256

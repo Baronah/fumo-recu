@@ -72,6 +72,16 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f844619ce16782747aeed511236722d1
+    m_Address: Assets/Prefabs/Enemy/Archer.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0242306fa7ca7e442be63b6471bf704b
+    m_Address: Assets/Prefabs/Enemy/Wetwork.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: f65301b1dd8c6c44bb3235aef6fd1d01, type: 2}
   m_SchemaSet:

@@ -1645,6 +1645,7 @@ MonoBehaviour:
   - {fileID: 1258518569}
   InitWaittime: 60
   enemyPrefab: 1
+  doSpawnEnemy: 1
   Quantity: 1
   OffsetRadius: 0
   TargetObjectsToInteract: []
@@ -2219,6 +2220,7 @@ MonoBehaviour:
   - {fileID: 2036250192}
   InitWaittime: 20
   enemyPrefab: 3
+  doSpawnEnemy: 1
   Quantity: 1
   OffsetRadius: 0
   TargetObjectsToInteract: []
@@ -3108,6 +3110,7 @@ MonoBehaviour:
   - {fileID: 808219158}
   InitWaittime: 60
   enemyPrefab: 1
+  doSpawnEnemy: 1
   Quantity: 1
   OffsetRadius: 0
   TargetObjectsToInteract: []
@@ -3507,6 +3510,7 @@ MonoBehaviour:
   - {fileID: 2119819353}
   InitWaittime: 20
   enemyPrefab: 3
+  doSpawnEnemy: 1
   Quantity: 1
   OffsetRadius: 0
   TargetObjectsToInteract: []
@@ -5821,6 +5825,7 @@ MonoBehaviour:
   - {fileID: 157432710}
   InitWaittime: 60
   enemyPrefab: 1
+  doSpawnEnemy: 1
   Quantity: 1
   OffsetRadius: 0
   TargetObjectsToInteract: []
@@ -6225,7 +6230,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2759397622582439361, guid: 677b10a779982cb4ca974f8ec47f17f5, type: 3}
       propertyPath: showTooltips
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2759397622582439361, guid: 677b10a779982cb4ca974f8ec47f17f5, type: 3}
       propertyPath: InitTooltipsPriority
@@ -7465,6 +7470,7 @@ MonoBehaviour:
   - {fileID: 1651181331}
   InitWaittime: 20
   enemyPrefab: 3
+  doSpawnEnemy: 1
   Quantity: 1
   OffsetRadius: 0
   TargetObjectsToInteract: []
@@ -11585,6 +11591,7 @@ MonoBehaviour:
   - {fileID: 1800806895}
   InitWaittime: 60
   enemyPrefab: 1
+  doSpawnEnemy: 1
   Quantity: 1
   OffsetRadius: 0
   TargetObjectsToInteract: []
@@ -130623,12 +130630,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spotPlayerUponSpawn: 0
   immediateSpawn: 1
-  showTooltips: 1
+  showTooltips: 0
   InitTooltipsPriority: 4
   enemyCheckpoints:
   - {fileID: 2071489302}
   InitWaittime: 60
   enemyPrefab: 5
+  doSpawnEnemy: 1
   Quantity: 1
   OffsetRadius: 0
   TargetObjectsToInteract: []
@@ -131313,13 +131321,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1388245275714907927, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
       propertyPath: m_text
-      value: 'Everyone has their weapons drawn.
+      value: 'This time, everyone already has their weapons drawn.
 
-        They are definitely not
-        here to negotiate.
+        They
+        are definitely not here to mess around.
 
 
-        <b>Goal: <color=red>Eliminate all enemies</color></b>'
+        <b>Goal: <color=red>Eliminate
+        all enemies</color></b>'
       objectReference: {fileID: 0}
     - target: {fileID: 2103956321432040019, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -131354,8 +131363,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4972510026905490036, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 121.4452
+      objectReference: {fileID: 0}
+    - target: {fileID: 4972510026905490036, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -25
+      value: -16
       objectReference: {fileID: 0}
     - target: {fileID: 5016183214343049740, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -131365,7 +131378,7 @@ PrefabInstance:
       propertyPath: m_text
       value: '<b><size=120>FM-02</size></b>
 
-        Checker'
+        Weft & wrap'
       objectReference: {fileID: 0}
     - target: {fileID: 6452663143887662580, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
       propertyPath: m_LocalPosition.x

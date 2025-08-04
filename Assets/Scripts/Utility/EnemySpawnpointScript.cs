@@ -21,6 +21,7 @@ public class EnemySpawnpointScript : MonoBehaviour
     [SerializeField] public List<EnemyCheckpointScript> enemyCheckpoints;
     [SerializeField] private float InitWaittime;
     [SerializeField] private EnemyCode enemyPrefab;
+    [SerializeField] private bool doSpawnEnemy = true;
     [SerializeField] private short Quantity = 1;
     [SerializeField] private float OffsetRadius = 5f;
 
@@ -56,33 +57,36 @@ public class EnemySpawnpointScript : MonoBehaviour
     {
         if (Spawned) yield break;
 
-        for (int i = 0; i < Quantity; i++) 
-        { 
-            GameObject o = Instantiate(
-                CharacterPrefabsStorage.EnemyPrefabs[(int) enemyPrefab], 
-                SpawnPosition.position + new Vector3(Random.Range(-OffsetRadius, OffsetRadius), Random.Range(-OffsetRadius, OffsetRadius)), 
-                Quaternion.identity);
-
-            EnemyBase enemy = o.GetComponent<EnemyBase>();
-
-            enemyCheckpoints.Insert(0, new EnemyCheckpointScript { Checkpoint = SpawnPosition, WaitTime = InitWaittime });
-            enemy.SetCheckpoints(InitWaittime, enemyCheckpoints, showTooltips, TooltipsPriority + InitTooltipsPriority);
-            TooltipsPriority++;
-            enemy.enabled = true;
-            Spawned = true;
-
-            yield return null;
-
-            if (spotPlayerUponSpawn)
+        if (doSpawnEnemy)
+        {
+            for (int i = 0; i < Quantity; i++)
             {
-                enemy.ForceSpotPlayer();
-            }
-            else
-            {
-                StartCoroutine(enemy.StartMovementLockout(extraWaittime));
-            }
+                GameObject o = Instantiate(
+                    CharacterPrefabsStorage.EnemyPrefabs[(int)enemyPrefab],
+                    SpawnPosition.position + new Vector3(Random.Range(-OffsetRadius, OffsetRadius), Random.Range(-OffsetRadius, OffsetRadius)),
+                    Quaternion.identity);
 
-            SpawnEnemies.Add(enemy);
+                EnemyBase enemy = o.GetComponent<EnemyBase>();
+
+                enemyCheckpoints.Insert(0, new EnemyCheckpointScript { Checkpoint = SpawnPosition, WaitTime = InitWaittime });
+                enemy.SetCheckpoints(InitWaittime, enemyCheckpoints, showTooltips, TooltipsPriority + InitTooltipsPriority);
+                TooltipsPriority++;
+                enemy.enabled = true;
+                Spawned = true;
+
+                yield return null;
+
+                if (spotPlayerUponSpawn)
+                {
+                    enemy.ForceSpotPlayer();
+                }
+                else
+                {
+                    StartCoroutine(enemy.StartMovementLockout(extraWaittime));
+                }
+
+                SpawnEnemies.Add(enemy);
+            }
         }
 
         foreach (var obj in TargetObjectsToInteract)
@@ -111,6 +115,7 @@ public class EnemySpawnpointScript : MonoBehaviour
 
     private void OnSpawnedEnemyDeath()
     {
+        if (!doSpawnEnemy) return;
         if (SpawnEnemies.Count <= 0 || SpawnEnemies.Any(e => e.IsAlive())) return;
 
         SpawnEnemies.Clear();
