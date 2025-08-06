@@ -25,7 +25,7 @@ public class Matterllurgist : EnemyBase
     {
         if (IsAttackLocked || attackPattern == AttackPattern.NONE) yield break;
 
-        animator.SetTrigger("attack");
+        animator.SetBool("attack", true);
         StartCoroutine(LockoutMovementsOnAttack());
 
         var target = SearchForNearestEntityAroundSelf(typeof(PlayerBase));

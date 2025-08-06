@@ -407,6 +407,8 @@ public class EnemyBase : EntityBase
 
         if (IsFrozen || IsStunned || !IsAlive()) return;
 
+        base.Move();
+
         if (!SpottedPlayer && MoveToOverridePosition && Vector3.Distance(AttackPosition.position, OverridePosition) <= OverridePositionCheckRadius)
         {
             MoveToOverridePosition = false;
@@ -665,6 +667,7 @@ public class EnemyBase : EntityBase
             var target = SearchForNearestEntityAroundSelf(typeof(PlayerBase));
             if (target && !IsStunned && !IsFrozen) DealDamage(target, atk);
         }
+
         yield return null;
     }
 

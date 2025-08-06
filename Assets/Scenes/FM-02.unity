@@ -131268,6 +131268,10 @@ PrefabInstance:
       value: 1050
       objectReference: {fileID: 0}
     - target: {fileID: 948272968721532573, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
+      propertyPath: timeScaleSlow
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 948272968721532573, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
       propertyPath: extraEnemyWaittime
       value: 12
       objectReference: {fileID: 0}

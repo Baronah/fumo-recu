@@ -51,9 +51,33 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 694963275832990143, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 694963275832990143, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.015
+      objectReference: {fileID: 0}
+    - target: {fileID: 694963275832990143, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 694963275832990143, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -1.55
+      objectReference: {fileID: 0}
+    - target: {fileID: 694963275832990143, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 712479229275404704, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_Name
       value: Heir
+      objectReference: {fileID: 0}
+    - target: {fileID: 773491194806959642, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1333956751212545712, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_Size.x
@@ -93,6 +117,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2491095902735715385, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2887112761855982070, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2887112761855982070, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_AnchorMax.y
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3072902088734969017, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
@@ -207,7 +239,7 @@ MonoBehaviour:
   lifeSteal: 1.2
   b_moveSpeed: 90
   b_attackRange: 30
-  b_attackWindupTime: 0.11
+  b_attackWindupTime: 0.1
   b_attackInterval: 0.13
   MIN_PHYSICAL_DMG: 0.05
   MIN_MAGICAL_DMG: 0.1
@@ -227,7 +259,9 @@ MonoBehaviour:
   attackPattern: 0
   ProjectilePrefab: {fileID: 0}
   ProjectileType: 1
+  ProjectileSpeed: 1000
   DamagePopup: {fileID: 7498904281893358320, guid: b09dfacba160b6d47938cf47f8dea3c9, type: 3}
+  ccBar: {fileID: 3695961262839361106}
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 2
   enemyCode: 0
@@ -352,6 +386,11 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!1 &3695961262839361106 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 773491194806959642, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+  m_PrefabInstance: {fileID: 4175205238220296264}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7208738346378264436 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6772246562461740860, guid: f3221dbae6b487b49907a796747ecac4, type: 3}

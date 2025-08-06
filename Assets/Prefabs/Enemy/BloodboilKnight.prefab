@@ -310,7 +310,9 @@ MonoBehaviour:
   attackPattern: 0
   ProjectilePrefab: {fileID: 0}
   ProjectileType: 1
+  ProjectileSpeed: 1000
   DamagePopup: {fileID: 7498904281893358320, guid: b09dfacba160b6d47938cf47f8dea3c9, type: 3}
+  ccBar: {fileID: 3699022713693373004}
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 1
   enemyCode: 5
@@ -343,6 +345,11 @@ MonoBehaviour:
   aspdAddPerEnemyKilled: 10
   mspdAddPerEnemyKilled: 0.125
   maxStackCount: 10
+--- !u!1 &3699022713693373004 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 773491194806959642, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+  m_PrefabInstance: {fileID: 4174396688852057174}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7211870446209438570 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6772246562461740860, guid: f3221dbae6b487b49907a796747ecac4, type: 3}

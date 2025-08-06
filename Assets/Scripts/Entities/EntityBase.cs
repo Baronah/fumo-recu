@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
+using static Cinemachine.CinemachineTargetGroup;
 using static ProjectileScript;
 using static UnityEngine.GraphicsBuffer;
 
@@ -41,6 +43,8 @@ public class EntityBase : MonoBehaviour
     [SerializeField] private GameObject DamagePopup;
     
     protected HealthBar healthBar;
+    [SerializeField] protected GameObject ccBar;
+    protected Slider ccSlider;
 
     protected Transform AttackPosition;
     protected SpriteRenderer spriteRenderer;
@@ -120,6 +124,8 @@ public class EntityBase : MonoBehaviour
 
         healthBar = GetComponentInChildren<HealthBar>();
         healthBar.SetMaxHealth(mHealth);
+
+        ccSlider = ccBar.GetComponentInChildren<Slider>();
 
         EntityManager = FindObjectOfType<EntityManager>();
         if (EntityManager)
@@ -384,7 +390,7 @@ public class EntityBase : MonoBehaviour
     {
         // base example
         if (IsMovementLocked) return;
-
+        if (rb2d.velocity.magnitude > 0) animator.SetBool("attack", false);
     }
 
     public virtual void StopMovement()
@@ -396,10 +402,12 @@ public class EntityBase : MonoBehaviour
     public virtual void ApplyFreeze(EntityBase target, float duration)
     {
         target.animator.speed = 0f;
-        target.animator.StartPlayback();
         target.FreezeTimer = Mathf.Max(target.FreezeTimer, duration);
         target.StopMovement();
         target.CancelAttack();
+
+        target.ccBar.SetActive(true);
+        target.ccSlider.value = target.ccSlider.maxValue = target.FreezeTimer;
     }
 
     public virtual void ApplyStun(EntityBase target, float duration)
@@ -408,20 +416,28 @@ public class EntityBase : MonoBehaviour
         target.StunTimer = Mathf.Max(target.StunTimer, duration);
         target.StopMovement();
         target.CancelAttack();
+
+        target.ccBar.SetActive(true);
+        target.ccSlider.value = target.ccSlider.maxValue = target.FreezeTimer;
     }
 
     public virtual void OnFreezeMaintain()
     {
         spriteRenderer.color = Color.blue;
+        ccSlider.value = FreezeTimer;
         StopMovement();
     }
 
     public virtual void OnFreezeExit()
     {
         if (FreezeTimer > 0f) return;
+
+        animator.SetBool("attack", false);
         FreezeTimer = 0f;
         spriteRenderer.color = InitSpriteColor;
         animator.speed = 1f;
+        ccSlider.value = 0;   
+        ccBar.SetActive(false);
     }
 
     public virtual Vector2 CalculateMovement(Vector2 normalizedMovementVector) => CalculateMovement(normalizedMovementVector, moveSpeed);
@@ -429,6 +445,7 @@ public class EntityBase : MonoBehaviour
 
     public virtual void OnDeath()
     {
+        ccBar.SetActive(false);
         ShadowSprite.SetActive(false);
         animator.speed = 1f;
 
@@ -479,7 +496,7 @@ public class EntityBase : MonoBehaviour
     {
         if (IsAttackLocked) yield break;
 
-        animator.SetTrigger("attack");
+        animator.SetBool("attack", true);
         LockoutMovementOnAttackCoroutine = StartCoroutine(LockoutMovementsOnAttack());
         yield break;
     }
@@ -489,11 +506,12 @@ public class EntityBase : MonoBehaviour
         // base example
         if (IsAttackLocked) yield break;
 
-        StartCoroutine(StartMovementLockout(GetWindupTime() * 1.5f));
         StartCoroutine(StartAttackLockout(GetAttackLockoutTime()));
 
-        // as enemy and player unit have different attack method,
-        // overrides will handle this
+        StartCoroutine(StartMovementLockout(GetWindupTime() * 1.5f));
+
+        yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0).Length / preferredAttackAnimationSpeed / animator.GetFloat("a_speed_value"));
+        if (!IsFrozen && !IsStunned) animator.SetBool("attack", false);
 
         yield return null;
     }
@@ -511,13 +529,13 @@ public class EntityBase : MonoBehaviour
 
     public virtual void CancelAttack()
     {
-        animator.ResetTrigger("attack");
+        if (!IsFrozen && !IsStunned) animator.SetBool("attack", false);
 
         if (AttackCoroutine != null)
         {
             StopCoroutine(AttackCoroutine);
             AttackCoroutine = null;
-            AttackLockout = (short)Mathf.Max(AttackLockout - 1, 0);
+            AttackLockout = (short)Mathf.Max(AttackLockout, 0);
         }
 
         if (LockoutMovementOnAttackCoroutine != null)

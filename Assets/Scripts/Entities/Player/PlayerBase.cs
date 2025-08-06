@@ -46,7 +46,7 @@ public class PlayerBase : EntityBase
     public override void Move()
     {
         if (IsMovementLocked) return;
-
+        
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
 
@@ -55,6 +55,8 @@ public class PlayerBase : EntityBase
         rb2d.velocity = CalculateMovement(movementInputs);
 
         animator.SetFloat("move", Mathf.Abs(moveHorizontal) + Mathf.Abs(moveVertical));
+
+        base.Move();
     }
 
     public override IEnumerator Attack()

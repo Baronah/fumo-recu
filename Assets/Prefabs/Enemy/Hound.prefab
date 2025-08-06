@@ -218,7 +218,9 @@ MonoBehaviour:
   attackPattern: 0
   ProjectilePrefab: {fileID: 0}
   ProjectileType: 1
+  ProjectileSpeed: 1000
   DamagePopup: {fileID: 7498904281893358320, guid: b09dfacba160b6d47938cf47f8dea3c9, type: 3}
+  ccBar: {fileID: 6784049404754971277}
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 0.9
   enemyCode: 0
@@ -246,3 +248,8 @@ MonoBehaviour:
   OverridePositionCheckRadius: 50
   MoveToOverridePositionSpeedMultiplier: 1
   MoveToOverridePositionSpeedMultiplierJump: 0.35
+--- !u!1 &6784049404754971277 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 773491194806959642, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+  m_PrefabInstance: {fileID: 6097371254401184919}
+  m_PrefabAsset: {fileID: 0}

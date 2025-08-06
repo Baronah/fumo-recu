@@ -643,8 +643,8 @@ MonoBehaviour:
   lifeSteal: 0
   b_moveSpeed: 125
   b_attackRange: 420
-  b_attackWindupTime: 1
-  b_attackInterval: 1.9
+  b_attackWindupTime: 0.95
+  b_attackInterval: 1.8
   MIN_PHYSICAL_DMG: 0.05
   MIN_MAGICAL_DMG: 0.1
   health: 0
@@ -665,8 +665,9 @@ MonoBehaviour:
   ProjectileType: 0
   ProjectileSpeed: 2000
   DamagePopup: {fileID: 7498904281893358320, guid: b09dfacba160b6d47938cf47f8dea3c9, type: 3}
+  ccBar: {fileID: 7702315061174201758}
   preferredMoveAnimationPlaySpeed: 0.85
-  preferredAttackAnimationSpeed: 0.88
+  preferredAttackAnimationSpeed: 0.9
   AttackSprite: {fileID: 21300000, guid: 1146632b55a73c34fa3b2bf1794f10ec, type: 3}
   SkillSprite: {fileID: 21300000, guid: 425d049a62ac11f4bbb9a798b005c93f, type: 3}
   SpecialSprite: {fileID: 21300000, guid: 0da9d9817e86b52448dcab10e8b6f47f, type: 3}
@@ -693,5 +694,10 @@ MonoBehaviour:
 --- !u!4 &6558327838760169379 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4379148182149629804, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
+  m_PrefabInstance: {fileID: 7477664755718121679}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7702315061174201758 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 946352713013429585, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
   m_PrefabInstance: {fileID: 7477664755718121679}
   m_PrefabAsset: {fileID: 0}

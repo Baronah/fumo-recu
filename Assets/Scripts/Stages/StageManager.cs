@@ -28,14 +28,16 @@ public class StageManager : MonoBehaviour
     [SerializeField] private Transform[] CameraShowcases;
     [SerializeField] private float[] Waittimes;
 
-    [SerializeField] private Image PauseButton;
+    [SerializeField] private Image PauseButton, SlowImg;
     [SerializeField] private Sprite PausedSprite, UnpausedSprite;
 
     private string LevelName;
     protected AudioSource BGM;
     private EnemySpawnpointScript[] enemySpawnpoints;
     
-    private float timeScaleSlow = 0.3f;
+    [SerializeField] private float timeScaleSlow = 0.4f;
+    [SerializeField] private KeyCode SlowKeyCode = KeyCode.Q;
+    private bool isSlowing = false;
 
     private bool IsEnemyAlive => EntityManager.Enemies.Any(e => e && e.IsAlive()) || enemySpawnpoints.Any(e => !e.IsSpawnpointSpawned);
 
@@ -161,7 +163,11 @@ public class StageManager : MonoBehaviour
     {
         if (!IsStageReady) return;
 
-        Time.timeScale = IsStagePaused || playerManager.IsReadingSkillView ? 0f : 1f;
+        Time.timeScale = 
+            IsStagePaused || playerManager.IsReadingSkillView 
+            ? 0f 
+            : isSlowing 
+                ? timeScaleSlow : 1f;
 
         OnStageUpdate();
 
@@ -176,6 +182,11 @@ public class StageManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             TogglePauseStage();
+        }
+        else if (Input.GetKeyDown(SlowKeyCode))
+        {
+            isSlowing = !isSlowing;
+            SlowImg.color = isSlowing ? Color.white : new(0.15f, 0.15f, 0.15f);
         }
     }
 

@@ -5081,6 +5081,7 @@ MonoBehaviour:
   ProjectileType: 1
   ProjectileSpeed: 1250
   DamagePopup: {fileID: 7498904281893358320, guid: b09dfacba160b6d47938cf47f8dea3c9, type: 3}
+  ccBar: {fileID: 2787112311692162125}
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 1
   enemyCode: 6
@@ -5114,6 +5115,11 @@ MonoBehaviour:
   AtkPercentageUp_perSecond: 0.05
   AtkPercentageUp_cap: 2
   PS: {fileID: 7906865763794752210}
+--- !u!1 &2787112311692162125 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 773491194806959642, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+  m_PrefabInstance: {fileID: 3176781312704580183}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8209476750313219435 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6772246562461740860, guid: f3221dbae6b487b49907a796747ecac4, type: 3}

@@ -112,9 +112,8 @@ public class PlayerRanged : PlayerBase
             yield break;
         }
 
+        animator.SetBool("attack", true);
         LockoutMovementOnAttackCoroutine = StartCoroutine(LockoutMovementsOnAttack());
-        
-        animator.SetTrigger("attack");
 
         yield return new WaitForSeconds(GetWindupTime());
 
