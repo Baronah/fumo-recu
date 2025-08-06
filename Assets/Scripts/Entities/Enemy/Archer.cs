@@ -5,6 +5,7 @@ public class Archer : EnemyBase
 {
     [SerializeField] private float AtkPercentageUp_perSecond = 0.05f;
     [SerializeField] private float AtkPercentageUp_cap = 2.0f;
+    [SerializeField] private GameObject PS;
 
     private float AtkPercentageUp_count = 0;
 
@@ -21,6 +22,7 @@ public class Archer : EnemyBase
             if (!IsAlive()) yield break;
 
             yield return new WaitForSeconds(1f);
+            PS.SetActive(IsAlive() && AtkPercentageUp_count >= AtkPercentageUp_cap / 2);
             if (IsAttackLocked) continue;
 
             AtkPercentageUp_count = Mathf.Min(AtkPercentageUp_count + AtkPercentageUp_perSecond, AtkPercentageUp_cap);
@@ -42,7 +44,7 @@ public class Archer : EnemyBase
     {
         Description = "";
         Skillset = ".";
-        TooltipsDescription = "An archer that can perform long-range shots. When not attacking, ATK continuously increases " +
+        TooltipsDescription = "Seasoned archer that can perform long-range shots. When not attacking, ATK continuously increases " +
             "and reset after the next attack.";
 
         base.WriteStats();

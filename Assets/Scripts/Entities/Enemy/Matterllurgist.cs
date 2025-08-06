@@ -18,7 +18,7 @@ public class Matterllurgist : EnemyBase
     public override void OnFirsttimePlayerSpot(bool viaAlert = false)
     {
         base.OnFirsttimePlayerSpot(viaAlert);
-        if (viaAlert) ASPD += 100f;
+        if (viaAlert) ASPD += 200f;
     }
 
     public override IEnumerator Attack()

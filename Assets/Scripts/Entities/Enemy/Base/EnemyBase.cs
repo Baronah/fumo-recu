@@ -17,6 +17,7 @@ public class EnemyBase : EntityBase
         BLOODBOIL_KNIGHT,
         ARCHER,
         WETWORK,
+        DUMMY,
     }
 
     public EnemyCode enemyCode;
@@ -113,6 +114,11 @@ public class EnemyBase : EntityBase
 
         base.FixedUpdate();
 
+        EnemyFixedBehaviors();
+    }
+
+    public virtual void EnemyFixedBehaviors()
+    {
         ScanPlayer();
         UpdatePathfinding();
         Move();

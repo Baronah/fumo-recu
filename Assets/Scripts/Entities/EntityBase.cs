@@ -36,8 +36,8 @@ public class EntityBase : MonoBehaviour
     public enum AttackPattern { MELEE, RANGED, NONE }
     public AttackPattern attackPattern;
     [SerializeField] protected GameObject ProjectilePrefab;
-    [SerializeField] protected ProjectileType ProjectileType = ProjectileType.CATCH_FIRST_TARGET_OF_TYPE;   
-
+    [SerializeField] protected ProjectileType ProjectileType = ProjectileType.CATCH_FIRST_TARGET_OF_TYPE;
+    [SerializeField] protected float ProjectileSpeed = 1000;
     [SerializeField] private GameObject DamagePopup;
     
     protected HealthBar healthBar;
@@ -560,29 +560,39 @@ public class EntityBase : MonoBehaviour
         yield return null;
     }
 
-    public void CreateProjectileAndShootToward(EntityBase target, ProjectileScript.ProjectileType projectileType, float travelSpeed = 1000, float acceleration = 0)
+    public void CreateProjectileAndShootToward(EntityBase target, ProjectileScript.ProjectileType projectileType, float acceleration = 0)
+    {
+        CreateProjectileAndShootToward(ProjectilePrefab, GetInstanceBasedOnDamagetype(), target, AttackPosition.position, target.transform.position, projectileType, ProjectileSpeed, acceleration);
+    }
+
+    public void CreateProjectileAndShootToward(EntityBase target, ProjectileScript.ProjectileType projectileType, float travelSpeed, float acceleration)
     {
         CreateProjectileAndShootToward(ProjectilePrefab, GetInstanceBasedOnDamagetype(), target, AttackPosition.position, target.transform.position, projectileType, travelSpeed, acceleration);
     }
 
-    public void CreateProjectileAndShootToward(EntityBase target, Vector3 targetPosition, ProjectileScript.ProjectileType projectileType, float travelSpeed = 1000, float acceleration = 0)
+    public void CreateProjectileAndShootToward(EntityBase target, Vector3 targetPosition, ProjectileScript.ProjectileType projectileType, float acceleration = 0)
     {
-        CreateProjectileAndShootToward(ProjectilePrefab, GetInstanceBasedOnDamagetype(), target, AttackPosition.position, targetPosition, projectileType, travelSpeed, acceleration);
+        CreateProjectileAndShootToward(ProjectilePrefab, GetInstanceBasedOnDamagetype(), target, AttackPosition.position, targetPosition, projectileType, ProjectileSpeed, acceleration);
     }
 
-    public void CreateProjectileAndShootToward(EntityBase target, Vector3 spawnPosition, Vector3 targetPosition, ProjectileScript.ProjectileType projectileType, float travelSpeed = 1000, float acceleration = 0)
+    public void CreateProjectileAndShootToward(EntityBase target, Vector3 spawnPosition, Vector3 targetPosition, ProjectileScript.ProjectileType projectileType, float acceleration = 0)
+    {
+        CreateProjectileAndShootToward(ProjectilePrefab, GetInstanceBasedOnDamagetype(), target, spawnPosition, targetPosition, projectileType, ProjectileSpeed, acceleration);
+    }
+
+    public void CreateProjectileAndShootToward(EntityBase target, Vector3 spawnPosition, Vector3 targetPosition, ProjectileScript.ProjectileType projectileType, float travelSpeed, float acceleration = 0)
     {
         CreateProjectileAndShootToward(ProjectilePrefab, GetInstanceBasedOnDamagetype(), target, spawnPosition, targetPosition, projectileType, travelSpeed, acceleration);
     }
 
-    public void CreateProjectileAndShootToward(EntityBase target, DamageInstance damageInstance, ProjectileScript.ProjectileType projectileType, float travelSpeed = 1000, float acceleration = 0)
+    public void CreateProjectileAndShootToward(EntityBase target, DamageInstance damageInstance, ProjectileScript.ProjectileType projectileType, float acceleration = 0)
     {
-        CreateProjectileAndShootToward(ProjectilePrefab, damageInstance, target, AttackPosition.position,target.transform.position, projectileType, travelSpeed, acceleration);
+        CreateProjectileAndShootToward(ProjectilePrefab, damageInstance, target, AttackPosition.position,target.transform.position, projectileType, ProjectileSpeed, acceleration);
     }
 
-    public void CreateProjectileAndShootToward(EntityBase target, DamageInstance damageInstance, Vector3 targetPosition, ProjectileScript.ProjectileType projectileType, float travelSpeed = 1000, float acceleration = 0)
+    public void CreateProjectileAndShootToward(EntityBase target, DamageInstance damageInstance, Vector3 targetPosition, ProjectileScript.ProjectileType projectileType, float acceleration = 0)
     {
-        CreateProjectileAndShootToward(ProjectilePrefab, damageInstance, target, AttackPosition.position, targetPosition, projectileType, travelSpeed, acceleration);
+        CreateProjectileAndShootToward(ProjectilePrefab, damageInstance, target, AttackPosition.position, targetPosition, projectileType, ProjectileSpeed, acceleration);
     }
 
     public void CreateProjectileAndShootToward(GameObject ProjectilePref, DamageInstance damageInstance, EntityBase target, Vector3 spawnPosition, Vector3 preferPosition, ProjectileScript.ProjectileType projectileType, float travelSpeed = 1000, float acceleration = 0, float lifeSpan = 8)

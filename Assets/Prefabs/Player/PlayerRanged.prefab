@@ -663,6 +663,7 @@ MonoBehaviour:
   attackPattern: 1
   ProjectilePrefab: {fileID: 1707831507938423826, guid: f80dd11dc4cc0ba4ab073dc632da03aa, type: 3}
   ProjectileType: 0
+  ProjectileSpeed: 2000
   DamagePopup: {fileID: 7498904281893358320, guid: b09dfacba160b6d47938cf47f8dea3c9, type: 3}
   preferredMoveAnimationPlaySpeed: 0.85
   preferredAttackAnimationSpeed: 0.88
@@ -674,7 +675,6 @@ MonoBehaviour:
   SkillDes: 
   SpecialName: 
   SpecialDes: 
-  ProjectileSpeed: 2000
   AttackRangeIndicator: {fileID: 7574998143464888112}
   Warning: {fileID: 6080019599566292019}
   SkillEffect: {fileID: 2390494206778937756}

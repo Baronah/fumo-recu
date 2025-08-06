@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PlayerRanged : PlayerBase
 {
-    [SerializeField] private float ProjectileSpeed = 1250f;
     [SerializeField] private GameObject AttackRangeIndicator, Warning, SkillEffect, FreezeEffect;
 
     [SerializeField] private Transform SkillPosition;
@@ -218,9 +217,9 @@ public class PlayerRanged : PlayerBase
         info.AttackText = $"Lauches a projectile toward the nearest enemy within range, " +
             $"dealing {atk} {damageType.ToString().ToLower()} damage.";
 
-        info.SkillName = "Aupiciousness";
+        info.SkillName = "Der Tag neigt sich";
         info.SkillText =
-            $"In the next {SkillDuration} seconds: becomes unable to move and attack, continuously unleashes a wave of projectiles " +
+            $"In the next {SkillDuration} seconds: becomes unable to move and attack, continuously unleashes waves of projectiles " +
             $"spreading in all direction around self. Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
             $"{SkillCooldown}s cooldown.";
 

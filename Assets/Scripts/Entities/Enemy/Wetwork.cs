@@ -3,8 +3,11 @@ using UnityEngine;
 
 public class Wetwork : EnemyBase
 {
+    [SerializeField] private float DefPenUp_perSecond = 1f;
+    [SerializeField] private float DefPenUp_cap = 50f;
     [SerializeField] private float AtkPercentageUp_perSecond = 0.05f;
     [SerializeField] private float AtkPercentageUp_cap = 2.0f;
+    [SerializeField] private GameObject PS;
 
     private float AtkPercentageUp_count = 0;
 
@@ -21,6 +24,8 @@ public class Wetwork : EnemyBase
             if (!IsAlive()) yield break;
 
             yield return new WaitForSeconds(1f);
+
+            PS.SetActive(IsAlive() && AtkPercentageUp_count >= AtkPercentageUp_cap / 2);
             if (IsAttackLocked) continue;
 
             AtkPercentageUp_count = Mathf.Min(AtkPercentageUp_count + AtkPercentageUp_perSecond, AtkPercentageUp_cap);
@@ -42,7 +47,7 @@ public class Wetwork : EnemyBase
     {
         Description = "";
         Skillset = ".";
-        TooltipsDescription = "An assassin that gets more dangerous the longer they hide. When not attacking, ATK continuously increases " +
+        TooltipsDescription = "An assassin who prefers close-ranged combat. When not attacking, ATK continuously increases " +
             "and reset after the next attack.";
 
         base.WriteStats();
