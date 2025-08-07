@@ -46,6 +46,7 @@ public class EntityBase : MonoBehaviour
     [SerializeField] protected GameObject ccBar;
     protected Slider ccSlider;
 
+    [SerializeField] protected AnimationClip AttackAnimation;
     protected Transform AttackPosition;
     protected SpriteRenderer spriteRenderer;
     protected Animator animator;
@@ -389,8 +390,7 @@ public class EntityBase : MonoBehaviour
     public virtual void Move()
     {
         // base example
-        if (IsMovementLocked) return;
-        if (rb2d.velocity.magnitude > 0) animator.SetBool("attack", false);
+        if (rb2d.velocity.magnitude != 0) animator.SetBool("attack", false);
     }
 
     public virtual void StopMovement()
@@ -510,7 +510,7 @@ public class EntityBase : MonoBehaviour
 
         StartCoroutine(StartMovementLockout(GetWindupTime() * 1.5f));
 
-        yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0).Length / preferredAttackAnimationSpeed / animator.GetFloat("a_speed_value"));
+        yield return new WaitForSeconds(GetAttackAnimationLength());
         if (!IsFrozen && !IsStunned) animator.SetBool("attack", false);
 
         yield return null;
@@ -520,11 +520,16 @@ public class EntityBase : MonoBehaviour
 
     public float GetAttackInterval() => attackInterval * (100 / Mathf.Max(20, ASPD));
 
+    public float GetAttackAnimationLength() => 
+        AttackAnimation 
+            ? AttackAnimation.length / preferredAttackAnimationSpeed / animator.GetFloat("a_speed_value")
+            : 0;
+
     public float GetAttackLockoutTime() 
         => Mathf.Max(
                 GetWindupTime(),
                 GetAttackInterval(),
-                animator.GetCurrentAnimatorClipInfo(0).Length / preferredAttackAnimationSpeed / animator.GetFloat("a_speed_value")
+                GetAttackAnimationLength()
             );
 
     public virtual void CancelAttack()

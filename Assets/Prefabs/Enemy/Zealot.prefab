@@ -382,6 +382,7 @@ MonoBehaviour:
   ProjectileSpeed: 1000
   DamagePopup: {fileID: 7498904281893358320, guid: b09dfacba160b6d47938cf47f8dea3c9, type: 3}
   ccBar: {fileID: 754730279402599387}
+  AttackAnimation: {fileID: 7400000, guid: a09a6a5b301f7034a95e77b2c60a63a9, type: 2}
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 0.9
   enemyCode: 0

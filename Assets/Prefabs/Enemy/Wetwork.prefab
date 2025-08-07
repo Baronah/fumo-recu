@@ -5006,7 +5006,7 @@ MonoBehaviour:
   Name: '"Wetwork" Operative'
   Icon: {fileID: 21300000, guid: 3e4db170e0454e743b751aaebc755b22, type: 3}
   mHealth: 130
-  bAtk: 35
+  bAtk: 40
   bDef: 5
   bRes: 0
   defPen: 0
@@ -5039,6 +5039,7 @@ MonoBehaviour:
   ProjectileSpeed: 1000
   DamagePopup: {fileID: 7498904281893358320, guid: b09dfacba160b6d47938cf47f8dea3c9, type: 3}
   ccBar: {fileID: 6580482464572689602}
+  AttackAnimation: {fileID: 7400000, guid: bdfcfd76ef9b1f744b1bd42a3e4bedcc, type: 2}
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 0.9
   enemyCode: 7

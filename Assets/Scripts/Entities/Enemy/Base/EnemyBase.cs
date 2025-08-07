@@ -407,8 +407,6 @@ public class EnemyBase : EntityBase
 
         if (IsFrozen || IsStunned || !IsAlive()) return;
 
-        base.Move();
-
         if (!SpottedPlayer && MoveToOverridePosition && Vector3.Distance(AttackPosition.position, OverridePosition) <= OverridePositionCheckRadius)
         {
             MoveToOverridePosition = false;
@@ -452,6 +450,7 @@ public class EnemyBase : EntityBase
 
         rb2d.velocity = CalculateMovement(finalDirection);
         animator.SetFloat("move", 1);
+        base.Move();
     }
 
     private void HandleStuckState()

@@ -5058,7 +5058,7 @@ MonoBehaviour:
   resIgn: 0
   lifeSteal: 0
   b_moveSpeed: 120
-  b_attackRange: 350
+  b_attackRange: 370
   b_attackWindupTime: 0.48
   b_attackInterval: 3
   MIN_PHYSICAL_DMG: 0.05
@@ -5082,6 +5082,7 @@ MonoBehaviour:
   ProjectileSpeed: 1250
   DamagePopup: {fileID: 7498904281893358320, guid: b09dfacba160b6d47938cf47f8dea3c9, type: 3}
   ccBar: {fileID: 2787112311692162125}
+  AttackAnimation: {fileID: 7400000, guid: 3d57bdd9bab37a64fb086ac50f47c812, type: 2}
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 1
   enemyCode: 6
@@ -5090,7 +5091,7 @@ MonoBehaviour:
   TooltipsPriority: 0
   TooltipsHoldtime: 6
   DetectionRange: 400
-  DangerRange_RatioOfAttackRange: 0.75
+  DangerRange_RatioOfAttackRange: 0.9
   MinimumDistanceFromPlayer: 20
   showTooltips: 0
   gridCellSize: 50
