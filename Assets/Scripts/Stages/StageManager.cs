@@ -60,7 +60,7 @@ public class StageManager : MonoBehaviour
 
     bool IsStageReady = false, IsStageEnd = false;
 
-    private void Start()
+    public virtual void Start()
     {
         LevelName = SceneManager.GetActiveScene().name;
 
@@ -92,6 +92,11 @@ public class StageManager : MonoBehaviour
 
         image.color = Color.clear;
         Destroy(Overlay);
+    }
+
+    public virtual void EnableChallengeMode()
+    {
+
     }
 
     private IEnumerator LoadRequiredPrefabs()
@@ -159,7 +164,7 @@ public class StageManager : MonoBehaviour
         StartCoroutine(CheckStageStatus());
     }
 
-    private void Update()
+    public virtual void Update()
     {
         if (!IsStageReady) return;
 
@@ -230,12 +235,13 @@ public class StageManager : MonoBehaviour
         }
 
         StartCoroutine(FadeIn(resultIsWin));
+        CharacterPrefabsStorage.EnableChallengeMode = false;
     }
 
     IEnumerator FadeIn(bool resultIsWin)
     {
         TMP_Text text = pauseOverlay.GetComponentInChildren<TMP_Text>();
-        text.text = resultIsWin ? "<color=green>Stage completed</color>" : "<color=red>Defeated</color>";
+        text.text = resultIsWin ? "<color=green>Stage Completed</color>" : "<color=red>Defeated</color>";
         CanvasGroup canvasGroup = pauseOverlay.GetComponent<CanvasGroup>();
         canvasGroup.alpha = 0;
         pauseOverlay.SetActive(true);
@@ -259,7 +265,7 @@ public class StageManager : MonoBehaviour
         PauseButton.sprite = IsStagePaused ? PausedSprite : UnpausedSprite;
     }
 
-    public void RetryStage()
+    public virtual void RetryStage()
     {
         Time.timeScale = 1f;
         EnemySpawnpointScript.OnStageRetry();
@@ -267,11 +273,12 @@ public class StageManager : MonoBehaviour
         Addressables.LoadSceneAsync(currentSceneName, LoadSceneMode.Single, true);
     }
 
-    public void QuitStage()
+    public virtual void QuitStage()
     {
         EnemySpawnpointScript.OnStageRetry();
         CharacterPrefabsStorage.EnemyPrefabs.Clear();
         CharacterPrefabsStorage.PlayerPrefabs.Clear();
+        CharacterPrefabsStorage.EnableChallengeMode = false;
 
         Time.timeScale = 1f;
 

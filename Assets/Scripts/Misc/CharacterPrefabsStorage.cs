@@ -11,6 +11,8 @@ public class CharacterPrefabsStorage : ScriptableObject
 	public AssetReference[] EnemyAssetReferences;
 	public AssetReference[] SceneAssetReferences;
 
+	public static bool EnableChallengeMode = false;
+
     public static Dictionary<int, GameObject> PlayerPrefabs = new();
 	public static Dictionary<int, GameObject> EnemyPrefabs = new();
 }
