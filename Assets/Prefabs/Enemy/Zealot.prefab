@@ -398,7 +398,7 @@ MonoBehaviour:
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 256
-  pathfindingRadius: 800
+  pathfindingRadius: 1000
   pathUpdateInterval: 1
   waypointReachDistance: 70
   showPathGizmos: 1

@@ -87,18 +87,20 @@ public class EnemyBase : EntityBase
         if (DetectionRange <= 0) DetectionRange = b_attackRange;
 
         // Initialize pathfinding grid (shared among all enemies)
-        if (pathfindingGrid == null)
-        {
-            pathfindingGrid = new PathfindingGrid(gridCellSize, obstacleLayer);
-        }
+        pathfindingGrid ??= new PathfindingGrid(gridCellSize, obstacleLayer);
+
+        AdjustChallengeModeAttributes();
 
         WriteStats();
         if (SpotPlayerUponSpawn) ForceSpotPlayer();
     }
 
+    public virtual void AdjustChallengeModeAttributes() { }
+
     public void ForceSpotPlayer() => SpottedPlayer = FindObjectOfType<PlayerBase>();
 
     private short ScanPlayerCnt = 0, MoveCnt = 0, PathfindCnt = 0;
+
     public override void FixedUpdate()
     {
         if (!IsAlive()) return;

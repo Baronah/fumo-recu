@@ -509,6 +509,7 @@ MonoBehaviour:
   ProjectileSpeed: 1000
   DamagePopup: {fileID: 7498904281893358320, guid: b09dfacba160b6d47938cf47f8dea3c9, type: 3}
   ccBar: {fileID: 5384541712598859992}
+  AttackAnimation: {fileID: 0}
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 1
   enemyCode: 0
@@ -524,7 +525,7 @@ MonoBehaviour:
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 256
-  pathfindingRadius: 800
+  pathfindingRadius: 1000
   pathUpdateInterval: 1
   waypointReachDistance: 25
   showPathGizmos: 1

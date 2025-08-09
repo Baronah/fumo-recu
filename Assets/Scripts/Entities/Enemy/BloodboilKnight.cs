@@ -5,10 +5,10 @@ using UnityEngine;
 public class BloodboilKnight : EnemyBase
 {
     [SerializeField] GameObject SkillEffect;
-    [SerializeField] private float atkAddPerEnemyKilled = 0.125f;
-    [SerializeField] private float aspdAddPerEnemyKilled = 10f;
-    [SerializeField] private float mspdAddPerEnemyKilled = 0.125f;
-    [SerializeField] private short maxStackCount = 10;
+    public float atkAddPerEnemyKilled = 0.125f;
+    public float aspdAddPerEnemyKilled = 10f;
+    public float mspdAddPerEnemyKilled = 0.125f;
+    public short maxStackCount = 10;
 
     private short stackCount = 0;
 

@@ -15,10 +15,10 @@ public class EntityBase : MonoBehaviour
     [SerializeField] protected string Name;
     [SerializeField] protected Sprite Icon;
 
-    [SerializeField] protected int mHealth;
-    [SerializeField] protected short bAtk, bDef, bRes;
-    [SerializeField] protected short defPen, defIgn, resPen, resIgn;
-    [SerializeField] protected float lifeSteal, b_moveSpeed, b_attackRange, b_attackWindupTime, b_attackInterval;
+    [SerializeField] public int mHealth;
+    [SerializeField] public short bAtk, bDef, bRes;
+    [SerializeField] public short defPen, defIgn, resPen, resIgn;
+    [SerializeField] public float lifeSteal, b_moveSpeed, b_attackRange, b_attackWindupTime, b_attackInterval;
     public float MIN_PHYSICAL_DMG = 0.05F, MIN_MAGICAL_DMG = 0.1F;
 
     public int health;

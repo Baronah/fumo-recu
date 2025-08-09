@@ -34,7 +34,9 @@ public class StageManager : MonoBehaviour
     private string LevelName;
     protected AudioSource BGM;
     private EnemySpawnpointScript[] enemySpawnpoints;
-    
+
+    [SerializeField] protected float ChallengeModeStatsModifier = 1.1f;
+
     [SerializeField] private float timeScaleSlow = 0.4f;
     [SerializeField] private KeyCode SlowKeyCode = KeyCode.Q;
     private bool isSlowing = false;
@@ -58,7 +60,7 @@ public class StageManager : MonoBehaviour
 
     private PlayerManager playerManager;
 
-    bool IsStageReady = false, IsStageEnd = false;
+    bool IsStageReady = false, IsStageEnd = false, StageClearedNMFirsttime = false;
 
     public virtual void Start()
     {
@@ -68,9 +70,12 @@ public class StageManager : MonoBehaviour
 
         BGM = GetComponent<AudioSource>();
 
+        if (CharacterPrefabsStorage.EnableChallengeMode) EnableChallengeMode();
+
         enemySpawnpoints = FindObjectsOfType<EnemySpawnpointScript>();
         playerManager = GetComponent<PlayerManager>();
         LoadingState.text = "Loading stage, please wait...";
+
         StartCoroutine(LoadRequiredPrefabs());
         EnemyTooltipsScript.isAnyTooltipsShowing = false;
         Time.timeScale = 0f;
@@ -97,6 +102,16 @@ public class StageManager : MonoBehaviour
     public virtual void EnableChallengeMode()
     {
 
+    }
+
+    public virtual void OnEnemySpawn(EnemyBase enemy)
+    {
+        if (CharacterPrefabsStorage.EnableChallengeMode)
+        {
+            enemy.bAtk = (short)(enemy.bAtk * ChallengeModeStatsModifier);
+            enemy.bDef = (short)(enemy.bDef * ChallengeModeStatsModifier);
+            enemy.mHealth = (int)(enemy.mHealth * ChallengeModeStatsModifier);
+        }
     }
 
     private IEnumerator LoadRequiredPrefabs()
@@ -227,21 +242,43 @@ public class StageManager : MonoBehaviour
 
         if (resultIsWin)
         {
+            foreach (var item in enemySpawnpoints)
+            {
+                Destroy(item);
+            }
+
             List<string> CompletedLevels = PlayerPrefs.GetString("CompletedLevels", string.Empty).Split(" ").ToList();
-            if (!CompletedLevels.Contains(LevelName))
-                CompletedLevels.Add(LevelName);
+            if (CharacterPrefabsStorage.EnableChallengeMode)
+            {
+                var CMLVL = LevelName + "_CM";
+                if (!CompletedLevels.Contains(CMLVL) && CompletedLevels.Contains(LevelName))
+                {
+                    CompletedLevels.Remove(LevelName);
+                }
+
+                CompletedLevels.Add(CMLVL);
+            }
+            else
+            {
+                if (!CompletedLevels.Contains(LevelName) && !CompletedLevels.Contains(LevelName + "_CM"))
+                {
+                    CompletedLevels.Add(LevelName);
+                    StageClearedNMFirsttime = true;
+                }
+            }
 
             PlayerPrefs.SetString("CompletedLevels", string.Join(' ', CompletedLevels.ToArray()));
         }
 
         StartCoroutine(FadeIn(resultIsWin));
-        CharacterPrefabsStorage.EnableChallengeMode = false;
+        if (resultIsWin) CharacterPrefabsStorage.EnableChallengeMode = false;
     }
 
     IEnumerator FadeIn(bool resultIsWin)
     {
         TMP_Text text = pauseOverlay.GetComponentInChildren<TMP_Text>();
         text.text = resultIsWin ? "<color=green>Stage Completed</color>" : "<color=red>Defeated</color>";
+        if (StageClearedNMFirsttime && resultIsWin) text.text += "\n<size=39>Challenge Mode has been unlocked!</size>";
         CanvasGroup canvasGroup = pauseOverlay.GetComponent<CanvasGroup>();
         canvasGroup.alpha = 0;
         pauseOverlay.SetActive(true);

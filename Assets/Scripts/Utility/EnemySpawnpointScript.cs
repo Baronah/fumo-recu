@@ -36,12 +36,15 @@ public class EnemySpawnpointScript : MonoBehaviour
     public static void OnStageRetry() => TooltipsPriority = 0;
 
     private Transform SpawnPosition;
+    
+    private StageManager stageManager;
 
     private bool Spawned = false;
     public bool IsSpawnpointSpawned => Spawned;
 
     private void Start()
     {
+        stageManager = FindObjectOfType<StageManager>();
         SpawnPosition = transform.Find("Spawnposition");
         if (immediateSpawn)
             StartCoroutine(SpawnEnemy());
@@ -68,6 +71,8 @@ public class EnemySpawnpointScript : MonoBehaviour
 
                 EnemyBase enemy = o.GetComponent<EnemyBase>();
 
+                stageManager.OnEnemySpawn(enemy);
+
                 enemyCheckpoints.Insert(0, new EnemyCheckpointScript { Checkpoint = SpawnPosition, WaitTime = InitWaittime });
                 enemy.SetCheckpoints(InitWaittime, enemyCheckpoints, showTooltips, TooltipsPriority + InitTooltipsPriority);
                 TooltipsPriority++;
@@ -86,6 +91,8 @@ public class EnemySpawnpointScript : MonoBehaviour
                 }
 
                 SpawnEnemies.Add(enemy);
+
+                yield return null;
             }
         }
 
@@ -96,7 +103,8 @@ public class EnemySpawnpointScript : MonoBehaviour
                 case ActionType.NONE:
                     break;
                 case ActionType.DESTROY:
-                    Destroy(obj);
+                    if (obj == this) Destroy(obj, 0.5f);
+                    else Destroy(obj);
                     break;
                 case ActionType.ACTIVATE:
                     obj.SetActive(true);
@@ -126,7 +134,8 @@ public class EnemySpawnpointScript : MonoBehaviour
                 case ActionType.NONE:
                     break;
                 case ActionType.DESTROY:
-                    Destroy(obj);
+                    if (obj == this) Destroy(obj, 0.5f);
+                    else Destroy(obj);
                     break;
                 case ActionType.ACTIVATE:
                     obj.SetActive(true);
