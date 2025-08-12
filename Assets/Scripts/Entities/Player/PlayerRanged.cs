@@ -190,13 +190,13 @@ public class PlayerRanged : PlayerBase
                 CreateProjectileAndShootToward(
                     ProjectilePrefab,
                     new DamageInstance(0, (int)(atk * Skill_DamageMulitplier), 0),
-                    targetType: typeof(EnemyBase),
                     sourcePosition,
                     targetPosition,
                     projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
                     travelSpeed: ProjectileSpeed * 0.25f,
                     acceleration: ProjectileSpeed * 0.25f,
-                    lifeSpan: 1.5f);
+                    lifeSpan: 1.5f,
+                    targetType: typeof(EnemyBase));
             }
 
             angleOffset += 6;

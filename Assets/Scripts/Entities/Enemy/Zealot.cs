@@ -30,6 +30,8 @@ public class Zealot : EnemyBase
 
     public override void TakeDamage(DamageInstance damage, EntityBase source)
     {
+        if (!this || !this.IsAlive() || this.isInvulnerable) return;
+
         if (source != this)
         {
             OnAttackReceive(source);

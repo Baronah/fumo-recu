@@ -30,7 +30,7 @@ public class EntityBase : MonoBehaviour
     public short GetHealthPercentage() => (short) Mathf.Max(1, health * 100 / mHealth);
     public short GetMissingealthPercentage() => (short) Mathf.Max(1, (mHealth - health) * 100 / mHealth);
 
-    public bool canRevive = false, isInvulnerable = false, isInvisible = false;
+    public bool IsFreezeImmune = false, IsStunImmune = false, canRevive = false, isInvulnerable = false, isInvisible = false;
 
     public enum DamageType { PHYSICAL, MAGICAL, TRUE }
     public DamageType damageType;
@@ -337,7 +337,28 @@ public class EntityBase : MonoBehaviour
 
     public void ShowDamageDealt(DamageInstance damage)
     {
-        string dmgTxt = "<color=" + (damage.PhysicalDamage > damage.MagicalDamage ? "red" : "#ff00ff") + ">" + damage.TotalDamage + "</color>";
+        string dmgTxt = string.Empty;
+
+        bool hasMoreThanOneDamageType = false;
+        if (damage.PhysicalDamage > 0)
+        {
+            dmgTxt += $"<color=red>{damage.PhysicalDamage}";
+            hasMoreThanOneDamageType = true ;
+        }
+
+        if (damage.MagicalDamage > 0)
+        {
+            if (hasMoreThanOneDamageType) dmgTxt += '\n';
+            dmgTxt += $"<color=#ff00ff>{damage.MagicalDamage}</color>";
+            hasMoreThanOneDamageType = true;
+        }
+
+        if (damage.TrueDamage > 0)
+        {
+            if (hasMoreThanOneDamageType) dmgTxt += '\n';
+            dmgTxt += $"<color=#b1b1b1>{damage.TrueDamage}</color>";
+        }
+        
         DisplayDamage(dmgTxt, new(0, 55));
     }
 
@@ -401,6 +422,8 @@ public class EntityBase : MonoBehaviour
 
     public virtual void ApplyFreeze(EntityBase target, float duration)
     {
+        if (target.IsFreezeImmune) return;
+
         target.animator.speed = 0f;
         target.FreezeTimer = Mathf.Max(target.FreezeTimer, duration);
         target.StopMovement();
@@ -412,6 +435,8 @@ public class EntityBase : MonoBehaviour
 
     public virtual void ApplyStun(EntityBase target, float duration)
     {
+        if (target.IsStunImmune) return;
+
         target.animator.speed = 0f;
         target.StunTimer = Mathf.Max(target.StunTimer, duration);
         target.StopMovement();
@@ -633,7 +658,7 @@ public class EntityBase : MonoBehaviour
         projectileScript.ShootTowards(preferPosition, target, projectileType, lifeSpan);
     }
 
-    public void CreateProjectileAndShootToward(GameObject ProjectilePref, DamageInstance damageInstance, Type targetType, Vector3 spawnPosition, Vector3 preferPosition, ProjectileScript.ProjectileType projectileType, float travelSpeed = 1000, float acceleration = 0, float lifeSpan = 8)
+    public void CreateProjectileAndShootToward(GameObject ProjectilePref, DamageInstance damageInstance, Vector3 spawnPosition, Vector3 preferPosition, ProjectileScript.ProjectileType projectileType, float travelSpeed = 1000, float acceleration = 0, float lifeSpan = 8, params Type[] targetType)
     {
         if (!ProjectilePref) return;
 
@@ -645,7 +670,7 @@ public class EntityBase : MonoBehaviour
         projectileScript.DamageInstance = damageInstance;
         projectileScript.TravelSpeed = travelSpeed;
         projectileScript.Acceleration = acceleration;
-        projectileScript.ShootTowards(preferPosition, targetType, projectileType, lifeSpan);
+        projectileScript.ShootTowards(preferPosition, projectileType, lifeSpan, targetType);
     }
 
     public virtual List<EntityBase> SearchForEntitiesAroundSelf(Type type = null, bool catchInvisibles = false, short take = -1)

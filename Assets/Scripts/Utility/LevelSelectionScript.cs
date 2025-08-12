@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static EnemyBase;
 
 public class LevelSelectionScript : MonoBehaviour
 {
@@ -21,6 +22,7 @@ public class LevelSelectionScript : MonoBehaviour
 
     [SerializeField] private TMP_Text SelectedLvlName, SelectedLvlDescription;
     [SerializeField] private string[] Names, Descriptions, ChallengeModes;
+    [SerializeField] private EnemyCode[] AppearingEnemies;
 
     [SerializeField] private GameObject MapPreviewObj;
     [SerializeField] private Image MapPreviewImg, MapPreviewImgOverlay;
@@ -33,7 +35,7 @@ public class LevelSelectionScript : MonoBehaviour
 
     private string selectedKey = null;
     private int selectedIndex = -1;
-    private bool enableCM = false;
+    private bool enableCM = false, isViewingMap = false;
 
     private List<bool> IsMapCleared = new();
 
@@ -100,6 +102,8 @@ public class LevelSelectionScript : MonoBehaviour
 
     void SelectLevel(int index, string runtimeKey)
     {
+        if (isViewingMap) return;
+
         selectedIndex = index;
         selectedKey = runtimeKey;
         SelectedLvlName.text = Names[selectedIndex];
@@ -115,6 +119,8 @@ public class LevelSelectionScript : MonoBehaviour
 
     IEnumerator ScaleLevelSelection(bool toggleIn)
     {
+        isViewingMap = true;
+
         Vector3 fullScale = Vector3.one, 
                 hideScale = new(0.03f, 1, 1),
                 fullPosition = Vector3.zero,
@@ -186,6 +192,8 @@ public class LevelSelectionScript : MonoBehaviour
             LevelSelectionConfirm.SetActive(false); 
             CMToggleImg.sprite = NMSprite;
         }
+
+        isViewingMap = false;
     }
 
     public void ToggleChallengeMode()
@@ -255,6 +263,8 @@ public class LevelSelectionScript : MonoBehaviour
 
     public void Deselect()
     {
+        if (isViewingMap) return;
+
         enableCM = false;
         StartCoroutine(ScaleLevelSelection(false));
     }

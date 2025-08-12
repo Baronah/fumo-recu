@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using UnityEngine;
 
@@ -8,7 +9,7 @@ public class ProjectileScript : MonoBehaviour
 {
 	[HideInInspector] public EntityBase ProjectileFirer;
 	protected EntityBase ProjectileDestination = null;
-	protected Type ProjectileTargetedType = null;
+	protected List<Type> ProjectileTargetedTypes = new();
     protected float ProjectileLifespan = 8f;
 
     public DamageInstance DamageInstance;
@@ -52,7 +53,7 @@ public class ProjectileScript : MonoBehaviour
             Target = enemy.GetComponent<Collider2D>();
         }
 
-        ProjectileTargetedType = enemy.GetType();
+        ProjectileTargetedTypes.Add(enemy.GetType());
         targetDirection = (targetPosition - transform.position).normalized;
 
         Destroy(gameObject, ProjectileLifespan); 
@@ -64,11 +65,11 @@ public class ProjectileScript : MonoBehaviour
         allowingUpdate = true;
     }
 
-    public void ShootTowards(Vector3 targetPosition, Type enemy, ProjectileType projectileType, float ProjectileLifespan)
+    public void ShootTowards(Vector3 targetPosition, ProjectileType projectileType, float ProjectileLifespan, params Type[] enemy)
     {
         this.projectileType = projectileType;
 
-        ProjectileTargetedType = enemy;
+        ProjectileTargetedTypes.AddRange(enemy);
         targetDirection = (targetPosition - transform.position).normalized;
 
         Destroy(gameObject, ProjectileLifespan);
@@ -128,7 +129,7 @@ public class ProjectileScript : MonoBehaviour
 
         if (
             (projectileType == ProjectileType.HOMING_TO_SPECIFIC_TARGET && entity == ProjectileDestination) ||
-            (projectileType == ProjectileType.CATCH_FIRST_TARGET_OF_TYPE && ProjectileTargetedType.IsAssignableFrom(entity.GetType()))
+            (projectileType == ProjectileType.CATCH_FIRST_TARGET_OF_TYPE && ProjectileTargetedTypes.Any(tt => tt.IsAssignableFrom(entity.GetType())))
            )
         {
             OnHitEvent(entity);
