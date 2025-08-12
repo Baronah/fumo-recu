@@ -51,12 +51,12 @@ public class StageManager : MonoBehaviour
 
     public StageCompleteCondition StageCompleteConditionType = StageCompleteCondition.ELIMINATE_ALL_ENEMIES;
 
-    public enum EvironmentType
+    public enum EnvironmentType
     {
-
+        ORIGINIUM_TILES,
     };
 
-    public EvironmentType StageEvironmentType;
+    public EnvironmentType[] StageEvironmentTypes;
 
     private PlayerManager playerManager;
 

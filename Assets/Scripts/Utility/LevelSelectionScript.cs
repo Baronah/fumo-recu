@@ -8,10 +8,11 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static EnemyBase;
+using static StageManager;
 
 public class LevelSelectionScript : MonoBehaviour
 {
-    [SerializeField] private GameObject LevelPrefabTemplate, LevelsPoint, Overlay, LevelSelectionConfirm;
+    [SerializeField] private GameObject LevelPrefabTemplate, LevelsPoint, Overlay, LevelSelectionConfirm, Nav;
     [SerializeField] private CharacterPrefabsStorage characterPrefabsStorage;
     [SerializeField] private Transform[] Containers;
     [SerializeField] private Sprite Incompleted, Completed, CompletedCM;
@@ -22,6 +23,8 @@ public class LevelSelectionScript : MonoBehaviour
 
     [SerializeField] private TMP_Text SelectedLvlName, SelectedLvlDescription;
     [SerializeField] private string[] Names, Descriptions, ChallengeModes;
+    [SerializeField] private StageCompleteCondition[] CompleteCondition;
+    [SerializeField] private StageEnvironment[] Environments;
     [SerializeField] private EnemyCode[] AppearingEnemies;
 
     [SerializeField] private GameObject MapPreviewObj;
@@ -32,6 +35,7 @@ public class LevelSelectionScript : MonoBehaviour
     private int CurrentPageIndex = 0;
     private int MaxPageSize => Containers.Length;
     private int TotalLevels => characterPrefabsStorage.SceneAssetReferences.Length;
+    private int TotalPages => Mathf.CeilToInt((float)TotalLevels / MaxPageSize);    
 
     private string selectedKey = null;
     private int selectedIndex = -1;
@@ -52,6 +56,8 @@ public class LevelSelectionScript : MonoBehaviour
             if (l != null) Destroy(l);
         }
         LevelPrefabs.Clear();
+
+        Nav.SetActive(TotalPages > 1);
 
         int startLevelIndex = CurrentPageIndex * MaxPageSize;
         List<string> CompletedLevels = PlayerPrefs.GetString("CompletedLevels", string.Empty).Split(" ").ToList();
@@ -106,8 +112,8 @@ public class LevelSelectionScript : MonoBehaviour
 
         selectedIndex = index;
         selectedKey = runtimeKey;
-        SelectedLvlName.text = Names[selectedIndex];
-        SelectedLvlDescription.text = Descriptions[selectedIndex].Replace(@"\n", "\n");
+        SelectedLvlName.text = GetSceneName(selectedIndex) + ": " + Names[selectedIndex];
+        SelectedLvlDescription.text = GetLevelDescription(selectedIndex);
 
         if (!IsMapCleared[selectedIndex]) CMToggleImg.sprite = LockedSprite;
         CMToggleButton.interactable = IsMapCleared[selectedIndex];
@@ -115,6 +121,38 @@ public class LevelSelectionScript : MonoBehaviour
         MapPreviewImgOverlay.sprite = MapPreviewImg.sprite = Map_SSs[selectedIndex];
 
         StartCoroutine(ScaleLevelSelection(true));
+    }
+
+    string GetLevelDescription(int index)
+    {
+        string description = Descriptions[index];
+        if (enableCM)
+        {
+            description = $"<size=30><color=red><b>Conditions:</size></b>\n{ChallengeModes[index]}</color>";
+        }
+        else
+        {
+            string stageCompleteCondition = CompleteCondition[index] switch
+            {
+                StageCompleteCondition.ELIMINATE_ALL_ENEMIES => "<color=red><Annihilation></color> Eliminate all enemies to complete the stage.",
+                StageCompleteCondition.RETRIEVE_FUMO => "<color=#00ffff><Rescue></color> Reach the location of the Fumo to complete the stage.",
+                _ => "Unknown condition"
+            };
+
+            string environmentDescription = string.Empty;
+            foreach (var env in Environments[index].Environments)
+            {
+                string envDes = env switch
+                {
+                    EnvironmentType.ORIGINIUM_TILES => "<color=#C40000><Originium Pollution></color> Continuously deals true damage to the player and enemy units standing on it.",
+                    _ => "Unknown environment"
+                };
+                environmentDescription += $"{envDes}\n";
+            }
+
+            description += $"\n<color=#E5E5E5>{stageCompleteCondition}\n{environmentDescription}</color>";
+        }
+        return description.Replace(@"\n", "\n");
     }
 
     IEnumerator ScaleLevelSelection(bool toggleIn)
@@ -201,15 +239,15 @@ public class LevelSelectionScript : MonoBehaviour
         if (!enableCM)
         {
             enableCM = true;
-            SelectedLvlDescription.text = $"<size=30><color=red><b>Conditions:</size></b>\n{ChallengeModes[selectedIndex]}</color>";
             CMToggleImg.sprite = CMSprite;
         }
         else
         {
             enableCM = false;
-            SelectedLvlDescription.text = Descriptions[selectedIndex].Replace(@"\n", "\n");
             CMToggleImg.sprite = NMSprite;
         }
+
+        SelectedLvlDescription.text = GetLevelDescription(selectedIndex);
     }
 
     IEnumerator ConfirmLevelSelection()
@@ -244,8 +282,7 @@ public class LevelSelectionScript : MonoBehaviour
 
     public void NextPage()
     {
-        int totalPages = Mathf.CeilToInt((float)TotalLevels / MaxPageSize);
-        if (CurrentPageIndex < totalPages - 1)
+        if (CurrentPageIndex < TotalPages - 1)
         {
             CurrentPageIndex++;
             AssignLevels();
@@ -272,4 +309,9 @@ public class LevelSelectionScript : MonoBehaviour
     public void Confirm() => StartCoroutine(ConfirmLevelSelection());
 
     public void Quit() => Application.Quit();
+}
+
+[Serializable] public class StageEnvironment 
+{ 
+    public EnvironmentType[] Environments;
 }
