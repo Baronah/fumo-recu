@@ -18,6 +18,9 @@ public class EnemyBase : EntityBase
         ARCHER,
         WETWORK,
         DUMMY,
+        ORIGINIUM_SPIDER,
+        ORIGINIUTANT,
+        SURADAM,
     }
 
     public EnemyCode enemyCode;

@@ -38,23 +38,21 @@ public class Sentinel : EnemyBase
 
     public override void OnFirsttimePlayerSpot(bool viaAlert = false)
     {
-        if (sfxs[0]) sfxs[0].Play();
-
         base.OnFirsttimePlayerSpot();
         animator.SetTrigger("skill");
         StartCoroutine(ExpandDetectCircle());
 
-        if (!viaAlert)
+        if (viaAlert) return;
+        if (sfxs[0]) sfxs[0].Play();
+
+        EntityManager.Enemies.ForEach(enemy =>
         {
-            EntityManager.Enemies.ForEach(enemy =>
+            if (enemy != this && enemy.IsAlive())
             {
-                if (enemy != this && enemy.IsAlive())
-                {
-                    enemy.moveSpeed *= SpeedBuffOnAlert;
-                    enemy.atk = (short)(enemy.atk * AtkBuffOnAlert);
-                }
-            });
-        }
+                enemy.moveSpeed *= SpeedBuffOnAlert;
+                enemy.atk = (short)(enemy.atk * AtkBuffOnAlert);
+            }
+        });
     }
 
     IEnumerator ExpandDetectCircle()

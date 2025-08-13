@@ -4679,7 +4679,7 @@ MonoBehaviour:
   timeScaleSlow: 0.4
   SlowKeyCode: 113
   StageCompleteConditionType: 0
-  StageEvironmentType: 0
+  StageEvironmentTypes: 
   DeactivateSentinel: {fileID: 27650125}
   ActivateSentinel: {fileID: 1583119533}
   SentinelBonusMSPD_Ratio: 1.5
@@ -134759,7 +134759,7 @@ PrefabInstance:
       propertyPath: m_text
       value: '<b><size=120>FM-02</size></b>
 
-        Weft & wrap'
+        Weft & Warp'
       objectReference: {fileID: 0}
     - target: {fileID: 6452663143887662580, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
       propertyPath: m_LocalPosition.x

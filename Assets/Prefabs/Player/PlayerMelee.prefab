@@ -151,7 +151,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1457099365488019423, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
       propertyPath: m_Size.y
-      value: 1.9094594
+      value: 1.3295858
       objectReference: {fileID: 0}
     - target: {fileID: 1457099365488019423, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
       propertyPath: m_Offset.x
@@ -159,7 +159,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1457099365488019423, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
       propertyPath: m_Offset.y
-      value: -0.63182676
+      value: -0.92176354
       objectReference: {fileID: 0}
     - target: {fileID: 1457099365488019423, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.x
@@ -340,6 +340,8 @@ MonoBehaviour:
   attackRange: 0
   attackWindupTime: 0
   attackInterval: 0
+  IsFreezeImmune: 0
+  IsStunImmune: 0
   canRevive: 0
   isInvulnerable: 0
   isInvisible: 0

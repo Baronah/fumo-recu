@@ -490,11 +490,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1457099365488019423, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
       propertyPath: m_Size.y
-      value: 1.5849699
+      value: 1.1260881
       objectReference: {fileID: 0}
     - target: {fileID: 1457099365488019423, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
       propertyPath: m_Offset.y
-      value: -0.5846481
+      value: -0.81408894
       objectReference: {fileID: 0}
     - target: {fileID: 1929991105562868378, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
       propertyPath: m_Sprite
@@ -656,6 +656,8 @@ MonoBehaviour:
   attackRange: 0
   attackWindupTime: 0
   attackInterval: 0
+  IsFreezeImmune: 0
+  IsStunImmune: 0
   canRevive: 0
   isInvulnerable: 0
   isInvisible: 0
