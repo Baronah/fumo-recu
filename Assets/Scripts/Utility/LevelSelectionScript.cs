@@ -309,7 +309,7 @@ public class LevelSelectionScript : MonoBehaviour
 
     public void Confirm() => StartCoroutine(ConfirmLevelSelection());
 
-    public void Quit() => Application.Quit();
+    public void Quit() => SceneManager.LoadScene("MainMenu");
 }
 
 [Serializable] public class StageEnvironment 
