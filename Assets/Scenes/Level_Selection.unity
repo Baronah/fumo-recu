@@ -3107,7 +3107,7 @@ MonoBehaviour:
   - Hold me tight
   - Violent response
   - Weft & Warp
-  - In Originium-covered field
+  - Crimson Dusk
   Descriptions:
   - Oh, I sing while thinking of you.
   - Though some confilicts are unavoidable, it's best to not pick up unnecessary
@@ -3116,20 +3116,22 @@ MonoBehaviour:
     two sets of threads: warp and weft. The warp threads are stretched vertically
     on a loom, while the weft threads are woven side-to-side, creating a strong,
     balanced fabric."
-  - 
+  - Sometimes, a seemingly unconventional solution turns out to be the most suitable
+    one.
   ChallengeModes:
   - Terrains and enemies will differ in places, and more enemies will appear.
   - Bloodboil Knightclub Elite's ability stacks twice as fast. All enemies have increased
     MSPD.
   - One Sentinel has their position changed and takes different route. All 'Sentinels'
     have increased MSPD.
-  - 
+  - All enemies become immune to physical and magical damage. 'Originiutants' have
+    increased ASPD.
   CompleteCondition: 01000000010000000000000001000000
   Environments:
-  - Environments: 
-  - Environments: 
-  - Environments: 
   - Environments: 00000000
+  - Environments: 
+  - Environments: 
+  - Environments: 0000000001000000
   AppearingEnemies: 
   MapPreviewObj: {fileID: 340580784}
   MapPreviewImg: {fileID: 2125190412}
@@ -3138,7 +3140,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 9967d918409eb3745bf886a799467fa2, type: 3}
   - {fileID: 21300000, guid: 9e4c79ea50b19f54da6d5e0053134ee8, type: 3}
   - {fileID: 21300000, guid: 632a77c5043d6514996731920cab5124, type: 3}
-  - {fileID: 21300000, guid: 632a77c5043d6514996731920cab5124, type: 3}
+  - {fileID: 21300000, guid: 10f449d4de8490642914c3520bcb7690, type: 3}
 --- !u!82 &1143179409
 AudioSource:
   m_ObjectHideFlags: 0
@@ -3560,7 +3562,7 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 2125190411}
   - {fileID: 1297080365}
@@ -3569,7 +3571,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1280, y: 760}
+  m_SizeDelta: {x: 1391.7976, y: 781.3708}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1280771189
 MonoBehaviour:
@@ -3678,7 +3680,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -258.74225}
+  m_AnchoredPosition: {x: 0, y: -280}
   m_SizeDelta: {x: 1116.0739, y: 65.0531}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1297080366
@@ -5811,14 +5813,14 @@ RectTransform:
   m_GameObject: {fileID: 2125190410}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_LocalScale: {x: 0.85, y: 0.85, z: 0.85}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1280771188}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 20}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1474.2, y: 780}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2125190412

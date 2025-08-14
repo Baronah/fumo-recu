@@ -297,6 +297,7 @@ public class EnemyBase : EntityBase
                 bool PlayerIsNearby = DetectPlayer(DangerRange_RatioOfAttackRange * attackRange, false) != null;
                 if (PlayerIsNearby)
                 {
+                    enemyPos = transform.position;
                     Vector2 dirAwayFromPlayer = (enemyPos - playerPos).normalized;
                     return enemyPos + dirAwayFromPlayer * (attackRange * DangerRange_RatioOfAttackRange);
                 }
@@ -652,24 +653,28 @@ public class EnemyBase : EntityBase
         {
             var target = SearchForNearestEntityAroundSelf(typeof(PlayerBase));
             FaceToward(target.transform.position);
+        }
 
-            yield return new WaitForSeconds(GetWindupTime());
+        yield return new WaitForSeconds(GetWindupTime());
+        yield return null;
+    }
 
-            if (target && !IsStunned && !IsFrozen)
+    public override IEnumerator OnAttackComplete()
+    {
+        if (!SpottedPlayer || attackPattern == AttackPattern.NONE || IsStunned || IsFrozen) yield break;
+        
+        if (attackPattern == AttackPattern.RANGED)
+        {
+            if (ProjectilePrefab)
             {
-                if (ProjectilePrefab)
-                {
-                    CreateProjectileAndShootToward(target, ProjectileType);
-                }
-                else DealDamage(target, atk);
+                CreateProjectileAndShootToward(SpottedPlayer, ProjectileType);
             }
+            else DealDamage(SpottedPlayer, atk);
         }
         else if (attackPattern == AttackPattern.MELEE)
         {
-            yield return new WaitForSeconds(GetWindupTime());
-
             var target = SearchForNearestEntityAroundSelf(typeof(PlayerBase));
-            if (target && !IsStunned && !IsFrozen) DealDamage(target, atk);
+            if (target) DealDamage(target, atk);
         }
 
         yield return null;

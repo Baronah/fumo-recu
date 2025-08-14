@@ -30,7 +30,7 @@ public class EntityBase : MonoBehaviour
     public short GetHealthPercentage() => (short) Mathf.Max(1, health * 100 / mHealth);
     public short GetMissingealthPercentage() => (short) Mathf.Max(1, (mHealth - health) * 100 / mHealth);
 
-    public bool IsFreezeImmune = false, IsStunImmune = false, canRevive = false, isInvulnerable = false, isInvisible = false;
+    public bool IsFreezeImmune = false, IsStunImmune = false, IsPhysicalImmune = false, IsMagicalImmune = false, canRevive = false, isInvulnerable = false, isInvisible = false;
 
     public enum DamageType { PHYSICAL, MAGICAL, TRUE }
     public DamageType damageType;
@@ -297,9 +297,10 @@ public class EntityBase : MonoBehaviour
         if ((!allowWhenDisabled && (IsFrozen || IsStunned)) || !target || !target.IsAlive() || target.isInvulnerable) return;
 
         var calcDamage = DamageOutput(target, pDmg, mDmg, tDmg);
-        if (calcDamage.TotalDamage <= 0) return;
         
         target.TakeDamage(calcDamage, this);
+
+        if (calcDamage.TotalDamage <= 0) return;
         OnSuccessfulAttack(target, calcDamage);
     }
 
@@ -519,10 +520,16 @@ public class EntityBase : MonoBehaviour
 
     public virtual IEnumerator Attack()
     {
-        if (IsAttackLocked) yield break;
+        if (attackPattern == AttackPattern.NONE || IsStunned || IsFrozen) yield break;
 
         animator.SetBool("attack", true);
         LockoutMovementOnAttackCoroutine = StartCoroutine(LockoutMovementsOnAttack());
+        yield break;
+    }
+
+    // Called by the animation event
+    public virtual IEnumerator OnAttackComplete()
+    {
         yield break;
     }
 

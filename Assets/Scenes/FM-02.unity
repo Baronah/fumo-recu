@@ -1957,6 +1957,8 @@ MonoBehaviour:
   doSpawnEnemy: 1
   Quantity: 1
   OffsetRadius: 0
+  RepeatedSpawn: 0
+  WaittimeBeforeNextSpawn: 5
   TargetObjectsToInteract: []
   OnEnemySpawn_Action: 0
   OnEnemyDeath_Action: 0
@@ -2808,6 +2810,8 @@ MonoBehaviour:
   doSpawnEnemy: 1
   Quantity: 1
   OffsetRadius: 0
+  RepeatedSpawn: 0
+  WaittimeBeforeNextSpawn: 5
   TargetObjectsToInteract: []
   OnEnemySpawn_Action: 0
   OnEnemyDeath_Action: 0
@@ -4119,6 +4123,8 @@ MonoBehaviour:
   doSpawnEnemy: 1
   Quantity: 1
   OffsetRadius: 0
+  RepeatedSpawn: 0
+  WaittimeBeforeNextSpawn: 5
   TargetObjectsToInteract: []
   OnEnemySpawn_Action: 0
   OnEnemyDeath_Action: 0
@@ -4519,6 +4525,8 @@ MonoBehaviour:
   doSpawnEnemy: 1
   Quantity: 1
   OffsetRadius: 0
+  RepeatedSpawn: 0
+  WaittimeBeforeNextSpawn: 5
   TargetObjectsToInteract: []
   OnEnemySpawn_Action: 0
   OnEnemyDeath_Action: 0
@@ -4663,6 +4671,7 @@ MonoBehaviour:
   appearingEnemies: 0100000002000000030000000400000005000000
   extraEnemyWaittime: 12
   extraPlayerWaittime: 8
+  Title: {fileID: 1251807975}
   LoadingState: {fileID: 1783534590}
   prefabStorage: {fileID: 11400000, guid: 0ad6776eda60e464d8b8053ebaafca42, type: 2}
   mainCamera: {fileID: 1783534589}
@@ -7055,6 +7064,8 @@ MonoBehaviour:
   doSpawnEnemy: 1
   Quantity: 1
   OffsetRadius: 0
+  RepeatedSpawn: 0
+  WaittimeBeforeNextSpawn: 5
   TargetObjectsToInteract: []
   OnEnemySpawn_Action: 0
   OnEnemyDeath_Action: 0
@@ -9068,6 +9079,8 @@ MonoBehaviour:
   doSpawnEnemy: 1
   Quantity: 1
   OffsetRadius: 0
+  RepeatedSpawn: 0
+  WaittimeBeforeNextSpawn: 5
   TargetObjectsToInteract: []
   OnEnemySpawn_Action: 0
   OnEnemyDeath_Action: 0
@@ -12222,6 +12235,17 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 45, y: 45}
   m_EdgeRadius: 0
+--- !u!114 &1251807975 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5313589822600801233, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
+  m_PrefabInstance: {fileID: 1783534585}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1258194809
 GameObject:
   m_ObjectHideFlags: 0
@@ -14109,6 +14133,8 @@ MonoBehaviour:
   doSpawnEnemy: 1
   Quantity: 1
   OffsetRadius: 0
+  RepeatedSpawn: 0
+  WaittimeBeforeNextSpawn: 5
   TargetObjectsToInteract: []
   OnEnemySpawn_Action: 0
   OnEnemyDeath_Action: 0
@@ -133739,6 +133765,8 @@ MonoBehaviour:
   doSpawnEnemy: 1
   Quantity: 1
   OffsetRadius: 0
+  RepeatedSpawn: 0
+  WaittimeBeforeNextSpawn: 5
   TargetObjectsToInteract: []
   OnEnemySpawn_Action: 0
   OnEnemyDeath_Action: 0
@@ -134749,7 +134777,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4972510026905490036, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 54
+      value: 42
       objectReference: {fileID: 0}
     - target: {fileID: 5016183214343049740, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
       propertyPath: m_AnchoredPosition.y

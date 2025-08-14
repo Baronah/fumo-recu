@@ -5072,6 +5072,10 @@ MonoBehaviour:
   attackRange: 0
   attackWindupTime: 0
   attackInterval: 0
+  IsFreezeImmune: 0
+  IsStunImmune: 0
+  IsPhysicalImmune: 0
+  IsMagicalImmune: 0
   canRevive: 0
   isInvulnerable: 0
   isInvisible: 0

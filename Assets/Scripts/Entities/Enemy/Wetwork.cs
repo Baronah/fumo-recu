@@ -10,6 +10,7 @@ public class Wetwork : EnemyBase
     [SerializeField] private GameObject PS;
 
     private float AtkPercentageUp_count = 0;
+    private short AtkAdd = 0;   
 
     public override void InitializeComponents()
     {
@@ -34,11 +35,16 @@ public class Wetwork : EnemyBase
 
     public override IEnumerator Attack()
     {
-        short AtkAdd = (short)(bAtk * AtkPercentageUp_count);
+        AtkAdd = (short)(bAtk * AtkPercentageUp_count);
         atk += AtkAdd;
 
         yield return StartCoroutine(base.Attack());
 
+    }
+
+    public override IEnumerator OnAttackComplete()
+    {
+        yield return StartCoroutine(base.OnAttackComplete());
         AtkPercentageUp_count = 0f;
         atk -= AtkAdd;
     }

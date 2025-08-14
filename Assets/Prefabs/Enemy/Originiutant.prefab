@@ -182,7 +182,7 @@ MonoBehaviour:
   lifeSteal: 0
   b_moveSpeed: 185
   b_attackRange: 110
-  b_attackWindupTime: 0.72
+  b_attackWindupTime: 0.7
   b_attackInterval: 3.7
   MIN_PHYSICAL_DMG: 0.05
   MIN_MAGICAL_DMG: 0.1
@@ -197,6 +197,8 @@ MonoBehaviour:
   attackInterval: 4
   IsFreezeImmune: 0
   IsStunImmune: 0
+  IsPhysicalImmune: 0
+  IsMagicalImmune: 0
   canRevive: 0
   isInvulnerable: 0
   isInvisible: 0
@@ -209,7 +211,7 @@ MonoBehaviour:
   ccBar: {fileID: 93467831234781814}
   AttackAnimation: {fileID: 7400000, guid: dfe83c770ed644242bbe99eb0eaa6ab2, type: 2}
   preferredMoveAnimationPlaySpeed: 1.3
-  preferredAttackAnimationSpeed: 1
+  preferredAttackAnimationSpeed: 1.1
   enemyCode: 10
   SpotPlayerUponSpawn: 0
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}

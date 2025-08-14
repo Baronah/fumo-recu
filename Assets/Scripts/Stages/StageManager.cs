@@ -20,7 +20,7 @@ public class StageManager : MonoBehaviour
     [SerializeField] private GameObject pauseOverlay, titleOverlay;
     [SerializeField] private EnemyCode[] appearingEnemies;
     [SerializeField] private float extraEnemyWaittime = 0f, extraPlayerWaittime = 1.5f;
-    [SerializeField] private TMP_Text LoadingState;
+    [SerializeField] private TMP_Text Title, LoadingState;
     [SerializeField] private CharacterPrefabsStorage prefabStorage;
 
     [SerializeField] private CameraMovement mainCamera;
@@ -53,6 +53,7 @@ public class StageManager : MonoBehaviour
 
     public enum EnvironmentType
     {
+        KEYS,
         ORIGINIUM_TILES,
     };
 
@@ -101,7 +102,7 @@ public class StageManager : MonoBehaviour
 
     public virtual void EnableChallengeMode()
     {
-
+        Title.text += "\n<color=red><size=52>[CHALLENGE MODE]</size></color>";
     }
 
     public virtual void OnEnemySpawn(EnemyBase enemy)
@@ -239,6 +240,7 @@ public class StageManager : MonoBehaviour
     public virtual void OnStageEnd(bool resultIsWin)
     {
         IsStageEnd = true;
+        FindObjectsOfType<EnemySpawnpointScript>().ToList().ForEach(e => e.enabled = false);
 
         if (resultIsWin)
         {

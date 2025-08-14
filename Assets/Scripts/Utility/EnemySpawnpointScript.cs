@@ -25,8 +25,15 @@ public class EnemySpawnpointScript : MonoBehaviour
     [SerializeField] private short Quantity = 1;
     [SerializeField] private float OffsetRadius = 5f;
 
+    [SerializeField] private bool RepeatedSpawn = false;
+    [ShowIf("RepeatedSpawn", true)]
+    [SerializeField] private float WaittimeBeforeNextSpawn = 5f;
+
     [SerializeField] private GameObject[] TargetObjectsToInteract;
+
     [SerializeField] private ActionType OnEnemySpawn_Action = ActionType.NONE;
+
+    [ShowIf("RepeatedSpawn", false)]
     [SerializeField] private ActionType OnEnemyDeath_Action = ActionType.NONE;
 
     private List<EnemyBase> SpawnEnemies = new();
@@ -62,37 +69,10 @@ public class EnemySpawnpointScript : MonoBehaviour
 
         if (doSpawnEnemy)
         {
-            for (int i = 0; i < Quantity; i++)
+            yield return StartCoroutine(CreateEnemySpawn());
+            if (RepeatedSpawn)
             {
-                GameObject o = Instantiate(
-                    CharacterPrefabsStorage.EnemyPrefabs[(int)enemyPrefab],
-                    SpawnPosition.position + new Vector3(Random.Range(-OffsetRadius, OffsetRadius), Random.Range(-OffsetRadius, OffsetRadius)),
-                    Quaternion.identity);
-
-                EnemyBase enemy = o.GetComponent<EnemyBase>();
-
-                stageManager.OnEnemySpawn(enemy);
-
-                enemyCheckpoints.Insert(0, new EnemyCheckpointScript { Checkpoint = SpawnPosition, WaitTime = InitWaittime });
-                enemy.SetCheckpoints(InitWaittime, enemyCheckpoints, showTooltips, TooltipsPriority + InitTooltipsPriority);
-                TooltipsPriority++;
-                enemy.enabled = true;
-                Spawned = true;
-
-                yield return null;
-
-                if (spotPlayerUponSpawn)
-                {
-                    enemy.ForceSpotPlayer();
-                }
-                else
-                {
-                    StartCoroutine(enemy.StartMovementLockout(extraWaittime));
-                }
-
-                SpawnEnemies.Add(enemy);
-
-                yield return null;
+                StartCoroutine(DoRepeatedSpawn());
             }
         }
 
@@ -116,6 +96,53 @@ public class EnemySpawnpointScript : MonoBehaviour
         }
     }
 
+    IEnumerator CreateEnemySpawn()
+    {
+        for (int i = 0; i < Quantity; i++)
+        {
+            GameObject o = Instantiate(
+                CharacterPrefabsStorage.EnemyPrefabs[(int)enemyPrefab],
+                SpawnPosition.position + new Vector3(Random.Range(-OffsetRadius, OffsetRadius), Random.Range(-OffsetRadius, OffsetRadius)),
+                Quaternion.identity);
+
+            EnemyBase enemy = o.GetComponent<EnemyBase>();
+
+            stageManager.OnEnemySpawn(enemy);
+
+            enemyCheckpoints.Insert(0, new EnemyCheckpointScript { Checkpoint = SpawnPosition, WaitTime = InitWaittime });
+            enemy.SetCheckpoints(InitWaittime, enemyCheckpoints, showTooltips, TooltipsPriority + InitTooltipsPriority);
+            TooltipsPriority++;
+            enemy.enabled = true;
+            Spawned = true;
+
+            yield return null;
+
+            if (spotPlayerUponSpawn)
+            {
+                enemy.ForceSpotPlayer();
+            }
+            else
+            {
+                StartCoroutine(enemy.StartMovementLockout(extraWaittime));
+            }
+
+            SpawnEnemies.Add(enemy);
+
+            yield return null;
+        }
+    }
+
+    IEnumerator DoRepeatedSpawn()
+    {
+        if (!RepeatedSpawn) yield break;
+
+        while (true)
+        {
+            yield return new WaitForSeconds(WaittimeBeforeNextSpawn);
+            yield return StartCoroutine(CreateEnemySpawn());
+        }
+    }
+
     private void FixedUpdate()
     {
         OnSpawnedEnemyDeath();
@@ -123,7 +150,7 @@ public class EnemySpawnpointScript : MonoBehaviour
 
     private void OnSpawnedEnemyDeath()
     {
-        if (!doSpawnEnemy) return;
+        if (!doSpawnEnemy || RepeatedSpawn) return;
         if (SpawnEnemies.Count <= 0 || SpawnEnemies.Any(e => e.IsAlive())) return;
 
         SpawnEnemies.Clear();

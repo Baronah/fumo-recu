@@ -21,28 +21,16 @@ public class Matterllurgist : EnemyBase
         if (viaAlert) ASPD += 200f;
     }
 
-    public override IEnumerator Attack()
+    public override IEnumerator OnAttackComplete()
     {
-        if (IsAttackLocked || attackPattern == AttackPattern.NONE) yield break;
+        if (!SpottedPlayer || attackPattern == AttackPattern.NONE || IsStunned || IsFrozen) yield break;
 
-        animator.SetBool("attack", true);
-        StartCoroutine(LockoutMovementsOnAttack());
+        short ProjectileBaseSpeed = 600, ProjectileAcceleration = 250;
 
-        var target = SearchForNearestEntityAroundSelf(typeof(PlayerBase));
-        FaceToward(target.transform.position);
-
-        yield return new WaitForSeconds(GetWindupTime());
-
-        if (target)
-        {
-            short ProjectileBaseSpeed = 600, ProjectileAcceleration = 250;
-
-            Vector3 targetPosition = target.transform.position;
-            CreateProjectileAndShootToward(target, ProjectilePosition.position, targetPosition, ProjectileType, ProjectileBaseSpeed, ProjectileAcceleration * 2);
-            CreateProjectileAndShootToward(target, ProjectilePosition.position, targetPosition + new Vector3(30, 0), ProjectileType, ProjectileBaseSpeed, ProjectileAcceleration);
-            CreateProjectileAndShootToward(target, ProjectilePosition.position, targetPosition - new Vector3(30, 0), ProjectileType, ProjectileBaseSpeed, ProjectileAcceleration);
-        }
-        yield return null;
+        Vector3 targetPosition = SpottedPlayer.transform.position;
+        CreateProjectileAndShootToward(SpottedPlayer, ProjectilePosition.position, targetPosition, ProjectileType, ProjectileBaseSpeed, ProjectileAcceleration * 2);
+        CreateProjectileAndShootToward(SpottedPlayer, ProjectilePosition.position, targetPosition + new Vector3(30, 0), ProjectileType, ProjectileBaseSpeed, ProjectileAcceleration);
+        CreateProjectileAndShootToward(SpottedPlayer, ProjectilePosition.position, targetPosition - new Vector3(30, 0), ProjectileType, ProjectileBaseSpeed, ProjectileAcceleration);
     }
 
     public override void InitializeComponents()

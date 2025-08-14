@@ -2207,6 +2207,7 @@ MonoBehaviour:
   appearingEnemies: 0000000005000000
   extraEnemyWaittime: 0
   extraPlayerWaittime: 9
+  Title: {fileID: 5313589822600801233}
   LoadingState: {fileID: 6531686323969663351}
   prefabStorage: {fileID: 11400000, guid: 0ad6776eda60e464d8b8053ebaafca42, type: 2}
   mainCamera: {fileID: 1084383917526483030}
@@ -2227,7 +2228,7 @@ MonoBehaviour:
   timeScaleSlow: 0.4
   SlowKeyCode: 113
   StageCompleteConditionType: 1
-  StageEvironmentType: 0
+  StageEvironmentTypes: 
 --- !u!1 &2185458422869505621
 GameObject:
   m_ObjectHideFlags: 0
@@ -7796,7 +7797,7 @@ Transform:
   m_GameObject: {fileID: 8138116287106014697}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3388, y: -2804, z: -20}
+  m_LocalPosition: {x: 2095, y: -299, z: -20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

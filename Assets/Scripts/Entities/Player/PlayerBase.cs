@@ -66,11 +66,15 @@ public class PlayerBase : EntityBase
         StartCoroutine(base.Attack());
 
         yield return new WaitForSeconds(GetWindupTime());
+        yield return null;
+    }
 
+    public override IEnumerator OnAttackComplete()
+    {
         var targets = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), AttackPosition.position, attackRange);
         foreach (var target in targets)
         {
-            if (!target || !target.IsAlive()) continue; 
+            if (!target || !target.IsAlive()) continue;
             DealDamage(target, atk);
         }
 

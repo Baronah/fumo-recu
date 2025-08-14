@@ -57,7 +57,11 @@ public class OriginiumPollution : MonoBehaviour
                 int damage = (int)(e as EnemyBase ? TrueDamagePerTick * EnemyDamageMultiplier : TrueDamagePerTick);
                 if (e && e.IsAlive())
                 {
-                    if (e as OriginiumSpider) e.InstaKill();
+                    if (e is OriginiumSpider os)
+                    {
+                        os.Pollute();
+                        os.InstaKill();
+                    }
                     else e.TakeDamage(new(0, 0, damage), null);
                 }
             });

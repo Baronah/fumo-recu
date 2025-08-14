@@ -15,6 +15,9 @@ namespace DamageCalculation
 
         public void Process(EntityBase attacker, EntityBase target, DamageInstance instance)
         {
+            if (target.IsPhysicalImmune) instance.PhysicalDamage = 0;
+            if (target.IsMagicalImmune) instance.MagicalDamage = 0;
+
             float MIN_PHYSICALDMG = attacker.MIN_PHYSICAL_DMG,
                   MIN_MAGICALDMG = attacker.MIN_MAGICAL_DMG;
 

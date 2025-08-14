@@ -20,6 +20,8 @@ public class PlayerRanged : PlayerBase
     private bool CanUseSkill = true, IsSkillActive = false, CanUseFreeze = true;
     private RectTransform AttackRangeIndicatorRect;
 
+    private EntityBase target;
+
     public override void Start()
     {
         base.Start();
@@ -102,7 +104,7 @@ public class PlayerRanged : PlayerBase
         if (!IsAlive() || IsAttackLocked) yield break;
 
         AttackRangeIndicator.SetActive(true);
-        var target = SearchForNearestEntityAroundCertainPoint(typeof(EnemyBase), transform.position, attackRange);
+        target = SearchForNearestEntityAroundCertainPoint(typeof(EnemyBase), transform.position, attackRange);
         if (!target)
         {
             Warning.SetActive(true);
@@ -117,13 +119,16 @@ public class PlayerRanged : PlayerBase
 
         yield return new WaitForSeconds(GetWindupTime());
 
-        if (target)
-        {
-            CreateProjectileAndShootToward(target, ProjectileType, ProjectileSpeed);
-        }
-
         AttackRangeIndicator.SetActive(false);
         yield return null;
+    }
+
+    public override IEnumerator OnAttackComplete()
+    {
+        if (!target) yield break;
+
+        CreateProjectileAndShootToward(target, ProjectileType, ProjectileSpeed);
+        target = null;
     }
 
     public IEnumerator CastFreeze()
@@ -134,6 +139,7 @@ public class PlayerRanged : PlayerBase
         StartCoroutine(StartMovementLockout(FreezeCastDuration));
         StartCoroutine(StartAttackLockout(FreezeCastDuration));
         
+        animator.SetBool("attack", false);
         animator.SetTrigger("skill");
         IsSkillActive = true;
 

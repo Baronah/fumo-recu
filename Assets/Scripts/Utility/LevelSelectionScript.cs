@@ -144,6 +144,7 @@ public class LevelSelectionScript : MonoBehaviour
             {
                 string envDes = env switch
                 {
+                    EnvironmentType.KEYS => "<color=purple><Keys></color> Collect to remove the terrains with corresponding color.",
                     EnvironmentType.ORIGINIUM_TILES => "<color=#C40000><Originium Pollution></color> Continuously deals true damage to the player and enemy units standing on it.",
                     _ => "Unknown environment"
                 };
