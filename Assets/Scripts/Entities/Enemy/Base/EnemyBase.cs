@@ -20,7 +20,8 @@ public class EnemyBase : EntityBase
         DUMMY,
         ORIGINIUM_SPIDER,
         ORIGINIUTANT,
-        SURADAM,
+        ORIGINIUM_SPIDER_ALPHA,
+        SUDARAM,
     }
 
     public EnemyCode enemyCode;

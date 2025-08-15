@@ -1,0 +1,131 @@
+using System.Collections;
+using UnityEngine;
+using UnityEngine.Tilemaps;
+
+public class OriginiumSpiderAlpha : EnemyBase
+{
+    [SerializeField] private float explosionDelay = 0.5f;
+    [SerializeField] private float explosionAtkScale = 2.0f;
+    [SerializeField] private float explosionRadius = 250f;
+
+    [SerializeField] private float pollutedExplosionAtkScaleMultiplier = 2.0f;
+    [SerializeField] private float pollutedExplosionRadiusMultiplier = 2.0f;
+
+    [SerializeField] private GameObject ExplosionRangeIndicator_Outer, ExplosionRangeIndicator_Inner, ExplosionEffect;
+    
+    [SerializeField] private Tile OriginiumTile;
+    private Tilemap OriginiumTilemap;
+    private bool IsPolluted = false;
+
+    public override void InitializeComponents()
+    {
+        OriginiumTilemap = GameObject.Find("OriginiumTiles").GetComponent<Tilemap>();
+        base.InitializeComponents();
+    }
+
+    public void Pollute()
+    {
+        if (IsPolluted) return;
+        IsPolluted = true;
+        explosionAtkScale *= pollutedExplosionAtkScaleMultiplier;
+        explosionRadius *= pollutedExplosionRadiusMultiplier;
+    }
+
+    public override void OnDeath()
+    {
+        base.OnDeath();
+        StartCoroutine(Explode());
+    }
+
+    IEnumerator Explode()
+    {
+        float targetRadius = explosionRadius * 2.025f;
+
+        ExplosionRangeIndicator_Outer.GetComponent<RectTransform>().sizeDelta = new Vector2(
+            targetRadius,
+            targetRadius
+        );
+
+        ExplosionRangeIndicator_Outer.SetActive(true);
+        ExplosionRangeIndicator_Inner.SetActive(true);
+
+        float c = 0;
+        bool spawnedEffect = false;
+
+        RectTransform innerRect = ExplosionRangeIndicator_Inner.GetComponent<RectTransform>();
+        while (c < explosionDelay)
+        {
+            innerRect.sizeDelta = new Vector2(
+                Mathf.Lerp(0, targetRadius, c * 1.0f / explosionDelay),
+                Mathf.Lerp(0, targetRadius, c * 1.0f / explosionDelay)
+            );
+
+            if (c >= explosionDelay - 0.1f && !spawnedEffect)
+            {
+                GameObject effect = Instantiate(ExplosionEffect, transform.position + new Vector3(0, 60), Quaternion.identity);
+                effect.transform.localScale = new Vector3(
+                    targetRadius * 0.26f,
+                    targetRadius * 0.22f
+                );
+
+                Destroy(effect, 2.0f);
+                spawnedEffect = true;
+            }
+
+            c += Time.deltaTime;
+            yield return null;
+        }
+
+        innerRect.sizeDelta = new Vector2(targetRadius, targetRadius);
+        yield return null;
+
+        var player = DetectPlayer(explosionRadius, true);
+        if (player)
+        {
+            DealDamage(player, new DamageInstance(0, 0, (int)(atk * explosionAtkScale)));
+        }
+
+        OriginiumTilemap.SetTile(
+            OriginiumTilemap.WorldToCell(transform.position),
+            OriginiumTile
+        );
+
+        if (IsPolluted)
+        {
+            float offset = 50f;
+
+            OriginiumTilemap.SetTile(
+                OriginiumTilemap.WorldToCell(transform.position + new Vector3(offset, 0)),
+                OriginiumTile
+            );
+
+            OriginiumTilemap.SetTile(
+                OriginiumTilemap.WorldToCell(transform.position - new Vector3(offset, 0)),
+                OriginiumTile
+            );
+
+            OriginiumTilemap.SetTile(
+                OriginiumTilemap.WorldToCell(transform.position + new Vector3(0, offset)),
+                OriginiumTile
+            );
+
+            OriginiumTilemap.SetTile(
+                OriginiumTilemap.WorldToCell(transform.position - new Vector3(0, offset)),
+                OriginiumTile
+            );
+        }    
+
+        Destroy(gameObject);
+    }
+
+    public override void WriteStats()
+    {
+        Description = "A spider-like creature that has assimilated into the Originium.";
+        Skillset = "";
+        TooltipsDescription = "Explodes upon death, dealing true damage " +
+            "and creates an <color=#CC40000>Originium Pollution</color> on the spot. " +
+            "Will be instantly defeated upon taking damage from <color=#CC4000>Originium Pollution</color>, " +
+            "causing a more violent explosion and spreading the pollution.";
+        base.WriteStats();
+    }
+}

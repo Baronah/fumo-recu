@@ -62,7 +62,13 @@ public class OriginiumPollution : MonoBehaviour
                         os.Pollute();
                         os.InstaKill();
                     }
-                    else e.TakeDamage(new(0, 0, damage), null);
+                    else if (e is OriginiumSpiderAlpha osa)
+                    {
+                        osa.Pollute();
+                        osa.InstaKill();
+                    }
+                    else
+                        e.TakeDamage(new(0, 0, damage), null);
                 }
             });
         }
