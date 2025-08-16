@@ -66,6 +66,14 @@ MonoBehaviour:
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  - m_AssetGUID: f4ce40995f7a85c4888e4c6f9cd7c757
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: 5266467675149534084fc5d7864889c7
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
   SceneAssetReferences:
   - m_AssetGUID: 47cced8b560266540b85272099795159
     m_SubObjectName: 
@@ -80,6 +88,10 @@ MonoBehaviour:
     m_SubObjectType: 
     m_EditorAssetChanged: 0
   - m_AssetGUID: 93e86f3bb47d4094991140c0a33d3c2d
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: 7977e69d7cf749e44bbd543533c32746
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0

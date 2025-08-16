@@ -51,7 +51,7 @@ public class EnemyBase : EntityBase
     [SerializeField] private float pathSmoothingLookahead = 2; // How many waypoints ahead to look for smoothing
 
     [Header("Checkpoints System")]
-    private Transform FeetPosition;
+    protected Transform FeetPosition;
     protected List<Transform> Checkpoints = new();
     [SerializeField] private List<float> WaitTimes = new();
 
@@ -101,7 +101,18 @@ public class EnemyBase : EntityBase
 
     public virtual void AdjustChallengeModeAttributes() { }
 
-    public void ForceSpotPlayer() => SpottedPlayer = FindObjectOfType<PlayerBase>();
+    public void ForceSpotPlayer() => StartCoroutine(ForceSpotCoroutine());
+
+    IEnumerator ForceSpotCoroutine() 
+    {
+        int count = 0;
+        while (!SpottedPlayer || count <= 60)
+        {
+            yield return null;
+            SpottedPlayer = FindObjectOfType<PlayerBase>();
+            count++;
+        }
+    }
 
     private short ScanPlayerCnt = 0, MoveCnt = 0, PathfindCnt = 0;
 

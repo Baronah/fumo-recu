@@ -3184,6 +3184,7 @@ MonoBehaviour:
   - Violent response
   - Weft & Warp
   - Crimson Dusk
+  - Eternal Sunshine
   Descriptions:
   - Oh, I sing while thinking of you.
   - Though some confilicts are unavoidable, it's best to not pick up unnecessary
@@ -3194,6 +3195,8 @@ MonoBehaviour:
     balanced fabric."
   - Sometimes, a seemingly unconventional solution turns out to be the most suitable
     one.
+  - If the sun is way too far from reach, might as well making your own.\n<color=yellow>Swap
+    cool-down is halved in this level.</color>
   ChallengeModes:
   - Terrains and enemies will differ in places, and more enemies will appear.
   - Bloodboil Knightclub Elite's ability stacks twice as fast. All enemies have increased
@@ -3202,12 +3205,15 @@ MonoBehaviour:
     have increased MSPD.
   - All enemies become immune to physical and magical damage. 'Originiutants' have
     increased ASPD.
-  CompleteCondition: 01000000010000000000000001000000
+  - Some 'Originium Pollutions' will appear beforehand. 'Sudaram' is immune to damage
+    from 'Originium Pollution'.
+  CompleteCondition: 0100000001000000000000000100000000000000
   Environments:
   - Environments: 00000000
   - Environments: 
   - Environments: 
   - Environments: 0000000001000000
+  - Environments: 01000000
   AppearingEnemies: 
   MapPreviewObj: {fileID: 340580784}
   MapPreviewImg: {fileID: 2125190412}
@@ -3217,6 +3223,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 9e4c79ea50b19f54da6d5e0053134ee8, type: 3}
   - {fileID: 21300000, guid: 632a77c5043d6514996731920cab5124, type: 3}
   - {fileID: 21300000, guid: 10f449d4de8490642914c3520bcb7690, type: 3}
+  - {fileID: 21300000, guid: 56b4ab19f2f72814bb6cb77e23c3005f, type: 3}
 --- !u!82 &1143179409
 AudioSource:
   m_ObjectHideFlags: 0

@@ -16,6 +16,8 @@ public class EnemySpawnpointScript : MonoBehaviour
         DEACTIVATE,
     };
 
+    [SerializeField] private float InitDelay = 0f;
+
     [SerializeField] private bool spotPlayerUponSpawn = false, immediateSpawn = false, showTooltips;
     [SerializeField] private short InitTooltipsPriority = 0;
     [SerializeField] public List<EnemyCheckpointScript> enemyCheckpoints;
@@ -42,7 +44,7 @@ public class EnemySpawnpointScript : MonoBehaviour
     private static int TooltipsPriority = 0;
     public static void OnStageRetry() => TooltipsPriority = 0;
 
-    private Transform SpawnPosition;
+    private Transform[] SpawnPositions;
     
     private StageManager stageManager;
 
@@ -52,7 +54,7 @@ public class EnemySpawnpointScript : MonoBehaviour
     private void Start()
     {
         stageManager = FindObjectOfType<StageManager>();
-        SpawnPosition = transform.Find("Spawnposition");
+        SpawnPositions = transform.Find("Spawnposition").GetComponentsInChildren<Transform>();
         if (immediateSpawn)
             StartCoroutine(SpawnEnemy());
     }
@@ -65,6 +67,11 @@ public class EnemySpawnpointScript : MonoBehaviour
 
     public IEnumerator SpawnEnemy()
     {
+        if (immediateSpawn)
+        {
+            yield return new WaitForSeconds(InitDelay);
+        }
+
         if (Spawned) yield break;
 
         if (doSpawnEnemy)
@@ -98,37 +105,43 @@ public class EnemySpawnpointScript : MonoBehaviour
 
     IEnumerator CreateEnemySpawn()
     {
-        for (int i = 0; i < Quantity; i++)
+        short maxSpawnPositions = (short)SpawnPositions.Length;
+
+        for (int i = 0; i < maxSpawnPositions; i++)
         {
-            GameObject o = Instantiate(
-                CharacterPrefabsStorage.EnemyPrefabs[(int)enemyPrefab],
-                SpawnPosition.position + new Vector3(Random.Range(-OffsetRadius, OffsetRadius), Random.Range(-OffsetRadius, OffsetRadius)),
-                Quaternion.identity);
-
-            EnemyBase enemy = o.GetComponent<EnemyBase>();
-
-            stageManager.OnEnemySpawn(enemy);
-
-            enemyCheckpoints.Insert(0, new EnemyCheckpointScript { Checkpoint = SpawnPosition, WaitTime = InitWaittime });
-            enemy.SetCheckpoints(InitWaittime, enemyCheckpoints, showTooltips, TooltipsPriority + InitTooltipsPriority);
-            TooltipsPriority++;
-            enemy.enabled = true;
-            Spawned = true;
-
-            yield return null;
-
-            if (spotPlayerUponSpawn)
+            for (int j = 0; j < Quantity; j++)
             {
-                enemy.ForceSpotPlayer();
-            }
-            else
-            {
-                StartCoroutine(enemy.StartMovementLockout(extraWaittime));
-            }
+                Transform spawnTransform = SpawnPositions[Mathf.Min(i, maxSpawnPositions - 1)];
 
-            SpawnEnemies.Add(enemy);
+                GameObject o = Instantiate(
+                    CharacterPrefabsStorage.EnemyPrefabs[(int)enemyPrefab],
+                    spawnTransform.position + new Vector3(Random.Range(-OffsetRadius, OffsetRadius), Random.Range(-OffsetRadius, OffsetRadius)),
+                    Quaternion.identity);
 
-            yield return null;
+                EnemyBase enemy = o.GetComponent<EnemyBase>();
+
+                stageManager.OnEnemySpawn(enemy);
+
+                enemyCheckpoints.Insert(0, new EnemyCheckpointScript { Checkpoint = spawnTransform, WaitTime = InitWaittime });
+                enemy.SetCheckpoints(InitWaittime, enemyCheckpoints, showTooltips, TooltipsPriority + InitTooltipsPriority);
+                if (showTooltips) TooltipsPriority++;
+                enemy.enabled = true;
+                Spawned = true;
+
+                showTooltips = false;
+                yield return null;
+
+                if (spotPlayerUponSpawn)
+                {
+                    enemy.ForceSpotPlayer();
+                }
+
+                if (extraWaittime > 0) StartCoroutine(enemy.StartMovementLockout(extraWaittime));
+
+                SpawnEnemies.Add(enemy);
+
+                yield return null;
+            }
         }
     }
 

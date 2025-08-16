@@ -73,7 +73,7 @@ public class StageManager : MonoBehaviour
 
         if (CharacterPrefabsStorage.EnableChallengeMode) EnableChallengeMode();
 
-        enemySpawnpoints = FindObjectsOfType<EnemySpawnpointScript>();
+        enemySpawnpoints = FindObjectsOfType<EnemySpawnpointScript>(true);
         playerManager = GetComponent<PlayerManager>();
         LoadingState.text = "Loading stage, please wait...";
 

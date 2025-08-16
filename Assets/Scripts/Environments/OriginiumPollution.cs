@@ -55,8 +55,11 @@ public class OriginiumPollution : MonoBehaviour
             entitiesWithin.ForEach(e =>
             {
                 int damage = (int)(e as EnemyBase ? TrueDamagePerTick * EnemyDamageMultiplier : TrueDamagePerTick);
+                
                 if (e && e.IsAlive())
                 {
+                    if (e is Sudaram sr) damage = (int)(damage * sr.originiumPollutionDamageMultiplier);
+
                     if (e is OriginiumSpider os)
                     {
                         os.Pollute();
@@ -83,6 +86,11 @@ public class OriginiumPollution : MonoBehaviour
         if (collision.isTrigger && collision.GetComponent<PlayerBase>()) return; 
 
         entitiesWithin.Add(entityBase);
+
+        if (entityBase is Sudaram s)
+        {
+            s.OnOriginiumPollutionEnter();
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -94,5 +102,10 @@ public class OriginiumPollution : MonoBehaviour
         if (collision.isTrigger && collision.GetComponent<PlayerBase>()) return;
 
         entitiesWithin.Remove(entityBase);
+
+        if (entityBase is Sudaram s)
+        {
+            s.OnOriginiumPollutionExit();
+        }
     }
 }

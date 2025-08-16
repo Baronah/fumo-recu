@@ -85,35 +85,59 @@ public class OriginiumSpiderAlpha : EnemyBase
             DealDamage(player, new DamageInstance(0, 0, (int)(atk * explosionAtkScale)));
         }
 
+        var position = FeetPosition.position;
+
         OriginiumTilemap.SetTile(
-            OriginiumTilemap.WorldToCell(transform.position),
+            OriginiumTilemap.WorldToCell(position),
             OriginiumTile
         );
 
         if (IsPolluted)
         {
-            float offset = 50f;
+            float offset = 75f;
 
+            // adjacent tiles
             OriginiumTilemap.SetTile(
-                OriginiumTilemap.WorldToCell(transform.position + new Vector3(offset, 0)),
+                OriginiumTilemap.WorldToCell(position + new Vector3(offset, 0)),
                 OriginiumTile
             );
 
             OriginiumTilemap.SetTile(
-                OriginiumTilemap.WorldToCell(transform.position - new Vector3(offset, 0)),
+                OriginiumTilemap.WorldToCell(position - new Vector3(offset, 0)),
                 OriginiumTile
             );
 
             OriginiumTilemap.SetTile(
-                OriginiumTilemap.WorldToCell(transform.position + new Vector3(0, offset)),
+                OriginiumTilemap.WorldToCell(position + new Vector3(0, offset)),
                 OriginiumTile
             );
 
             OriginiumTilemap.SetTile(
-                OriginiumTilemap.WorldToCell(transform.position - new Vector3(0, offset)),
+                OriginiumTilemap.WorldToCell(position - new Vector3(0, offset)),
                 OriginiumTile
             );
-        }    
+
+            // diagonal tiles
+            OriginiumTilemap.SetTile(
+                OriginiumTilemap.WorldToCell(position + new Vector3(offset, offset)),
+                OriginiumTile
+            );
+
+            OriginiumTilemap.SetTile(
+                OriginiumTilemap.WorldToCell(position + new Vector3(-offset, offset)),
+                OriginiumTile
+            );
+
+            OriginiumTilemap.SetTile(
+                OriginiumTilemap.WorldToCell(position + new Vector3(offset, -offset)),
+                OriginiumTile
+            );
+
+            OriginiumTilemap.SetTile(
+                OriginiumTilemap.WorldToCell(position + new Vector3(-offset, -offset)),
+                OriginiumTile
+            );
+        }
 
         Destroy(gameObject);
     }
@@ -123,7 +147,7 @@ public class OriginiumSpiderAlpha : EnemyBase
         Description = "A spider-like creature that has assimilated into the Originium.";
         Skillset = "";
         TooltipsDescription = "Explodes upon death, dealing true damage " +
-            "and creates an <color=#CC40000>Originium Pollution</color> on the spot. " +
+            "and creates an <color=#CC4000>Originium Pollution</color> on the spot. " +
             "Will be instantly defeated upon taking damage from <color=#CC4000>Originium Pollution</color>, " +
             "causing a more violent explosion and spreading the pollution.";
         base.WriteStats();

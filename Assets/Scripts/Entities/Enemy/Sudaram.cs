@@ -1,5 +1,10 @@
+using Unity.VisualScripting;
+using UnityEngine;
+
 public class Sudaram : EnemyBase
 {
+    [SerializeField] private float bonusASPD = 40f;
+    [SerializeField] public float originiumPollutionDamageMultiplier = 0.5f;
     private bool Enhanced = false;
     private float b_detectionRange;
 
@@ -13,6 +18,7 @@ public class Sudaram : EnemyBase
     { 
         if (Enhanced) return;
 
+        ASPD += bonusASPD;
         b_detectionRange = DetectionRange;
         Enhanced = true;
         DetectionRange = attackRange = 9999f;
@@ -24,6 +30,7 @@ public class Sudaram : EnemyBase
     {
         if (!Enhanced) return;
 
+        ASPD -= bonusASPD;
         Enhanced = false;
         attackRange = b_attackRange;
         DetectionRange = b_detectionRange;
@@ -34,7 +41,8 @@ public class Sudaram : EnemyBase
     {
         Description = "";
         Skillset = "";
-        TooltipsDescription = "While in an <color=#CC40000>Originium Pollution</color>, stops moving and gains " +
+        TooltipsDescription = "Takes reduced damage from <color=#CC4000>Originium Pollutions</color>. " +
+            "While in an <color=#CC4000>Originium Pollution</color>, stops moving and gains " +
             "the ability to perform global-ranged attacks.";
         base.WriteStats();
     }

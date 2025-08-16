@@ -97,6 +97,16 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f4ce40995f7a85c4888e4c6f9cd7c757
+    m_Address: Assets/Prefabs/Enemy/AssimilatedSpider.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5266467675149534084fc5d7864889c7
+    m_Address: Assets/Prefabs/Enemy/Sudaram.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: f65301b1dd8c6c44bb3235aef6fd1d01, type: 2}
   m_SchemaSet:
