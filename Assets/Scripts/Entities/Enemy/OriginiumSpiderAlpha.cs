@@ -39,7 +39,7 @@ public class OriginiumSpiderAlpha : EnemyBase
 
     IEnumerator Explode()
     {
-        float targetRadius = explosionRadius * 2.025f;
+        float targetRadius = explosionRadius * 2.05f;
 
         ExplosionRangeIndicator_Outer.GetComponent<RectTransform>().sizeDelta = new Vector2(
             targetRadius,
@@ -60,7 +60,7 @@ public class OriginiumSpiderAlpha : EnemyBase
                 Mathf.Lerp(0, targetRadius, c * 1.0f / explosionDelay)
             );
 
-            if (c >= explosionDelay - 0.1f && !spawnedEffect)
+            if (c >= explosionDelay - 0.05f && !spawnedEffect)
             {
                 GameObject effect = Instantiate(ExplosionEffect, transform.position + new Vector3(0, 60), Quaternion.identity);
                 effect.transform.localScale = new Vector3(
@@ -70,6 +70,7 @@ public class OriginiumSpiderAlpha : EnemyBase
 
                 Destroy(effect, 2.0f);
                 spawnedEffect = true;
+                sfxs[1].Play();
             }
 
             c += Time.deltaTime;
@@ -84,6 +85,9 @@ public class OriginiumSpiderAlpha : EnemyBase
         {
             DealDamage(player, new DamageInstance(0, 0, (int)(atk * explosionAtkScale)));
         }
+
+        ExplosionRangeIndicator_Outer.SetActive(false);
+        ExplosionRangeIndicator_Inner.SetActive(false);
 
         var position = FeetPosition.position;
 
@@ -139,7 +143,6 @@ public class OriginiumSpiderAlpha : EnemyBase
             );
         }
 
-        Destroy(gameObject);
     }
 
     public override void WriteStats()
