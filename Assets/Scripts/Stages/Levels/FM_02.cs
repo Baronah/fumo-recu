@@ -8,8 +8,16 @@ public class FM_02 : StageManager
     public override void EnableChallengeMode()
     {
         base.EnableChallengeMode();
-        ActivateSentinel.SetActive(true);
-        DeactivateSentinel.SetActive(false);
+
+        if (CharacterPrefabsStorage.EnableChallengeMode)
+        {
+            ActivateSentinel.SetActive(true);
+            Destroy(DeactivateSentinel);
+        }
+        else
+        {
+            Destroy(ActivateSentinel);
+        }
     }
 
     public override void OnEnemySpawn(EnemyBase enemy)

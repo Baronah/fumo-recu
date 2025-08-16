@@ -19,6 +19,9 @@ public class StageManager : MonoBehaviour
 
     [SerializeField] private GameObject pauseOverlay, titleOverlay;
     [SerializeField] private EnemyCode[] appearingEnemies;
+    [SerializeField] private TMP_Text RemainingEnemiesTxt;
+    private GameObject RemainingEnemiesGO => RemainingEnemiesTxt.transform.parent.gameObject;
+
     [SerializeField] private float extraEnemyWaittime = 0f, extraPlayerWaittime = 1.5f;
     [SerializeField] private TMP_Text Title, LoadingState;
     [SerializeField] private CharacterPrefabsStorage prefabStorage;
@@ -70,16 +73,29 @@ public class StageManager : MonoBehaviour
         StartCoroutine(OnStartOverlayFadeout());
 
         BGM = GetComponent<AudioSource>();
+        RemainingEnemiesGO.SetActive(StageCompleteConditionType == StageCompleteCondition.ELIMINATE_ALL_ENEMIES);
 
-        if (CharacterPrefabsStorage.EnableChallengeMode) EnableChallengeMode();
+        EnableChallengeMode();
 
-        enemySpawnpoints = FindObjectsOfType<EnemySpawnpointScript>(true);
+        enemySpawnpoints = FindObjectsOfType<EnemySpawnpointScript>(true).ToArray();
         playerManager = GetComponent<PlayerManager>();
         LoadingState.text = "Loading stage, please wait...";
 
         StartCoroutine(LoadRequiredPrefabs());
         EnemyTooltipsScript.isAnyTooltipsShowing = false;
         Time.timeScale = 0f;
+    }
+
+    private int GetEnemyCount()
+    {
+        int count = 0;
+        foreach (var enemy in enemySpawnpoints)
+        {
+            if (!enemy) continue;
+            count += enemy.GetEnemiesCount();
+        }
+
+        return count;
     }
 
     IEnumerator OnStartOverlayFadeout()
@@ -102,7 +118,7 @@ public class StageManager : MonoBehaviour
 
     public virtual void EnableChallengeMode()
     {
-        Title.text += "\n<color=red><size=52>[CHALLENGE MODE]</size></color>";
+        if (CharacterPrefabsStorage.EnableChallengeMode) Title.text += "\n<color=red><size=52>[CHALLENGE MODE]</size></color>";
     }
 
     public virtual void OnEnemySpawn(EnemyBase enemy)
@@ -190,8 +206,6 @@ public class StageManager : MonoBehaviour
             : isSlowing 
                 ? timeScaleSlow : 1f;
 
-        OnStageUpdate();
-
         if (!PressedAnyKey && !IsStageStarted && Input.anyKeyDown)
         {
             PressedAnyKey = true;
@@ -199,6 +213,8 @@ public class StageManager : MonoBehaviour
         }
 
         if (!IsStageStarted) return;
+
+        OnStageUpdate();
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -213,7 +229,17 @@ public class StageManager : MonoBehaviour
 
     protected virtual void OnStageReady() { }
 
-    protected virtual void OnStageUpdate() { }
+    private short SearchCnt = 0;
+    protected virtual void OnStageUpdate() 
+    { 
+        SearchCnt++;
+        if (SearchCnt >= 5 && RemainingEnemiesGO.activeSelf)
+        {
+            int remainingEnemies = GetEnemyCount();
+            RemainingEnemiesTxt.text = $"Enemies: {remainingEnemies}";
+            SearchCnt = 0;
+        }
+    }
 
     protected virtual IEnumerator CheckStageStatus()
     {
@@ -229,7 +255,7 @@ public class StageManager : MonoBehaviour
             }
 
             if (StageCompleteConditionType == StageCompleteCondition.ELIMINATE_ALL_ENEMIES 
-                && !IsEnemyAlive)
+                && GetEnemyCount() <= 0)
             {
                 IsStageStarted = false;
                 OnStageEnd(playerManager.IsPlayerAlive);

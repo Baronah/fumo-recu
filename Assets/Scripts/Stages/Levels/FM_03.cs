@@ -4,11 +4,6 @@ public class FM_03 : StageManager
 {
     [SerializeField] private float CM_OriginiutantASPD_Bonus = 100f;
 
-    public override void EnableChallengeMode()
-    {
-        base.EnableChallengeMode();
-    }
-
     public override void OnEnemySpawn(EnemyBase enemy)
     {
         base.OnEnemySpawn(enemy);

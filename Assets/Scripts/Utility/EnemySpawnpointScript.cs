@@ -48,19 +48,26 @@ public class EnemySpawnpointScript : MonoBehaviour
     
     private StageManager stageManager;
 
+    public bool UsedByChallengeMode = false;
+
     private bool Spawned = false;
     public bool IsSpawnpointSpawned => Spawned;
 
+    private void Awake()
+    {
+        stageManager = FindObjectOfType<StageManager>(true);
+        SpawnPositions = transform.Find("Spawnposition").GetComponentsInChildren<Transform>();
+    }
+
     private void Start()
     {
-        stageManager = FindObjectOfType<StageManager>();
-        SpawnPositions = transform.Find("Spawnposition").GetComponentsInChildren<Transform>();
         if (immediateSpawn)
             StartCoroutine(SpawnEnemy());
     }
 
     public void OnStageStart(float extraWaittime = 0)
     {
+        if (!this) return;
         this.extraWaittime += extraWaittime;
         enabled = true;
     }
@@ -195,6 +202,18 @@ public class EnemySpawnpointScript : MonoBehaviour
         {
             StartCoroutine(SpawnEnemy());
         }
+    }
+
+    public int GetEnemiesCount()
+    {
+        if (!this.gameObject) return 0;
+
+        if (!stageManager) stageManager = FindObjectOfType<StageManager>(true);
+        SpawnPositions ??= transform.Find("Spawnposition").GetComponentsInChildren<Transform>();
+
+        if (!doSpawnEnemy || RepeatedSpawn || SpawnPositions == null) return 0;
+        if (Spawned) return SpawnEnemies.Count(e => e.IsAlive());
+        return SpawnPositions.Length * Quantity;
     }
 }
 
