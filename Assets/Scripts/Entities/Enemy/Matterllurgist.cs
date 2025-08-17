@@ -23,7 +23,7 @@ public class Matterllurgist : EnemyBase
 
     public override IEnumerator OnAttackComplete()
     {
-        if (!SpottedPlayer || attackPattern == AttackPattern.NONE || IsStunned || IsFrozen) yield break;
+        if (!CanAttack) yield break;
 
         short ProjectileBaseSpeed = 600, ProjectileAcceleration = 250;
 

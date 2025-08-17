@@ -81,6 +81,12 @@ public class EntityBase : MonoBehaviour
     protected Coroutine AttackCoroutine = null, LockoutMovementOnAttackCoroutine = null;
     protected Animation attackAnimation;
 
+    public virtual bool CanAttack => 
+        attackPattern != AttackPattern.NONE && 
+        !IsFrozen && 
+        !IsStunned && 
+        IsAlive();
+
     public Vector3 GetAttackPosition()
     {
         if (useTransformAsAttackPosition) return transform.position;

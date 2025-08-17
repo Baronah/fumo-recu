@@ -10,11 +10,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7088186993608180177, guid: cf24154a7dcbae84daf4eb96071044ae, type: 3}
       propertyPath: m_Size.x
-      value: 1.8426563
+      value: 1.460996
       objectReference: {fileID: 0}
     - target: {fileID: 7088186993608180177, guid: cf24154a7dcbae84daf4eb96071044ae, type: 3}
       propertyPath: m_Size.y
-      value: 2.9001367
+      value: 1.3554538
       objectReference: {fileID: 0}
     - target: {fileID: 7088186993608180177, guid: cf24154a7dcbae84daf4eb96071044ae, type: 3}
       propertyPath: m_Offset.x
@@ -22,15 +22,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7088186993608180177, guid: cf24154a7dcbae84daf4eb96071044ae, type: 3}
       propertyPath: m_Offset.y
-      value: 0.1830672
+      value: 0.4584797
       objectReference: {fileID: 0}
     - target: {fileID: 7088186993608180177, guid: cf24154a7dcbae84daf4eb96071044ae, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.x
-      value: 2.22
+      value: 2.69
       objectReference: {fileID: 0}
     - target: {fileID: 7088186993608180177, guid: cf24154a7dcbae84daf4eb96071044ae, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.y
-      value: 4.46
+      value: 4.6
       objectReference: {fileID: 0}
     - target: {fileID: 7883959157803824435, guid: cf24154a7dcbae84daf4eb96071044ae, type: 3}
       propertyPath: m_LocalScale.x
@@ -94,6 +94,18 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: 43d6d1aab16d7e148a8a1dd30e54e77f, type: 3}
     - target: {fileID: 8657137650069237451, guid: cf24154a7dcbae84daf4eb96071044ae, type: 3}
       propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8657137650069237451, guid: cf24154a7dcbae84daf4eb96071044ae, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8657137650069237451, guid: cf24154a7dcbae84daf4eb96071044ae, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8657137650069237451, guid: cf24154a7dcbae84daf4eb96071044ae, type: 3}
+      propertyPath: m_Color.r
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -182,9 +194,9 @@ TrailRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 0.7830189, g: 0.7830189, b: 0.7830189, a: 0.19607843}
-      key1: {r: 1, g: 1, b: 1, a: 0}
-      key2: {r: 0, g: 0, b: 0, a: 1}
+      key0: {r: 1, g: 0, b: 0, a: 0.19607843}
+      key1: {r: 1, g: 0, b: 0, a: 0}
+      key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
       key5: {r: 0, g: 0, b: 0, a: 0}

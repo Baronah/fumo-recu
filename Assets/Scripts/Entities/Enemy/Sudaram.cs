@@ -1,3 +1,5 @@
+using System.Collections;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -36,6 +38,43 @@ public class Sudaram : EnemyBase
         DetectionRange = b_detectionRange;
         attackPattern = AttackPattern.MELEE;
     }
+
+
+    public override IEnumerator OnAttackComplete()
+    {
+        if (!CanAttack) yield break;
+
+        if (Enhanced)
+        {
+            Vector2 playerDir = (SpottedPlayer.transform.position - AttackPosition.position).normalized;
+            Vector3 sourcePosition = AttackPosition.position;
+
+            float[] angles = { 0f, 90f, -90f, 180f };
+
+            foreach (float angle in angles)
+            {
+                Vector2 rotatedDir = Quaternion.Euler(0, 0, angle) * playerDir;
+
+                Vector3 targetPosition = sourcePosition + (Vector3)rotatedDir;
+
+                CreateProjectileAndShootToward(
+                    ProjectilePrefab,
+                    new DamageInstance(atk, 0, 0),
+                    sourcePosition,
+                    targetPosition,
+                    projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
+                    travelSpeed: ProjectileSpeed,
+                    acceleration: 0,
+                    lifeSpan: 8f,
+                    targetType: typeof(PlayerBase));
+            }
+        }
+        else
+        {
+            yield return StartCoroutine(base.OnAttackComplete());
+        }
+    }
+
 
     public override void WriteStats()
     {
