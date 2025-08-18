@@ -1140,6 +1140,16 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 90, y: 180}
   m_EdgeRadius: 0
+--- !u!1 &170395061 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4070576717304676263, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
+  m_PrefabInstance: {fileID: 1783534585}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &170395062 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5936594197091828171, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
+  m_PrefabInstance: {fileID: 1783534585}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &190230761
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1963,6 +1973,7 @@ MonoBehaviour:
   TargetObjectsToInteract: []
   OnEnemySpawn_Action: 0
   OnEnemyDeath_Action: 0
+  UsedByChallengeMode: 0
 --- !u!1 &241838482
 GameObject:
   m_ObjectHideFlags: 0
@@ -2817,6 +2828,7 @@ MonoBehaviour:
   TargetObjectsToInteract: []
   OnEnemySpawn_Action: 0
   OnEnemyDeath_Action: 0
+  UsedByChallengeMode: 0
 --- !u!1 &316133700
 GameObject:
   m_ObjectHideFlags: 0
@@ -4131,6 +4143,7 @@ MonoBehaviour:
   TargetObjectsToInteract: []
   OnEnemySpawn_Action: 0
   OnEnemyDeath_Action: 0
+  UsedByChallengeMode: 0
 --- !u!1 &475011122
 GameObject:
   m_ObjectHideFlags: 0
@@ -4534,6 +4547,7 @@ MonoBehaviour:
   TargetObjectsToInteract: []
   OnEnemySpawn_Action: 0
   OnEnemyDeath_Action: 0
+  UsedByChallengeMode: 0
 --- !u!1 &526347202
 GameObject:
   m_ObjectHideFlags: 0
@@ -4672,6 +4686,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pauseOverlay: {fileID: 1783534592}
   titleOverlay: {fileID: 1783534591}
+  mapOverview: {fileID: 170395062}
+  mapCamera: {fileID: 170395061}
   appearingEnemies: 0100000002000000030000000400000005000000
   RemainingEnemiesTxt: {fileID: 1759899680}
   extraEnemyWaittime: 12
@@ -4692,6 +4708,7 @@ MonoBehaviour:
   ChallengeModeStatsModifier: 1.1
   timeScaleSlow: 0.4
   SlowKeyCode: 113
+  ViewMapKeyCode: 109
   StageCompleteConditionType: 0
   StageEvironmentTypes: 
   DeactivateSentinel: {fileID: 27650125}
@@ -7075,6 +7092,7 @@ MonoBehaviour:
   TargetObjectsToInteract: []
   OnEnemySpawn_Action: 0
   OnEnemyDeath_Action: 0
+  UsedByChallengeMode: 0
 --- !u!1 &783455211
 GameObject:
   m_ObjectHideFlags: 0
@@ -9091,6 +9109,7 @@ MonoBehaviour:
   TargetObjectsToInteract: []
   OnEnemySpawn_Action: 0
   OnEnemyDeath_Action: 0
+  UsedByChallengeMode: 0
 --- !u!1 &894824928
 GameObject:
   m_ObjectHideFlags: 0
@@ -14146,6 +14165,7 @@ MonoBehaviour:
   TargetObjectsToInteract: []
   OnEnemySpawn_Action: 0
   OnEnemyDeath_Action: 0
+  UsedByChallengeMode: 0
 --- !u!1 &1427043669
 GameObject:
   m_ObjectHideFlags: 0
@@ -16072,7 +16092,7 @@ Transform:
   m_GameObject: {fileID: 1626646007}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -51.2, y: 18.8, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -133779,6 +133799,7 @@ MonoBehaviour:
   TargetObjectsToInteract: []
   OnEnemySpawn_Action: 0
   OnEnemyDeath_Action: 0
+  UsedByChallengeMode: 0
 --- !u!1 &1691423949
 GameObject:
   m_ObjectHideFlags: 0
@@ -134751,6 +134772,14 @@ PrefabInstance:
       propertyPath: m_text
       value: '<b>Goal: <color=red>Eliminate all enemies</color></b>'
       objectReference: {fileID: 0}
+    - target: {fileID: 1731534367868234546, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 976
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731534367868234546, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -428
+      objectReference: {fileID: 0}
     - target: {fileID: 2103956321432040019, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -53
@@ -134762,6 +134791,10 @@ PrefabInstance:
     - target: {fileID: 2109709240132902021, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
       propertyPath: m_LocalPosition.y
       value: -421
+      objectReference: {fileID: 0}
+    - target: {fileID: 2109709240132902021, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 2180949171452089868, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
       propertyPath: m_Name
@@ -134782,6 +134815,18 @@ PrefabInstance:
     - target: {fileID: 2308949739623826001, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: QuitStage
+      objectReference: {fileID: 0}
+    - target: {fileID: 2747572265272181016, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 976
+      objectReference: {fileID: 0}
+    - target: {fileID: 2747572265272181016, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -428
+      objectReference: {fileID: 0}
+    - target: {fileID: 2747572265272181016, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3097339220927656715, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
       propertyPath: m_audioClip
@@ -134841,6 +134886,14 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: TogglePauseStage
       objectReference: {fileID: 0}
+    - target: {fileID: 8508723797104569970, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
+      propertyPath: m_Follow
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8508723797104569970, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
+      propertyPath: m_Lens.OrthographicSize
+      value: 1500
+      objectReference: {fileID: 0}
     - target: {fileID: 8891701975477234824, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
       propertyPath: m_LocalPosition.x
       value: 990
@@ -134848,6 +134901,10 @@ PrefabInstance:
     - target: {fileID: 8891701975477234824, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
       propertyPath: m_LocalPosition.y
       value: -421
+      objectReference: {fileID: 0}
+    - target: {fileID: 8891701975477234824, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 9119001943703513319, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
       propertyPath: m_LocalPosition.x

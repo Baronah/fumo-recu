@@ -17,7 +17,7 @@ public class StageManager : MonoBehaviour
     private bool IsStagePaused = false;
     public bool ReadIsStagePaused => IsStagePaused;
 
-    [SerializeField] private GameObject pauseOverlay, titleOverlay;
+    [SerializeField] private GameObject pauseOverlay, titleOverlay, mapOverview, mapCamera;
     [SerializeField] private EnemyCode[] appearingEnemies;
     [SerializeField] private TMP_Text RemainingEnemiesTxt;
     private GameObject RemainingEnemiesGO => RemainingEnemiesTxt.transform.parent.gameObject;
@@ -41,7 +41,7 @@ public class StageManager : MonoBehaviour
     [SerializeField] protected float ChallengeModeStatsModifier = 1.1f;
 
     [SerializeField] private float timeScaleSlow = 0.4f;
-    [SerializeField] private KeyCode SlowKeyCode = KeyCode.Q;
+    [SerializeField] private KeyCode SlowKeyCode = KeyCode.Q, ViewMapKeyCode = KeyCode.M;
     private bool isSlowing = false;
 
     private bool IsEnemyAlive => EntityManager.Enemies.Any(e => e && e.IsAlive()) || enemySpawnpoints.Any(e => !e.IsSpawnpointSpawned);
@@ -224,6 +224,24 @@ public class StageManager : MonoBehaviour
         {
             isSlowing = !isSlowing;
             SlowImg.color = isSlowing ? Color.white : new(0.15f, 0.15f, 0.15f);
+        }
+        else if (Input.GetKeyDown(ViewMapKeyCode))
+        {
+            ViewMap();
+        }
+    }
+
+    private void ViewMap()
+    {
+        if (mapOverview.activeSelf)
+        {
+            mapOverview.SetActive(false);
+            mapCamera.SetActive(false);
+        }
+        else
+        {
+            mapOverview.SetActive(true);
+            mapCamera.SetActive(true);
         }
     }
 

@@ -471,7 +471,7 @@ MonoBehaviour:
   DamagePopup: {fileID: 7498904281893358320, guid: b09dfacba160b6d47938cf47f8dea3c9, type: 3}
   ccBar: {fileID: 798767698844814004}
   AttackAnimation: {fileID: 7400000, guid: 7d08df8c00c3b8649bf4b5a495e316f0, type: 2}
-  preferredMoveAnimationPlaySpeed: 1.5
+  preferredMoveAnimationPlaySpeed: 1.7
   preferredAttackAnimationSpeed: 0.85
   enemyCode: 9
   SpotPlayerUponSpawn: 0
