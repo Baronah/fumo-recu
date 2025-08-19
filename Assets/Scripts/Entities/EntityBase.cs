@@ -87,7 +87,7 @@ public class EntityBase : MonoBehaviour
         !IsStunned && 
         IsAlive();
 
-    public bool ViewOnlyMode = false;
+    public bool ViewOnlyMode => FindAnyObjectByType<StageManager>() == null;
 
     public Vector3 GetAttackPosition()
     {

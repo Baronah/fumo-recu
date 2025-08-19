@@ -40,7 +40,7 @@ public class OriginiumSpiderAlpha : EnemyBase
 
     IEnumerator Explode()
     {
-        float targetRadius = explosionRadius * 2.05f;
+        float targetRadius = explosionRadius * 2.1f;
 
         ExplosionRangeIndicator_Outer.GetComponent<RectTransform>().sizeDelta = new Vector2(
             targetRadius,

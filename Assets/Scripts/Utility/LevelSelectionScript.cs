@@ -69,6 +69,7 @@ public class LevelSelectionScript : MonoBehaviour
     private List<GameObject> CreatedEnemyViewPrefabs = new();
 
     private List<EnemyCode> EncounteredEnemies = new();
+    private bool IsEnemyEncoutered(EnemyCode enemyCode) => EncounteredEnemies.Contains(enemyCode);
 
     private void Start()
     {
@@ -356,7 +357,6 @@ public class LevelSelectionScript : MonoBehaviour
         GameObject enemyGO = CharacterPrefabsStorage.EnemyPrefabs[(int) enemyCode];
         EnemyBase enemy = enemyGO.GetComponent<EnemyBase>();
         
-        enemy.ViewOnlyMode = true;
         enemy.InitializeComponents();
 
         EnemyIcon.sprite = enemy.Icon;
@@ -558,7 +558,7 @@ public class LevelSelectionScript : MonoBehaviour
 
         EnemyDescription.text = 
             $"<color=#b1b1b1><i>{enemy.Description}</i></color>\n\n" +
-            $"<color=#D7D7D7>{enemy.Skillset}</color>";
+            $"<color=#E5E5E5>{enemy.Skillset}</color>";
     }
 
     private IEnumerator LoadEnemyPrefabs()
@@ -598,7 +598,10 @@ public class LevelSelectionScript : MonoBehaviour
             Image enemyImage = e.GetComponent<Image>();
             if (CharacterPrefabsStorage.EnemyPrefabs.ContainsKey((int)code))
             {
-                enemyImage.sprite = CharacterPrefabsStorage.EnemyPrefabs[(int) code].GetComponent<EnemyBase>().Icon;
+                enemyImage.sprite = 
+                    IsEnemyEncoutered(code)
+                        ? CharacterPrefabsStorage.EnemyPrefabs[(int)code].GetComponent<EnemyBase>().Icon
+                        : DefaultEnemyIcon;
                 continue;
             }
 
@@ -608,7 +611,9 @@ public class LevelSelectionScript : MonoBehaviour
                 var handle = DataHandler.Instance.LoadAddressable<GameObject>(reference);
                 yield return handle;
                 CharacterPrefabsStorage.EnemyPrefabs[(int)code] = handle.Result;
-                enemyImage.sprite = handle.Result.GetComponent<EnemyBase>().Icon;
+                enemyImage.sprite = IsEnemyEncoutered(code) 
+                    ? handle.Result.GetComponent<EnemyBase>().Icon
+                    : DefaultEnemyIcon;
             }
         }
 

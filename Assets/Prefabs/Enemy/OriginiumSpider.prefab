@@ -503,7 +503,7 @@ MonoBehaviour:
   MoveToOverridePositionSpeedMultiplierJump: 0.35
   explosionDelay: 1
   explosionAtkScale: 2.5
-  explosionRadius: 200
+  explosionRadius: 175
   pollutedExplosionAtkScaleMultiplier: 2
   pollutedExplosionRadiusMultiplier: 2.5
   ExplosionRangeIndicator_Outer: {fileID: 5664152606430998509}
