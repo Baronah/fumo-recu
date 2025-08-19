@@ -4,6 +4,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static EnemyBase;
 
 public class EnemyTooltipsScript : MonoBehaviour
 {
@@ -43,6 +44,15 @@ public class EnemyTooltipsScript : MonoBehaviour
         txtName.text = data.Name;
         txtDescription.text = data.Description;
         holdTime = data.HoldTime;
+
+        string[] encounterEnemies = PlayerPrefs.GetString("EncounteredEnemies", string.Empty).Split(" ").ToArray();
+
+        EnemyCode ownerCode = data.Code;
+        if (!encounterEnemies.Contains(ownerCode.ToString()))
+        {
+            encounterEnemies = encounterEnemies.Append(ownerCode.ToString()).ToArray();
+            PlayerPrefs.SetString("EncounteredEnemies", string.Join(" ", encounterEnemies));
+        }
 
         StartCoroutine(ShowUp());
     }
@@ -93,4 +103,5 @@ public class TooltipsData
     public string Name { get; set; }
     public string Description { get; set; }
     public float HoldTime { get; set; } = 8f;   
+    public EnemyCode Code { get; set; }
 }

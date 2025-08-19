@@ -17,7 +17,7 @@ public class Puppet : EnemyBase
 
     public override void WriteStats()
     {
-        Description = "";
+        Description = "A harmless dummy. Very durable, great for particing purpose.";
         Skillset = ".";
         TooltipsDescription = "A harmless dummy. Very durable, great for particing purpose.";
 

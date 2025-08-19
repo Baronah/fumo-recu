@@ -43,8 +43,9 @@ public class Matterllurgist : EnemyBase
 
     public override void WriteStats()
     {
-        Description = "A matterllurgist is a master of manipulating matter at the atomic level, capable of altering the properties of objects and materials.";
-        Skillset = "Matterllurgists can reshape materials, create barriers, and manipulate the environment to their advantage.";
+        Description = "A ranged combatant. Integrating Sarkaz tactics with Leithanien Arts, they are capable of inflicting lethal damage with a block of energy.";
+        Skillset = "• Attacks fire up to 3 projectiles at once.\n" +
+            "• When alerted by a Sentinel, ASPD is greatly increased."; ;
         TooltipsDescription = "Ranged unit, attacks fire 3 projectiles that deal physical damage. <color=yellow>Keeps distance</color> from the player unit. <color=yellow>If alerted early</color>, ASPD greatly increases.";
     
         base.WriteStats();

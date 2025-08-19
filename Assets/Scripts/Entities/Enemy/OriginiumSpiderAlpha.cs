@@ -19,7 +19,8 @@ public class OriginiumSpiderAlpha : EnemyBase
 
     public override void InitializeComponents()
     {
-        OriginiumTilemap = GameObject.Find("OriginiumTiles").GetComponent<Tilemap>();
+        GameObject TilemapObj = GameObject.Find("OriginiumTiles");
+        if (TilemapObj) OriginiumTilemap = TilemapObj.GetComponent<Tilemap>();
         base.InitializeComponents();
     }
 
@@ -148,7 +149,10 @@ public class OriginiumSpiderAlpha : EnemyBase
     public override void WriteStats()
     {
         Description = "A spider-like creature that has assimilated into the Originium.";
-        Skillset = "";
+        Skillset =
+            "• Explodes upon death, dealing true damage in an area around self and creates an <color=#CC4000>Originium Pollution</color> on the spot.\n" +
+            "• Will be instantly defeated when coming into contact with a <color=#CC4000>Originium Pollution</color>, " +
+            "causing a stronger explosion and spreading <color=#CC4000>Originium Pollution</color> to its nearby tiles.";
         TooltipsDescription = "Explodes upon death, dealing true damage " +
             "and creates an <color=#CC4000>Originium Pollution</color> on the spot. " +
             "Will be instantly defeated upon taking damage from <color=#CC4000>Originium Pollution</color>, " +

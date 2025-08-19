@@ -12,8 +12,8 @@ using static UnityEngine.GraphicsBuffer;
 
 public class EntityBase : MonoBehaviour
 {
-    [SerializeField] protected string Name;
-    [SerializeField] protected Sprite Icon;
+    [SerializeField] public string Name;
+    [SerializeField] public Sprite Icon;
 
     [SerializeField] public int mHealth;
     [SerializeField] public short bAtk, bDef, bRes;
@@ -87,6 +87,8 @@ public class EntityBase : MonoBehaviour
         !IsStunned && 
         IsAlive();
 
+    public bool ViewOnlyMode = false;
+
     public Vector3 GetAttackPosition()
     {
         if (useTransformAsAttackPosition) return transform.position;
@@ -133,6 +135,8 @@ public class EntityBase : MonoBehaviour
         healthBar.SetMaxHealth(mHealth);
 
         ccSlider = ccBar.GetComponentInChildren<Slider>();
+
+        if (ViewOnlyMode) return;
 
         EntityManager = FindObjectOfType<EntityManager>();
         if (EntityManager)

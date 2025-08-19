@@ -84,7 +84,10 @@ public class OriginiumSpider : EnemyBase
     public override void WriteStats()
     {
         Description = "A spider-like creature that has been mutated by Originium.";
-        Skillset = "";
+        Skillset = 
+            "• Explodes upon death, dealing true damage in an area around self.\n" +
+            "• Will be instantly defeated when coming into contact with a <color=#CC4000>Originium Pollution</color>, " +
+            "causing a far stronger explosion.";
         TooltipsDescription = "Explodes upon death, dealing true damage. " +
             "Will be instantly defeated upon taking damage from <color=#CC4000>Originium Pollution</color>, " +
             "causing a more violent explosion.";

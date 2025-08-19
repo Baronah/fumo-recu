@@ -30,13 +30,13 @@ public class EnemyBase : EntityBase
     [SerializeField] private GameObject TooltipsPrefab;
     [SerializeField] private int TooltipsPriority = 0;
     [SerializeField] private float TooltipsHoldtime = 6f;
-    protected string Description = "Enemy lore or description";
-    protected string Skillset = "Enemy skillset";
+    public string Description = "Enemy lore or description";
+    public string Skillset = "Enemy skillset";
     protected string TooltipsDescription = "the thing to appear on tooltips";
-    [SerializeField] protected float DetectionRange = -1f;
-    [SerializeField] protected float DangerRange_RatioOfAttackRange = 0.75f;
+    [SerializeField] public float DetectionRange = -1f;
+    [SerializeField] public float DangerRange_RatioOfAttackRange = 0.75f;
     [SerializeField] protected float MinimumDistanceFromPlayer = 20f;
-    [SerializeField] private bool showTooltips = false;
+    [SerializeField] public bool showTooltips = false;
 
     [Header("A* Pathfinding")]
     [SerializeField] private float gridCellSize = 50f;
@@ -84,19 +84,21 @@ public class EnemyBase : EntityBase
     {
         base.InitializeComponents();
 
-        DetectSymbol = transform.Find("Spotted").GetComponentInChildren<TMP_Text>();
+        if (!ViewOnlyMode)
+        {
+            DetectSymbol = transform.Find("Spotted").GetComponentInChildren<TMP_Text>();
 
-        FeetPosition = transform.Find("Feetposition");
+            FeetPosition = transform.Find("Feetposition");
+
+            // Initialize pathfinding grid (shared among all enemies)
+            pathfindingGrid ??= new PathfindingGrid(gridCellSize, obstacleLayer);
+
+            AdjustChallengeModeAttributes();
+        }
 
         if (DetectionRange <= 0) DetectionRange = b_attackRange;
-
-        // Initialize pathfinding grid (shared among all enemies)
-        pathfindingGrid ??= new PathfindingGrid(gridCellSize, obstacleLayer);
-
-        AdjustChallengeModeAttributes();
-
         WriteStats();
-        if (SpotPlayerUponSpawn) ForceSpotPlayer();
+        if (!ViewOnlyMode && SpotPlayerUponSpawn) ForceSpotPlayer();
     }
 
     public virtual void AdjustChallengeModeAttributes() { }
@@ -798,7 +800,8 @@ public class EnemyBase : EntityBase
 
     public virtual void WriteStats()
     {
-        if (showTooltips && TooltipsPrefab) StartCoroutine(ShowTooltips());
+        if (ViewOnlyMode || !showTooltips || !TooltipsPrefab) return;
+        StartCoroutine(ShowTooltips());
     }
 
     public virtual void SetCheckpoints(float InitWaittime, List<EnemyCheckpointScript> enemyCheckpoints, bool showTooltips = false, int TooltipsPriority = 0)
@@ -838,7 +841,8 @@ public class EnemyBase : EntityBase
             Icon = this.Icon,
             Name = this.Name,
             Description = this.TooltipsDescription,
-            HoldTime = this.TooltipsHoldtime
+            HoldTime = this.TooltipsHoldtime,
+            Code = this.enemyCode,
         };
     }
 

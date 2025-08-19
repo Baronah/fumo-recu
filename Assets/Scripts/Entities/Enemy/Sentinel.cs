@@ -71,8 +71,11 @@ public class Sentinel : EnemyBase
 
     public override void WriteStats()
     {
-        Description = "";
-        Skillset = "";
+        Description = "They are responsible for scouting, patrolling, and issuing early warnings to the entire squad. Once spotting intruder, the Herald will immediately issue a warning that spread to the entire army.";
+        Skillset = 
+            "• Unable to attack.\n" +
+            "• Upon spotting the player, raises an alarm that increases the ATK and MSPD of all presenting enemies, " +
+            "and makes them to also spot the player immediately.";
         TooltipsDescription = "Does not attack. Upon spotting the player, <color=red>alerts</color> all other enemies who haven't spotted them, increasing their ATK and movespeed.";
 
         base.WriteStats();

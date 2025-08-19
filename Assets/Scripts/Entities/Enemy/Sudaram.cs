@@ -78,8 +78,11 @@ public class Sudaram : EnemyBase
 
     public override void WriteStats()
     {
-        Description = "";
-        Skillset = "";
+        Description = "The Sudaram is the shroud of the dead. " +
+            "Once gaunt from hunger, it is now nourished by the power of the Nachzehrer King. " +
+            "For the Nachzehrer, consumption and nourishment—greed and devotion—are just two sides of the same dreaded coin.";
+        Skillset = "• Takes reduced damage from <color=#CC4000>'Originium Pollutions'</color>." +
+            "\n• While standing on a <color=#CC4000>'Originium Pollution'</color>, stops moving to gain increased ASPD. Attack now lauches 4 projectiles with unlimited range.";
         TooltipsDescription = "Takes reduced damage from <color=#CC4000>Originium Pollutions</color>. " +
             "While in an <color=#CC4000>Originium Pollution</color>, stops moving and gains " +
             "the ability to perform global-ranged attacks.";

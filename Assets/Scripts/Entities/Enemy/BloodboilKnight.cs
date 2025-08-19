@@ -16,6 +16,7 @@ public class BloodboilKnight : EnemyBase
     {
         base.InitializeComponents();
 
+        if (ViewOnlyMode) return;
         short EnemyDeaths = EntityManager.GetEnemyDefeatedCount();
         for (int i = 0; i < EnemyDeaths && stackCount < maxStackCount; i++)
         {
@@ -42,8 +43,9 @@ public class BloodboilKnight : EnemyBase
 
     public override void WriteStats()
     {
-        Description = "";
-        Skillset = ".";
+        Description = "A reowned knight from the Bloodboil Knightclub. The Bloodboil Knights have long been known for their ferocity and aggression, from trainees to knight nobles. Whenever one of their brothers falls, they gain courage and combat prowess.";
+        Skillset = 
+            $"• Every time an enemy is defeated, ATK, ASPD and MSPD are increased. This effect stacks up to {maxStackCount} times.";
         TooltipsDescription = 
             $"Gains increased ATK, ASPD and MSPD every time an enemy is defeated. Stacks up to {maxStackCount} times.";
 

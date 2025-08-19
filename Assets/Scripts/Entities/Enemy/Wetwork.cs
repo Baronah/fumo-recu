@@ -15,7 +15,7 @@ public class Wetwork : EnemyBase
     public override void InitializeComponents()
     {
         base.InitializeComponents();
-        StartCoroutine(IncreasesAtk());
+        if (!ViewOnlyMode) StartCoroutine(IncreasesAtk());
     }
 
     IEnumerator IncreasesAtk()
@@ -51,10 +51,10 @@ public class Wetwork : EnemyBase
 
     public override void WriteStats()
     {
-        Description = "";
-        Skillset = ".";
+        Description = "An assassin who makes up for their average skills with clever plots. They are adept at hiding in the darkness, sharpening their blades and continually increasing their ATK.";
+        Skillset = "• When not attacking, ATK continuously increases and resets after the next attack.";
         TooltipsDescription = "An assassin who prefers close-ranged combat. When not attacking, ATK continuously increases " +
-            "and reset after the next attack.";
+            "and resets after the next attack.";
 
         base.WriteStats();
     }

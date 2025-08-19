@@ -516,11 +516,14 @@ MonoBehaviour:
   AttackAnimation: {fileID: 0}
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 1
-  enemyCode: 0
+  ViewOnlyMode: 0
+  enemyCode: 2
   SpotPlayerUponSpawn: 0
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
   TooltipsPriority: 0
   TooltipsHoldtime: 5.5
+  Description: Enemy lore or description
+  Skillset: Enemy skillset
   DetectionRange: 450
   DangerRange_RatioOfAttackRange: 0
   MinimumDistanceFromPlayer: 20

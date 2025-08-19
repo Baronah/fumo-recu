@@ -58,8 +58,11 @@ public class Zealot : EnemyBase
 
     public override void WriteStats()
     {
-        Description = "";
-        Skillset = ".";
+        Description = "The dance on the edge of life and death has given them a unique tactical system. Through Arts Resonance, they are able to create a barrier that absorbs damage";
+        Skillset = 
+            "• Has a barrier that absorbs damage.\n" +
+            "• Upon losing the barrier, gains increased MSPD and ASPD.\n" +
+            "• When alerted by a Sentinel, the barrier will be loss instantly.";
         TooltipsDescription = "Melee unit, attacks deal physical damage. <color=green>Has a barrier that absorbs damage</color>, and gains <color=yellow>greatly increased MSPD and ASPD</color> when the barrier is destroyed. " +
             "<color=yellow>If alerted early</color>, <color=red>forfeits</color> self barrier.";
 
