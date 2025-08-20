@@ -127,6 +127,7 @@ public class PlayerRanged : PlayerBase
     {
         if (!target) yield break;
 
+        if (sfxs[0]) sfxs[0].Play();
         CreateProjectileAndShootToward(target, ProjectileType, ProjectileSpeed);
         target = null;
     }
@@ -142,6 +143,8 @@ public class PlayerRanged : PlayerBase
         animator.SetBool("attack", false);
         animator.SetTrigger("skill");
         IsSkillActive = true;
+
+        if (sfxs[1]) sfxs[1].Play();
 
         Instantiate(FreezeEffect, SkillPosition.position, Quaternion.identity);
         yield return new WaitForSeconds(FreezeCastDuration - Time.fixedDeltaTime);
@@ -179,6 +182,7 @@ public class PlayerRanged : PlayerBase
         while (count < SkillDuration)
         {
             Vector3 sourcePosition = SkillPosition.position;
+            if (sfxs[2]) sfxs[2].Play();
 
             for (int i = 0; i < 360; i += 30) 
             {

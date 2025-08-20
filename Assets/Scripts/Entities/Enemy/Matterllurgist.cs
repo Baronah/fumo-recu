@@ -27,10 +27,31 @@ public class Matterllurgist : EnemyBase
 
         short ProjectileBaseSpeed = 600, ProjectileAcceleration = 250;
 
-        Vector3 targetPosition = SpottedPlayer.transform.position;
-        CreateProjectileAndShootToward(SpottedPlayer, ProjectilePosition.position, targetPosition, ProjectileType, ProjectileBaseSpeed, ProjectileAcceleration * 2);
-        CreateProjectileAndShootToward(SpottedPlayer, ProjectilePosition.position, targetPosition + new Vector3(30, 0), ProjectileType, ProjectileBaseSpeed, ProjectileAcceleration);
-        CreateProjectileAndShootToward(SpottedPlayer, ProjectilePosition.position, targetPosition - new Vector3(30, 0), ProjectileType, ProjectileBaseSpeed, ProjectileAcceleration);
+        Vector2 playerDir = (SpottedPlayer.transform.position - AttackPosition.position).normalized;
+        Vector3 sourcePosition = AttackPosition.position;
+
+        float[] angles = { 0f, -15f, 15f };
+        bool hasAccleration = true;
+
+        foreach (float angle in angles)
+        {
+            Vector2 rotatedDir = Quaternion.Euler(0, 0, angle) * playerDir;
+
+            Vector3 targetPosition = sourcePosition + (Vector3)rotatedDir;
+
+            CreateProjectileAndShootToward(
+                ProjectilePrefab,
+                new DamageInstance(atk, 0, 0),
+                sourcePosition,
+                targetPosition,
+                projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
+                travelSpeed: ProjectileBaseSpeed,
+                acceleration: hasAccleration ? ProjectileAcceleration : 0,
+                lifeSpan: 8f,
+                targetType: typeof(PlayerBase));
+
+            hasAccleration = false;
+        }
     }
 
     public override void InitializeComponents()

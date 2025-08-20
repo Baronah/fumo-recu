@@ -28,6 +28,12 @@ public class OriginiumSpider : EnemyBase
         StartCoroutine(Explode());
     }
 
+    public override IEnumerator OnAttackComplete()
+    {
+        if (sfxs[0]) sfxs[0].Play();
+        return base.OnAttackComplete();
+    }
+
     IEnumerator Explode()
     {
         float targetRadius = explosionRadius * 2.1f;

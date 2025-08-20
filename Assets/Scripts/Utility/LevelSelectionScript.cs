@@ -71,8 +71,12 @@ public class LevelSelectionScript : MonoBehaviour
     private List<EnemyCode> EncounteredEnemies = new();
     private bool IsEnemyEncoutered(EnemyCode enemyCode) => EncounteredEnemies.Contains(enemyCode);
 
+    private AudioSource[] sfxs;
+
     private void Start()
     {
+        sfxs = GetComponents<AudioSource>();
+
         string[] encounteredEnemies = PlayerPrefs.GetString("EncounteredEnemies", string.Empty).Split(" ").ToArray();
         foreach (var enemy in encounteredEnemies)
         {
@@ -146,6 +150,8 @@ public class LevelSelectionScript : MonoBehaviour
     void SelectLevel(int index, string runtimeKey)
     {
         if (isViewingMap) return;
+
+        sfxs[1].Play();
 
         selectedIndex = index;
         selectedKey = runtimeKey;
@@ -344,6 +350,8 @@ public class LevelSelectionScript : MonoBehaviour
 
     public IEnumerator GetEnemyInformation(EnemyCode enemyCode, Vector3 position)
     {
+        sfxs[1].Play();
+
         SelectedBorder.transform.localPosition = position;
         SelectedBorder.SetActive(true);
 

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 
@@ -28,6 +29,12 @@ public class Zealot : EnemyBase
         if (viaAlert) TakeDamage(new DamageInstance(0, 0, Mathf.CeilToInt(barrierHealth)), this);
     }
 
+    public override IEnumerator OnAttackComplete()
+    {
+        if (sfxs[0]) sfxs[0].Play();
+        return base.OnAttackComplete();
+    }
+
     public override void TakeDamage(DamageInstance damage, EntityBase source)
     {
         if (!this || !this.IsAlive() || this.isInvulnerable) return;
@@ -40,6 +47,7 @@ public class Zealot : EnemyBase
 
         if (barrierHealth > 0)
         {
+            if (sfxs[1]) sfxs[1].Play();
             barrierHealth -= damage.TotalDamage;
             barrierEffect.color = new Color(barrierinitialColor.r, barrierinitialColor.g, barrierinitialColor.b, Mathf.Lerp(1, 0.5f, (barrierMaxHealth - barrierHealth) * 1.0f / barrierMaxHealth));
             barrierEffect.gameObject.SetActive(barrierHealth > 0);

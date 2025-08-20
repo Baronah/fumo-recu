@@ -26,9 +26,9 @@ public class EntityBase : MonoBehaviour
     public float ASPD = 100;
     public float moveSpeed, attackRange, attackWindupTime, attackInterval;
 
-    public int GetMaxHealth() => mHealth; 
-    public short GetHealthPercentage() => (short) Mathf.Max(1, health * 100 / mHealth);
-    public short GetMissingealthPercentage() => (short) Mathf.Max(1, (mHealth - health) * 100 / mHealth);
+    public int GetMaxHealth() => mHealth;
+    public short GetHealthPercentage() => (short)Mathf.Max(1, health * 100 / mHealth);
+    public short GetMissingealthPercentage() => (short)Mathf.Max(1, (mHealth - health) * 100 / mHealth);
 
     public bool IsFreezeImmune = false, IsStunImmune = false, IsPhysicalImmune = false, IsMagicalImmune = false, canRevive = false, isInvulnerable = false, isInvisible = false;
 
@@ -41,7 +41,7 @@ public class EntityBase : MonoBehaviour
     [SerializeField] protected ProjectileType ProjectileType = ProjectileType.CATCH_FIRST_TARGET_OF_TYPE;
     [SerializeField] protected float ProjectileSpeed = 1000;
     [SerializeField] private GameObject DamagePopup;
-    
+
     protected HealthBar healthBar;
     [SerializeField] protected GameObject ccBar;
     protected Slider ccSlider;
@@ -81,10 +81,10 @@ public class EntityBase : MonoBehaviour
     protected Coroutine AttackCoroutine = null, LockoutMovementOnAttackCoroutine = null;
     protected Animation attackAnimation;
 
-    public virtual bool CanAttack => 
-        attackPattern != AttackPattern.NONE && 
-        !IsFrozen && 
-        !IsStunned && 
+    public virtual bool CanAttack =>
+        attackPattern != AttackPattern.NONE &&
+        !IsFrozen &&
+        !IsStunned &&
         IsAlive();
 
     public bool ViewOnlyMode => FindAnyObjectByType<StageManager>() == null;
@@ -115,8 +115,8 @@ public class EntityBase : MonoBehaviour
         PrevPosition = transform.position;
 
         health = mHealth;
-        atk = bAtk; 
-        def = bDef; 
+        atk = bAtk;
+        def = bDef;
         res = bRes;
         moveSpeed = b_moveSpeed;
         attackRange = b_attackRange;
@@ -182,13 +182,13 @@ public class EntityBase : MonoBehaviour
 
     public virtual void UpdateCooldowns()
     {
-        bool PrevFrozen = FreezeTimer > 0f; 
+        bool PrevFrozen = FreezeTimer > 0f;
         FreezeTimer -= Time.deltaTime;
         if (FreezeTimer > 0f) OnFreezeMaintain();
         else if (PrevFrozen && FreezeTimer <= 0f) OnFreezeExit();
 
         StunTimer -= Time.deltaTime;
-        
+
         AttackLockout -= Time.deltaTime;
         MovementLockout -= Time.deltaTime;
     }
@@ -237,9 +237,9 @@ public class EntityBase : MonoBehaviour
 
     public virtual void HandleAnimationSpeed()
     {
-         float MIN_MSPEED = preferredMoveAnimationPlaySpeed * 0.2f, 
-                MAX_MSPEED = preferredMoveAnimationPlaySpeed * 2, 
-                X_MSPD_MULTIPLIER = preferredMoveAnimationPlaySpeed - MIN_MSPEED;
+        float MIN_MSPEED = preferredMoveAnimationPlaySpeed * 0.2f,
+               MAX_MSPEED = preferredMoveAnimationPlaySpeed * 2,
+               X_MSPD_MULTIPLIER = preferredMoveAnimationPlaySpeed - MIN_MSPEED;
         animator.SetFloat("speed_value", Mathf.Lerp(MIN_MSPEED, MAX_MSPEED, moveSpeed * (X_MSPD_MULTIPLIER / (MAX_MSPEED - MIN_MSPEED)) / b_moveSpeed));
 
         float MIN_ASPEED = preferredAttackAnimationSpeed * 0.2f,
@@ -307,7 +307,7 @@ public class EntityBase : MonoBehaviour
         if ((!allowWhenDisabled && (IsFrozen || IsStunned)) || !target || !target.IsAlive() || target.isInvulnerable) return;
 
         var calcDamage = DamageOutput(target, pDmg, mDmg, tDmg);
-        
+
         target.TakeDamage(calcDamage, this);
 
         if (calcDamage.TotalDamage <= 0) return;
@@ -354,7 +354,7 @@ public class EntityBase : MonoBehaviour
         if (damage.PhysicalDamage > 0)
         {
             dmgTxt += $"<color=red>{damage.PhysicalDamage}";
-            hasMoreThanOneDamageType = true ;
+            hasMoreThanOneDamageType = true;
         }
 
         if (damage.MagicalDamage > 0)
@@ -369,7 +369,7 @@ public class EntityBase : MonoBehaviour
             if (hasMoreThanOneDamageType) dmgTxt += '\n';
             dmgTxt += $"<color=#b1b1b1>{damage.TrueDamage}</color>";
         }
-        
+
         DisplayDamage(dmgTxt, new(0, 55));
     }
 
@@ -377,8 +377,8 @@ public class EntityBase : MonoBehaviour
     {
         health -= damage.TotalDamage;
         if (health < 0) health = 0;
-        healthBar?.SetHealth(health); 
-        
+        healthBar?.SetHealth(health);
+
         if (health <= 0) OnDeath();
     }
 
@@ -433,7 +433,7 @@ public class EntityBase : MonoBehaviour
 
     public virtual void ApplyFreeze(EntityBase target, float duration)
     {
-        if (target.IsFreezeImmune) return;
+        if (target.IsFreezeImmune || target as DeviceBase) return;
 
         target.animator.speed = 0f;
         target.FreezeTimer = Mathf.Max(target.FreezeTimer, duration);
@@ -446,7 +446,7 @@ public class EntityBase : MonoBehaviour
 
     public virtual void ApplyStun(EntityBase target, float duration)
     {
-        if (target.IsStunImmune) return;
+        if (target.IsStunImmune || target as DeviceBase) return;
 
         target.animator.speed = 0f;
         target.StunTimer = Mathf.Max(target.StunTimer, duration);

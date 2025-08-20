@@ -24,6 +24,12 @@ public class OriginiumSpiderAlpha : EnemyBase
         base.InitializeComponents();
     }
 
+    public override IEnumerator OnAttackComplete()
+    {
+        if (sfxs[0]) sfxs[0].Play();
+        return base.OnAttackComplete();
+    }
+
     public void Pollute()
     {
         if (IsPolluted) return;

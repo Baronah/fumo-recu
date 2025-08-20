@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerMelee : PlayerBase
@@ -82,6 +83,7 @@ public class PlayerMelee : PlayerBase
             moveHorizontal = spriteRenderer.flipX ? -1 : 1;
         }
 
+        if (sfxs[1]) sfxs[1].Play();
         float dashTime = 0f;
         while (dashTime < DashDuration)
         {
@@ -108,10 +110,27 @@ public class PlayerMelee : PlayerBase
         isInvulnerable = false;
     }
 
+    public override IEnumerator OnAttackComplete()
+    {
+        if (!CanAttack) yield break;
+        var targets = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), AttackPosition.position, attackRange)
+                    .Where(t => t && t.IsAlive());
+
+        if (sfxs[0] && targets.Count() > 0) sfxs[0].Play();
+
+        foreach (var target in targets)
+        {
+            DealDamage(target, atk);
+        }
+        yield return null;
+    }
+
     IEnumerator ActivateSkill()
     {
         if (!IsAlive() || IsSkillActive || !CanUseSkill) yield break;
         StartCoroutine(SkillLockout());
+
+        if (sfxs[2]) sfxs[2].Play();
 
         IsSkillActive = true;
         Heal(mHealth * BurstHeal_HpPercentage);
