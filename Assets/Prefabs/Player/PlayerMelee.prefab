@@ -316,7 +316,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Player Melee
   Icon: {fileID: 21300000, guid: 16d47974b79ddaf4886e53951e987eab, type: 3}
-  mHealth: 150
+  mHealth: 200
   bAtk: 26
   bDef: 20
   bRes: 10
@@ -373,7 +373,7 @@ MonoBehaviour:
   SkillCooldown: 27
   SkillDuration: 7
   BurstHeal_HpPercentage: 0.3
-  HealPerSecond_HpPercentage: 0.06
+  HealPerSecond_HpPercentage: 0.05
   DefBoost: 2
   ResBoost: 20
   AtkBoost: 0.35

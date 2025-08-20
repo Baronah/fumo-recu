@@ -349,7 +349,7 @@ MonoBehaviour:
   Name: Zealot
   Icon: {fileID: 21300000, guid: 727115dcf85547a49b8c33392336b1e2, type: 3}
   mHealth: 160
-  bAtk: 65
+  bAtk: 50
   bDef: 20
   bRes: 20
   defPen: 0
@@ -389,7 +389,6 @@ MonoBehaviour:
   AttackAnimation: {fileID: 7400000, guid: a09a6a5b301f7034a95e77b2c60a63a9, type: 2}
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 0.9
-  ViewOnlyMode: 0
   enemyCode: 3
   SpotPlayerUponSpawn: 0
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}

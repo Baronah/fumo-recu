@@ -4958,6 +4958,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8775152862550477468, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Value
+      value: 130
+      objectReference: {fileID: 0}
+    - target: {fileID: 8775152862550477468, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_MaxValue
+      value: 130
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7523077825662678453, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
     m_RemovedGameObjects: []
@@ -4998,7 +5006,7 @@ MonoBehaviour:
   Name: '"Wetwork" Operative'
   Icon: {fileID: 21300000, guid: 3e4db170e0454e743b751aaebc755b22, type: 3}
   mHealth: 130
-  bAtk: 40
+  bAtk: 35
   bDef: 5
   bRes: 0
   defPen: 0
@@ -5012,15 +5020,15 @@ MonoBehaviour:
   b_attackInterval: 2
   MIN_PHYSICAL_DMG: 0.05
   MIN_MAGICAL_DMG: 0.1
-  health: 0
-  atk: 0
-  def: 0
+  health: 130
+  atk: 40
+  def: 5
   res: 0
   ASPD: 100
-  moveSpeed: 0
-  attackRange: 0
-  attackWindupTime: 0
-  attackInterval: 0
+  moveSpeed: 160
+  attackRange: 80
+  attackWindupTime: 0.3
+  attackInterval: 2
   IsFreezeImmune: 0
   IsStunImmune: 0
   IsPhysicalImmune: 0
@@ -5043,6 +5051,11 @@ MonoBehaviour:
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
   TooltipsPriority: 0
   TooltipsHoldtime: 6
+  Description: An assassin who makes up for their average skills with clever plots.
+    They are adept at hiding in the darkness, sharpening their blades and continually
+    increasing their ATK.
+  Skillset: "\u2022 When not attacking, ATK continuously increases and resets after
+    the next attack."
   DetectionRange: 200
   DangerRange_RatioOfAttackRange: 0.75
   MinimumDistanceFromPlayer: 20

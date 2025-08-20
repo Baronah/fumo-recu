@@ -392,6 +392,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8775152862550477468, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Value
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 8775152862550477468, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_MaxValue
+      value: 90
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7523077825662678453, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
     m_RemovedGameObjects: []
@@ -433,7 +441,7 @@ MonoBehaviour:
   Name: Caustic Originium Spider
   Icon: {fileID: 21300000, guid: dd91be91695bbe0408ec4f0c45657f3c, type: 3}
   mHealth: 90
-  bAtk: 20
+  bAtk: 18
   bDef: 15
   bRes: 10
   defPen: 0
@@ -447,15 +455,15 @@ MonoBehaviour:
   b_attackInterval: 2
   MIN_PHYSICAL_DMG: 0.05
   MIN_MAGICAL_DMG: 0.1
-  health: 0
-  atk: 0
-  def: 0
-  res: 0
+  health: 90
+  atk: 18
+  def: 15
+  res: 10
   ASPD: 100
-  moveSpeed: 0
-  attackRange: 0
-  attackWindupTime: 0
-  attackInterval: 0
+  moveSpeed: 200
+  attackRange: 60
+  attackWindupTime: 0.45
+  attackInterval: 2
   IsFreezeImmune: 0
   IsStunImmune: 0
   IsPhysicalImmune: 0
@@ -478,6 +486,10 @@ MonoBehaviour:
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
   TooltipsPriority: 0
   TooltipsHoldtime: 6
+  Description: A spider-like creature that has been mutated by Originium.
+  Skillset: "\u2022 Explodes upon death, dealing true damage in an area around self.\n\u2022
+    Will be instantly defeated when coming into contact with a <color=#CC4000>Originium
+    Pollution</color>, causing a far stronger explosion."
   DetectionRange: 185
   DangerRange_RatioOfAttackRange: 1
   MinimumDistanceFromPlayer: 20
@@ -504,7 +516,7 @@ MonoBehaviour:
   explosionDelay: 1
   explosionAtkScale: 2.5
   explosionRadius: 175
-  pollutedExplosionAtkScaleMultiplier: 2
+  pollutedExplosionAtkScaleMultiplier: 2.5
   pollutedExplosionRadiusMultiplier: 2.5
   ExplosionRangeIndicator_Outer: {fileID: 5664152606430998509}
   ExplosionRangeIndicator_Inner: {fileID: 5175067255346655683}

@@ -5049,7 +5049,7 @@ MonoBehaviour:
   Name: Archer
   Icon: {fileID: 21300000, guid: f88ba66dee8ca814887bca306fff14ed, type: 3}
   mHealth: 100
-  bAtk: 40
+  bAtk: 33
   bDef: 0
   bRes: 0
   defPen: 0
@@ -5094,6 +5094,8 @@ MonoBehaviour:
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
   TooltipsPriority: 0
   TooltipsHoldtime: 6
+  Description: Enemy lore or description
+  Skillset: Enemy skillset
   DetectionRange: 400
   DangerRange_RatioOfAttackRange: 0.9
   MinimumDistanceFromPlayer: 20

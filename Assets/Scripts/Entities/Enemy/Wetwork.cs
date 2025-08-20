@@ -44,6 +44,7 @@ public class Wetwork : EnemyBase
 
     public override IEnumerator OnAttackComplete()
     {
+        if (sfxs[0]) sfxs[0].Play();
         yield return StartCoroutine(base.OnAttackComplete());
         AtkPercentageUp_count = 0f;
         atk -= AtkAdd;

@@ -479,26 +479,28 @@ public class LevelSelectionScript : MonoBehaviour
         }
 
         // aspd
-        if (enemy.b_attackInterval <= 0) 
+        if (enemy.b_attackInterval <= 0)
             Rating_ASPD.text = "E";
-        else if (enemy.b_attackInterval <= 10f)
-            Rating_ASPD.text = "D";
-        else if (enemy.b_attackInterval <= 7.5f)
-            Rating_ASPD.text = "C";
-        else if (enemy.b_attackInterval <= 5.5f)
-            Rating_ASPD.text = "C+";
-        else if (enemy.b_attackInterval <= 4.5f)
-            Rating_ASPD.text = "B";
-        else if (enemy.b_attackInterval <= 4f)
-            Rating_ASPD.text = "B+";
-        else if (enemy.b_attackInterval <= 3f)
+        else if (enemy.b_attackInterval < 0.25f) 
+            Rating_ASPD.text = "SS";
+        else if (enemy.b_attackInterval <= 0.8f)
+            Rating_ASPD.text = "S";
+        else if (enemy.b_attackInterval <= 1f)
+            Rating_ASPD.text = "A+";
+        else if (enemy.b_attackInterval <= 1.5f)
             Rating_ASPD.text = "A";
         else if (enemy.b_attackInterval <= 2f)
-            Rating_ASPD.text = "A+";
-        else if (enemy.b_attackInterval <= 1f)
-            Rating_ASPD.text = "S";
+            Rating_ASPD.text = "B+";
+        else if (enemy.b_attackInterval <= 2.5f)
+            Rating_ASPD.text = "B";
+        else if (enemy.b_attackInterval <= 3.5f)
+            Rating_ASPD.text = "C+";
+        else if (enemy.b_attackInterval <= 5f)
+            Rating_ASPD.text = "C";
+        else if (enemy.b_attackInterval <= 7f)
+            Rating_ASPD.text = "D";
         else
-            Rating_ASPD.text = "SS";
+            Rating_ASPD.text = "E";
 
         // mspd
         if (enemy.moveSpeed <= 0) 
@@ -550,7 +552,7 @@ public class LevelSelectionScript : MonoBehaviour
 
         if (calvValue <= 0.15f)
             Rating_CALV.text = "Lo";
-        else if (calvValue < 0.9f)
+        else if (calvValue <= 0.8f)
             Rating_CALV.text = "Med";
         else
             Rating_CALV.text = "Hi";
@@ -577,6 +579,8 @@ public class LevelSelectionScript : MonoBehaviour
 
         foreach (var code in appearingEnemies)
         {
+            if (code == EnemyCode.DUMMY) continue;
+
             GameObject btnEnemyViewGO = Instantiate(EnemyViewPrefab, CurrentPosition, Quaternion.identity, EnemyViewContent.transform);
             btnEnemyViewGO.transform.localPosition = CurrentPosition;
 
