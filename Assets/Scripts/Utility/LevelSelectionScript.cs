@@ -280,6 +280,7 @@ public class LevelSelectionScript : MonoBehaviour
 
     public void ToggleChallengeMode()
     {
+        if (sfxs[2]) sfxs[2].Play();
         if (!enableCM)
         {
             enableCM = true;
@@ -296,6 +297,7 @@ public class LevelSelectionScript : MonoBehaviour
 
     IEnumerator ConfirmLevelSelection()
     {
+        if (sfxs[2]) sfxs[2].Play();
         yield return StartCoroutine(OverlayFadeIn());
 
         CharacterPrefabsStorage.EnableChallengeMode = enableCM;

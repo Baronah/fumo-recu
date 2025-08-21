@@ -5024,7 +5024,7 @@ MonoBehaviour:
   MIN_PHYSICAL_DMG: 0.05
   MIN_MAGICAL_DMG: 0.1
   health: 130
-  atk: 40
+  atk: 35
   def: 5
   res: 0
   ASPD: 100
@@ -5094,7 +5094,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: e2cf73d9a0ff4354b98c791d968faa93, type: 3}
+  m_audioClip: {fileID: 8300000, guid: e6a81b839c17318448d018c24a5289be, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1

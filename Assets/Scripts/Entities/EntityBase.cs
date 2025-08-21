@@ -39,7 +39,7 @@ public class EntityBase : MonoBehaviour
     public AttackPattern attackPattern;
     [SerializeField] protected GameObject ProjectilePrefab;
     [SerializeField] protected ProjectileType ProjectileType = ProjectileType.CATCH_FIRST_TARGET_OF_TYPE;
-    [SerializeField] protected float ProjectileSpeed = 1000;
+    [SerializeField] public float ProjectileSpeed = 1000;
     [SerializeField] private GameObject DamagePopup;
 
     protected HealthBar healthBar;
@@ -433,7 +433,7 @@ public class EntityBase : MonoBehaviour
 
     public virtual void ApplyFreeze(EntityBase target, float duration)
     {
-        if (target.IsFreezeImmune || target as DeviceBase) return;
+        if (target.IsFreezeImmune) return;
 
         target.animator.speed = 0f;
         target.FreezeTimer = Mathf.Max(target.FreezeTimer, duration);
@@ -446,7 +446,7 @@ public class EntityBase : MonoBehaviour
 
     public virtual void ApplyStun(EntityBase target, float duration)
     {
-        if (target.IsStunImmune || target as DeviceBase) return;
+        if (target.IsStunImmune) return;
 
         target.animator.speed = 0f;
         target.StunTimer = Mathf.Max(target.StunTimer, duration);

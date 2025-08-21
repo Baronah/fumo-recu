@@ -1,33 +1,13 @@
 using System.Collections;
+using UnityEngine;
 
-public class DeviceBase : EntityBase
+public class DeviceBase : MonoBehaviour
 {
-    public override void FixedUpdate()
+    public enum DeviceType
     {
-        UpdateCooldowns();
-    }
-
-    public override void UpdateCooldowns()
-    {
-        
-    }
-
-    public override IEnumerator Attack()
-    {
-        yield return null;
-    }
-
-    public override void Move()
-    {
+        TURRET,
 
     }
 
-    public override void OnFreezeMaintain()
-    {
-    }
-
-    public override void OnFreezeExit()
-    {
-        
-    }
+    [SerializeField] protected HealthBar SPbar;
 }

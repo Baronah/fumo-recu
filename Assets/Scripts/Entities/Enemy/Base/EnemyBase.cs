@@ -730,6 +730,9 @@ public class EnemyBase : EntityBase
     {
         if (MoveToOverridePosition || (SpottedPlayer && SpottedPlayer.IsAlive())) return;
 
+        var tunnel = Checkpoints[CurrentCheckpointIndex].GetComponent<Tunnel>();
+        if (tunnel) tunnel.EnterTunnel(this);
+
         if (WaitTimes[CurrentCheckpointIndex] > 0)
         {
             StopMovement();

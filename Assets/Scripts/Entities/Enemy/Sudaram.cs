@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Sudaram : EnemyBase
 {
-    [SerializeField] private float bonusASPD = 40f;
+    [SerializeField] public float originiumPollutionBonusASPD = 40f;
     [SerializeField] public float originiumPollutionDamageMultiplier = 0.5f;
     private bool Enhanced = false;
     private float b_detectionRange;
@@ -20,7 +20,7 @@ public class Sudaram : EnemyBase
     { 
         if (Enhanced) return;
 
-        ASPD += bonusASPD;
+        ASPD += originiumPollutionBonusASPD;
         b_detectionRange = DetectionRange;
         Enhanced = true;
         DetectionRange = attackRange = 9999f;
@@ -32,7 +32,7 @@ public class Sudaram : EnemyBase
     {
         if (!Enhanced) return;
 
-        ASPD -= bonusASPD;
+        ASPD -= originiumPollutionBonusASPD;
         Enhanced = false;
         attackRange = b_attackRange;
         DetectionRange = b_detectionRange;
