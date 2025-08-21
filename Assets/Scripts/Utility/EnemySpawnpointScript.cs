@@ -97,7 +97,12 @@ public class EnemySpawnpointScript : MonoBehaviour
                 case ActionType.NONE:
                     break;
                 case ActionType.DESTROY:
-                    if (obj == this) Destroy(obj, 0.5f);
+                    EntityBase en = obj.GetComponent<EntityBase>();
+                    if (en)
+                    {
+                        en.InstaKill();
+                    }
+                    else if (obj == this) Destroy(obj, 0.5f);
                     else Destroy(obj);
                     break;
                 case ActionType.ACTIVATE:
@@ -181,7 +186,12 @@ public class EnemySpawnpointScript : MonoBehaviour
                 case ActionType.NONE:
                     break;
                 case ActionType.DESTROY:
-                    if (obj == this) Destroy(obj, 0.5f);
+                    EntityBase en = obj.GetComponent<EntityBase>();
+                    if (en)
+                    {
+                        en.InstaKill();
+                    }
+                    else if (obj == this) Destroy(obj, 0.5f);
                     else Destroy(obj);
                     break;
                 case ActionType.ACTIVATE:

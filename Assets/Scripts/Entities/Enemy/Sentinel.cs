@@ -55,6 +55,11 @@ public class Sentinel : EnemyBase
         });
     }
 
+    public override IEnumerator Attack()
+    {
+        yield break;
+    }
+
     IEnumerator ExpandDetectCircle()
     {
         Vector3 currentScale = DetectCircle.transform.localScale, finalScale = currentScale * 10f;

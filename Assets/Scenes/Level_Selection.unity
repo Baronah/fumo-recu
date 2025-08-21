@@ -10490,8 +10490,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "<size=24><b><color=red>ASPD:</b></color></size> \n\nThe interval between
-    attacks. Higher rating means shorter interval."
+  m_text: "<size=24><b><color=red>Attack Speed:</b></color></size> \n\nThe interval
+    between attacks. Higher rating means shorter interval."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -11370,8 +11370,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "<size=24><b><color=red>ATK:</b></color></size> \n\nThe amount of damage
-    a unit can inflict with their attacks."
+  m_text: "<size=24><b><color=red>Attack Damage:</b></color></size> \n\nThe amount
+    of damage a unit can inflict with their attacks."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

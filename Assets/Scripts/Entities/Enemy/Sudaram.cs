@@ -20,6 +20,7 @@ public class Sudaram : EnemyBase
     { 
         if (Enhanced) return;
 
+        if (sfxs[1]) sfxs[1].Play();
         ASPD += originiumPollutionBonusASPD;
         b_detectionRange = DetectionRange;
         Enhanced = true;
@@ -39,10 +40,11 @@ public class Sudaram : EnemyBase
         attackPattern = AttackPattern.MELEE;
     }
 
-
     public override IEnumerator OnAttackComplete()
     {
         if (!CanAttack) yield break;
+
+        if (sfxs[0]) sfxs[0].Play();
 
         if (Enhanced)
         {
@@ -64,7 +66,7 @@ public class Sudaram : EnemyBase
                     targetPosition,
                     projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
                     travelSpeed: ProjectileSpeed,
-                    acceleration: 0,
+                    acceleration: 100f,
                     lifeSpan: 8f,
                     targetType: typeof(PlayerBase));
             }

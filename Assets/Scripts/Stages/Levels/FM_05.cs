@@ -5,7 +5,6 @@ public class FM_05 : StageManager
         base.OnEnemySpawn(enemy);
         if (enemy is Sudaram sr)
         {
-            sr.ProjectileSpeed *= 1.5f;
             sr.originiumPollutionBonusASPD = 100f;
             sr.originiumPollutionDamageMultiplier = 0f;
         }
