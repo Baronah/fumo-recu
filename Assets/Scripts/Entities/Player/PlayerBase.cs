@@ -16,11 +16,12 @@ public class PlayerBase : EntityBase
 
     public override void InitializeComponents()
     {
+        StageManager = FindObjectOfType<StageManager>();
+        StageManager.OnPlayerSpawn(this);
+
         base.InitializeComponents();
         playerManager = FindObjectOfType<PlayerManager>();
         playerManager.Register(this);
-
-        StageManager = FindObjectOfType<StageManager>();
 
         StartCoroutine(InvulnerableOnSpawn());
     }

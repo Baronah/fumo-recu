@@ -179,7 +179,7 @@ MonoBehaviour:
   resIgn: 0
   lifeSteal: 0
   b_moveSpeed: 150
-  b_attackRange: 115
+  b_attackRange: 110
   b_attackWindupTime: 0.48
   b_attackInterval: 3
   MIN_PHYSICAL_DMG: 0.05
@@ -224,7 +224,7 @@ MonoBehaviour:
     to gain increased ASPD. Attack range becomes global, and attacks now fire several
     projectiles."
   DetectionRange: 300
-  DangerRange_RatioOfAttackRange: 0.7
+  DangerRange_RatioOfAttackRange: 0.8
   MinimumDistanceFromPlayer: 20
   showTooltips: 0
   gridCellSize: 50

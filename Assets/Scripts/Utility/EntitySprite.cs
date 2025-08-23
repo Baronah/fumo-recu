@@ -9,5 +9,5 @@ public class EntitySprite : MonoBehaviour
         Parent = GetComponentInParent<EntityBase>();
     }
 
-    public void OnAttackComplete() => StartCoroutine(Parent.OnAttackComplete());
+    public void OnAttackComplete() { if (Parent) StartCoroutine(Parent.OnAttackComplete()); }
 }

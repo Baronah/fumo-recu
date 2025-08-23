@@ -131,6 +131,11 @@ public class StageManager : MonoBehaviour
         }
     }
 
+    public virtual void OnPlayerSpawn(PlayerBase player)
+    {
+
+    }
+
     private IEnumerator LoadRequiredPrefabs()
     {
         // Load all player prefabs

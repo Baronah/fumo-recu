@@ -131,6 +131,7 @@ public class PlayerManager : MonoBehaviour
         GameObject newPlayerPrefab = activePlayerIsMelee
             ? CharacterPrefabsStorage.PlayerPrefabs[(int) PlayerType.RANGED] 
             : CharacterPrefabsStorage.PlayerPrefabs[(int)PlayerType.MELEE];
+        
         Instantiate(newPlayerPrefab, spawnPosition, Quaternion.identity);
 
         StartCoroutine(FadeOut(Effect, IsStageStarted ? 1f : 2f));
@@ -173,7 +174,6 @@ public class PlayerManager : MonoBehaviour
             this.player = player;
             virtualCamera.Follow = player.transform;
             IsStageStarted = true;
-
             SwapCooldownOnStart();
             return;
         }

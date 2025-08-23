@@ -7768,6 +7768,7 @@ MonoBehaviour:
   - Weft & Warp
   - Crimson Dusk
   - Eternal Sunshine
+  - Loop&Loop
   Descriptions:
   - Oh, I sing while thinking of you.
   - Though some confilicts are unavoidable, it's best to not pick up unnecessary
@@ -7780,6 +7781,9 @@ MonoBehaviour:
     one.
   - If the sun is way too far from reach, might as well making your own.\n<color=yellow>Swap
     cool-down is halved in this level.</color>
+  - '"You see, life is all about turning back."\n<color=yellow>Your units have increased
+    MSPD in this level.</color>\n<color=red>The Sudarim are immune to damage from
+    Originium Pollutions.</color>'
   ChallengeModes:
   - Terrains and enemies will differ in places, and more enemies will appear.
   - Bloodboil Knightclub Elite's ability stacks twice as fast. All enemies have increased
@@ -7788,21 +7792,24 @@ MonoBehaviour:
     have increased MSPD.
   - All enemies become immune to physical and magical damage. 'Originiutants' have
     increased ASPD.
-  - Some 'Originium Pollutions' will appear beforehand. 'Sudaram' is immune to damage
+  - Some 'Originium Pollutions' will appear beforehand. 'Sudarim' are immune to damage
     from 'Originium Pollution'.
-  CompleteCondition: 0100000001000000000000000100000000000000
+  - '''Sentinels'' have greatly increased HP.'
+  CompleteCondition: 010000000100000000000000010000000000000001000000
   Environments:
   - Environments: 00000000
   - Environments: 
   - Environments: 
   - Environments: 0000000001000000
   - Environments: 01000000
+  - Environments: 0000000001000000
   AppearingEnemies:
   - Enemies: 08000000070000000600000002000000
   - Enemies: 000000000700000005000000
   - Enemies: 0400000003000000010000000500000002000000
   - Enemies: 0100000003000000040000000a00000009000000
   - Enemies: 090000000b0000000c000000
+  - Enemies: 090000000100000003000000020000000a0000000c000000
   MapPreviewObj: {fileID: 340580784}
   MapPreviewImg: {fileID: 2125190412}
   MapPreviewImgOverlay: {fileID: 1141736479}
@@ -7812,6 +7819,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 632a77c5043d6514996731920cab5124, type: 3}
   - {fileID: 21300000, guid: 10f449d4de8490642914c3520bcb7690, type: 3}
   - {fileID: 21300000, guid: 56b4ab19f2f72814bb6cb77e23c3005f, type: 3}
+  - {fileID: 21300000, guid: 1684395ec306f904690608dae364ec55, type: 3}
   DefaultEnemyIcon: {fileID: 21300000, guid: 450f341a4d8aeec45acb98c71b1a64cb, type: 3}
   EnemyDetail: {fileID: 1152686954}
   SelectedBorder: {fileID: 1857408668}
