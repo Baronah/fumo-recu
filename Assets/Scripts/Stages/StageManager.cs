@@ -17,6 +17,8 @@ public class StageManager : MonoBehaviour
     private bool IsStagePaused = false;
     public bool ReadIsStagePaused => IsStagePaused;
 
+    private static bool IsFirstTimeStageEnter = true;
+
     [SerializeField] private GameObject pauseOverlay, titleOverlay, mapOverview, mapCamera;
     [SerializeField] private EnemyCode[] appearingEnemies;
     [SerializeField] private TMP_Text RemainingEnemiesTxt;
@@ -73,6 +75,15 @@ public class StageManager : MonoBehaviour
         StartCoroutine(OnStartOverlayFadeout());
 
         BGM = GetComponent<AudioSource>();
+        BGM.volume = PlayerPrefs.GetFloat("BGM", 1f);
+
+        var sfxs = FindObjectsOfType<AudioSource>(true).Where(a => a != BGM);
+        float sfxValue = PlayerPrefs.GetFloat("SFX", 1f);
+        foreach (var item in sfxs)
+        {
+            item.volume = sfxValue;
+        }
+
         RemainingEnemiesGO.SetActive(StageCompleteConditionType == StageCompleteCondition.ELIMINATE_ALL_ENEMIES);
 
         EnableChallengeMode();
@@ -185,7 +196,12 @@ public class StageManager : MonoBehaviour
         Destroy(titleOverlay);
 
         Time.timeScale = 1f;
-        yield return StartCoroutine(mainCamera.MoveShowcases(ShowcaseSize, CameraShowcases, Waittimes));
+        if (IsFirstTimeStageEnter)
+        {
+            yield return StartCoroutine(mainCamera.MoveShowcases(ShowcaseSize, CameraShowcases, Waittimes));
+            IsFirstTimeStageEnter = false;
+        }
+        else if (extraPlayerWaittime > 0) extraPlayerWaittime = 0.5f;
 
         foreach (var item in enemySpawnpoints)
         {
@@ -206,7 +222,7 @@ public class StageManager : MonoBehaviour
         if (!IsStageReady) return;
 
         Time.timeScale = 
-            IsStagePaused || playerManager.IsReadingSkillView 
+            IsStagePaused || playerManager.IsReadingSkillView || mapOverview.activeSelf
             ? 0f 
             : isSlowing 
                 ? timeScaleSlow : 1f;
@@ -368,6 +384,7 @@ public class StageManager : MonoBehaviour
         CharacterPrefabsStorage.PlayerPrefabs.Clear();
         CharacterPrefabsStorage.EnableChallengeMode = false;
 
+        IsFirstTimeStageEnter = true;
         Time.timeScale = 1f;
 
         SceneManager.LoadScene("Level_Selection");

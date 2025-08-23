@@ -25,11 +25,19 @@ public class EntityManager : MonoBehaviour
         .Select(e => e.transform.parent.GetComponent<PlayerBase>())
         .ToList();
 
+    private float SFXValue;
+
     public void OnEntitySpawn(GameObject e)
     {
         var spriteRenderers = e.GetComponentsInChildren<SpriteRenderer>().Where(o => o.sortingLayerName == "Entities");
         if (spriteRenderers.Count() <= 0) return;
         SpriteRenderers.AddRange(spriteRenderers.Where(s => !SpriteRenderers.Contains(s)));
+
+        var sfxs = e.GetComponent<EntityBase>().sfxs;
+        foreach (var item in sfxs)
+        {
+            item.volume = SFXValue;
+        }
     }
 
     public void OnEntityDeath(GameObject e)
@@ -39,6 +47,7 @@ public class EntityManager : MonoBehaviour
 
     private void Start()
     {
+        SFXValue = PlayerPrefs.GetFloat("SFX", 1f);
         SpriteRenderers = FindObjectsOfType<SpriteRenderer>().Where(o => o.sortingLayerName == "Entities").ToList();
         SortLayerIndex();
     }

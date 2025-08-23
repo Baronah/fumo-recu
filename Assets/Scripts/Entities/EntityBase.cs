@@ -52,7 +52,7 @@ public class EntityBase : MonoBehaviour
     protected Animator animator;
     protected Rigidbody2D rb2d;
     protected Collider2D[] colliders;
-    protected AudioSource[] sfxs;
+    public AudioSource[] sfxs;
 
     private GameObject ShadowSprite;
 

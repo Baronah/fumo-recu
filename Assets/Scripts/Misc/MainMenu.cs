@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -9,11 +10,21 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Image Garden;
     [SerializeField] private Image Title;
 
+    [SerializeField] private Slider BGMSlider, SFXSlider;
+    [SerializeField] private TMP_Text ResolutionTxt;
+    [SerializeField] private Button ResolutionUpBtn, ResolutionDownBtn;
+
+    private int ResolutionIndex = 0;
+
     private Color TitleStartColor, TitleEndColor;
     private bool FlipX = true;
 
+    private AudioSource BGM;
+
     private void Start()
     {
+        BGM = GetComponent<AudioSource>();
+        InitValues();
         TitleStartColor = Title.color;
         StartCoroutine(GardenFadeIn());
     }
@@ -96,6 +107,60 @@ public class MainMenu : MonoBehaviour
         Title.transform.localScale = startScale;
 
         FlipX = !FlipX;
+    }
+
+    private void InitValues()
+    {
+        BGMSlider.value = PlayerPrefs.GetFloat("BGM", 1f);
+        SFXSlider.value = PlayerPrefs.GetFloat("SFX", 1f);
+
+        BGMSlider.maxValue = SFXSlider.maxValue = 1f;
+
+        BGM.volume = BGMSlider.value;
+
+        ResolutionIndex = PlayerPrefs.GetInt("Resolution", 3);
+        ChangeResolution(0);
+    }
+
+    public void SetBGMVolume(float v)
+    {
+        PlayerPrefs.SetFloat("BGM", v);
+        BGMSlider.value = v;
+        BGM.volume = v;
+    }
+
+    public void SetSFXVolume(float v)
+    {
+        PlayerPrefs.SetFloat("SFX", v);
+        SFXSlider.value = v;
+    }
+
+    public void ChangeResolution(int dir)
+    {
+        ResolutionIndex += dir;
+        ResolutionIndex = Mathf.Clamp(ResolutionIndex, 0, 3);
+        PlayerPrefs.SetInt("Resolution", ResolutionIndex);
+        switch (ResolutionIndex)
+        {
+            case 0:
+                Screen.SetResolution(1280, 720, false);
+                ResolutionTxt.text = "1280 x 720";
+                break;
+            case 1:
+                Screen.SetResolution(1366, 786, false);
+                ResolutionTxt.text = "1366 x 786";
+                break;
+            case 2:
+                Screen.SetResolution(1920, 1080, false);
+                ResolutionTxt.text = "1920 x 1080";
+                break;
+            case 3:
+                Screen.SetResolution(Screen.width, Screen.height, true);
+                ResolutionTxt.text = "Full-screen";
+                break;
+        }
+        ResolutionDownBtn.interactable = ResolutionIndex > 0;
+        ResolutionUpBtn.interactable = ResolutionIndex < 3;
     }
 
     public void Play() => SceneManager.LoadScene("Level_Selection");

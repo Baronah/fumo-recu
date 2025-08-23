@@ -46,6 +46,12 @@ public class Archer : EnemyBase
         atk -= AtkAdd;
     }
 
+    public override void OnDeath()
+    {
+        base.OnDeath();
+        PS.SetActive(false);
+    }
+
     public override void WriteStats()
     {
         Description = "A crossbowman that is adept at hiding in the darkness and assassinating their targets with special bolts.";

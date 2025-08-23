@@ -76,6 +76,11 @@ public class LevelSelectionScript : MonoBehaviour
     private void Start()
     {
         sfxs = GetComponents<AudioSource>();
+        sfxs[0].volume = PlayerPrefs.GetFloat("BGM", 1f);
+        for (int i = 1; i < sfxs.Length; ++i)
+        {
+            sfxs[i].volume = PlayerPrefs.GetFloat("SFX", 1f);
+        }
 
         string[] encounteredEnemies = PlayerPrefs.GetString("EncounteredEnemies", string.Empty).Split(" ").ToArray();
         foreach (var enemy in encounteredEnemies)
@@ -194,7 +199,7 @@ public class LevelSelectionScript : MonoBehaviour
                 environmentDescription += $"{envDes}\n";
             }
 
-            description += $"\n<color=#E5E5E5>{stageCompleteCondition}\n{environmentDescription}</color>";
+            description += $"\n\n<color=#E5E5E5>{stageCompleteCondition}\n{environmentDescription}</color>";
         }
         return description.Replace(@"\n", "\n");
     }

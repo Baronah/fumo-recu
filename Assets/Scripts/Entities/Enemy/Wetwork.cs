@@ -50,6 +50,12 @@ public class Wetwork : EnemyBase
         atk -= AtkAdd;
     }
 
+    public override void OnDeath()
+    {
+        base.OnDeath();
+        PS.SetActive(false);
+    }
+
     public override void WriteStats()
     {
         Description = "An assassin who makes up for their average skills with clever plots. They are adept at hiding in the darkness, sharpening their blades and continually increasing their ATK.";

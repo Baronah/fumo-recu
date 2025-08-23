@@ -5,10 +5,17 @@ using UnityEngine;
 
 public class Sudaram : EnemyBase
 {
+    [SerializeField] private ParticleSystem originiumPollutionEffect;
     [SerializeField] public float originiumPollutionBonusASPD = 40f;
     [SerializeField] public float originiumPollutionDamageMultiplier = 0.5f;
     private bool Enhanced = false;
     private float b_detectionRange;
+
+    public override void Start()
+    {
+        originiumPollutionEffect.Stop();
+        base.Start();
+    }
 
     public override void Move()
     {
@@ -21,6 +28,8 @@ public class Sudaram : EnemyBase
         if (Enhanced) return;
 
         if (sfxs[1]) sfxs[1].Play();
+
+        originiumPollutionEffect.Play();
         ASPD += originiumPollutionBonusASPD;
         b_detectionRange = DetectionRange;
         Enhanced = true;
@@ -33,11 +42,18 @@ public class Sudaram : EnemyBase
     {
         if (!Enhanced) return;
 
+        originiumPollutionEffect.Stop();
         ASPD -= originiumPollutionBonusASPD;
         Enhanced = false;
         attackRange = b_attackRange;
         DetectionRange = b_detectionRange;
         attackPattern = AttackPattern.MELEE;
+    }
+
+    public override void OnDeath()
+    {
+        originiumPollutionEffect.Stop();
+        base.OnDeath();
     }
 
     public override IEnumerator OnAttackComplete()
