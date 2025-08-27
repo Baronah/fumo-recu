@@ -164,6 +164,7 @@ MonoBehaviour:
   DamagePopup: {fileID: 7498904281893358320, guid: b09dfacba160b6d47938cf47f8dea3c9, type: 3}
   ccBar: {fileID: 773491194806959642}
   AttackAnimation: {fileID: 0}
+  sfxs: []
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 1
   enemyCode: 0
@@ -171,6 +172,8 @@ MonoBehaviour:
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
   TooltipsPriority: 0
   TooltipsHoldtime: 6
+  Description: Enemy lore or description
+  Skillset: Enemy skillset
   DetectionRange: 30
   DangerRange_RatioOfAttackRange: 0.75
   MinimumDistanceFromPlayer: 20
@@ -179,7 +182,7 @@ MonoBehaviour:
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 256
-  pathfindingRadius: 500
+  pathfindingRadius: 2000
   pathUpdateInterval: 1
   waypointReachDistance: 25
   showPathGizmos: 1

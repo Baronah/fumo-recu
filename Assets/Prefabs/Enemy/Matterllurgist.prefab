@@ -212,6 +212,7 @@ MonoBehaviour:
   DamagePopup: {fileID: 7498904281893358320, guid: b09dfacba160b6d47938cf47f8dea3c9, type: 3}
   ccBar: {fileID: 446298989067341241}
   AttackAnimation: {fileID: 7400000, guid: 00dd520ee3809c84ca49114685d019b7, type: 2}
+  sfxs: []
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 0.9
   enemyCode: 1
@@ -225,16 +226,16 @@ MonoBehaviour:
   DangerRange_RatioOfAttackRange: 0.75
   MinimumDistanceFromPlayer: 20
   showTooltips: 1
-  gridCellSize: 40
+  gridCellSize: 60
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 256
-  pathfindingRadius: 1000
+  pathfindingRadius: 2000
   pathUpdateInterval: 1
   waypointReachDistance: 50
   showPathGizmos: 1
   allowDiagonalMovement: 1
-  pathfindingDistanceThreshold: 50
+  pathfindingDistanceThreshold: 100
   cornerAvoidanceDistance: 100
   pathSmoothingLookahead: 3
   WaitTimes:

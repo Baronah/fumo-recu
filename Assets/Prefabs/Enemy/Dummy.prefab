@@ -168,6 +168,10 @@ MonoBehaviour:
   attackRange: 0
   attackWindupTime: 0
   attackInterval: 0
+  IsFreezeImmune: 0
+  IsStunImmune: 0
+  IsPhysicalImmune: 0
+  IsMagicalImmune: 0
   canRevive: 0
   isInvulnerable: 0
   isInvisible: 0
@@ -178,6 +182,8 @@ MonoBehaviour:
   ProjectileSpeed: 1000
   DamagePopup: {fileID: 7498904281893358320, guid: b09dfacba160b6d47938cf47f8dea3c9, type: 3}
   ccBar: {fileID: 3383678605386129869}
+  AttackAnimation: {fileID: 0}
+  sfxs: []
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 1
   enemyCode: 8
@@ -185,11 +191,13 @@ MonoBehaviour:
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
   TooltipsPriority: 0
   TooltipsHoldtime: 6
+  Description: Enemy lore or description
+  Skillset: Enemy skillset
   DetectionRange: 30
   DangerRange_RatioOfAttackRange: 0.75
   MinimumDistanceFromPlayer: 20
   showTooltips: 0
-  gridCellSize: 35
+  gridCellSize: 500
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 256

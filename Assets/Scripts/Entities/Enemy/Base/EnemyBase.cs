@@ -40,8 +40,8 @@ public class EnemyBase : EntityBase
 
     [Header("A* Pathfinding")]
     [SerializeField] private float gridCellSize = 50f;
-    [SerializeField] private LayerMask obstacleLayer = 7;
-    [SerializeField] private float pathfindingRadius = 1500f;
+    [SerializeField] private LayerMask obstacleLayer = 6;
+    [SerializeField] private float pathfindingRadius = 3000f;
     [SerializeField] private float pathUpdateInterval = 0.5f;
     [SerializeField] private float waypointReachDistance = 50f; 
     [SerializeField] private bool showPathGizmos = true;
@@ -55,7 +55,7 @@ public class EnemyBase : EntityBase
     protected List<Transform> Checkpoints = new();
     [SerializeField] private List<float> WaitTimes = new();
 
-    [SerializeField] private float OverridePositionCheckRadius = 25f;
+    [SerializeField] private float OverridePositionCheckRadius = 120f;
     private Vector2 OverridePosition;
     [SerializeField] private float MoveToOverridePositionSpeedMultiplier = 1.5f, MoveToOverridePositionSpeedMultiplierJump = 0.35f;
     private short MoveToOverridePositionJumpCnt = 0;
@@ -161,16 +161,16 @@ public class EnemyBase : EntityBase
 
     private void UpdatePathfinding()
     {
-        if (PathfindCnt <= 10)
+        if (PathfindCnt <= 35)
         {
             PathfindCnt++;
             return;
         }
         PathfindCnt = 0;
 
-        if (IsFrozen || IsStunned || !IsAlive()) return;
+        if (IsFrozen || IsStunned || !IsAlive() || rb2d.velocity.magnitude <= 0) return;
 
-        Vector2 currentPos = transform.position;
+        Vector2 currentPos = FeetPosition.position;
         Vector2 desiredDestination = GetUniversalDestination();
         float distanceToDestination = Vector2.Distance(currentPos, desiredDestination);
 
@@ -184,10 +184,10 @@ public class EnemyBase : EntityBase
 
         // Check if there's a direct line to our desired destination
         Vector2 directionToDestination = (desiredDestination - currentPos).normalized;
-        RaycastHit2D hit = Physics2D.Raycast(currentPos, directionToDestination, distanceToDestination, obstacleLayer);
+        RaycastHit2D[] hit = Physics2D.RaycastAll(currentPos, directionToDestination, distanceToDestination, obstacleLayer);
 
         // Only skip pathfinding if we have completely clear path
-        bool hasDirectPath = (hit.collider == null || colliders.Contains(hit.collider));
+        bool hasDirectPath = hit.Length <= 0;
 
         // Additional check: ensure the direct path doesn't take us too close to other obstacles
         if (hasDirectPath)
@@ -293,10 +293,12 @@ public class EnemyBase : EntityBase
 
     private Vector2 GetPathfindingTarget()
     {
-        if (!SpottedPlayer) return transform.position;
+        if (!SpottedPlayer) return FeetPosition.position;
 
-        Vector2 playerPos = SpottedPlayer.transform.position;
-        Vector2 enemyPos = AttackPosition.position;
+        bool playerIsFarAway = !RecentlyScannedPlayer;
+
+        Vector2 playerPos = playerIsFarAway ? SpottedPlayer.Feetposition : SpottedPlayer.transform.position;
+        Vector2 enemyPos = playerIsFarAway ? FeetPosition.position : AttackPosition.position;
 
         switch (attackPattern)
         {
@@ -427,7 +429,9 @@ public class EnemyBase : EntityBase
 
         if (IsFrozen || IsStunned || !IsAlive()) return;
 
-        if (!SpottedPlayer && MoveToOverridePosition && Vector3.Distance(AttackPosition.position, OverridePosition) <= OverridePositionCheckRadius)
+        if (!SpottedPlayer 
+            && MoveToOverridePosition 
+            && Vector2.Distance(AttackPosition.position, OverridePosition) <= OverridePositionCheckRadius)
         {
             MoveToOverridePosition = false;
             StartCoroutine(StartMovementLockout(UnityEngine.Random.Range(2f, 6f)));

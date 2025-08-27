@@ -61,7 +61,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 1000
+  m_SortingOrder: 10001
   m_TargetDisplay: 0
 --- !u!114 &6929103067524937066
 MonoBehaviour:
@@ -123,9 +123,6 @@ MonoBehaviour:
   icon: {fileID: 7989005208545618264}
   txtName: {fileID: 3229234674311999014}
   txtDescription: {fileID: 5262794282247099574}
-  PauseButton: {fileID: 0}
-  Pause: {fileID: -720323299, guid: 18b7d08980983f04bb346322645181b5, type: 3}
-  Unpause: {fileID: 269863882, guid: 18b7d08980983f04bb346322645181b5, type: 3}
 --- !u!1 &2677855889626135128
 GameObject:
   m_ObjectHideFlags: 0

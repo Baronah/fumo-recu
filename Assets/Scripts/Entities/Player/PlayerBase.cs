@@ -9,6 +9,9 @@ public class PlayerBase : EntityBase
     protected PlayerManager playerManager;
     protected StageManager StageManager;
 
+    private Transform TransformFeetposition;
+    public Vector3 Feetposition => TransformFeetposition.position;
+
     private void Update()
     {
         GetControlInputs();
@@ -20,6 +23,8 @@ public class PlayerBase : EntityBase
         StageManager.OnPlayerSpawn(this);
 
         base.InitializeComponents();
+        TransformFeetposition = transform.Find("Feetposition");
+
         playerManager = FindObjectOfType<PlayerManager>();
         playerManager.Register(this);
 

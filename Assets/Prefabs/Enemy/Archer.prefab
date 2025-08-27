@@ -5016,6 +5016,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7523077825662678453, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+    - {fileID: 6353154876185391977, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 6772246562461740860, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
@@ -5090,6 +5091,7 @@ MonoBehaviour:
   DamagePopup: {fileID: 7498904281893358320, guid: b09dfacba160b6d47938cf47f8dea3c9, type: 3}
   ccBar: {fileID: 2787112311692162125}
   AttackAnimation: {fileID: 7400000, guid: 3d57bdd9bab37a64fb086ac50f47c812, type: 2}
+  sfxs: []
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 1
   enemyCode: 6
@@ -5103,11 +5105,11 @@ MonoBehaviour:
   DangerRange_RatioOfAttackRange: 0.9
   MinimumDistanceFromPlayer: 20
   showTooltips: 0
-  gridCellSize: 50
+  gridCellSize: 60
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 256
-  pathfindingRadius: 1000
+  pathfindingRadius: 2000
   pathUpdateInterval: 0.5
   waypointReachDistance: 25
   showPathGizmos: 1
@@ -5119,7 +5121,7 @@ MonoBehaviour:
   - 2
   - 5
   - 7
-  OverridePositionCheckRadius: 100
+  OverridePositionCheckRadius: 150
   MoveToOverridePositionSpeedMultiplier: 1.25
   MoveToOverridePositionSpeedMultiplierJump: 0.35
   AtkPercentageUp_perSecond: 0.05

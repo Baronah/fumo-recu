@@ -514,9 +514,9 @@ MonoBehaviour:
   DamagePopup: {fileID: 7498904281893358320, guid: b09dfacba160b6d47938cf47f8dea3c9, type: 3}
   ccBar: {fileID: 5384541712598859992}
   AttackAnimation: {fileID: 0}
+  sfxs: []
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 1
-  ViewOnlyMode: 0
   enemyCode: 2
   SpotPlayerUponSpawn: 0
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
@@ -528,11 +528,11 @@ MonoBehaviour:
   DangerRange_RatioOfAttackRange: 0
   MinimumDistanceFromPlayer: 20
   showTooltips: 1
-  gridCellSize: 40
+  gridCellSize: 60
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 256
-  pathfindingRadius: 1000
+  pathfindingRadius: 2000
   pathUpdateInterval: 1
   waypointReachDistance: 25
   showPathGizmos: 1
@@ -545,7 +545,7 @@ MonoBehaviour:
   - 7
   - 7
   - 8
-  OverridePositionCheckRadius: 50
+  OverridePositionCheckRadius: 120
   MoveToOverridePositionSpeedMultiplier: 1.5
   MoveToOverridePositionSpeedMultiplierJump: 0.35
   SpeedBuffOnAlert: 1.35

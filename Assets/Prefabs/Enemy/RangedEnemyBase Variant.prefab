@@ -89,6 +89,10 @@ PrefabInstance:
       value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 7523077825662678453, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: gridCellSize
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 7523077825662678453, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: attackPattern
       value: 1
       objectReference: {fileID: 0}

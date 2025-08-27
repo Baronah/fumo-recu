@@ -1,14 +1,28 @@
-// A* Pathfinding Grid System (Updated with better performance)
+// Hybrid approach - keeping your existing PathfindingGrid but with simplified A* logic
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PathfindingGrid
 {
     private Dictionary<Vector2Int, bool> obstacleGrid = new Dictionary<Vector2Int, bool>();
+    private Dictionary<Vector2Int, PathCell> pathCells = new Dictionary<Vector2Int, PathCell>();
+
     private float cellSize;
     private LayerMask obstacleLayer;
     private Vector2 lastUpdateCenter = Vector2.zero;
     private float lastUpdateRadius = 0f;
+
+    // Cached collections for performance
+    private List<Vector2Int> cellsToSearch = new List<Vector2Int>(256);
+    private List<Vector2Int> searchedCells = new List<Vector2Int>(256);
+    private List<Vector2> finalPath = new List<Vector2>(64);
+
+    // Neighbor directions
+    private static readonly Vector2Int[] neighborOffsets = {
+        Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right,
+        Vector2Int.up + Vector2Int.right, Vector2Int.up + Vector2Int.left,
+        Vector2Int.down + Vector2Int.right, Vector2Int.down + Vector2Int.left
+    };
 
     public PathfindingGrid(float cellSize, LayerMask obstacleLayer)
     {
@@ -31,31 +45,33 @@ public class PathfindingGrid
 
     public void UpdateGrid(Vector2 center, float radius)
     {
-        // Only update if we've moved significantly
-        if (Vector2.Distance(center, lastUpdateCenter) < cellSize * 2f && Mathf.Abs(radius - lastUpdateRadius) < cellSize)
+        if (Vector2.Distance(center, lastUpdateCenter) < cellSize &&
+            Mathf.Abs(radius - lastUpdateRadius) < cellSize * 0.5f)
             return;
 
         lastUpdateCenter = center;
         lastUpdateRadius = radius;
 
-        // Clear old data outside radius (with some buffer)
-        List<Vector2Int> toRemove = new List<Vector2Int>();
-        float cleanupRadius = radius + cellSize * 5f; // Add buffer
+        // Clean up old data
+        var keysToRemove = new List<Vector2Int>();
+        float cleanupRadius = radius + cellSize * 3f;
 
         foreach (var kvp in obstacleGrid)
         {
             Vector2 worldPos = GridToWorld(kvp.Key);
             if (Vector2.Distance(worldPos, center) > cleanupRadius)
             {
-                toRemove.Add(kvp.Key);
+                keysToRemove.Add(kvp.Key);
             }
         }
-        foreach (var key in toRemove)
+
+        foreach (var key in keysToRemove)
         {
             obstacleGrid.Remove(key);
+            pathCells.Remove(key);
         }
 
-        // Add new grid cells
+        // Add new cells
         int gridRadius = Mathf.CeilToInt(radius / cellSize);
         Vector2Int centerGrid = WorldToGrid(center);
 
@@ -68,8 +84,19 @@ public class PathfindingGrid
                 if (!obstacleGrid.ContainsKey(gridPos))
                 {
                     Vector2 worldPos = GridToWorld(gridPos);
-                    bool isObstacle = Physics2D.OverlapCircle(worldPos, cellSize * 0.3f, obstacleLayer) != null;
+                    bool isObstacle = Physics2D.OverlapCircle(worldPos, cellSize * 0.25f, obstacleLayer) != null;
                     obstacleGrid[gridPos] = isObstacle;
+
+                    // Initialize path cell
+                    pathCells[gridPos] = new PathCell
+                    {
+                        position = gridPos,
+                        isWall = isObstacle,
+                        gCost = int.MaxValue,
+                        hCost = 0,
+                        fCost = int.MaxValue,
+                        connection = Vector2Int.zero
+                    };
                 }
             }
         }
@@ -85,171 +112,123 @@ public class PathfindingGrid
         Vector2Int startGrid = WorldToGrid(start);
         Vector2Int targetGrid = WorldToGrid(target);
 
-        // If start or target are obstacles, try to find nearby free cells
+        // Handle obstacles at start/target
         if (IsObstacle(startGrid))
-        {
             startGrid = FindNearestFreeCell(startGrid);
-        }
         if (IsObstacle(targetGrid))
-        {
             targetGrid = FindNearestFreeCell(targetGrid);
+
+        // Clear previous search
+        cellsToSearch.Clear();
+        searchedCells.Clear();
+        finalPath.Clear();
+
+        // Reset all path cells in search area
+        foreach (var cell in pathCells.Values)
+        {
+            cell.gCost = int.MaxValue;
+            cell.hCost = 0;
+            cell.fCost = int.MaxValue;
+            cell.connection = Vector2Int.zero;
         }
 
-        // A* algorithm with improved performance
-        var openSet = new List<AStarNode>();
-        var closedSet = new HashSet<Vector2Int>();
-        var allNodes = new Dictionary<Vector2Int, AStarNode>();
+        // Initialize start cell
+        if (!pathCells.ContainsKey(startGrid))
+            return finalPath; // Empty path if start invalid
 
-        var startNode = new AStarNode
-        {
-            position = startGrid,
-            gCost = 0,
-            hCost = GetDistance(startGrid, targetGrid),
-            parent = null
-        };
-        startNode.fCost = startNode.gCost + startNode.hCost;
+        var startCell = pathCells[startGrid];
+        startCell.gCost = 0;
+        startCell.hCost = GetDistance(startGrid, targetGrid);
+        startCell.fCost = startCell.hCost;
 
-        openSet.Add(startNode);
-        allNodes[startGrid] = startNode;
+        cellsToSearch.Add(startGrid);
 
-        int maxIterations = 1000; // Prevent infinite loops
+        int maxIterations = 500;
         int iterations = 0;
 
-        while (openSet.Count > 0 && iterations < maxIterations)
+        while (cellsToSearch.Count > 0 && iterations < maxIterations)
         {
             iterations++;
 
-            // Find node with lowest fCost
-            AStarNode currentNode = openSet[0];
-            for (int i = 1; i < openSet.Count; i++)
+            // Find cell with lowest fCost
+            Vector2Int currentCell = cellsToSearch[0];
+            foreach (Vector2Int pos in cellsToSearch)
             {
-                if (openSet[i].fCost < currentNode.fCost ||
-                    (openSet[i].fCost == currentNode.fCost && openSet[i].hCost < currentNode.hCost))
+                var cell = pathCells[pos];
+                var currentBest = pathCells[currentCell];
+
+                if (cell.fCost < currentBest.fCost ||
+                    (cell.fCost == currentBest.fCost && cell.hCost < currentBest.hCost))
                 {
-                    currentNode = openSet[i];
+                    currentCell = pos;
                 }
             }
 
-            openSet.Remove(currentNode);
-            closedSet.Add(currentNode.position);
+            cellsToSearch.Remove(currentCell);
+            searchedCells.Add(currentCell);
 
-            // Found target
-            if (currentNode.position == targetGrid)
+            // Check if we reached the target
+            if (currentCell == targetGrid)
             {
-                List<Vector2> rawPath = RetracePath(startNode, currentNode);
-                return SmoothPath(rawPath); // Apply path smoothing
+                // Reconstruct path
+                var pathCell = pathCells[targetGrid];
+                while (pathCell.position != startGrid)
+                {
+                    finalPath.Add(GridToWorld(pathCell.position));
+                    pathCell = pathCells[pathCell.connection];
+                }
+                finalPath.Add(start); // Use actual start position
+                finalPath.Reverse();
+
+                return SmoothPath(finalPath, start, target);
             }
 
-            // Check neighbors
-            foreach (Vector2Int neighbor in GetNeighbors(currentNode.position, allowDiagonal))
+            // Search neighbors
+            SearchCellNeighbors(currentCell, targetGrid, allowDiagonal);
+        }
+
+        return finalPath; // Return empty if no path found
+    }
+
+    private void SearchCellNeighbors(Vector2Int cellPos, Vector2Int endPos, bool allowDiagonal)
+    {
+        int maxNeighbors = allowDiagonal ? neighborOffsets.Length : 4;
+
+        for (int i = 0; i < maxNeighbors; i++)
+        {
+            Vector2Int neighborPos = cellPos + neighborOffsets[i];
+
+            // Check if this neighbor exists and is valid
+            if (!pathCells.TryGetValue(neighborPos, out PathCell neighborCell) ||
+                searchedCells.Contains(neighborPos) ||
+                neighborCell.isWall)
+                continue;
+
+            // For diagonal movement, check corner cutting
+            if (i >= 4) // Diagonal indices
             {
-                if (IsObstacle(neighbor) || closedSet.Contains(neighbor))
+                Vector2Int horizontal = cellPos + new Vector2Int(neighborOffsets[i].x, 0);
+                Vector2Int vertical = cellPos + new Vector2Int(0, neighborOffsets[i].y);
+
+                if (IsObstacle(horizontal) || IsObstacle(vertical))
                     continue;
+            }
 
-                // Add penalty for corners and tight spaces
-                int moveCost = GetDistance(currentNode.position, neighbor);
-                if (IsNearCorner(neighbor))
+            int gCostToNeighbor = pathCells[cellPos].gCost + GetDistance(cellPos, neighborPos);
+
+            if (gCostToNeighbor < neighborCell.gCost)
+            {
+                neighborCell.connection = cellPos;
+                neighborCell.gCost = gCostToNeighbor;
+                neighborCell.hCost = GetDistance(neighborPos, endPos);
+                neighborCell.fCost = neighborCell.gCost + neighborCell.hCost;
+
+                if (!cellsToSearch.Contains(neighborPos))
                 {
-                    moveCost += 5; // Add penalty for corner positions
-                }
-
-                int newGCost = currentNode.gCost + moveCost;
-
-                if (!allNodes.ContainsKey(neighbor))
-                {
-                    var neighborNode = new AStarNode
-                    {
-                        position = neighbor,
-                        gCost = newGCost,
-                        hCost = GetDistance(neighbor, targetGrid),
-                        parent = currentNode
-                    };
-                    neighborNode.fCost = neighborNode.gCost + neighborNode.hCost;
-
-                    allNodes[neighbor] = neighborNode;
-                    openSet.Add(neighborNode);
-                }
-                else if (newGCost < allNodes[neighbor].gCost)
-                {
-                    var neighborNode = allNodes[neighbor];
-                    neighborNode.gCost = newGCost;
-                    neighborNode.fCost = neighborNode.gCost + neighborNode.hCost;
-                    neighborNode.parent = currentNode;
-
-                    if (!openSet.Contains(neighborNode))
-                        openSet.Add(neighborNode);
+                    cellsToSearch.Add(neighborPos);
                 }
             }
         }
-
-        // No path found
-        return new List<Vector2>();
-    }
-
-    private bool IsNearCorner(Vector2Int gridPos)
-    {
-        // Check if this position is near a corner (has obstacles diagonally adjacent)
-        int obstacleCount = 0;
-        Vector2Int[] diagonals = {
-            new Vector2Int(1, 1), new Vector2Int(1, -1),
-            new Vector2Int(-1, 1), new Vector2Int(-1, -1)
-        };
-
-        foreach (Vector2Int diagonal in diagonals)
-        {
-            if (IsObstacle(gridPos + diagonal))
-                obstacleCount++;
-        }
-
-        return obstacleCount >= 2; // Consider it a corner if 2+ diagonal obstacles
-    }
-
-    private List<Vector2> SmoothPath(List<Vector2> rawPath)
-    {
-        if (rawPath.Count <= 2) return rawPath;
-
-        List<Vector2> smoothedPath = new List<Vector2>();
-        smoothedPath.Add(rawPath[0]); // Always keep start point
-
-        int currentIndex = 0;
-        while (currentIndex < rawPath.Count - 1)
-        {
-            int farthestReachable = currentIndex;
-
-            // Find the farthest point we can reach directly
-            for (int i = currentIndex + 1; i < rawPath.Count; i++)
-            {
-                Vector2 direction = (rawPath[i] - rawPath[currentIndex]).normalized;
-                float distance = Vector2.Distance(rawPath[currentIndex], rawPath[i]);
-
-                // Check if we can reach this point directly
-                RaycastHit2D hit = Physics2D.Raycast(rawPath[currentIndex], direction, distance, obstacleLayer);
-                if (hit.collider == null)
-                {
-                    farthestReachable = i;
-                }
-                else
-                {
-                    break; // Can't reach further, stop here
-                }
-            }
-
-            // Move to the farthest reachable point
-            if (farthestReachable > currentIndex)
-            {
-                currentIndex = farthestReachable;
-                smoothedPath.Add(rawPath[currentIndex]);
-            }
-            else
-            {
-                // Can't smooth further, add next point
-                currentIndex++;
-                if (currentIndex < rawPath.Count)
-                    smoothedPath.Add(rawPath[currentIndex]);
-            }
-        }
-
-        return smoothedPath;
     }
 
     private Vector2Int FindNearestFreeCell(Vector2Int gridPos)
@@ -260,36 +239,18 @@ public class PathfindingGrid
             {
                 for (int y = -radius; y <= radius; y++)
                 {
-                    Vector2Int testPos = gridPos + new Vector2Int(x, y);
-                    if (!IsObstacle(testPos))
+                    if (Mathf.Abs(x) == radius || Mathf.Abs(y) == radius)
                     {
-                        return testPos;
+                        Vector2Int testPos = gridPos + new Vector2Int(x, y);
+                        if (pathCells.ContainsKey(testPos) && !pathCells[testPos].isWall)
+                        {
+                            return testPos;
+                        }
                     }
                 }
             }
         }
-        return gridPos; // Fallback to original position
-    }
-
-    private List<Vector2Int> GetNeighbors(Vector2Int gridPos, bool allowDiagonal)
-    {
-        var neighbors = new List<Vector2Int>();
-
-        // Orthogonal neighbors
-        neighbors.Add(gridPos + Vector2Int.up);
-        neighbors.Add(gridPos + Vector2Int.down);
-        neighbors.Add(gridPos + Vector2Int.left);
-        neighbors.Add(gridPos + Vector2Int.right);
-
-        if (allowDiagonal)
-        {
-            neighbors.Add(gridPos + Vector2Int.up + Vector2Int.right);
-            neighbors.Add(gridPos + Vector2Int.up + Vector2Int.left);
-            neighbors.Add(gridPos + Vector2Int.down + Vector2Int.right);
-            neighbors.Add(gridPos + Vector2Int.down + Vector2Int.left);
-        }
-
-        return neighbors;
+        return gridPos;
     }
 
     private int GetDistance(Vector2Int a, Vector2Int b)
@@ -297,33 +258,73 @@ public class PathfindingGrid
         int dstX = Mathf.Abs(a.x - b.x);
         int dstY = Mathf.Abs(a.y - b.y);
 
-        // Diagonal distance calculation
         if (dstX > dstY)
             return 14 * dstY + 10 * (dstX - dstY);
         return 14 * dstX + 10 * (dstY - dstX);
     }
 
-    private List<Vector2> RetracePath(AStarNode startNode, AStarNode endNode)
+    private List<Vector2> SmoothPath(List<Vector2> rawPath, Vector2 actualStart, Vector2 actualTarget)
     {
-        var path = new List<Vector2>();
-        var currentNode = endNode;
-
-        while (currentNode != startNode)
+        if (rawPath.Count <= 2)
         {
-            path.Add(GridToWorld(currentNode.position));
-            currentNode = currentNode.parent;
+            var result = new List<Vector2> { actualStart };
+            if (rawPath.Count > 0)
+                result.Add(actualTarget);
+            return result;
         }
 
-        path.Reverse();
-        return path;
+        var smoothedPath = new List<Vector2> { actualStart };
+        int currentIndex = 0;
+
+        while (currentIndex < rawPath.Count - 1)
+        {
+            int farthestReachable = currentIndex;
+
+            for (int i = currentIndex + 2; i < rawPath.Count; i++)
+            {
+                Vector2 startPoint = currentIndex == 0 ? actualStart : rawPath[currentIndex];
+                Vector2 direction = (rawPath[i] - startPoint).normalized;
+                float distance = Vector2.Distance(startPoint, rawPath[i]);
+
+                RaycastHit2D hit = Physics2D.Raycast(startPoint, direction, distance - 10f, obstacleLayer);
+                if (hit.collider == null)
+                {
+                    farthestReachable = i;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            if (farthestReachable > currentIndex)
+            {
+                currentIndex = farthestReachable;
+                smoothedPath.Add(rawPath[currentIndex]);
+            }
+            else
+            {
+                currentIndex++;
+                if (currentIndex < rawPath.Count)
+                    smoothedPath.Add(rawPath[currentIndex]);
+            }
+        }
+
+        if (smoothedPath.Count > 0 && Vector2.Distance(smoothedPath[smoothedPath.Count - 1], actualTarget) > 10f)
+        {
+            smoothedPath.Add(actualTarget);
+        }
+
+        return smoothedPath;
     }
 }
 
-public class AStarNode
+public class PathCell
 {
     public Vector2Int position;
-    public int gCost; // Distance from start
-    public int hCost; // Distance to target (heuristic)
-    public int fCost; // gCost + hCost
-    public AStarNode parent;
+    public bool isWall;
+    public int gCost;
+    public int hCost;
+    public int fCost;
+    public Vector2Int connection;
 }

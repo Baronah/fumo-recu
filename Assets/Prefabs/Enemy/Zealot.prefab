@@ -393,6 +393,7 @@ MonoBehaviour:
   DamagePopup: {fileID: 7498904281893358320, guid: b09dfacba160b6d47938cf47f8dea3c9, type: 3}
   ccBar: {fileID: 754730279402599387}
   AttackAnimation: {fileID: 7400000, guid: a09a6a5b301f7034a95e77b2c60a63a9, type: 2}
+  sfxs: []
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 0.9
   enemyCode: 3
@@ -406,11 +407,11 @@ MonoBehaviour:
   DangerRange_RatioOfAttackRange: 0.65
   MinimumDistanceFromPlayer: 50
   showTooltips: 1
-  gridCellSize: 50
+  gridCellSize: 60
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 256
-  pathfindingRadius: 1000
+  pathfindingRadius: 3000
   pathUpdateInterval: 1
   waypointReachDistance: 70
   showPathGizmos: 1
@@ -422,7 +423,7 @@ MonoBehaviour:
   - 5
   - 5
   - 5
-  OverridePositionCheckRadius: 50
+  OverridePositionCheckRadius: 100
   MoveToOverridePositionSpeedMultiplier: 1.5
   MoveToOverridePositionSpeedMultiplierJump: 0.35
   barrierEffect: {fileID: 4804839738491929246}
@@ -449,8 +450,8 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
+  MinDistance: 495.0495
+  MaxDistance: 3500
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -485,7 +486,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -545,8 +546,8 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
+  MinDistance: 495.0495
+  MaxDistance: 3500
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -581,7 +582,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0

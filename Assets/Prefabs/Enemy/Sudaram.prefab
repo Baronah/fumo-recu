@@ -5062,11 +5062,11 @@ MonoBehaviour:
   DangerRange_RatioOfAttackRange: 0.8
   MinimumDistanceFromPlayer: 20
   showTooltips: 0
-  gridCellSize: 50
+  gridCellSize: 60
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 256
-  pathfindingRadius: 1000
+  pathfindingRadius: 2000
   pathUpdateInterval: 0.5
   waypointReachDistance: 25
   showPathGizmos: 1
