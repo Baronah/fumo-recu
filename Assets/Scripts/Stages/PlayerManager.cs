@@ -54,6 +54,7 @@ public class PlayerManager : MonoBehaviour
     Coroutine AttackCooldownCoroutine, SkillCooldownCoroutine, SpecialCooldownCoroutine;
 
     private bool IsStageStarted = false;
+    private AudioSource swapSfx;
 
     private void Awake()
     {
@@ -62,6 +63,8 @@ public class PlayerManager : MonoBehaviour
 
     private void Start()
     {
+        swapSfx = GetComponents<AudioSource>().ElementAt(1);
+
         SwapPlayer();
 
         mainCamera = FindObjectOfType<CameraMovement>();
@@ -133,6 +136,7 @@ public class PlayerManager : MonoBehaviour
             : CharacterPrefabsStorage.PlayerPrefabs[(int)PlayerType.MELEE];
         
         Instantiate(newPlayerPrefab, spawnPosition, Quaternion.identity);
+        swapSfx.Play();
 
         StartCoroutine(FadeOut(Effect, IsStageStarted ? 1f : 2f));
 

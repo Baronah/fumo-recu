@@ -28,7 +28,7 @@ public class StageManager : MonoBehaviour
     [SerializeField] private TMP_Text Title, LoadingState;
     [SerializeField] private CharacterPrefabsStorage prefabStorage;
 
-    [SerializeField] private CameraMovement mainCamera;
+    private CameraMovement mainCamera;
     [SerializeField] private float ShowcaseSize;
     [SerializeField] private Transform[] CameraShowcases;
     [SerializeField] private float[] Waittimes;
@@ -74,6 +74,7 @@ public class StageManager : MonoBehaviour
 
         StartCoroutine(OnStartOverlayFadeout());
 
+        mainCamera = GetComponentInChildren<CameraMovement>(true);
         BGM = GetComponent<AudioSource>();
         BGM.volume = PlayerPrefs.GetFloat("BGM", 1f);
 
