@@ -123,6 +123,14 @@ public class PlayerBase : EntityBase
         };
     }
 
+    public override void TakeDamage(DamageInstance damage, EntityBase source)
+    {
+        base.TakeDamage(damage, source); 
+        
+        if (source)
+            playerManager.OnPlayerAttacked(damage.TotalDamage * 1.0f / (mHealth * 0.5f));
+    }
+
     public override void OnDeath()
     {
         base.OnDeath();
@@ -135,8 +143,7 @@ public class PlayerBase : EntityBase
 
         if (collision.gameObject.CompareTag("Fumo"))
         {
-            StageManager.OnPlayerFumoPickup(this);
-            Destroy(collision.gameObject);
+            StageManager.OnPlayerFumoPickup(this, collision);
         }
     }
 

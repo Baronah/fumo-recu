@@ -223,6 +223,8 @@ public class EntityBase : MonoBehaviour
 
     public virtual void FaceToward(Vector2 position)
     {
+        if (IsFrozen || IsStunned) return;
+
         float deltaX = position.x - transform.position.x;
 
         bool PrevFlipX = spriteRenderer.flipX;

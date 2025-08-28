@@ -4722,6 +4722,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveTime: 2
+  shakeDuration: 0.2
+  shakeMagnitude: 0.8
+  shakeValue: {x: 15, y: 15}
   offset: {x: -10, y: 10, z: 0}
 --- !u!1 &4264031369070351598
 GameObject:
@@ -9254,7 +9257,7 @@ Transform:
   m_GameObject: {fileID: 8138116287106014697}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 982, y: -445, z: -110}
+  m_LocalPosition: {x: -1660, y: 0, z: -110}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

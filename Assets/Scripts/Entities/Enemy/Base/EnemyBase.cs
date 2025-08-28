@@ -798,11 +798,6 @@ public class EnemyBase : EntityBase
     {
         if (!SpottedPlayer) return;
         SpottedPlayer = player;
-
-        // Clear path when changing target
-        currentPath.Clear();
-        currentWaypointIndex = 0;
-        isUsingPathfinding = false;
     }
 
     public virtual void WriteStats()

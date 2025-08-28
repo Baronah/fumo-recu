@@ -5,11 +5,17 @@ using UnityEngine;
 
 public class CameraMovement : MonoBehaviour
 {
-    public float moveTime;
+    public float moveTime, shakeDuration = 0.2f, shakeMagnitude = 1f;
+    public Vector2 shakeValue;
     public Vector3 offset;
     
     private float size;
     private Camera camera;
+
+    private bool isShaking = false;
+    public bool TriggerStopHit => isShaking && shakeStrength >= 0.5f;
+
+    private float shakeStrength = 0;
 
     private void Start()
     {
@@ -19,7 +25,7 @@ public class CameraMovement : MonoBehaviour
 
     public void UpdatePlayerMovement(Transform targetTransform)
     {
-        if (targetTransform == null) return;
+        if (targetTransform == null || isShaking) return;
 
         Vector3 finalPosition = targetTransform.position + offset;
         transform.position = Vector3.Lerp(transform.position, finalPosition, moveTime * Time.deltaTime);
@@ -57,5 +63,28 @@ public class CameraMovement : MonoBehaviour
         }
 
         yield return null;
+    }
+
+    public IEnumerator Shake(float percentageScale)
+    {
+        percentageScale = Mathf.Clamp01(percentageScale);
+        if (percentageScale <= shakeStrength) yield break;
+
+        shakeStrength = percentageScale;
+        isShaking = true;
+        
+        Vector3 originalPosition = transform.position;
+        float elapsedTime = 0f, dJump = shakeDuration / 10;
+        while (elapsedTime < shakeDuration)
+        {
+            float x = Random.Range(-shakeValue.x, shakeValue.x) * shakeMagnitude * percentageScale;
+            float y = Random.Range(-shakeValue.y, shakeValue.y) * shakeMagnitude * percentageScale;
+            transform.position = new Vector3(originalPosition.x + x, originalPosition.y + y);
+            elapsedTime += dJump;
+            yield return null;
+        }
+
+        isShaking = false;
+        shakeStrength = 0;
     }
 }

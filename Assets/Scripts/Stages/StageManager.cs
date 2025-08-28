@@ -66,7 +66,7 @@ public class StageManager : MonoBehaviour
 
     private PlayerManager playerManager;
 
-    bool IsStageReady = false, IsStageEnd = false, StageClearedNMFirsttime = false;
+    bool IsStageReady = false, IsStageEnd = false, IsStageEndOverlayActive = false, StageClearedNMFirsttime = false;
 
     public virtual void Start()
     {
@@ -223,7 +223,7 @@ public class StageManager : MonoBehaviour
         if (!IsStageReady) return;
 
         Time.timeScale = 
-            IsStagePaused || playerManager.IsReadingSkillView || mapOverview.activeSelf
+            IsStagePaused || mainCamera.TriggerStopHit || playerManager.IsReadingSkillView || mapOverview.activeSelf || IsStageEndOverlayActive
             ? 0f 
             : isSlowing 
                 ? timeScaleSlow : 1f;
@@ -291,6 +291,7 @@ public class StageManager : MonoBehaviour
             {
                 IsStageStarted = false;
                 OnStageEnd(false);
+                FadeInResult(false);
                 yield break; // Exit the coroutine if player is dead
             }
 
@@ -299,6 +300,7 @@ public class StageManager : MonoBehaviour
             {
                 IsStageStarted = false;
                 OnStageEnd(playerManager.IsPlayerAlive);
+                FadeInResult(playerManager.IsPlayerAlive);
             }
         }
     }
@@ -338,8 +340,12 @@ public class StageManager : MonoBehaviour
             PlayerPrefs.SetString("CompletedLevels", string.Join(' ', CompletedLevels.ToArray()));
         }
 
-        StartCoroutine(FadeIn(resultIsWin));
         if (resultIsWin) CharacterPrefabsStorage.EnableChallengeMode = false;
+    }
+
+    void FadeInResult(bool resultIsWin)
+    {
+        StartCoroutine(FadeIn(resultIsWin));
     }
 
     IEnumerator FadeIn(bool resultIsWin)
@@ -358,6 +364,9 @@ public class StageManager : MonoBehaviour
             c += cJump;
             yield return new WaitForSecondsRealtime(cJump);
         }
+
+        canvasGroup.alpha = 1;
+        IsStageEndOverlayActive = true;
     }
 
     public void TogglePauseStage()
@@ -391,14 +400,42 @@ public class StageManager : MonoBehaviour
         SceneManager.LoadScene("Level_Selection");
     }
 
-    public void OnPlayerFumoPickup(PlayerBase player)
+    public void OnPlayerFumoPickup(PlayerBase player, Collider2D FumoObj)
     {
         if (StageCompleteConditionType != StageCompleteCondition.RETRIEVE_FUMO) return;
 
+        playerManager.enabled = FumoObj.enabled = false;
         player.isInvulnerable = true;
         EntityManager.Enemies.ForEach(e => { if (e) e.InstaKill(); });
-        IsStageStarted = false;
+        IsStageStarted = false; 
         OnStageEnd(true);
+        StartCoroutine(ZoomInFumo(FumoObj.gameObject));
+    }
+
+    IEnumerator ZoomInFumo(GameObject fumo)
+    {
+        SpriteRenderer sr = fumo.GetComponent<SpriteRenderer>();
+        sr.sortingLayerID = SortingLayer.NameToID("UI");
+        sr.sortingOrder = 100;
+
+        mainCamera.enabled = false;
+        Vector3 originalPosition = mainCamera.transform.position, 
+            fumoInitScale = fumo.transform.localScale,
+            fumoTargetScale = fumo.transform.localScale * 8.5f;
+        float c = 0, d = 2f, cJump = 0.02f;
+        while (c < d)
+        {
+            fumo.transform.position = Vector3.Lerp(fumo.transform.position, originalPosition, c * 1.0f / d);
+            fumo.transform.localScale = Vector3.Lerp(fumoInitScale, fumoTargetScale, c * 1.0f / d);
+            c += cJump;
+            yield return new WaitForSecondsRealtime(cJump);
+        }
+
+        fumo.transform.position = originalPosition;
+        fumo.transform.localScale = fumoTargetScale;
+
+        yield return new WaitForSecondsRealtime(0.5f);
+        FadeInResult(true);
     }
 
     public static void SpecialStageAddsOn(EntityBase entity)

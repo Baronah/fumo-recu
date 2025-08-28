@@ -321,6 +321,8 @@ public class PlayerManager : MonoBehaviour
         return '\0';
     }
 
+    public void OnPlayerAttacked(float strength) => mainCamera.StartCoroutine(mainCamera.Shake(strength));
+
     public void OnPlayerDeath()
     {
         IsPlayerAlive = false;
