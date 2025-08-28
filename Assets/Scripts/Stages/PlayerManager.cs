@@ -28,6 +28,8 @@ public class PlayerManager : MonoBehaviour
     public KeyCode ViewKey = KeyCode.V, SwapKey = KeyCode.Space, AttackKey = KeyCode.Z, SkillKey = KeyCode.A, SpecialKey = KeyCode.X;
 
     private PlayerBase player;
+    public PlayerBase activePlayer => player;
+
     [SerializeField] private float swapCooldownTimer = 0f;
     private float swapCurrentRotation = 0;
 

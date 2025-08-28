@@ -35,19 +35,17 @@ public class Wetwork : EnemyBase
 
     public override IEnumerator Attack()
     {
-        AtkAdd = (short)(bAtk * AtkPercentageUp_count);
-        atk += AtkAdd;
-
         yield return StartCoroutine(base.Attack());
-
     }
 
     public override IEnumerator OnAttackComplete()
     {
+        AtkAdd = (short)(bAtk * AtkPercentageUp_count);
+        atk += AtkAdd;
         if (sfxs[0]) sfxs[0].Play();
         yield return StartCoroutine(base.OnAttackComplete());
-        AtkPercentageUp_count = 0f;
         atk -= AtkAdd;
+        AtkPercentageUp_count = 0f;
     }
 
     public override void OnDeath()

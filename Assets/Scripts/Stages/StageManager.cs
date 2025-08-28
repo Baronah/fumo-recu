@@ -66,6 +66,7 @@ public class StageManager : MonoBehaviour
 
     private PlayerManager playerManager;
 
+
     bool IsStageReady = false, IsStageEnd = false, IsStageEndOverlayActive = false, StageClearedNMFirsttime = false;
 
     public virtual void Start()
@@ -404,7 +405,8 @@ public class StageManager : MonoBehaviour
     {
         if (StageCompleteConditionType != StageCompleteCondition.RETRIEVE_FUMO) return;
 
-        playerManager.enabled = FumoObj.enabled = false;
+        playerManager.enabled = playerManager.activePlayer.enabled = FumoObj.enabled = false;
+
         player.isInvulnerable = true;
         EntityManager.Enemies.ForEach(e => { if (e) e.InstaKill(); });
         IsStageStarted = false; 
@@ -414,27 +416,58 @@ public class StageManager : MonoBehaviour
 
     IEnumerator ZoomInFumo(GameObject fumo)
     {
-        SpriteRenderer sr = fumo.GetComponent<SpriteRenderer>();
-        sr.sortingLayerID = SortingLayer.NameToID("UI");
-        sr.sortingOrder = 100;
+        FumoScript fumoScript = fumo.GetComponent<FumoScript>();
+
+        BGM.clip = fumoScript.f_WinBGM;
+        BGM.loop = false;
+        BGM.Play();
+
+        fumoScript.OnFumoPickUp();
+        SpriteRenderer[] srs = fumo.GetComponentsInChildren<SpriteRenderer>();
+        Canvas fumoGlowCanvas = fumo.GetComponentInChildren<Canvas>(true);
+        RawImage fumoGlowImg = fumo.GetComponentInChildren<RawImage>(true);
+
+        foreach (var sr in srs)
+        {
+            sr.sortingLayerID = SortingLayer.NameToID("UI");
+        }
+        fumoGlowCanvas.sortingLayerID = SortingLayer.NameToID("UI");
 
         mainCamera.enabled = false;
+
+        yield return new WaitForSecondsRealtime(1.25f);
+
+        Transform fumoSpriteTransform = fumo.GetComponentInChildren<SpriteRenderer>().transform;
+
         Vector3 originalPosition = mainCamera.transform.position, 
             fumoInitScale = fumo.transform.localScale,
-            fumoTargetScale = fumo.transform.localScale * 8.5f;
-        float c = 0, d = 2f, cJump = 0.02f;
+            fumoTargetScale = new(18f, 18f);
+
+        Vector3 fumoGlowImgScale = fumoGlowImg.transform.localScale;    
+        float c = 0, d = 4.2f, cJump = 0.01f;
+        float rotateTimer = d * 0.55f;
+        float rotateDegreePerLoop = 360 * 2 / rotateTimer * cJump;
+
         while (c < d)
         {
+            if (c < rotateTimer) 
+                fumoSpriteTransform.Rotate(0, rotateDegreePerLoop, 0);
+            else
+                fumoSpriteTransform.rotation = Quaternion.Euler(Vector3.zero);
+
             fumo.transform.position = Vector3.Lerp(fumo.transform.position, originalPosition, c * 1.0f / d);
             fumo.transform.localScale = Vector3.Lerp(fumoInitScale, fumoTargetScale, c * 1.0f / d);
+            fumoGlowImg.transform.localScale = Vector3.Lerp(fumoGlowImgScale, fumoGlowImgScale * 10f, c * 1.0f / d);
+
             c += cJump;
             yield return new WaitForSecondsRealtime(cJump);
         }
 
         fumo.transform.position = originalPosition;
         fumo.transform.localScale = fumoTargetScale;
+        fumoGlowImg.transform.localScale = fumoGlowImgScale * 10f;
 
-        yield return new WaitForSecondsRealtime(0.5f);
+        yield return new WaitForSecondsRealtime(1f);
         FadeInResult(true);
     }
 

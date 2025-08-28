@@ -2258,7 +2258,9 @@ MonoBehaviour:
   m_text: 'Use arrow keys to move the camera.
 
     Use [Ctrl] + [Up/Down arrow key]
-    to zoom In/Out.'
+    to zoom In/Out.
+
+    Press ''M'' again to close this.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: b246c4190f4e46ec9352fe15a7b09ce0, type: 2}

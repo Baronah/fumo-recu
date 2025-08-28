@@ -152,4 +152,9 @@ public class PlayerBase : EntityBase
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(AttackPosition ? AttackPosition.position : transform.position, attackRange);
     }
+
+    private void OnDisable()
+    {
+        StopMovement();
+    }
 }
