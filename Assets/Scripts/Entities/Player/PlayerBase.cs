@@ -19,6 +19,7 @@ public class PlayerBase : EntityBase
 
     public override void InitializeComponents()
     {
+        if (IsComponentsInitialized) return;
         StageManager = FindObjectOfType<StageManager>();
         StageManager.OnPlayerSpawn(this);
 
@@ -29,6 +30,7 @@ public class PlayerBase : EntityBase
         playerManager.Register(this);
 
         StartCoroutine(InvulnerableOnSpawn());
+        IsComponentsInitialized = true;
     }
 
     IEnumerator InvulnerableOnSpawn()

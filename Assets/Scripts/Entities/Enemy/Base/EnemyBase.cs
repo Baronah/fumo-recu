@@ -63,6 +63,7 @@ public class EnemyBase : EntityBase
 
     protected PlayerBase SpottedPlayer, RecentlyScannedPlayer;
     protected bool IsGuarding = true;
+    public bool CanDetectThroughWalls = false;
     private short CurrentCheckpointIndex = 0;
 
     Coroutine MovelockoutCoroutine = null;
@@ -82,6 +83,8 @@ public class EnemyBase : EntityBase
 
     public override void InitializeComponents()
     {
+        if (IsComponentsInitialized) return;
+
         base.InitializeComponents();
 
         if (!ViewOnlyMode)
@@ -99,6 +102,8 @@ public class EnemyBase : EntityBase
         if (DetectionRange <= 0) DetectionRange = b_attackRange;
         WriteStats();
         if (!ViewOnlyMode && SpotPlayerUponSpawn) ForceSpotPlayer();
+
+        IsComponentsInitialized = true;
     }
 
     public virtual void AdjustChallengeModeAttributes() { }
@@ -608,10 +613,10 @@ public class EnemyBase : EntityBase
 
         if (!SpottedPlayer)
         {
-            if (!spottedViaAlert)
+            if (!spottedViaAlert && !CanDetectThroughWalls)
             {
                 float distance = Vector3.Distance(RecentlyScannedPlayer.transform.position, transform.position);
-                if (distance > Mathf.Max(110f, DetectionRange * 0.5f))
+                if (distance > Mathf.Max(120f, DetectionRange * 0.4f))
                 {
                     var checkObstacle = Physics2D.Raycast(
                         transform.position,

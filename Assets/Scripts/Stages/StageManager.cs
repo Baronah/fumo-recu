@@ -34,6 +34,7 @@ public class StageManager : MonoBehaviour
     [SerializeField] private float[] Waittimes;
 
     [SerializeField] private Image PauseButton, SlowImg;
+    [SerializeField] private Button o_QuitBtn, o_RetryBtn;
     [SerializeField] private Sprite PausedSprite, UnpausedSprite;
 
     private string LevelName;
@@ -292,7 +293,7 @@ public class StageManager : MonoBehaviour
             {
                 IsStageStarted = false;
                 OnStageEnd(false);
-                FadeInResult(false);
+                FadeInResult();
                 yield break; // Exit the coroutine if player is dead
             }
 
@@ -301,15 +302,23 @@ public class StageManager : MonoBehaviour
             {
                 IsStageStarted = false;
                 OnStageEnd(playerManager.IsPlayerAlive);
-                FadeInResult(playerManager.IsPlayerAlive);
+                FadeInResult();
             }
         }
     }
 
     public virtual void OnStageEnd(bool resultIsWin)
     {
+        PauseButton.gameObject.SetActive(false);
         IsStageEnd = true;
         FindObjectsOfType<EnemySpawnpointScript>().ToList().ForEach(e => e.enabled = false);
+        
+        TMP_Text text = pauseOverlay.GetComponentInChildren<TMP_Text>();
+        text.text = resultIsWin ?
+            (CharacterPrefabsStorage.EnableChallengeMode
+            ? "<color=#ff3b3b>Challenge Completed!</color>"
+            : "<color=green>Stage Completed!</color>")
+            : "<color=red>Defeated</color>";
 
         if (resultIsWin)
         {
@@ -317,6 +326,16 @@ public class StageManager : MonoBehaviour
             {
                 Destroy(item);
             }
+
+            if (StageClearedNMFirsttime)
+                text.text += "\n<size=39>Challenge Mode has been unlocked!</size>";
+            else if (CharacterPrefabsStorage.EnableChallengeMode)
+                text.text += "\n<size=42><color=#00ffb7>Omigod...</color></size>";
+            else if (StageCompleteConditionType == StageCompleteCondition.RETRIEVE_FUMO)
+                text.text += "\n<size=39><color=#00ffb7>Mint arknights fumo...</color></size>";
+
+            o_QuitBtn.transform.localPosition = new Vector3(0, o_QuitBtn.transform.localPosition.y);
+            o_RetryBtn.gameObject.SetActive(false);
 
             List<string> CompletedLevels = PlayerPrefs.GetString("CompletedLevels", string.Empty).Split(" ").ToList();
             if (CharacterPrefabsStorage.EnableChallengeMode)
@@ -344,16 +363,13 @@ public class StageManager : MonoBehaviour
         if (resultIsWin) CharacterPrefabsStorage.EnableChallengeMode = false;
     }
 
-    void FadeInResult(bool resultIsWin)
+    void FadeInResult()
     {
-        StartCoroutine(FadeIn(resultIsWin));
+        StartCoroutine(FadeIn());
     }
 
-    IEnumerator FadeIn(bool resultIsWin)
+    IEnumerator FadeIn()
     {
-        TMP_Text text = pauseOverlay.GetComponentInChildren<TMP_Text>();
-        text.text = resultIsWin ? "<color=green>Stage Completed</color>" : "<color=red>Defeated</color>";
-        if (StageClearedNMFirsttime && resultIsWin) text.text += "\n<size=39>Challenge Mode has been unlocked!</size>";
         CanvasGroup canvasGroup = pauseOverlay.GetComponent<CanvasGroup>();
         canvasGroup.alpha = 0;
         pauseOverlay.SetActive(true);
@@ -414,61 +430,70 @@ public class StageManager : MonoBehaviour
         StartCoroutine(ZoomInFumo(FumoObj.gameObject));
     }
 
-    IEnumerator ZoomInFumo(GameObject fumo)
+    IEnumerator ZoomInFumo(GameObject fumoObj)
     {
-        FumoScript fumoScript = fumo.GetComponent<FumoScript>();
+        var stageCompletedText = pauseOverlay.GetComponentInChildren<TMP_Text>();
+        stageCompletedText.transform.position += new Vector3(0, 200);
+
+        o_QuitBtn.transform.localScale *= 0.8f;
+        o_QuitBtn.transform.position -= new Vector3(0, 220);
+
+        FumoScript fumoScript = fumoObj.GetComponent<FumoScript>();
+        var fumo = fumoScript.Fumo;
 
         BGM.clip = fumoScript.f_WinBGM;
         BGM.loop = false;
         BGM.Play();
 
-        fumoScript.OnFumoPickUp();
-        SpriteRenderer[] srs = fumo.GetComponentsInChildren<SpriteRenderer>();
-        Canvas fumoGlowCanvas = fumo.GetComponentInChildren<Canvas>(true);
-        RawImage fumoGlowImg = fumo.GetComponentInChildren<RawImage>(true);
-
-        foreach (var sr in srs)
-        {
-            sr.sortingLayerID = SortingLayer.NameToID("UI");
-        }
-        fumoGlowCanvas.sortingLayerID = SortingLayer.NameToID("UI");
+        Vector3 fumoCurrentPostition = fumoScript.OnFumoPickUp();
+        RawImage fumoGlowImg = fumoObj.GetComponentInChildren<RawImage>(true);
 
         mainCamera.enabled = false;
+        yield return new WaitForSecondsRealtime(1.5f);
 
-        yield return new WaitForSecondsRealtime(1.25f);
-
-        Transform fumoSpriteTransform = fumo.GetComponentInChildren<SpriteRenderer>().transform;
-
-        Vector3 originalPosition = mainCamera.transform.position, 
+        Transform fumoSpriteTransform = fumo.transform;
+        Vector3
             fumoInitScale = fumo.transform.localScale,
-            fumoTargetScale = new(18f, 18f);
+            fumoTargetScale = new(5.5f, 5.5f);
 
-        Vector3 fumoGlowImgScale = fumoGlowImg.transform.localScale;    
+        Vector3 fumoGlowImgScale = fumoGlowImg.transform.localScale,
+                fumoGlowImgTargetScale = fumoGlowImgScale * 50f;
+
         float c = 0, d = 4.2f, cJump = 0.01f;
-        float rotateTimer = d * 0.55f;
-        float rotateDegreePerLoop = 360 * 2 / rotateTimer * cJump;
+        float rotateTimer = d * 0.75f;
+        float rotateDegreePerLoop = 360 * 3 / rotateTimer * cJump;
+
+        // Get screen center for lerping to center
+        Vector3 screenCenter = new Vector3(Screen.width / 2f, Screen.height / 2f, 0);
 
         while (c < d)
         {
-            if (c < rotateTimer) 
+            /*
+            if (c < rotateTimer)
                 fumoSpriteTransform.Rotate(0, rotateDegreePerLoop, 0);
             else
                 fumoSpriteTransform.rotation = Quaternion.Euler(Vector3.zero);
+            */
 
-            fumo.transform.position = Vector3.Lerp(fumo.transform.position, originalPosition, c * 1.0f / d);
+            // Lerp from current screen position to screen center
+            Vector3 currentScreenPos = Vector3.Lerp(fumoCurrentPostition, screenCenter, c * 1.0f / d);
+            fumoGlowImg.transform.position = fumo.transform.position = currentScreenPos;
+
             fumo.transform.localScale = Vector3.Lerp(fumoInitScale, fumoTargetScale, c * 1.0f / d);
-            fumoGlowImg.transform.localScale = Vector3.Lerp(fumoGlowImgScale, fumoGlowImgScale * 10f, c * 1.0f / d);
+            fumoGlowImg.transform.localScale = Vector3.Lerp(fumoGlowImgScale, fumoGlowImgTargetScale, c * 1.0f / d);
 
             c += cJump;
             yield return new WaitForSecondsRealtime(cJump);
         }
 
-        fumo.transform.position = originalPosition;
+        fumo.transform.localPosition = Vector3.zero;
         fumo.transform.localScale = fumoTargetScale;
-        fumoGlowImg.transform.localScale = fumoGlowImgScale * 10f;
+        fumoGlowImg.transform.localScale = fumoGlowImgTargetScale;
 
-        yield return new WaitForSecondsRealtime(1f);
-        FadeInResult(true);
+        fumoScript.FumoZoomInComplete();
+
+        yield return new WaitForSecondsRealtime(2f);
+        FadeInResult();
     }
 
     public static void SpecialStageAddsOn(EntityBase entity)

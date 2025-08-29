@@ -7782,8 +7782,8 @@ MonoBehaviour:
   - If the sun is way too far from reach, might as well making your own.\n<color=yellow>Swap
     cool-down is halved in this level.</color>
   - '"You see, life is all about turning back."\n<color=yellow>Your units have increased
-    MSPD in this level.</color>\n<color=red>The Sudarim are immune to damage from
-    Originium Pollutions.</color>'
+    max HP and MSPD in this level.</color>\n<color=red>The ''Sudarim'' are immune
+    to damage from Originium Pollutions.</color>'
   ChallengeModes:
   - Terrains and enemies will differ in places, and more enemies will appear.
   - Bloodboil Knightclub Elite's ability stacks twice as fast. All enemies have increased
@@ -7794,7 +7794,7 @@ MonoBehaviour:
     increased ASPD.
   - Some 'Originium Pollutions' will appear beforehand. 'Sudarim' are immune to damage
     from 'Originium Pollution'.
-  - '''Sentinels'' have greatly increased HP.'
+  - One 'Sudaram' has different starting position.
   CompleteCondition: 010000000100000000000000010000000000000001000000
   Environments:
   - Environments: 00000000

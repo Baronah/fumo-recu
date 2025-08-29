@@ -5024,7 +5024,7 @@ MonoBehaviour:
   res: 50
   ASPD: 100
   moveSpeed: 150
-  attackRange: 115
+  attackRange: 110
   attackWindupTime: 0.48
   attackInterval: 3
   IsFreezeImmune: 0
@@ -5042,7 +5042,9 @@ MonoBehaviour:
   DamagePopup: {fileID: 7498904281893358320, guid: b09dfacba160b6d47938cf47f8dea3c9, type: 3}
   ccBar: {fileID: 3483630152131767987}
   AttackAnimation: {fileID: 7400000, guid: 3d57bdd9bab37a64fb086ac50f47c812, type: 2}
-  sfxs: []
+  sfxs:
+  - {fileID: 6578555615704739346}
+  - {fileID: -760533550074903822}
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 1
   enemyCode: 12
@@ -5082,7 +5084,7 @@ MonoBehaviour:
   MoveToOverridePositionSpeedMultiplier: 1.25
   MoveToOverridePositionSpeedMultiplierJump: 0.35
   originiumPollutionEffect: {fileID: 1025464345471623337}
-  originiumPollutionBonusASPD: 40
+  originiumPollutionBonusASPD: 60
   originiumPollutionDamageMultiplier: 0.4
 --- !u!82 &6578555615704739346
 AudioSource:

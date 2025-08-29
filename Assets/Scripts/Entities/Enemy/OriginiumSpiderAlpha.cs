@@ -46,7 +46,7 @@ public class OriginiumSpiderAlpha : EnemyBase
 
     IEnumerator Explode()
     {
-        float targetRadius = explosionRadius * 2.1f;
+        float targetRadius = explosionRadius * 2.15f;
 
         ExplosionRangeIndicator_Outer.GetComponent<RectTransform>().sizeDelta = new Vector2(
             targetRadius,
@@ -157,8 +157,8 @@ public class OriginiumSpiderAlpha : EnemyBase
         Description = "A spider-like creature that has assimilated into the Originium.";
         Skillset =
             "• Explodes upon death, dealing true damage in an area around self and creates an <color=#CC4000>Originium Pollution</color> on the spot.\n" +
-            "• Will be instantly defeated when coming into contact with a <color=#CC4000>Originium Pollution</color>, " +
-            "causing a stronger explosion and spreading <color=#CC4000>Originium Pollution</color> to its nearby tiles.";
+            "• Will be instantly defeated when coming into contact with an <color=#CC4000>Originium Pollution</color>, " +
+            "causing a stronger explosion and spreading the pollution to its nearby tiles.";
         TooltipsDescription = "Explodes upon death, dealing true damage " +
             "and creates an <color=#CC4000>Originium Pollution</color> on the spot. " +
             "Will be instantly defeated upon taking damage from <color=#CC4000>Originium Pollution</color>, " +

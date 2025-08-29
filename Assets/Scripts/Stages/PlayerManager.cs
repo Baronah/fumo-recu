@@ -56,7 +56,11 @@ public class PlayerManager : MonoBehaviour
     Coroutine AttackCooldownCoroutine, SkillCooldownCoroutine, SpecialCooldownCoroutine;
 
     private bool IsStageStarted = false;
-    private AudioSource swapSfx;
+    private List<AudioSource> sfxs;
+    
+    private AudioSource swapSfx => sfxs[0];
+    private AudioSource hit_01_sfx => sfxs[1];
+    private AudioSource hit_02_sfx => sfxs[2];
 
     private void Awake()
     {
@@ -65,7 +69,8 @@ public class PlayerManager : MonoBehaviour
 
     private void Start()
     {
-        swapSfx = GetComponents<AudioSource>().ElementAt(1);
+        sfxs = GetComponents<AudioSource>().ToList();
+        sfxs.Remove(sfxs.ElementAt(0)); // Remove the music audio source
 
         SwapPlayer();
 
@@ -319,11 +324,22 @@ public class PlayerManager : MonoBehaviour
             return shift ? shifted[index] : normal[index];
         }
 
-        // Add more mappings here as needed (symbols, punctuation, etc.)
         return '\0';
     }
 
-    public void OnPlayerAttacked(float strength) => mainCamera.StartCoroutine(mainCamera.Shake(strength));
+    public DamageInstance OnPlayerDamageTarget(PlayerBase player, DamageInstance dmg, EntityBase target)
+    {
+        if (!player || !player.IsAlive()) return dmg;
+        return dmg;
+    }
+
+    public void OnPlayerAttacked(float strength)
+    {
+        if (strength >= 0.8f) hit_02_sfx.Play();
+        else hit_01_sfx.Play();
+
+        mainCamera.StartCoroutine(mainCamera.Shake(strength));
+    }
 
     public void OnPlayerDeath()
     {

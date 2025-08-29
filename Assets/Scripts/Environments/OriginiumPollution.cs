@@ -93,6 +93,22 @@ public class OriginiumPollution : MonoBehaviour
         }
     }
 
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (!collision) return;
+
+        EntityBase entityBase = collision.GetComponent<EntityBase>();
+        if (!entityBase || !entityBase.IsAlive() || entitiesWithin.Contains(entityBase)) return;
+        if (collision.isTrigger && collision.GetComponent<PlayerBase>()) return;
+
+        entitiesWithin.Add(entityBase);
+
+        if (entityBase is Sudaram s)
+        {
+            s.OnOriginiumPollutionEnter();
+        }
+    }
+
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (!collision) return;

@@ -81,6 +81,8 @@ public class EntityBase : MonoBehaviour
     protected Coroutine AttackCoroutine = null, LockoutMovementOnAttackCoroutine = null;
     protected Animation attackAnimation;
 
+    protected bool IsComponentsInitialized = false;
+
     public virtual bool CanAttack =>
         attackPattern != AttackPattern.NONE &&
         !IsFrozen &&
@@ -350,6 +352,8 @@ public class EntityBase : MonoBehaviour
 
     public void ShowDamageDealt(DamageInstance damage)
     {
+        if (damage.TotalDamage == 0) return;
+
         string dmgTxt = string.Empty;
 
         bool hasMoreThanOneDamageType = false;

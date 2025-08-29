@@ -11,10 +11,19 @@ public class Sudaram : EnemyBase
     private bool Enhanced = false;
     private float b_detectionRange;
 
+    private static float a_audioPlayLockout = 0f, e_audioPlayLockout = 0f;
+
     public override void Start()
     {
         originiumPollutionEffect.Stop();
         base.Start();
+    }
+
+    public override void FixedUpdate()
+    {
+        base.FixedUpdate();
+        if (a_audioPlayLockout > 0) a_audioPlayLockout -= Time.unscaledDeltaTime;
+        if (e_audioPlayLockout > 0) e_audioPlayLockout -= Time.unscaledDeltaTime;
     }
 
     public override void Move()
@@ -25,10 +34,15 @@ public class Sudaram : EnemyBase
 
     public void OnOriginiumPollutionEnter()
     { 
-        if (Enhanced) return;
+        if (Enhanced || !IsComponentsInitialized) return;
 
-        if (sfxs[1]) sfxs[1].Play();
+        if (e_audioPlayLockout <= 0 && sfxs[1])
+        {
+            sfxs[1].Play();
+            e_audioPlayLockout = 0.25f;
+        }
 
+        CanDetectThroughWalls = true;
         originiumPollutionEffect.Play();
         ASPD += originiumPollutionBonusASPD;
         b_detectionRange = DetectionRange;
@@ -42,6 +56,7 @@ public class Sudaram : EnemyBase
     {
         if (!Enhanced) return;
 
+        CanDetectThroughWalls = false;
         originiumPollutionEffect.Stop();
         ASPD -= originiumPollutionBonusASPD;
         Enhanced = false;
@@ -60,7 +75,11 @@ public class Sudaram : EnemyBase
     {
         if (!CanAttack) yield break;
 
-        if (sfxs[0]) sfxs[0].Play();
+        if (a_audioPlayLockout <= 0 && sfxs[0])
+        {
+            sfxs[0].Play();
+            a_audioPlayLockout = 0.25f;
+        }
 
         if (Enhanced)
         {

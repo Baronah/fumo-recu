@@ -28,8 +28,8 @@ public class CameraMovement : MonoBehaviour
         if (targetTransform == null || isShaking) return;
 
         Vector3 finalPosition = targetTransform.position + offset;
-        transform.position = Vector3.Lerp(transform.position, finalPosition, moveTime * Time.deltaTime);
-        camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, size, moveTime * Time.deltaTime);
+        transform.position = Vector3.Lerp(transform.position, finalPosition, moveTime * Time.unscaledDeltaTime);
+        camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, size, moveTime * Time.unscaledDeltaTime);
     }
 
     public IEnumerator MoveShowcases(float showcaseSize, Transform[] points, float[] waittimes)
