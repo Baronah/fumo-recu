@@ -147,7 +147,27 @@ public class StageManager : MonoBehaviour
 
     public virtual void OnPlayerSpawn(PlayerBase player)
     {
+        GetPlayerBonusSkills(player);
+    }
 
+    void GetPlayerBonusSkills(PlayerBase player)
+    {
+        foreach (var skill in CharacterPrefabsStorage.Skills)
+        {
+            switch (skill)
+            {
+                case SkillTree_Manager.SkillName.WINGED_STEPS_A:
+                    player.b_moveSpeed += player.b_moveSpeed * 0.3f;
+                    break;
+                case SkillTree_Manager.SkillName.WINGED_STEPS_B:
+                    player.ASPD += 30;
+                    break;
+                case SkillTree_Manager.SkillName.WINGED_STEPS_C:
+                    player.b_moveSpeed += player.b_moveSpeed * 0.15f;
+                    player.ASPD += 15;
+                    break;
+            }
+        }
     }
 
     private IEnumerator LoadRequiredPrefabs()
@@ -409,6 +429,7 @@ public class StageManager : MonoBehaviour
         EnemySpawnpointScript.OnStageRetry();
         CharacterPrefabsStorage.EnemyPrefabs.Clear();
         CharacterPrefabsStorage.PlayerPrefabs.Clear();
+        CharacterPrefabsStorage.Skills.Clear();
         CharacterPrefabsStorage.EnableChallengeMode = false;
 
         IsFirstTimeStageEnter = true;
