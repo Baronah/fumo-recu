@@ -18,12 +18,15 @@ public class SkillTree_Manager : MonoBehaviour
         WINGED_STEPS_A,
         WINGED_STEPS_B,
         WINGED_STEPS_C,
+        GEOGOLIST_A,
+        GEOGOLIST_B,
+        GEOGOLIST_C,
         WINDBLOW_NORTH,
         WINDBLOW_SOUTH,
     }
 
     public static SkillTree_Manager Instance;
-    private SkillTree_SkillComponent selectedSkill;
+    private HashSet<SkillTree_SkillComponent> selectedSkill = new();
     [SerializeField] private Image skillIconImage;
     [SerializeField] private TMP_Text skillNameText, skillDetailsText;
     [SerializeField] private GameObject skillDetailsPanel;
@@ -45,40 +48,42 @@ public class SkillTree_Manager : MonoBehaviour
 
     public void OnSkillSelected(SkillTree_SkillComponent skill)
     {
-        if (selectedSkill == skill)
+        if (selectedSkill.Contains(skill))
         {
-            DeselectSkill();
+            DeselectSkill(skill);
             return;
         }
 
-        selectedSkill = skill;
-        HighlightSelectedSkill();
-        ShowSkillDetails();
+        selectedSkill.Add(skill);
+        HighlightSelectedSkill(skill);
+        ShowSkillDetails(skill);
     }
 
-    private void DeselectSkill()
+    private void DeselectSkill(SkillTree_SkillComponent skill)
     {
-        selectedSkill.OnDeselect_SetMutuallyExclusive();
-        selectedSkill = null;
+        skill.OnDeselect_SetMutuallyExclusive();
+        selectedSkill.Remove(skill);
         skillDetailsPanel.SetActive(false);
         skillDetailsText.text = skillNameText.text = "";
         skillIconImage.sprite = null;
     }
 
-    private void HighlightSelectedSkill()
+    private void HighlightSelectedSkill(SkillTree_SkillComponent skill )
     {
         // Logic to highlight the selected skill
         // e.g., change button color, add outline, etc.
     }
 
-    private void ShowSkillDetails()
+    private void ShowSkillDetails(SkillTree_SkillComponent skill)
     {
-        if (selectedSkill == null) return;
+        if (!selectedSkill.Contains(skill)) return;
 
-        selectedSkill.SetMutuallyExclusive();
+        var exclusiveSkills = skill.SetMutuallyExclusive();
+        selectedSkill.ExceptWith(allSkills.Where(s => exclusiveSkills.Contains(s.skillName)));
+
         skillDetailsPanel.SetActive(true);
-        skillDetailsText.text = selectedSkill.skillDescription;
-        skillNameText.text = selectedSkill.skillNameText;
-        skillIconImage.sprite = selectedSkill.skillIcon;
+        skillDetailsText.text = skill.skillDescription;
+        skillNameText.text = skill.skillNameText;
+        skillIconImage.sprite = skill.skillIcon;
     }
 }

@@ -29,7 +29,7 @@ public class SkillTree_SkillComponent : MonoBehaviour
         SkillTree_Manager.Instance.OnSkillSelected(this);
     }
 
-    public void SetMutuallyExclusive()
+    public SkillName[] SetMutuallyExclusive()
     {
         skillIconImage.color = Color.white;
         foreach (var skill in mutuallyExclusiveSkills)
@@ -38,10 +38,12 @@ public class SkillTree_SkillComponent : MonoBehaviour
             if (skillComponent != null)
             {
                 var grayScale = skillComponent.skillIconImage.color;
-                grayScale = new Color(0.35f, 0.35f, 0.35f);
+                grayScale = new Color(0.2f, 0.2f, 0.2f);
                 skillComponent.skillIconImage.color = grayScale;
             }
         }
+
+        return mutuallyExclusiveSkills;
     }
 
     public void OnDeselect_SetMutuallyExclusive()
