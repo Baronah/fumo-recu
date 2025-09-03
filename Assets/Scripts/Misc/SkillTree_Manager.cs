@@ -6,10 +6,13 @@ using UnityEngine.UI;
 
 public class SkillTree_Manager : MonoBehaviour
 {
+    [SerializeField] GameObject SkillHighlight;
+
     public enum SkillType
     {
-        PASSIVE,
-        ACTIVE,
+        SENSES,
+        TECHS,
+        SPECS,
     }
 
     public enum SkillName
@@ -21,17 +24,48 @@ public class SkillTree_Manager : MonoBehaviour
         GEOGOLIST_A,
         GEOGOLIST_B,
         GEOGOLIST_C,
+        EQUIPMENT_BLADE,
+        EQUIPMENT_SCOPE,
+        EQUIPMENT_RADIO,
+        EQUIPMENT_PROVISIONS,
+        DASH_HASTEN,
+        DASH_LETHAL,
+        DASH_FAITH,
         WINDBLOW_NORTH,
         WINDBLOW_SOUTH,
+        FREEZE_TIMEUP,
+        FREEZE_CHARGE,
+        FREEZE_SUPERCONDUCT,
+        OBSCURE_VISION,
+        GRAVITY,
     }
 
     public static SkillTree_Manager Instance;
-    private HashSet<SkillTree_SkillComponent> selectedSkill = new();
+    [SerializeField] private GameObject TickOverlay;
+
     [SerializeField] private Image skillIconImage;
+    Sprite defaultSkillIcon;
+
     [SerializeField] private TMP_Text skillNameText, skillDetailsText;
+    string defaultSkillName, defaultSkillDetailsText;
+
     [SerializeField] private GameObject skillDetailsPanel;
 
-    public List<SkillTree_SkillComponent> allSkills;
+    [HideInInspector] public List<SkillTree_SkillComponent> allSkills;
+    private SkillTree_SkillComponent selectingSkill;
+    private HashSet<SkillName> exclusions = new();
+
+    Image SkillViewPanelImg;
+    Image[] TechImgs;
+
+    [SerializeField] Button SelectButton, OkButton;
+    [SerializeField] private short MaxSkillCount = 2;   
+
+    [SerializeField] Color 
+          IdleColor = new(0.35f, 0.35f, 0.35f),
+          SpecsSkillViewPanelColor = new(0.57f, 0.51f, 0), 
+          SensesSkillViewPanelColor = new(0, 0.59f, 0.65f),
+          TechsSkillViewPanelColor = new(0.57f, 0, 0.8f);
 
     private void Awake()
     {
@@ -39,6 +73,22 @@ public class SkillTree_Manager : MonoBehaviour
         {
             Instance = this;
             allSkills = FindObjectsOfType<SkillTree_SkillComponent>().ToList();
+            allSkills.ForEach(skill =>
+            {
+                Instantiate(TickOverlay, skill.transform.position, Quaternion.identity, skill.transform);
+                skill.OnTickOverlayCreated();
+            });
+
+            SkillViewPanelImg = skillDetailsPanel.GetComponent<Image>();
+            defaultSkillIcon = skillIconImage.sprite;
+            defaultSkillName = skillNameText.text;
+            defaultSkillDetailsText = skillDetailsText.text;
+
+            TechImgs = Techs.GetComponentsInChildren<Image>();
+            for (int i = 0; i < TechImgs.Length; i++)
+            {
+                TechImgs[i].gameObject.SetActive(MaxSkillCount >= (i + 1));
+            }
         }
         else
         {
@@ -46,44 +96,113 @@ public class SkillTree_Manager : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        OkButton.interactable = CharacterPrefabsStorage.Skills.Count > 0;
+        SelectButton.interactable = selectingSkill && CharacterPrefabsStorage.Skills.Count < MaxSkillCount;
+    }
+
     public void OnSkillSelected(SkillTree_SkillComponent skill)
     {
-        if (selectedSkill.Contains(skill))
+        allSkills.ForEach(s => { if (!exclusions.Contains(s.skillName)) s.OnSkillClear(); });
+
+        if (selectingSkill == skill)
         {
+            selectingSkill = null;
             DeselectSkill(skill);
             return;
         }
 
-        selectedSkill.Add(skill);
-        HighlightSelectedSkill(skill);
+        selectingSkill = skill;
         ShowSkillDetails(skill);
     }
 
     private void DeselectSkill(SkillTree_SkillComponent skill)
     {
-        skill.OnDeselect_SetMutuallyExclusive();
-        selectedSkill.Remove(skill);
-        skillDetailsPanel.SetActive(false);
-        skillDetailsText.text = skillNameText.text = "";
-        skillIconImage.sprite = null;
-    }
+        SkillHighlight.SetActive(false);
 
-    private void HighlightSelectedSkill(SkillTree_SkillComponent skill )
-    {
-        // Logic to highlight the selected skill
-        // e.g., change button color, add outline, etc.
+        skill.ResetMutuallyExclusive();
+        
+        skillDetailsText.text = defaultSkillDetailsText;
+        skillNameText.text = defaultSkillName;
+        skillIconImage.sprite = defaultSkillIcon;
+
+        SkillViewPanelImg.color = IdleColor;
     }
 
     private void ShowSkillDetails(SkillTree_SkillComponent skill)
     {
-        if (!selectedSkill.Contains(skill)) return;
+        if (!selectingSkill) return;
 
-        var exclusiveSkills = skill.SetMutuallyExclusive();
-        selectedSkill.ExceptWith(allSkills.Where(s => exclusiveSkills.Contains(s.skillName)));
+        SkillHighlight.transform.position = skill.transform.position;
+        SkillHighlight.SetActive(true);
 
-        skillDetailsPanel.SetActive(true);
+        skill.SetMutuallyExclusive();
+
+        SkillViewPanelImg.color = skill.skillType switch
+        {
+            SkillType.SENSES => SensesSkillViewPanelColor,
+            SkillType.TECHS => TechsSkillViewPanelColor,
+            SkillType.SPECS => SpecsSkillViewPanelColor,
+            _ => IdleColor,
+        };
+
         skillDetailsText.text = skill.skillDescription;
         skillNameText.text = skill.skillNameText;
         skillIconImage.sprite = skill.skillIcon;
+    }
+
+    public void ConfirmSkillSelect()
+    {
+        if (selectingSkill == null) return;
+        exclusions = selectingSkill.OnSkillSelected(exclusions);
+        selectingSkill.Button.interactable = false;
+        selectingSkill = null;
+        SkillHighlight.SetActive(false);
+
+        OnSelect_Update();
+    }
+
+    public void Clear()
+    {
+        CharacterPrefabsStorage.Skills.Clear();
+
+        exclusions.Clear();
+        allSkills.ForEach(s => s.OnSkillClear());
+        selectingSkill = null;
+        SkillHighlight.SetActive(false);
+
+        skillDetailsText.text = defaultSkillDetailsText;
+        skillNameText.text = defaultSkillName;
+        skillIconImage.sprite = defaultSkillIcon;
+
+        SkillViewPanelImg.color = IdleColor;
+
+        OnSelect_Update();
+    }
+
+    [SerializeField] GameObject Techs;
+    public void OnSelect_Update()
+    {
+        foreach (var item in TechImgs)
+        {
+            item.sprite = defaultSkillIcon;
+        }
+
+        short cnt = 0;
+        foreach (var item in CharacterPrefabsStorage.Skills)
+        {
+            TechImgs[cnt].sprite = item.Value;
+            cnt++;
+        }
+
+        if (CharacterPrefabsStorage.Skills.Count >= MaxSkillCount)
+            allSkills.ForEach (s => s.Button.interactable = false);
+    }
+
+    public void ForceQuit()
+    {
+        Clear();
+        gameObject.SetActive(false);
     }
 }

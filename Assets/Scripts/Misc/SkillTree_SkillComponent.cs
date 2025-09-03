@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using static SkillTree_Manager;
 
 public class SkillTree_SkillComponent : MonoBehaviour
 {
+
     public SkillType skillType;
     public SkillName skillName;
 
@@ -14,7 +17,11 @@ public class SkillTree_SkillComponent : MonoBehaviour
     public SkillName[] mutuallyExclusiveSkills;
 
     private Button selfButton;
+    public Button Button => selfButton;
+
     private Image skillIconImage;
+
+    public Transform Overlay;
 
     private void Awake()
     {
@@ -22,6 +29,16 @@ public class SkillTree_SkillComponent : MonoBehaviour
         skillIconImage = GetComponent<Image>();
 
         selfButton.onClick.AddListener(OnSkillButtonClicked);
+        var colors = selfButton.colors;
+        colors.disabledColor = new(0.35f, 0.35f, 0.35f);
+        
+        selfButton.colors = colors;
+    }
+
+    public void OnTickOverlayCreated()
+    {
+        Overlay = transform.Find("TickOverlay(Clone)");
+        Overlay.gameObject.SetActive(false);
     }
 
     public void OnSkillButtonClicked()
@@ -37,25 +54,71 @@ public class SkillTree_SkillComponent : MonoBehaviour
             var skillComponent = SkillTree_Manager.Instance.allSkills.Find(s => s.skillName == skill);
             if (skillComponent != null)
             {
-                var grayScale = skillComponent.skillIconImage.color;
-                grayScale = new Color(0.2f, 0.2f, 0.2f);
-                skillComponent.skillIconImage.color = grayScale;
+                skillComponent.skillIconImage.color = new(0.5f, 0.5f, 0.5f);
             }
         }
 
         return mutuallyExclusiveSkills;
     }
 
-    public void OnDeselect_SetMutuallyExclusive()
+    public void ResetMutuallyExclusive()
     {
         skillIconImage.color = Color.white;
         foreach (var skill in mutuallyExclusiveSkills)
         {
             var skillComponent = SkillTree_Manager.Instance.allSkills.Find(s => s.skillName == skill);
-            if (skillComponent != null)
+            if (!skillComponent) continue;
+
+            if (CharacterPrefabsStorage.Skills.ContainsKey(skillComponent.skillName))
+                skillComponent.selfButton.interactable = false;
+            else
             {
                 skillComponent.skillIconImage.color = Color.white;
+                skillComponent.selfButton.interactable = true;
             }
         }
+    }
+
+    private void FixedUpdate()
+    {
+        if (selfButton)
+        {
+            var colors = selfButton.colors;
+            colors.disabledColor = CharacterPrefabsStorage.Skills.ContainsKey(skillName)
+                ? Color.white
+                : new(0.35f, 0.35f, 0.35f);
+        }
+
+        if (Overlay == null) return;
+        Overlay.gameObject.SetActive(CharacterPrefabsStorage.Skills.ContainsKey(skillName));
+    }
+
+    public HashSet<SkillName> OnSkillSelected(HashSet<SkillName> existings)
+    {
+        selfButton.interactable = false;
+        foreach (var skill in mutuallyExclusiveSkills)
+        {
+            var skillComponent = SkillTree_Manager.Instance.allSkills.Find(s => s.skillName == skill);
+            if (skillComponent == null) continue;
+            skillComponent.selfButton.interactable = false;
+        }
+
+        CharacterPrefabsStorage.Skills.Add(skillName, skillIcon);
+        foreach (var item in CharacterPrefabsStorage.Skills)
+        {
+            if (mutuallyExclusiveSkills.Contains(item.Key))
+                CharacterPrefabsStorage.Skills.Remove(item.Key);
+        }
+
+        existings.AddRange(mutuallyExclusiveSkills);
+        return existings;
+    }
+
+    public void OnSkillClear()
+    {
+        if (CharacterPrefabsStorage.Skills.ContainsKey(skillName)) return;
+
+        selfButton.interactable = true;
+        skillIconImage.color = Color.white;
     }
 }

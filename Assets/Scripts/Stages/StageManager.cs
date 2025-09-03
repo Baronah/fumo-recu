@@ -154,17 +154,22 @@ public class StageManager : MonoBehaviour
     {
         foreach (var skill in CharacterPrefabsStorage.Skills)
         {
-            switch (skill)
+            switch (skill.Key)
             {
                 case SkillTree_Manager.SkillName.WINGED_STEPS_A:
-                    player.b_moveSpeed += player.b_moveSpeed * 0.3f;
+                    player.b_moveSpeed += player.b_moveSpeed * 0.2f;
                     break;
                 case SkillTree_Manager.SkillName.WINGED_STEPS_B:
-                    player.ASPD += 30;
+                    player.ASPD += 25;
                     break;
-                case SkillTree_Manager.SkillName.WINGED_STEPS_C:
-                    player.b_moveSpeed += player.b_moveSpeed * 0.15f;
-                    player.ASPD += 15;
+                case SkillTree_Manager.SkillName.EQUIPMENT_BLADE:
+                    player.bAtk += (short) (player.bAtk * 0.2f);
+                    break;
+                case SkillTree_Manager.SkillName.EQUIPMENT_SCOPE:
+                    player.b_attackRange *= 1.2f; 
+                    break;
+                case SkillTree_Manager.SkillName.EQUIPMENT_PROVISIONS:
+                    player.mHealth += (int)(player.mHealth * 0.2f); 
                     break;
             }
         }
