@@ -72,6 +72,7 @@ public class PlayerManager : MonoBehaviour
         sfxs = GetComponents<AudioSource>().ToList();
         sfxs.Remove(sfxs.ElementAt(0)); // Remove the music audio source
 
+        GetPlayerSkills();
         SwapPlayer();
 
         mainCamera = FindObjectOfType<CameraMovement>();
@@ -117,6 +118,15 @@ public class PlayerManager : MonoBehaviour
         else if (Input.GetKeyDown(ViewKey))
         {
             ViewSkill();
+        }
+    }
+
+    public void GetPlayerSkills()
+    {
+        var skills = CharacterPrefabsStorage.Skills.Select(x => x.Key).ToHashSet();
+        if (skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_RADIO))
+        {
+            SwapCooldown *= 0.85f;
         }
     }
 

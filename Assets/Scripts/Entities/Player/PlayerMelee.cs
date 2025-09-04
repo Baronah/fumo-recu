@@ -1,5 +1,7 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMelee : PlayerBase
@@ -19,13 +21,25 @@ public class PlayerMelee : PlayerBase
     [SerializeField] private float AtkBoost = 0.25f;
     [SerializeField] private float SpeedBoost = 0.35f;
 
-    private bool IsSkillActive = false, CanUseSkill = true, CanUseDash = true;
+    private bool IsSkillActive = false, IsDashing = false, CanUseSkill = true, CanUseDash = true;
     private short atkAdd, defAdd, resAdd, speedAdd;
+
+    private HashSet<EntityBase> EnemyHitByDash = new HashSet<EntityBase>();
 
     public override void FixedUpdate()
     {
         base.FixedUpdate();
         SkillEffect.SetActive(IsSkillActive && IsAlive());
+    }
+
+    public override void GetBonusSkill()
+    {
+        base.GetBonusSkill();
+        if (Skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_RADIO))
+        {
+            DashCooldown *= 0.85f;
+            SkillCooldown *= 0.85f;
+        }
     }
 
     protected override void GetControlInputs()
@@ -66,15 +80,34 @@ public class PlayerMelee : PlayerBase
         CanUseSkill = true;
     }
 
+    public float GetDashDistance()
+    {
+        float distance = DashSpeed + moveSpeed * 5f;
+        if (Skills.Contains(SkillTree_Manager.SkillName.DASH_HASTEN))
+        {
+            distance *= 1.65f;
+        }
+
+        return distance;
+    }
+
     IEnumerator Dash()
     {
         if (!CanUseDash) yield break;
+
+        IsDashing = true;
 
         StartCoroutine(DashLockout());
         StartCoroutine(StartMovementLockout(DashDuration));
         StartCoroutine(StartAttackLockout(DashDuration));
 
-        isInvulnerable = true;
+        float invulDuration = DashDuration * 2f;
+        if (Skills.Contains(SkillTree_Manager.SkillName.DASH_FAITH))
+        {
+            invulDuration += 0.5f;
+        }
+
+        SetInvulnerable(invulDuration);
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
 
@@ -84,12 +117,28 @@ public class PlayerMelee : PlayerBase
         }
 
         if (sfxs[1]) sfxs[1].Play();
+        
+        bool dashDoesDamage = Skills.Contains(SkillTree_Manager.SkillName.DASH_LETHAL);
+
+
         float dashTime = 0f;
         while (dashTime < DashDuration)
         {
+            if (dashDoesDamage)
+            {
+                var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, 45f, true);
+                foreach (EntityBase enemy in enemies)
+                {
+                    if (!enemy || !enemy.IsAlive() || EnemyHitByDash.Contains(enemy)) continue;
+
+                    DealDamage(enemy, (int)(atk * 0.6f), 0, 0);
+                    EnemyHitByDash.Add(enemy);
+                }
+            }
+
             var movementInputs = new Vector2(moveHorizontal, moveVertical).normalized;
 
-            rb2d.velocity = CalculateMovement(movementInputs, DashSpeed + moveSpeed * 5f);
+            rb2d.velocity = CalculateMovement(movementInputs, GetDashDistance());
 
             animator.SetFloat("move", Mathf.Abs(moveHorizontal) + Mathf.Abs(moveVertical));
 
@@ -104,10 +153,10 @@ public class PlayerMelee : PlayerBase
             yield return new WaitForFixedUpdate();
         }
 
+        yield return null;
         rb2d.velocity = Vector2.zero;
-
-        yield return new WaitForSeconds(DashDuration);
-        isInvulnerable = false;
+        IsDashing = false;
+        if (EnemyHitByDash.Count > 0) EnemyHitByDash.Clear();
     }
 
     public override IEnumerator OnAttackComplete()
@@ -177,10 +226,32 @@ public class PlayerMelee : PlayerBase
             $"ATK +{AtkBoost * 100}%, DEF +{DefBoost * 100}%, RES +{ResBoost}, MSPD +{SpeedBoost * 100}% and " +
             $"regenerate {HealPerSecond_HpPercentage * 100}% max HP every second. {SkillCooldown}s cooldown.";
 
-        info.SpecialName = "Evasion";
-        info.SpecialText = 
-            $"Dash a short distance toward the movement direction and briefly becomes invulnerable during the process. {DashCooldown}s cooldown.";
-        
+
+        if (Skills.Contains(SkillTree_Manager.SkillName.DASH_HASTEN))
+        {
+            info.SpecialName = "Evasion - Hasten";
+            info.SpecialText =
+                $"Dash a long distance toward the movement direction and briefly becomes invulnerable during the process. {DashCooldown}s cooldown.";
+        }
+        else if (Skills.Contains(SkillTree_Manager.SkillName.DASH_LETHAL))
+        {
+            info.SpecialName = "Evasion - Lethal Tempo";
+            info.SpecialText =
+                $"Dash a short distance toward the movement direction, briefly becomes invulnerable during the process and damage all enemies self coming into contact with. {DashCooldown}s cooldown.";
+        }
+        else if (Skills.Contains(SkillTree_Manager.SkillName.DASH_FAITH))
+        {
+            info.SpecialName = "Evasion - Leap of Faith";
+            info.SpecialText =
+                $"Dash a short distance toward the movement direction and becomes invulnerable during the process and for a brief moment afterward. {DashCooldown}s cooldown.";
+        }
+        else
+        {
+            info.SpecialName = "Evasion";
+            info.SpecialText =
+                $"Dash a short distance toward the movement direction and briefly becomes invulnerable during the process. {DashCooldown}s cooldown.";
+        }
+
         return info;
     }
 }

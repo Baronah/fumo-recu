@@ -13,7 +13,7 @@ public class PlayerRanged : PlayerBase
     [SerializeField] private float Skill_AtkInterval = 0.25f;
 
     [SerializeField] private float FreezeRange = 800f;
-    [SerializeField] private float FreezeDurationMin = 1f, FreeDurationMax = 4f, MinDistanceForFreezeDuration = 150f;
+    [SerializeField] private float FreezeDurationMin = 1f, FreezeDurationMax = 4f, MinDistanceForFreezeDuration = 150f;
     [SerializeField] private float FreezeCooldown = 11.5f;
     [SerializeField] private float FreezeCastDuration = 0.25f;
 
@@ -63,6 +63,25 @@ public class PlayerRanged : PlayerBase
         );
     }
 
+    public override void GetBonusSkill()
+    {
+        base.GetBonusSkill();
+        if (Skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_RADIO))
+        {
+            FreezeCooldown *= 0.85f;
+            SkillCooldown *= 0.85f;
+        }
+        
+        if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_TIMEUP))
+        {
+            FreezeDurationMin *= 1.3f;
+            FreezeDurationMax *= 1.3f;
+        }
+
+        if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_SOUTH))
+            FreezeDurationMin = Mathf.Max(FreezeDurationMin, 2f);
+    }
+
     protected override void GetControlInputs()
     {
         if (!IsAlive() || IsSkillActive) return;
@@ -91,11 +110,11 @@ public class PlayerRanged : PlayerBase
         CanUseSkill = true;
     }
 
-    IEnumerator FreezeLockout()
+    IEnumerator FreezeLockout(float d)
     {
         CanUseFreeze = false;
-        StartCoroutine(playerManager.SpecialCooldown(FreezeCooldown));
-        yield return new WaitForSeconds(FreezeCooldown);
+        StartCoroutine(playerManager.SpecialCooldown(d));
+        yield return new WaitForSeconds(d);
         CanUseFreeze = true;
     }
 
@@ -136,7 +155,8 @@ public class PlayerRanged : PlayerBase
     {
         if (!IsAlive() || !CanUseFreeze || IsFrozen || IsStunned) yield break;
 
-        StartCoroutine(FreezeLockout());
+        CanUseFreeze = false;
+
         StartCoroutine(StartMovementLockout(FreezeCastDuration));
         StartCoroutine(StartAttackLockout(FreezeCastDuration));
         
@@ -158,10 +178,22 @@ public class PlayerRanged : PlayerBase
                 ?
                 FreezeDurationMin
                 : 
-                Mathf.Lerp(FreezeDurationMin, FreeDurationMax, MinDistanceForFreezeDuration * 1.0f / distance);
+                Mathf.Lerp(FreezeDurationMin, FreezeDurationMax, MinDistanceForFreezeDuration * 1.0f / distance);
             ApplyFreeze(enemy, freezeDuration);
+
+            if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_NORTH))
+                PushEntityFrom(enemy, transform, 5f, 0.25f);
+            else if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_SOUTH))
+                PullEntityTowards(enemy, transform, 5f, 0.25f);
         }
 
+        float cooldown = FreezeCooldown;
+        if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_CHARGE))
+        {
+            for (int i = 1; i <= hitEnemies.Count; i++) cooldown *= 0.85f;
+        }
+
+        StartCoroutine(FreezeLockout(cooldown));
         animator.SetTrigger("skill_end");
         IsSkillActive = false;
         yield return null;
@@ -232,12 +264,45 @@ public class PlayerRanged : PlayerBase
             $"spreading in all direction around self. Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
             $"{SkillCooldown}s cooldown.";
 
-        info.SpecialName = "Zeropoint Burst";
-        info.SpecialText =
-            $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreeDurationMax} seconds based on distance. " +
-            $"{FreezeCooldown}s cooldown.";
+        if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_TIMEUP))
+        {
+            info.SpecialName = "Zeropoint Burst - Ice Age";
+            info.SpecialText =
+                $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds based on distance";
+        }
+        else if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_CHARGE))
+        {
+            info.SpecialName = "Zeropoint Burst - Hypercharge";
+            info.SpecialText =
+                $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds based on distance. Every enemy hit " +
+                $"shortens the cool-down of the next usage by 15%";
+        }
+        else if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_SUPERCONDUCT))
+        {
+            info.SpecialName = "Zeropoint Burst - Superconduct";
+            info.SpecialText =
+                $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds based on distance " +
+                $"and reduce their DEF and RES by 50% for equivalent duration";
+        }
+        else
+        {
+            info.SpecialName = "Zeropoint Burst";
+            info.SpecialText =
+                $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds based on distance";
+        }
 
-        return info;
+        if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_NORTH))
+        {
+            info.SpecialText += " and pushes them away from self";
+        }
+        else if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_SOUTH))
+        {
+            info.SpecialText += " and pulls them towards self";
+        }
+
+        info.SpecialText += $". {FreezeCooldown}s cool-down.";
+
+            return info;
     }
 
     private void OnDrawGizmos()

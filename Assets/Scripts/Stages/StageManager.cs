@@ -147,32 +147,6 @@ public class StageManager : MonoBehaviour
 
     public virtual void OnPlayerSpawn(PlayerBase player)
     {
-        GetPlayerBonusSkills(player);
-    }
-
-    void GetPlayerBonusSkills(PlayerBase player)
-    {
-        foreach (var skill in CharacterPrefabsStorage.Skills)
-        {
-            switch (skill.Key)
-            {
-                case SkillTree_Manager.SkillName.WINGED_STEPS_A:
-                    player.b_moveSpeed += player.b_moveSpeed * 0.2f;
-                    break;
-                case SkillTree_Manager.SkillName.WINGED_STEPS_B:
-                    player.ASPD += 25;
-                    break;
-                case SkillTree_Manager.SkillName.EQUIPMENT_BLADE:
-                    player.bAtk += (short) (player.bAtk * 0.2f);
-                    break;
-                case SkillTree_Manager.SkillName.EQUIPMENT_SCOPE:
-                    player.b_attackRange *= 1.2f; 
-                    break;
-                case SkillTree_Manager.SkillName.EQUIPMENT_PROVISIONS:
-                    player.mHealth += (int)(player.mHealth * 0.2f); 
-                    break;
-            }
-        }
     }
 
     private IEnumerator LoadRequiredPrefabs()
@@ -449,7 +423,7 @@ public class StageManager : MonoBehaviour
 
         playerManager.enabled = playerManager.activePlayer.enabled = FumoObj.enabled = false;
 
-        player.isInvulnerable = true;
+        player.SetInvulnerable(9999f);
         EntityManager.Enemies.ForEach(e => { if (e) e.InstaKill(); });
         IsStageStarted = false; 
         OnStageEnd(true);

@@ -9,23 +9,6 @@ public class ShroudedAssassin : EnemyBase
     [SerializeField] private float skillCooldown = 15f;
     private bool isUsingSkill = false, isDashing = false;
 
-    IEnumerator UseSkill()
-    {
-        isUsingSkill = true;
-        IsFreezeImmune = true;
-        IsStunImmune = true;
-        isInvulnerable = true;
-
-        rb2d.velocity = Vector2.zero;
-        animator.SetTrigger("skill");
-        yield return new WaitForSeconds(skillWindupTime);
-
-        isUsingSkill = false;
-        IsFreezeImmune = false;
-        IsStunImmune = false;
-        isInvulnerable = false;
-    }
-
     private void OnPlayerDashHit(PlayerBase player)
     {
 

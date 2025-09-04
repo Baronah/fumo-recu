@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static SkillTree_Manager;
 
 public class PlayerBase : EntityBase
 {
@@ -11,6 +12,8 @@ public class PlayerBase : EntityBase
 
     private Transform TransformFeetposition;
     public Vector3 Feetposition => TransformFeetposition.position;
+
+    public List<SkillName> Skills = new();
 
     private void Update()
     {
@@ -23,21 +26,45 @@ public class PlayerBase : EntityBase
         StageManager = FindObjectOfType<StageManager>();
         StageManager.OnPlayerSpawn(this);
 
+        GetBonusSkill();
+
         base.InitializeComponents();
         TransformFeetposition = transform.Find("Feetposition");
 
         playerManager = FindObjectOfType<PlayerManager>();
         playerManager.Register(this);
 
-        StartCoroutine(InvulnerableOnSpawn());
+        SetInvulnerable(1f);
         IsComponentsInitialized = true;
     }
 
-    IEnumerator InvulnerableOnSpawn()
+    public virtual void GetBonusSkill()
     {
-        isInvulnerable = true;
-        yield return new WaitForSeconds(1f);
-        isInvulnerable = false;
+        foreach (var skill in CharacterPrefabsStorage.Skills)
+        {
+            var key = skill.Key;
+            Skills.Add(key);
+
+            switch (key)
+            {
+                case SkillTree_Manager.SkillName.WINGED_STEPS_A:
+                    b_moveSpeed += b_moveSpeed * 0.2f;
+                    break;
+                case SkillTree_Manager.SkillName.WINGED_STEPS_B:
+                    ASPD += 25;
+                    break;
+                case SkillTree_Manager.SkillName.EQUIPMENT_BLADE:
+                    defPen += 10;
+                    break;
+                case SkillTree_Manager.SkillName.EQUIPMENT_SCOPE:
+                    b_attackRange *= 1.2f;
+                    break;
+                case SkillTree_Manager.SkillName.EQUIPMENT_PROVISIONS:
+                    mHealth += (int)(mHealth * 0.1f);
+                    hpRegenPercentage += 0.005f;
+                    break;
+            }
+        }
     }
 
     protected virtual void GetControlInputs()

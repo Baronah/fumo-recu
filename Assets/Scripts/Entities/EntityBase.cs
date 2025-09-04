@@ -26,11 +26,26 @@ public class EntityBase : MonoBehaviour
     public float ASPD = 100;
     public float moveSpeed, attackRange, attackWindupTime, attackInterval;
 
+    public float hpRegenFlat = 0, hpRegenPercentage = 0;
+
     public int GetMaxHealth() => mHealth;
     public short GetHealthPercentage() => (short)Mathf.Max(1, health * 100 / mHealth);
     public short GetMissingealthPercentage() => (short)Mathf.Max(1, (mHealth - health) * 100 / mHealth);
 
-    public bool IsFreezeImmune = false, IsStunImmune = false, IsPhysicalImmune = false, IsMagicalImmune = false, canRevive = false, isInvulnerable = false, isInvisible = false;
+    public bool IsFreezeImmune = false, IsStunImmune = false, IsPhysicalImmune = false, IsMagicalImmune = false, canRevive = false, isInvisible = false;
+
+    public float InvulnerableTimer = 0f;
+    public bool isInvulnerable => InvulnerableTimer > 0f;
+    public void SetInvulnerable(float duration, bool stack = false)
+    {
+        if (stack)
+        {
+            InvulnerableTimer += duration;
+            return;
+        }
+
+        InvulnerableTimer = Mathf.Max(InvulnerableTimer, duration);
+    }
 
     public enum DamageType { PHYSICAL, MAGICAL, TRUE }
     public DamageType damageType;
@@ -177,9 +192,26 @@ public class EntityBase : MonoBehaviour
     public virtual void FixedUpdate()
     {
         if (!IsAlive() && !TriggeredOnDeath) OnDeath();
+
+        Regen();
         UpdateCooldowns();
         HandleSpriteFlipping();
         HandleAnimationSpeed();
+    }
+
+    private float regenTimer = 0;
+    public void Regen()
+    {
+        regenTimer += Time.deltaTime;
+        if (regenTimer < 1.0f) return;
+        regenTimer = 0;
+        
+        if (!IsAlive()) return;
+
+        float regenAmount = Mathf.Ceil(hpRegenFlat + mHealth * hpRegenPercentage);
+        if (regenAmount <= 0) return;
+
+        Heal(regenAmount, this, false, true);
     }
 
     public virtual void UpdateCooldowns()
@@ -193,6 +225,8 @@ public class EntityBase : MonoBehaviour
 
         AttackLockout -= Time.deltaTime;
         MovementLockout -= Time.deltaTime;
+
+        InvulnerableTimer -= Time.deltaTime;
     }
 
     public virtual void HandleSpriteFlipping()
@@ -603,10 +637,10 @@ public class EntityBase : MonoBehaviour
         Heal(amount, this, healThroughDead);
     }
 
-    public virtual void Heal(float amount, EntityBase target, bool healThroughDead = false)
+    public virtual void Heal(float amount, EntityBase target, bool healThroughDead = false, bool displayMsg = true)
     {
         if (amount <= 0 || (!target.IsAlive() && !healThroughDead)) return;
-        target.DisplayDamage("<color=green>+" + (int)amount + "</color>", new Vector3(0, 55));
+        if (displayMsg) target.DisplayDamage("<color=green>+" + (int)amount + "</color>", new Vector3(0, 55));
         target.health += (int)amount;
         if (target.health > target.mHealth) target.health = target.mHealth;
         target.healthBar.SetHealth(target.health);
@@ -629,6 +663,82 @@ public class EntityBase : MonoBehaviour
         }
 
         yield return null;
+    }
+
+    public void PullEntityTowards(EntityBase targetEntity, Transform targetPosition, float pullForce, float duration)
+        => StartCoroutine(ApplyForceCoroutine(targetEntity, targetPosition, pullForce, duration, true));
+
+    public void PushEntityFrom(EntityBase targetEntity, Transform sourcePosition, float pushForce, float duration)
+        => StartCoroutine(ApplyForceCoroutine(targetEntity, sourcePosition, pushForce, duration, false));
+
+    private IEnumerator ApplyForceCoroutine(EntityBase targetEntity, Transform referencePosition, float force, float duration, bool isPull)
+    {
+        StartCoroutine(targetEntity.StartMovementLockout(duration));
+
+        float elapsedTime = 0f;
+        float initialDistance = Vector3.Distance(targetEntity.transform.position, referencePosition.position);
+
+        if (initialDistance < 0.01f && isPull)
+        {
+            yield break;
+        }
+
+        while (elapsedTime < duration)
+        {
+            if (!targetEntity.IsAlive())
+            {
+                targetEntity.rb2d.velocity = Vector2.zero;
+                yield break;
+            }
+
+            float currentDistance = Vector3.Distance(targetEntity.transform.position, referencePosition.position);
+
+            if (isPull && currentDistance <= 50f)
+            {
+                targetEntity.rb2d.velocity *= 0.8f;
+                break;
+            }
+
+            Vector3 directionVector = isPull
+                ? (referencePosition.position - targetEntity.transform.position).normalized
+                : (targetEntity.transform.position - referencePosition.position).normalized;
+
+            if (isPull)
+            {
+                // Better force curve options:
+
+                // Option 1: Smooth ease-out curve
+                float progress = 1f - (currentDistance / initialDistance);
+                float easedForce = force * (1f - Mathf.Pow(1f - progress, 3f));
+
+                // Option 2: Spring-like behavior (stronger when farther)
+                // float springForce = force * Mathf.Clamp01(currentDistance / initialDistance);
+
+                // Option 3: Minimum force threshold to prevent stalling
+                float finalForce = Mathf.Max(0.3f * force, easedForce);
+
+                targetEntity.rb2d.AddForce(directionVector * finalForce, ForceMode2D.Force);
+            }
+            else
+            {
+                // Push can have time-based decay for more realistic feel
+                float timeProgress = elapsedTime / duration;
+                float decayedForce = force * (1f - timeProgress * 0.5f); // 50% decay over time
+                targetEntity.rb2d.AddForce(directionVector * decayedForce, ForceMode2D.Force);
+            }
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    public void StopForceEffects(EntityBase targetEntity)
+    {
+        if (targetEntity != null && targetEntity.rb2d != null)
+        {
+            targetEntity.rb2d.velocity = Vector2.zero;
+            StopAllCoroutines(); // Note: This stops ALL coroutines, consider a more targeted approach
+        }
     }
 
     public void CreateProjectileAndShootToward(EntityBase target, ProjectileScript.ProjectileType projectileType, float acceleration = 0)

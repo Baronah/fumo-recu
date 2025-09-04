@@ -12,7 +12,7 @@ public class CharacterPrefabsStorage : ScriptableObject
 	public AssetReference[] SceneAssetReferences;
 
 	public static bool EnableChallengeMode = false;
-	public static Dictionary<SkillTree_Manager.SkillName, Sprite> Skills = new();
+	public static Dictionary<SkillTree_Manager.SkillName, SkillDataSet> Skills = new();
 
     public static Dictionary<int, GameObject> PlayerPrefabs = new();
 	public static Dictionary<int, GameObject> EnemyPrefabs = new();

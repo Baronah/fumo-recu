@@ -192,7 +192,7 @@ public class SkillTree_Manager : MonoBehaviour
         short cnt = 0;
         foreach (var item in CharacterPrefabsStorage.Skills)
         {
-            TechImgs[cnt].sprite = item.Value;
+            TechImgs[cnt].sprite = item.Value.skillIcon;
             cnt++;
         }
 

@@ -103,7 +103,16 @@ public class SkillTree_SkillComponent : MonoBehaviour
             skillComponent.selfButton.interactable = false;
         }
 
-        CharacterPrefabsStorage.Skills.Add(skillName, skillIcon);
+        CharacterPrefabsStorage.Skills.Add(
+            skillName, 
+            new SkillDataSet()
+                { 
+                    skillType = skillType,
+                    skillIcon = skillIcon,
+                    nameInString = skillNameText,
+                    skillDescription = skillDescription,
+                }
+            );
         foreach (var item in CharacterPrefabsStorage.Skills)
         {
             if (mutuallyExclusiveSkills.Contains(item.Key))
@@ -121,4 +130,12 @@ public class SkillTree_SkillComponent : MonoBehaviour
         selfButton.interactable = true;
         skillIconImage.color = Color.white;
     }
+}
+
+public class SkillDataSet
+{
+    public SkillType skillType { get; set; }
+    public Sprite skillIcon { get; set; }
+    public string nameInString { get; set; }
+    public string skillDescription { get; set; }
 }
