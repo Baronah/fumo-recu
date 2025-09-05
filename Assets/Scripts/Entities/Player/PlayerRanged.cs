@@ -198,7 +198,7 @@ public class PlayerRanged : PlayerBase
                 PushEntityFrom(enemy, transform, 5f, pushDuration);
             }
             else if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_SOUTH))
-                PullEntityTowards(enemy, transform, 5.25f, 0.2f);
+                PullEntityTowards(enemy, AttackPosition.transform, 5.25f, 0.2f);
         }
 
         float cooldown = FreezeCooldown;

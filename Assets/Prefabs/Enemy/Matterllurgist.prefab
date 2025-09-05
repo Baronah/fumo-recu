@@ -197,13 +197,15 @@ MonoBehaviour:
   attackRange: 0
   attackWindupTime: 0
   attackInterval: 0
+  hpRegenFlat: 0
+  hpRegenPercentage: 0
   IsFreezeImmune: 0
   IsStunImmune: 0
   IsPhysicalImmune: 0
   IsMagicalImmune: 0
   canRevive: 0
-  isInvulnerable: 0
   isInvisible: 0
+  InvulnerableTimer: 0
   damageType: 0
   attackPattern: 0
   ProjectilePrefab: {fileID: 8325308609239250088, guid: cf24154a7dcbae84daf4eb96071044ae, type: 3}
@@ -236,7 +238,7 @@ MonoBehaviour:
   showPathGizmos: 1
   allowDiagonalMovement: 1
   pathfindingDistanceThreshold: 100
-  cornerAvoidanceDistance: 100
+  cornerAvoidanceDistance: 300
   pathSmoothingLookahead: 3
   WaitTimes:
   - 5
@@ -245,6 +247,7 @@ MonoBehaviour:
   OverridePositionCheckRadius: 50
   MoveToOverridePositionSpeedMultiplier: 1.5
   MoveToOverridePositionSpeedMultiplierJump: 0.35
+  CanDetectThroughWalls: 0
   ProjectilePosition: {fileID: 1440802399349756502}
 --- !u!1 &446298989067341241 stripped
 GameObject:

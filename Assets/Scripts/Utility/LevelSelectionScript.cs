@@ -3,12 +3,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using TMPro;
 using Unity.Loading;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static Cinemachine.DocumentationSortingAttribute;
 using static EnemyBase;
 using static StageManager;
 using static UnityEngine.Rendering.VirtualTexturing.Debugging;
@@ -75,6 +77,8 @@ public class LevelSelectionScript : MonoBehaviour
 
     private void Start()
     {
+        FindAnyObjectByType<SkillTree_Manager>(FindObjectsInactive.Include).GetPlayerProgress();
+
         sfxs = GetComponents<AudioSource>();
         sfxs[0].volume = PlayerPrefs.GetFloat("BGM", 1f);
         for (int i = 1; i < sfxs.Length; ++i)
@@ -105,14 +109,27 @@ public class LevelSelectionScript : MonoBehaviour
 
         Nav.SetActive(TotalPages > 1);
 
+        var regex = new Regex(@"^FM-(\d+)(_CM)?$");
         int startLevelIndex = CurrentPageIndex * MaxPageSize;
-        List<string> CompletedLevels = PlayerPrefs.GetString("CompletedLevels", string.Empty).Split(" ").ToList();
+        List<string> CompletedLevels = PlayerPrefs.GetString("CompletedLevels", string.Empty)
+                                        .Split(" ", StringSplitOptions.RemoveEmptyEntries)
+                                        .Where(p => regex.IsMatch(p))
+                                        .ToList();
+
+        int highestLevelCompleted = 0;
+        if (CompletedLevels.Count > 0)
+        {
+            var numbers = CompletedLevels
+                .Select(p => int.Parse(regex.Match(p).Groups[1].Value));
+
+            highestLevelCompleted = numbers.Max() + 1;
+        }
 
         for (int i = 0; i < MaxPageSize; ++i)
         {
             int levelIndex = startLevelIndex + i;
 
-            if (levelIndex >= TotalLevels) break;
+            if (levelIndex >= Mathf.Min(highestLevelCompleted + 1, TotalLevels)) break;
 
             var targetLevel = characterPrefabsStorage.SceneAssetReferences[levelIndex];
             var runtimeKey = targetLevel.RuntimeKey.ToString();

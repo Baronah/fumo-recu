@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class FM_04 : StageManager
@@ -14,6 +15,9 @@ public class FM_04 : StageManager
         {
             hiddenOriginiumTiles.SetActive(true);
         }
+
+        var spiderSpawns = FindObjectsOfType<EnemySpawnpointScript>(true).Where(s => s.enemyPrefab == EnemyBase.EnemyCode.ORIGINIUM_SPIDER);
+        foreach (var spider in spiderSpawns) spider.enemyPrefab = EnemyBase.EnemyCode.ORIGINIUM_SPIDER_ALPHA;
     }
 
     public override void OnEnemySpawn(EnemyBase enemy)

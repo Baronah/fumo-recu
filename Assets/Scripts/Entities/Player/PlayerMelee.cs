@@ -11,7 +11,7 @@ public class PlayerMelee : PlayerBase
     [SerializeField] private float DashDuration = 0.5f;
     [SerializeField] private float DashCooldown = 6f;
 
-    [SerializeField] private GameObject SkillEffect;
+    [SerializeField] private GameObject SkillEffect, SkillEffect_2, AftershockEffect;
     [SerializeField] private float SkillCooldown = 30f;
     [SerializeField] private float SkillDuration = 7f;
     [SerializeField] private float BurstHeal_HpPercentage = 0.35f;
@@ -21,15 +21,27 @@ public class PlayerMelee : PlayerBase
     [SerializeField] private float AtkBoost = 0.25f;
     [SerializeField] private float SpeedBoost = 0.35f;
 
+    [SerializeField] float PullRadius = 400, DoTRadius = 220f, AoERadius = 300f;
+
     private bool IsSkillActive = false, IsDashing = false, CanUseSkill = true, CanUseDash = true;
     private short atkAdd, defAdd, resAdd, speedAdd;
 
     private HashSet<EntityBase> EnemyHitByDash = new HashSet<EntityBase>();
 
+    short FUpdateCnt = 0;
     public override void FixedUpdate()
     {
         base.FixedUpdate();
-        SkillEffect.SetActive(IsSkillActive && IsAlive());
+
+        FUpdateCnt++;
+        if (FUpdateCnt >= 3)
+        {
+            bool skillActive = IsSkillActive && IsAlive();
+
+            SkillEffect.SetActive(skillActive);
+            SkillEffect_2.SetActive(Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_IGNITE) && skillActive);
+            FUpdateCnt = 0;
+        }
     }
 
     public override void GetBonusSkill()
@@ -50,11 +62,11 @@ public class PlayerMelee : PlayerBase
         {
             AttackCoroutine = StartCoroutine(Attack());
         }
-        else if (Input.GetKeyDown(playerManager.SkillKey) && CanUseSkill)
+        else if (Input.GetKeyDown(playerManager.SkillKey) && CanUseSkill && !IsSkillActive)
         {
             StartCoroutine(ActivateSkill());
         }
-        else if (Input.GetKeyDown(playerManager.SpecialKey) && CanUseDash)
+        else if (Input.GetKeyDown(playerManager.SpecialKey) && CanUseDash && !IsDashing)
         {
             StartCoroutine(Dash());
         }
@@ -191,6 +203,8 @@ public class PlayerMelee : PlayerBase
         yield return null;
     }
 
+    bool extendSkillDuration = false;
+    int damageTakenDuringSkill = 0;
     IEnumerator ActivateSkill()
     {
         if (!IsAlive() || IsSkillActive || !CanUseSkill) yield break;
@@ -199,6 +213,9 @@ public class PlayerMelee : PlayerBase
         if (sfxs[2]) sfxs[2].Play();
 
         IsSkillActive = true;
+        bool CanPull = Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_PULL),
+             CanDoT = Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_IGNITE);
+
         Heal(mHealth * BurstHeal_HpPercentage);
         atkAdd = (short) (bAtk * AtkBoost);
         atk += atkAdd;
@@ -209,17 +226,64 @@ public class PlayerMelee : PlayerBase
         speedAdd = (short) (b_moveSpeed * SpeedBoost);
         moveSpeed += speedAdd;
 
+        if (CanPull)
+        {
+            var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, PullRadius, true);
+            foreach (EntityBase enemy in enemies)
+            {
+                PullEntityTowards(enemy, transform, 2.5f, 0.1f);
+                ApplyEffect(Effect.AffectedStat.MSPD, "JUGGERNAUNT_PULL_DEBUFF_MSPD", -40f, 1.25f, true);
+            }
+        }
+        else if (CanDoT)
+        {
+            var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, DoTRadius, true);
+            foreach (EntityBase enemy in enemies)
+            {
+                DealDamage(enemy, (int)(atk * 0.25f), 0, 0);
+            }
+        }
+
         float c = 0, t = 0, d = SkillDuration;
+        float durationAdded = 0;
+
         while (c < d)
         {
             c += Time.deltaTime;
             t += Time.deltaTime;
 
+            if (extendSkillDuration && durationAdded < d)
+            {
+                float bonus = 0.5f;
+                c -= bonus;
+                durationAdded += bonus;
+                extendSkillDuration = false;
+            }
+
             if (t >= 1.0f)
             {
                 Heal(mHealth * HealPerSecond_HpPercentage);
+                if (CanPull)
+                {
+                    var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, PullRadius, true);
+                    foreach (EntityBase enemy in enemies)
+                    {
+                        PullEntityTowards(enemy, transform, 2.5f, 0.1f);
+                        ApplyEffect(Effect.AffectedStat.MSPD, "JUGGERNAUNT_PULL_DEBUFF_MSPD", -40f, 1.25f, true);
+                    }
+                }
+                else if (CanDoT)
+                {
+                    var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, DoTRadius, true);
+                    foreach (EntityBase enemy in enemies)
+                    {
+                        DealDamage(enemy, (int)(atk * 0.25f), 0, 0);
+                    }
+                }
+
                 t = 0;
             }
+
             yield return null;
         }
 
@@ -229,6 +293,33 @@ public class PlayerMelee : PlayerBase
         res -= resAdd;
         moveSpeed -= speedAdd;
         IsSkillActive = false;
+
+        ReleaseAfterShock();
+    }
+
+    public void ReleaseAfterShock()
+    {
+        if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_AFTERSHOCK) && damageTakenDuringSkill > 0)
+        {
+            Instantiate(AftershockEffect, transform.position, Quaternion.identity);
+
+            var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, AoERadius, true);
+            foreach (EntityBase enemy in enemies)
+            {
+                DealDamage(enemy, damageTakenDuringSkill / 2, 0, 0);
+            }
+        }
+        damageTakenDuringSkill = 0;
+    }
+
+    public override void TakeDamage(DamageInstance damage, EntityBase source)
+    {
+        if (IsSkillActive && IsAlive() && damage.TotalDamage > 0)
+        {
+            extendSkillDuration = Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_DURATION);
+            if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_AFTERSHOCK)) damageTakenDuringSkill += damage.TotalDamage;
+        }
+        base.TakeDamage(damage, source);
     }
 
     public override PlayerTooltipsInfo GetPlayerTooltipsInfo()
@@ -236,13 +327,6 @@ public class PlayerMelee : PlayerBase
         var info = base.GetPlayerTooltipsInfo();
 
         info.AttackText = $"Performs an attack that deals {atk} {damageType.ToString().ToLower()} damage to all enemies within range.";
-
-        info.SkillName = "Juggernaunt";
-        info.SkillText = 
-            $"Immediately heals self for {BurstHeal_HpPercentage * 100}% max HP. In the next {SkillDuration} seconds: " +
-            $"ATK +{AtkBoost * 100}%, DEF +{DefBoost * 100}%, RES +{ResBoost}, MSPD +{SpeedBoost * 100}% and " +
-            $"regenerate {HealPerSecond_HpPercentage * 100}% max HP every second. {SkillCooldown}s cooldown.";
-
 
         if (Skills.Contains(SkillTree_Manager.SkillName.DASH_TOUCH))
         {
@@ -268,6 +352,49 @@ public class PlayerMelee : PlayerBase
             info.SpecialText =
                 $"Dash a short distance toward the movement direction and briefly becomes invulnerable during the process. {DashCooldown}s cooldown.";
         }
+
+        bool hasUpgrade = true;
+        if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_DURATION))
+        {
+            info.SkillName = "Juggernaunt - Persistence";
+            info.SkillText =
+                $"Immediately heals self for {BurstHeal_HpPercentage * 100}% max HP. In the next {SkillDuration} seconds: " +
+                $"ATK +{AtkBoost * 100}%, DEF +{DefBoost * 100}%, RES +{ResBoost}, MSPD +{SpeedBoost * 100}% and " +
+                $"regenerate {HealPerSecond_HpPercentage * 100}% max HP every second. Receiving damage during this period extends skill duration by additional 0.5s (up to +{SkillDuration}s). ";
+        }
+        else if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_IGNITE))
+        {
+            info.SkillName = "Juggernaunt - Rim of the Sun";
+            info.SkillText =
+                $"Immediately heals self for {BurstHeal_HpPercentage * 100}% max HP. In the next {SkillDuration} seconds: " +
+                $"ATK +{AtkBoost * 100}%, DEF +{DefBoost * 100}%, RES +{ResBoost}, MSPD +{SpeedBoost * 100}%. " +
+                $"Every second, regenerates {HealPerSecond_HpPercentage * 100}% max HP and deals 25% ATK physical damage to all nearby enemies. ";
+        }
+        else if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_PULL))
+        {
+            info.SkillName = "Juggernaunt - Swirling Vortex";
+            info.SkillText =
+                $"Immediately heals self for {BurstHeal_HpPercentage * 100}% max HP. In the next {SkillDuration} seconds: " +
+                $"ATK +{AtkBoost * 100}%, DEF +{DefBoost * 100}%, RES +{ResBoost}, MSPD +{SpeedBoost * 100}%. " +
+                $"Every second, regenerates {HealPerSecond_HpPercentage * 100}% max HP and reduces the MSPD of all nearby enemies by 30% and pulls them toward self. ";
+        }
+        else
+        {
+            hasUpgrade = false;
+            info.SkillName = "Juggernaunt";
+            info.SkillText =
+                $"Immediately heals self for {BurstHeal_HpPercentage * 100}% max HP. In the next {SkillDuration} seconds: " +
+                $"ATK +{AtkBoost * 100}%, DEF +{DefBoost * 100}%, RES +{ResBoost}, MSPD +{SpeedBoost * 100}% and " +
+                $"regenerate {HealPerSecond_HpPercentage * 100}% max HP every second. ";
+        }
+
+        if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_AFTERSHOCK))
+        {
+            if (!hasUpgrade) info.SkillName = "Juggernaunt - Aftershock";
+            info.SkillText += " After skill ends, deal physical damage equals to 50% damage taken during the duration to all nearby enemies.";
+        }
+
+        info.SkillText += $"{SkillCooldown}s cooldown.";
 
         return info;
     }

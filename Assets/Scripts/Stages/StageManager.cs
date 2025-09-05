@@ -9,6 +9,7 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static EnemyBase;
+using Image = UnityEngine.UI.Image;
 
 public class StageManager : MonoBehaviour
 {
@@ -41,7 +42,7 @@ public class StageManager : MonoBehaviour
     protected AudioSource BGM;
     private EnemySpawnpointScript[] enemySpawnpoints;
 
-    [SerializeField] protected float ChallengeModeStatsModifier = 1.1f;
+    [SerializeField] protected float ChallengeModeStatsModifier = 1.2f;
 
     [SerializeField] private float timeScaleSlow = 0.4f;
     [SerializeField] private KeyCode SlowKeyCode = KeyCode.Q, ViewMapKeyCode = KeyCode.M;
@@ -319,47 +320,63 @@ public class StageManager : MonoBehaviour
             : "<color=green>Stage Completed!</color>")
             : "<color=red>Defeated</color>";
 
-        if (resultIsWin)
+        if (resultIsWin) ProceedAsVictory(text);
+    }
+
+    void ProceedAsVictory(TMP_Text text)
+    {
+        bool StageClearedCMFirsttime = false;
+        foreach (var item in enemySpawnpoints)
         {
-            foreach (var item in enemySpawnpoints)
-            {
-                Destroy(item);
-            }
-
-            if (StageClearedNMFirsttime)
-                text.text += "\n<size=39>Challenge Mode has been unlocked!</size>";
-            else if (CharacterPrefabsStorage.EnableChallengeMode)
-                text.text += "\n<size=42><color=#00ffb7>Omigod...</color></size>";
-            else if (StageCompleteConditionType == StageCompleteCondition.RETRIEVE_FUMO)
-                text.text += "\n<size=39><color=#00ffb7>Mint arknights fumo...</color></size>";
-
-            o_QuitBtn.transform.localPosition = new Vector3(0, o_QuitBtn.transform.localPosition.y);
-            o_RetryBtn.gameObject.SetActive(false);
-
-            List<string> CompletedLevels = PlayerPrefs.GetString("CompletedLevels", string.Empty).Split(" ").ToList();
-            if (CharacterPrefabsStorage.EnableChallengeMode)
-            {
-                var CMLVL = LevelName + "_CM";
-                if (!CompletedLevels.Contains(CMLVL) && CompletedLevels.Contains(LevelName))
-                {
-                    CompletedLevels.Remove(LevelName);
-                }
-
-                CompletedLevels.Add(CMLVL);
-            }
-            else
-            {
-                if (!CompletedLevels.Contains(LevelName) && !CompletedLevels.Contains(LevelName + "_CM"))
-                {
-                    CompletedLevels.Add(LevelName);
-                    StageClearedNMFirsttime = true;
-                }
-            }
-
-            PlayerPrefs.SetString("CompletedLevels", string.Join(' ', CompletedLevels.ToArray()));
+            Destroy(item);
         }
 
-        if (resultIsWin) CharacterPrefabsStorage.EnableChallengeMode = false;
+        List<string> CompletedLevels = PlayerPrefs.GetString("CompletedLevels", string.Empty).Split(" ").ToList();
+        if (CharacterPrefabsStorage.EnableChallengeMode)
+        {
+            var CMLVL = LevelName + "_CM";
+            StageClearedCMFirsttime = !CompletedLevels.Contains(CMLVL);
+
+            if (StageClearedCMFirsttime)
+            {
+                if (CompletedLevels.Contains(LevelName)) CompletedLevels.Remove(LevelName);
+                CompletedLevels.Add(CMLVL);
+            }
+        }
+        else
+        {
+            if (!CompletedLevels.Contains(LevelName) && !CompletedLevels.Contains(LevelName + "_CM"))
+            {
+                CompletedLevels.Add(LevelName);
+                StageClearedNMFirsttime = true;
+            }
+        }
+
+        PlayerPrefs.SetString("CompletedLevels", string.Join(' ', CompletedLevels.ToArray()));
+
+        if (StageClearedNMFirsttime)
+        {
+            text.text += "\n<size=36>+1 Mint fumo\nChallenge Mode has been unlocked!</size>";
+            AddFumo();
+        }
+        else if (StageClearedCMFirsttime)
+        {
+            text.text += "\n<size=36>+1 Mint fumo\nThis is crazy</size>";
+            AddFumo();
+        }
+        else
+            text.text += "\n<size=32><color=#00ffb7>But you already claimed the Fumo...</color></size>";
+
+        o_QuitBtn.transform.localPosition = new Vector3(0, o_QuitBtn.transform.localPosition.y);
+        o_RetryBtn.gameObject.SetActive(false);
+
+        CharacterPrefabsStorage.EnableChallengeMode = false;
+    }
+
+    void AddFumo()
+    {
+        int fumoCount = PlayerPrefs.GetInt("Fumo", 0);
+        PlayerPrefs.SetInt("Fumo", fumoCount + 1);
     }
 
     void FadeInResult()

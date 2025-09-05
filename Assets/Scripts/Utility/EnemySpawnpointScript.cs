@@ -22,7 +22,7 @@ public class EnemySpawnpointScript : MonoBehaviour
     [SerializeField] private short InitTooltipsPriority = 0;
     [SerializeField] public List<EnemyCheckpointScript> enemyCheckpoints;
     [SerializeField] private float InitWaittime;
-    [SerializeField] private EnemyCode enemyPrefab;
+    [SerializeField] public EnemyCode enemyPrefab;
     [SerializeField] private bool doSpawnEnemy = true;
     [SerializeField] private short Quantity = 1;
     [SerializeField] private float OffsetRadius = 5f;

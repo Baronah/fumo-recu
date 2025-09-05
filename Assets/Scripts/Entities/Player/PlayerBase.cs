@@ -160,6 +160,18 @@ public class PlayerBase : EntityBase
             playerManager.OnPlayerAttacked(damage.TotalDamage * 1.0f / (mHealth * 0.5f));
     }
 
+    public override void DealDamage(EntityBase target, int pDmg, int mDmg, int tDmg, bool allowWhenDisabled = false)
+    {
+        base.DealDamage(target, pDmg, mDmg, tDmg, allowWhenDisabled);
+        if (!target.IsAlive())
+        {
+            if (Skills.Contains(SkillTree_Manager.SkillName.VICTORY_ATK))
+                ApplyEffect(Effect.AffectedStat.ATK, "VICTORY_ATK_BUFF", 50, 5, true, true);
+            else if (Skills.Contains(SkillTree_Manager.SkillName.VICTORY_MSPD))
+                ApplyEffect(Effect.AffectedStat.MSPD, "VICTORY_MSPD_BUFF", 50, 5, true, true);
+        }
+    }
+
     public override void OnDeath()
     {
         base.OnDeath();

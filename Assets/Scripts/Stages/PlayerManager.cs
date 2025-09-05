@@ -39,10 +39,15 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] GameObject SwapReadyEffect;
     [SerializeField] private Image[] SwapStacksImg;
     [SerializeField] private Sprite SwapStackAvailable, SwapStackUnavailable;
+
+    [SerializeField] private GameObject PlayerInfoSect, TechInfoSect;
     [SerializeField] private GameObject SkillView_Overlay, SkillView;
     [SerializeField] private Image PlayerIcon, SkillView_Attack, SkillView_Skill, SkillView_Special;
     [SerializeField] private TMP_Text SkillView_Attributes, SkillView_AttackText, SkillView_SkillName, SkillView_SkillText, SkillView_SpecialName, SkillView_SpecialText;
     private Coroutine skillViewCoroutine;
+
+    [SerializeField] private GameObject[] TechViews;
+    [SerializeField] private TMP_Text EmptyTechViewsText;
 
     public bool IsReadingSkillView => skillViewCoroutine != null && SkillView_Overlay.activeSelf;
     private bool CanSwapPlayer => swapCooldownTimer >= SwapCooldown && player && player.IsAlive();
@@ -65,6 +70,8 @@ public class PlayerManager : MonoBehaviour
     private void Awake()
     {
         SkillView_Overlay.SetActive(false);
+        TechInfoSect.SetActive(false);
+        PlayerInfoSect.SetActive(true);
     }
 
     private void Start()
@@ -144,6 +151,10 @@ public class PlayerManager : MonoBehaviour
         ResetAllCooldown();
 
         bool activePlayerIsMelee = IsStageStarted ? player is PlayerMelee : playerStartType != PlayerType.MELEE;
+        if (activePlayerIsMelee)
+        {
+            player.GetComponent<PlayerMelee>().ReleaseAfterShock();
+        }
 
         Vector3 spawnPosition = IsStageStarted ? player.transform.position : PlayerSpawnpoint.position;
 
@@ -441,6 +452,38 @@ public class PlayerManager : MonoBehaviour
         SkillView_SkillText.text = info.SkillText;
         SkillView_SpecialName.text = info.SpecialName;
         SkillView_SpecialText.text = info.SpecialText;
+
+        // techs
+        int techCount = CharacterPrefabsStorage.Skills.Count;
+        bool hasTech = techCount > 0;
+
+        EmptyTechViewsText.text = hasTech
+            ?
+            "Techniques:"
+            :
+            "No technique was selected :(";
+        
+        for (int i = 0; i < TechViews.Length; i++)
+        {
+            GameObject techView = TechViews[i];
+            techView.SetActive((i + 1) <= techCount);
+            if (!techView.activeSelf) continue;
+            
+            SkillDataSet skillDataSet = CharacterPrefabsStorage.Skills.ElementAt(i).Value;
+            Image skillIcon = techView.GetComponentInChildren<Image>();
+            TMP_Text[] txts = techView.GetComponentsInChildren<TMP_Text>();
+
+            skillIcon.sprite = skillDataSet.skillIcon;
+            txts[0].text = skillDataSet.nameInString;
+            txts[1].text = skillDataSet.skillDescription;
+        }
+    }
+
+    public void SwapView()
+    {
+        bool activeInfoView = !PlayerInfoSect.activeSelf;
+        PlayerInfoSect.SetActive(activeInfoView);
+        TechInfoSect.SetActive(!activeInfoView);
     }
 }
 

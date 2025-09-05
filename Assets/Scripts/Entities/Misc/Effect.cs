@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class Effect
 {
     public enum AffectedStat
@@ -15,30 +17,42 @@ public class Effect
     protected EntityBase Helder;
     public float Value, Duration;
     public bool IsPercentage;
+    public bool DecayOverDuration;
+
+    private float InitValue, InitDuration;
 
     public bool IsInEffect => Helder != null && Value > 0f && Duration > 0f;
 
-    public Effect(EntityBase helder, float value, float duration, bool isPercentage)
+    public Effect(EntityBase helder, float value, float duration, bool isPercentage, bool decayOverDuration)
     {
         Helder = helder;
-        Value = value;
-        Duration = duration;
+        InitValue = Value = value;
+        InitDuration = Duration = duration;
         IsPercentage = isPercentage;
+        DecayOverDuration = decayOverDuration;
     }
 
-    public void Instantiate(EntityBase helder, float value, float duration, bool isPercentage)
+    public void Decay()
     {
-        Instantiate(new(helder, value, duration, isPercentage));
+        if (!DecayOverDuration) return;
+        Value = Mathf.Lerp(0, InitValue, Duration * 1.0f / InitDuration);
+    }
+
+    public void Instantiate(EntityBase helder, float value, float duration, bool isPercentage, bool decayOverDuration = false)
+    {
+        Instantiate(new(helder, value, duration, isPercentage, decayOverDuration));
     }
 
     public void Instantiate(Effect effect)
     {
         if (IsGreaterThan(effect)) return;
 
+        EndEffect();
         Helder = effect.Helder;
-        Value = effect.Value;
-        Duration = effect.Duration;
+        InitValue = Value = effect.Value;
+        InitDuration = Duration = effect.Duration;
         IsPercentage = effect.IsPercentage;
+        DecayOverDuration = effect.DecayOverDuration;
     }
 
     public bool IsGreaterThan(Effect other)
@@ -71,6 +85,7 @@ public class Effect
     public void EndEffect()
     {
         Helder = null;
-        Value = Duration = 0;
+        InitValue = Value = InitDuration = Duration = 0;
+        DecayOverDuration = false;
     }
 }

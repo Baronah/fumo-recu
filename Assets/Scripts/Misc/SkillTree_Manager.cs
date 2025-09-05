@@ -6,7 +6,13 @@ using UnityEngine.UI;
 
 public class SkillTree_Manager : MonoBehaviour
 {
-    [SerializeField] GameObject SkillHighlight;
+    [SerializeField] Button TechViewBtn;
+    [SerializeField] GameObject Block, SkillHighlight;
+
+    [SerializeField] GameObject SENSES_BLOCK, TECHS_BLOCK, SPECS_BLOCK, TECHS_PRECEDE_BLOCK, SPECS_PRECEDE_BLOCK;
+    [SerializeField] Button SensesUnlockBtn, TechsUnlockBtn, SpecsUnlockBtn;
+    [SerializeField] short FUMO_COST_SENSE = 3, FUMO_COST_TECHS = 3, FUMO_COST_SPECS = 3;
+    [SerializeField] TMP_Text FumoCnt;
 
     public enum SkillType
     {
@@ -38,6 +44,12 @@ public class SkillTree_Manager : MonoBehaviour
         FREEZE_SUPERCONDUCT,
         OBSCURE_VISION,
         GRAVITY,
+        JUGGERNAUNT_DURATION,
+        JUGGERNAUNT_IGNITE,
+        JUGGERNAUNT_PULL,
+        JUGGERNAUNT_AFTERSHOCK,
+        VICTORY_ATK,
+        VICTORY_MSPD
     }
 
     public static SkillTree_Manager Instance;
@@ -67,11 +79,88 @@ public class SkillTree_Manager : MonoBehaviour
           SensesSkillViewPanelColor = new(0, 0.59f, 0.65f),
           TechsSkillViewPanelColor = new(0.57f, 0, 0.8f);
 
+    public void GetPlayerProgress()
+    {
+        string[] CompletedLevels = PlayerPrefs.GetString("CompletedLevels", "").Split(' ');
+        bool techUnlocked = CompletedLevels.Any(s => s.Contains("_CM"));
+
+        TechViewBtn.interactable = techUnlocked;
+        Block.SetActive(!techUnlocked);
+    }
+
+    public void CheckUnlockStatus()
+    {
+        bool IsSensesUnlocked = PlayerPrefs.GetInt("SensesUnlocked", 0) != 0,
+             IsTechUnlocked = PlayerPrefs.GetInt("TechsUnlocked", 0) != 0,
+             IsSpecsUnlocked = PlayerPrefs.GetInt("SpecsUnlocked", 0) != 0;
+
+        SENSES_BLOCK.SetActive(!IsSensesUnlocked);
+        TECHS_PRECEDE_BLOCK.SetActive(!IsSensesUnlocked);
+
+        TECHS_BLOCK.SetActive(!IsTechUnlocked && !TECHS_PRECEDE_BLOCK.activeSelf);
+        SPECS_PRECEDE_BLOCK.SetActive(!IsTechUnlocked);
+
+        SPECS_BLOCK.SetActive(!IsSpecsUnlocked && !SPECS_PRECEDE_BLOCK.activeSelf);
+
+        int fumo = PlayerPrefs.GetInt("Fumo", 0);
+        SensesUnlockBtn.interactable = fumo > FUMO_COST_SENSE;
+        TechsUnlockBtn.interactable = fumo > FUMO_COST_TECHS;
+        SpecsUnlockBtn.interactable = fumo > FUMO_COST_SPECS;
+
+        FumoCnt.text = "x " + fumo;
+    }
+
+    public void UnlockSense()
+    {
+        int fumo = PlayerPrefs.GetInt("Fumo", 0);
+        if (fumo < FUMO_COST_SENSE) return;
+
+        fumo -= FUMO_COST_SENSE;
+        PlayerPrefs.SetInt("Fumo", fumo);
+        PlayerPrefs.SetInt("SensesUnlocked", 1);
+        PlayerPrefs.Save();
+
+        CheckUnlockStatus();
+    }
+
+    public void UnlockTechs()
+    {
+        int fumo = PlayerPrefs.GetInt("Fumo", 0);
+        if (fumo < FUMO_COST_TECHS) return;
+
+        fumo -= FUMO_COST_TECHS;
+        PlayerPrefs.SetInt("Fumo", fumo);
+        PlayerPrefs.SetInt("TechsUnlocked", 1);
+        PlayerPrefs.Save();
+
+        CheckUnlockStatus();
+    }
+
+    public void UnlockSpecs()
+    {
+        int fumo = PlayerPrefs.GetInt("Fumo", 0);
+        if (fumo < FUMO_COST_SPECS) return;
+
+        fumo -= FUMO_COST_SPECS;
+        PlayerPrefs.SetInt("Fumo", fumo);
+        PlayerPrefs.SetInt("SpecsUnlocked", 1);
+        PlayerPrefs.Save();
+
+        CheckUnlockStatus();
+    }
+
+    private void OnEnable()
+    {
+        CheckUnlockStatus();
+    }
+
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
+            CheckUnlockStatus();
+
             allSkills = FindObjectsOfType<SkillTree_SkillComponent>().ToList();
             allSkills.ForEach(skill =>
             {
@@ -98,6 +187,9 @@ public class SkillTree_Manager : MonoBehaviour
 
     private void Update()
     {
+        if (selectingSkill && SkillHighlight.activeSelf)
+            SkillHighlight.transform.position = selectingSkill.transform.position;
+
         OkButton.interactable = CharacterPrefabsStorage.Skills.Count > 0;
         SelectButton.interactable = selectingSkill && CharacterPrefabsStorage.Skills.Count < MaxSkillCount;
     }

@@ -230,7 +230,7 @@ public class EntityBase : MonoBehaviour
     }
 
     // use negative values for debuffs
-    public void ApplyEffect(AffectedStat affectedStat, string Key, float Value, float Duration, bool IsPercentageBased)
+    public void ApplyEffect(AffectedStat affectedStat, string Key, float Value, float Duration, bool IsPercentageBased, bool DecayOverDuration = false)
     {
         bool IsDebuff = Value < 0;
 
@@ -242,30 +242,30 @@ public class EntityBase : MonoBehaviour
             {
                 case AffectedStat.ATK:
                     if (AtkDebuffs.ContainsKey(Key))
-                        AtkDebuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased);
+                        AtkDebuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased, DecayOverDuration);
                     else
-                        AtkDebuffs.Add(Key, new(this, Value, Duration, IsPercentageBased)); 
+                        AtkDebuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration)); 
                     break;
 
                 case AffectedStat.DEF:
                     if (DefDebuffs.ContainsKey(Key))
-                        DefDebuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased);
+                        DefDebuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased, DecayOverDuration);
                     else
-                        DefDebuffs.Add(Key, new(this, Value, Duration, IsPercentageBased));
+                        DefDebuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
                     break;
 
                 case AffectedStat.RES:
                     if (ResDebuffs.ContainsKey(Key))
-                        ResDebuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased);
+                        ResDebuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased, DecayOverDuration);
                     else
-                        ResDebuffs.Add(Key, new(this, Value, Duration, IsPercentageBased));
+                        ResDebuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
                     break;
 
                 case AffectedStat.MSPD:
                     if (MspdDebuffs.ContainsKey(Key))
-                        MspdDebuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased);
+                        MspdDebuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased, DecayOverDuration);
                     else
-                        MspdDebuffs.Add(Key, new(this, Value, Duration, IsPercentageBased));
+                        MspdDebuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
                     break;
             }
         }
@@ -275,30 +275,30 @@ public class EntityBase : MonoBehaviour
             {
                 case AffectedStat.ATK:
                     if (AtkBuffs.ContainsKey(Key))
-                        AtkBuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased);
+                        AtkBuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased, DecayOverDuration);
                     else
-                        AtkBuffs.Add(Key, new(this, Value, Duration, IsPercentageBased));
+                        AtkBuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
                     break;
 
                 case AffectedStat.DEF:
                     if (DefBuffs.ContainsKey(Key))
-                        DefBuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased);
+                        DefBuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased, DecayOverDuration);
                     else
-                        DefBuffs.Add(Key, new(this, Value, Duration, IsPercentageBased));
+                        DefBuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
                     break;
 
                 case AffectedStat.RES:
                     if (ResBuffs.ContainsKey(Key))
-                        ResBuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased);
+                        ResBuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased, DecayOverDuration);
                     else
-                        ResBuffs.Add(Key, new(this, Value, Duration, IsPercentageBased));
+                        ResBuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
                     break;
 
                 case AffectedStat.MSPD:
                     if (MspdBuffs.ContainsKey(Key))
-                        MspdBuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased);
+                        MspdBuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased, DecayOverDuration);
                     else
-                        MspdBuffs.Add(Key, new(this, Value, Duration, IsPercentageBased));
+                        MspdBuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
                     break;
             }
         }
@@ -313,6 +313,8 @@ public class EntityBase : MonoBehaviour
         {
             if (!effect.IsInEffect) continue;
             effect.Duration -= Time.deltaTime;
+            if (effect.DecayOverDuration) effect.Decay();
+
             if (!effect.IsInEffect) effect.EndEffect();
         }
     }
@@ -943,15 +945,20 @@ public class EntityBase : MonoBehaviour
 
     private IEnumerator ApplyForceCoroutine(EntityBase targetEntity, Transform referencePosition, float force, float duration, bool isPull)
     {
-        StartCoroutine(targetEntity.StartMovementLockout(duration));
-
+        targetEntity.StopMovement();
+        targetEntity.CancelAttack();
+        StartCoroutine(targetEntity.StartMovementLockout(duration + 0.1f));
         float elapsedTime = 0f;
         float initialDistance = Vector3.Distance(targetEntity.transform.position, referencePosition.position);
+        float minDistanceForPull = 20f;
 
-        if (initialDistance < 0.01f && isPull)
+        if (initialDistance <= minDistanceForPull && isPull)
         {
             yield break;
         }
+
+        Vector3 lastValidPosition = targetEntity.transform.position;
+        float lastDistance = initialDistance;
 
         while (elapsedTime < duration)
         {
@@ -963,10 +970,21 @@ public class EntityBase : MonoBehaviour
 
             float currentDistance = Vector3.Distance(targetEntity.transform.position, referencePosition.position);
 
-            if (isPull && currentDistance <= 50f)
+            if (isPull)
             {
-                targetEntity.rb2d.velocity *= 0.8f;
-                break;
+                // Stop if reached minimum distance
+                if (currentDistance <= minDistanceForPull)
+                {
+                    targetEntity.rb2d.velocity = Vector2.zero;
+                    break;
+                }
+
+                // Stop if distance is increasing (overshot the target)
+                if (currentDistance > lastDistance && elapsedTime > 0.05f) // Small grace period
+                {
+                    targetEntity.rb2d.velocity = Vector2.zero;
+                    break;
+                }
             }
 
             Vector3 directionVector = isPull
@@ -975,31 +993,25 @@ public class EntityBase : MonoBehaviour
 
             if (isPull)
             {
-                // Better force curve options:
-
-                // Option 1: Smooth ease-out curve
                 float progress = 1f - (currentDistance / initialDistance);
                 float easedForce = force * (1f - Mathf.Pow(1f - progress, 3f));
-
-                // Option 2: Spring-like behavior (stronger when farther)
-                // float springForce = force * Mathf.Clamp01(currentDistance / initialDistance);
-
-                // Option 3: Minimum force threshold to prevent stalling
                 float finalForce = Mathf.Max(0.3f * force, easedForce);
-
                 targetEntity.rb2d.AddForce(directionVector * finalForce, ForceMode2D.Force);
             }
             else
             {
-                // Push can have time-based decay for more realistic feel
                 float timeProgress = elapsedTime / duration;
-                float decayedForce = force * (1f - timeProgress * 0.5f); // 50% decay over time
+                float decayedForce = force * (1f - timeProgress * 0.5f);
                 targetEntity.rb2d.AddForce(directionVector * decayedForce, ForceMode2D.Force);
             }
 
+            lastDistance = currentDistance;
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+
+        // Ensure entity stops at the end
+        targetEntity.rb2d.velocity = Vector2.zero;
     }
 
     public void StopForceEffects(EntityBase targetEntity)
