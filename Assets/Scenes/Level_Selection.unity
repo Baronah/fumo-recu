@@ -20060,8 +20060,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillType: 1
   skillName: 11
-  skillNameText: Evasion - Hasten
-  skillDescription: '''Evasion''''s dash distance +40%.'
+  skillNameText: Evasion - Gentle Touch
+  skillDescription: During the duration of 'Evasion', coming into contact with an
+    enemy extends dash's duration..
   mutuallyExclusiveSkills: 0c0000000d000000
   Overlay: {fileID: 0}
 --- !u!114 &1669243630

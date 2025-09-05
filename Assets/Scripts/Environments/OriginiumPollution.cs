@@ -59,6 +59,10 @@ public class OriginiumPollution : MonoBehaviour
                 if (e && e.IsAlive())
                 {
                     if (e is Sudaram sr) damage = (int)(damage * sr.originiumPollutionDamageMultiplier);
+                    else if (e is PlayerBase pb && pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_A))
+                    {
+                        damage = (int)(damage * 0.6f);
+                    }
 
                     if (e is OriginiumSpider os)
                     {
@@ -71,7 +75,21 @@ public class OriginiumPollution : MonoBehaviour
                         osa.InstaKill();
                     }
                     else
+                    {
+                        if (e is PlayerBase pb)
+                        {
+                            if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_B))
+                            {
+                                pb.ApplyEffect(Effect.AffectedStat.ATK, "GEOGOLIST_ATK_BUFF", 50, Interval, true);
+                            }
+                            else if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_C))
+                            {
+                                pb.ApplyEffect(Effect.AffectedStat.MSPD, "GEOGOLIST_MSPD_BUFF", 50, Interval, true);
+                            }
+                        }
+
                         e.TakeDamage(new(0, 0, damage), null);
+                    }
                 }
             });
         }

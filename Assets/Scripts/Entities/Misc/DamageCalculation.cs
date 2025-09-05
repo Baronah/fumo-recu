@@ -6,13 +6,34 @@ namespace DamageCalculation
     {
         public void Process(EntityBase attacker, EntityBase target, DamageInstance instance)
         {
+            PlayerBase playerBase = attacker as PlayerBase;
+            if (playerBase)
+            {
+                if (playerBase.Skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_BLADE))
+                {
+                    float maxiumDamageThreshold = 80f;
+                    float targetMissingHealth = target.GetMissinghealthPercentage();
+                    targetMissingHealth = targetMissingHealth >= maxiumDamageThreshold ? 100 : targetMissingHealth;
 
+                    float damageMultiply = Mathf.Lerp(1.0f, 1.4f, targetMissingHealth / 100f);
+
+                    instance.Multiply(damageMultiply);
+                }
+                else if (playerBase.Skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_SCOPE))
+                {
+                    float maxDistance = attacker.attackRange * 1.5f;
+                    float distance = Vector3.Distance(attacker.transform.position, target.transform.position);
+                    if (distance <= 50) distance = 0;
+
+                    float damageMultiply = Mathf.Lerp(1.0f, 1.4f, distance * 1.0f / maxDistance);
+                    instance.Multiply(damageMultiply);
+                }
+            }
         }
     }
 
     public class CalculateDefense : IDamageStep
     {
-
         public void Process(EntityBase attacker, EntityBase target, DamageInstance instance)
         {
             if (target.IsPhysicalImmune) instance.PhysicalDamage = 0;

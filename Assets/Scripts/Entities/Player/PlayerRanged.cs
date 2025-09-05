@@ -181,10 +181,24 @@ public class PlayerRanged : PlayerBase
                 Mathf.Lerp(FreezeDurationMin, FreezeDurationMax, MinDistanceForFreezeDuration * 1.0f / distance);
             ApplyFreeze(enemy, freezeDuration);
 
+            if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_SUPERCONDUCT))
+            {
+                enemy.ApplyEffect(Effect.AffectedStat.DEF, "FREEZE_SUPERCONDUCT_DEF_DEBUFF", -50, freezeDuration, true);
+                enemy.ApplyEffect(Effect.AffectedStat.RES, "FREEZE_SUPERCONDUCT_RES_DEBUFF", -50, freezeDuration, true);
+            }
+
             if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_NORTH))
-                PushEntityFrom(enemy, transform, 5f, 0.25f);
+            {
+                float pushDuration = distance >= FreezeRange * 0.8f
+                    ?
+                    0.1f
+                    :
+                    Mathf.Lerp(0.1f, 0.2f, MinDistanceForFreezeDuration * 1.0f / distance);
+
+                PushEntityFrom(enemy, transform, 5f, pushDuration);
+            }
             else if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_SOUTH))
-                PullEntityTowards(enemy, transform, 5f, 0.25f);
+                PullEntityTowards(enemy, transform, 5.25f, 0.2f);
         }
 
         float cooldown = FreezeCooldown;

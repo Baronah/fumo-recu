@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using static Cinemachine.CinemachineTargetGroup;
+using static Effect;
 using static ProjectileScript;
 using static UnityEngine.GraphicsBuffer;
 
@@ -30,7 +31,7 @@ public class EntityBase : MonoBehaviour
 
     public int GetMaxHealth() => mHealth;
     public short GetHealthPercentage() => (short)Mathf.Max(1, health * 100 / mHealth);
-    public short GetMissingealthPercentage() => (short)Mathf.Max(1, (mHealth - health) * 100 / mHealth);
+    public short GetMissinghealthPercentage() => (short)((mHealth - health) * 100 / mHealth);
 
     public bool IsFreezeImmune = false, IsStunImmune = false, IsPhysicalImmune = false, IsMagicalImmune = false, canRevive = false, isInvisible = false;
 
@@ -97,6 +98,29 @@ public class EntityBase : MonoBehaviour
     protected Animation attackAnimation;
 
     protected bool IsComponentsInitialized = false;
+
+    protected Dictionary<string, Effect>
+                    AtkBuffs = new(),
+                    AtkDebuffs = new(),
+                    DefBuffs = new(),
+                    DefDebuffs = new(),
+                    ResBuffs = new(),
+                    ResDebuffs = new(),
+                    MspdBuffs = new(),
+                    MspdDebuffs = new();
+
+    private List<Effect> AllEffects()
+    {
+        return AtkBuffs.Values
+            .Concat(AtkDebuffs.Values)
+            .Concat(DefBuffs.Values)
+            .Concat(DefDebuffs.Values)
+            .Concat(ResBuffs.Values)
+            .Concat(ResDebuffs.Values)
+            .Concat(MspdBuffs.Values)
+            .Concat(MspdDebuffs.Values)
+            .ToList();
+    }
 
     public virtual bool CanAttack =>
         attackPattern != AttackPattern.NONE &&
@@ -189,14 +213,259 @@ public class EntityBase : MonoBehaviour
         yield return null;
     }
 
+    short BDB_Cnt = 0;
     public virtual void FixedUpdate()
     {
         if (!IsAlive() && !TriggeredOnDeath) OnDeath();
 
         Regen();
         UpdateCooldowns();
+        UpdateEffectDurations();
+
+        BDB_Cnt++;
+        if (BDB_Cnt > 25) CalculateBuffsAndDebuffs();
+        
         HandleSpriteFlipping();
         HandleAnimationSpeed();
+    }
+
+    // use negative values for debuffs
+    public void ApplyEffect(AffectedStat affectedStat, string Key, float Value, float Duration, bool IsPercentageBased)
+    {
+        bool IsDebuff = Value < 0;
+
+        if (IsDebuff)
+        {
+            Value *= -1;
+
+            switch (affectedStat)
+            {
+                case AffectedStat.ATK:
+                    if (AtkDebuffs.ContainsKey(Key))
+                        AtkDebuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased);
+                    else
+                        AtkDebuffs.Add(Key, new(this, Value, Duration, IsPercentageBased)); 
+                    break;
+
+                case AffectedStat.DEF:
+                    if (DefDebuffs.ContainsKey(Key))
+                        DefDebuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased);
+                    else
+                        DefDebuffs.Add(Key, new(this, Value, Duration, IsPercentageBased));
+                    break;
+
+                case AffectedStat.RES:
+                    if (ResDebuffs.ContainsKey(Key))
+                        ResDebuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased);
+                    else
+                        ResDebuffs.Add(Key, new(this, Value, Duration, IsPercentageBased));
+                    break;
+
+                case AffectedStat.MSPD:
+                    if (MspdDebuffs.ContainsKey(Key))
+                        MspdDebuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased);
+                    else
+                        MspdDebuffs.Add(Key, new(this, Value, Duration, IsPercentageBased));
+                    break;
+            }
+        }
+        else
+        {
+            switch (affectedStat)
+            {
+                case AffectedStat.ATK:
+                    if (AtkBuffs.ContainsKey(Key))
+                        AtkBuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased);
+                    else
+                        AtkBuffs.Add(Key, new(this, Value, Duration, IsPercentageBased));
+                    break;
+
+                case AffectedStat.DEF:
+                    if (DefBuffs.ContainsKey(Key))
+                        DefBuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased);
+                    else
+                        DefBuffs.Add(Key, new(this, Value, Duration, IsPercentageBased));
+                    break;
+
+                case AffectedStat.RES:
+                    if (ResBuffs.ContainsKey(Key))
+                        ResBuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased);
+                    else
+                        ResBuffs.Add(Key, new(this, Value, Duration, IsPercentageBased));
+                    break;
+
+                case AffectedStat.MSPD:
+                    if (MspdBuffs.ContainsKey(Key))
+                        MspdBuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased);
+                    else
+                        MspdBuffs.Add(Key, new(this, Value, Duration, IsPercentageBased));
+                    break;
+            }
+        }
+
+        CalculateBuffsAndDebuffs();
+    }
+
+    public void UpdateEffectDurations()
+    {
+        var effects = AllEffects();
+        foreach (var effect in effects)
+        {
+            if (!effect.IsInEffect) continue;
+            effect.Duration -= Time.deltaTime;
+            if (!effect.IsInEffect) effect.EndEffect();
+        }
+    }
+
+    float prevAtkAdd = 0, prevDefAdd = 0, prevResAdd = 0;
+    float prevMspdAdd = 0;
+    public void CalculateBuffsAndDebuffs()
+    {
+        BDB_Cnt = 0;
+        
+        atk -= (short) prevAtkAdd;
+        def -= (short) prevDefAdd;
+        res -= (short) prevResAdd;
+        moveSpeed -= prevMspdAdd;
+
+        prevAtkAdd = prevDefAdd = prevResAdd = 0;
+        prevMspdAdd = 0;
+
+        // Buffs
+        List<Effect> atkBuffsList = new(AtkBuffs.Values.Where(a => a.IsInEffect).ToList());
+        atkBuffsList.ForEach(a =>
+        {
+            if (a.IsPercentage)
+            {
+                prevAtkAdd += (bAtk * a.Value / 100);
+            }
+            else
+            {
+                prevAtkAdd += a.Value;
+            }
+        });
+
+        List<Effect> defBuffsList = new(DefBuffs.Values.Where(a => a.IsInEffect).ToList());
+        defBuffsList.ForEach(a =>
+        {
+            if (a.IsPercentage)
+            {
+                prevDefAdd += (bDef * a.Value / 100);
+            }
+            else
+            {
+                prevDefAdd += a.Value;
+            }
+        });
+
+        List<Effect> resBuffsList = new(ResBuffs.Values.Where(a => a.IsInEffect).ToList());
+        resBuffsList.ForEach(a =>
+        {
+            if (a.IsPercentage)
+            {
+                prevResAdd += (bRes * a.Value / 100);
+            }
+            else
+            {
+                prevResAdd += a.Value;
+            }
+        });
+
+        List<Effect> mspdBuffsList = new(MspdBuffs.Values.Where(a => a.IsInEffect).ToList());
+        mspdBuffsList.ForEach(a =>
+        {
+            if (a.IsPercentage)
+            {
+                prevMspdAdd += b_moveSpeed * a.Value / 100;
+            }
+            else
+            {
+                prevMspdAdd += a.Value;
+            }
+        });
+
+        float simAtk = (atk + prevAtkAdd),
+            simDef = (def + prevDefAdd),
+            simRes = (res + prevResAdd),
+             simMspd = moveSpeed + prevMspdAdd;
+
+        // Debuffs
+        List<Effect> sortedAtkDebuffs = new(AtkDebuffs.Values.Where(a => a.IsInEffect).ToList());
+        sortedAtkDebuffs.Sort((a1, a2) => (int) (a2.Value - a1.Value));
+        sortedAtkDebuffs.ForEach(a =>
+        {
+            if (a.IsPercentage)
+            {
+                prevAtkAdd -= (simAtk * a.Value / 100);
+
+                simAtk -= (simAtk * a.Value / 100);
+            }
+            else
+            {
+                prevAtkAdd -= a.Value;
+
+                simAtk -= a.Value;
+            }
+        });
+
+        List<Effect> sortedDefDebuffs = new(DefDebuffs.Values.Where(a => a.IsInEffect).ToList());
+        sortedDefDebuffs.Sort((a1, a2) => (int)(a2.Value - a1.Value));
+        sortedDefDebuffs.ForEach(a =>
+        {
+            if (a.IsPercentage)
+            {
+                prevDefAdd -= (simDef * a.Value / 100);
+
+                simDef -= (simDef * a.Value / 100);
+            }
+            else
+            {
+                prevDefAdd -= a.Value;
+                simDef -= a.Value;
+            }
+        });
+
+        List<Effect> sortedResDebuffs = new(ResDebuffs.Values.Where(a => a.IsInEffect).ToList());
+        sortedResDebuffs.Sort((a1, a2) => (int)(a2.Value - a1.Value));
+        sortedResDebuffs.ForEach(a =>
+        {
+            if (a.IsPercentage)
+            {
+                prevResAdd -= (simRes * a.Value / 100);
+                simRes -= (simRes * a.Value / 100);
+            }
+            else
+            {
+                prevResAdd -= a.Value;
+                simRes -= a.Value;
+            }
+        });
+
+        List<Effect> sortedMspdDebuffs = new(MspdDebuffs.Values.Where(a => a.IsInEffect).ToList());
+        sortedMspdDebuffs.Sort((a1, a2) => (int)(a2.Value - a1.Value));
+        sortedMspdDebuffs.ForEach(a =>
+        {
+            if (a.IsPercentage)
+            {
+                prevMspdAdd -= (simMspd * a.Value / 100);
+                simMspd -= (simMspd * a.Value / 100);
+            }
+            else
+            {
+                prevMspdAdd -= a.Value;
+                simMspd -= a.Value;
+            }
+        });
+
+        if (prevMspdAdd * -1 >= moveSpeed) prevMspdAdd = moveSpeed * -1;
+        if (prevAtkAdd * -1 >= atk) prevAtkAdd = atk * -1;
+        if (prevDefAdd * -1 >= def) prevDefAdd = def * -1;
+        if (prevResAdd * -1 >= res) prevResAdd = res * -1;
+
+        atk += (short) prevAtkAdd;
+        def += (short) prevDefAdd;
+        res += (short) prevResAdd;
+        moveSpeed += prevMspdAdd;
     }
 
     private float regenTimer = 0;
@@ -308,6 +577,7 @@ public class EntityBase : MonoBehaviour
             instance = new DamageInstance(pDmg, mDmg, tDmg)
         };
 
+        pipeline.Add(new ModifyRawDamage());
         pipeline.Add(new CalculateDefense());
         pipeline.Calculate();
 

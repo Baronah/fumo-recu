@@ -25,6 +25,18 @@ public class DamageInstance
         MagicalDamage = magical;
         TrueDamage = trueDamage;
     }
+
+    public void Multiply(float percentage)
+    {
+        Multiply(percentage, percentage, percentage);
+    }
+
+    public void Multiply(float pPercentage, float mPercentage, float tPercentage)
+    {
+        PhysicalDamage = (int)(PhysicalDamage * pPercentage);
+        MagicalDamage = (int)(MagicalDamage * mPercentage);
+        TrueDamage = (int)(TrueDamage * tPercentage);
+    }
 }
 
 public interface IDamageStep

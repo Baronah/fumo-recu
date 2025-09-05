@@ -83,10 +83,6 @@ public class PlayerMelee : PlayerBase
     public float GetDashDistance()
     {
         float distance = DashSpeed + moveSpeed * 5f;
-        if (Skills.Contains(SkillTree_Manager.SkillName.DASH_HASTEN))
-        {
-            distance *= 1.65f;
-        }
 
         return distance;
     }
@@ -95,19 +91,9 @@ public class PlayerMelee : PlayerBase
     {
         if (!CanUseDash) yield break;
 
+        StartCoroutine(DashLockout());
         IsDashing = true;
 
-        StartCoroutine(DashLockout());
-        StartCoroutine(StartMovementLockout(DashDuration));
-        StartCoroutine(StartAttackLockout(DashDuration));
-
-        float invulDuration = DashDuration * 2f;
-        if (Skills.Contains(SkillTree_Manager.SkillName.DASH_FAITH))
-        {
-            invulDuration += 0.5f;
-        }
-
-        SetInvulnerable(invulDuration);
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
 
@@ -118,39 +104,70 @@ public class PlayerMelee : PlayerBase
 
         if (sfxs[1]) sfxs[1].Play();
         
-        bool dashDoesDamage = Skills.Contains(SkillTree_Manager.SkillName.DASH_LETHAL);
+        bool checkForCollision = 
+            Skills.Contains(SkillTree_Manager.SkillName.DASH_LETHAL) 
+            ||
+            Skills.Contains(SkillTree_Manager.SkillName.DASH_TOUCH);
 
-
-        float dashTime = 0f;
-        while (dashTime < DashDuration)
+        var movementInputs = new Vector2(moveHorizontal, moveVertical).normalized;
+        
+        bool allowDashes = true;
+        while (allowDashes)
         {
-            if (dashDoesDamage)
-            {
-                var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, 45f, true);
-                foreach (EntityBase enemy in enemies)
-                {
-                    if (!enemy || !enemy.IsAlive() || EnemyHitByDash.Contains(enemy)) continue;
+            allowDashes = false;
+            StartCoroutine(StartMovementLockout(DashDuration));
+            StartCoroutine(StartAttackLockout(DashDuration));
 
-                    DealDamage(enemy, (int)(atk * 0.6f), 0, 0);
-                    EnemyHitByDash.Add(enemy);
-                }
+            float invulDuration = DashDuration * 2f;
+            if (Skills.Contains(SkillTree_Manager.SkillName.DASH_FAITH))
+            {
+                invulDuration += 0.5f;
             }
 
-            var movementInputs = new Vector2(moveHorizontal, moveVertical).normalized;
+            SetInvulnerable(invulDuration);
 
-            rb2d.velocity = CalculateMovement(movementInputs, GetDashDistance());
+            float dashTime = 0f;
+            while (dashTime < DashDuration)
+            {
+                if (checkForCollision)
+                {
+                    var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, 45f, true);
 
-            animator.SetFloat("move", Mathf.Abs(moveHorizontal) + Mathf.Abs(moveVertical));
+                    if (Skills.Contains(SkillTree_Manager.SkillName.DASH_TOUCH))
+                    {
+                        var enemy = enemies.FirstOrDefault(e => !EnemyHitByDash.Contains(e));
+                        if (!allowDashes && enemy)
+                        {
+                            allowDashes = true;
+                            EnemyHitByDash.Add(enemy);
+                        }
+                    }
+                    else if (Skills.Contains(SkillTree_Manager.SkillName.DASH_LETHAL))
+                    {
+                        foreach (EntityBase enemy in enemies)
+                        {
+                            if (!enemy || !enemy.IsAlive() || EnemyHitByDash.Contains(enemy)) continue;
 
-            GameObject Illusion = Instantiate(IllusionPrefab, transform.position, Quaternion.identity);
-            SpriteRenderer IllusionSpriteRenderer = Illusion.GetComponentInChildren<SpriteRenderer>();
-            IllusionSpriteRenderer.sprite = spriteRenderer.sprite;
-            IllusionSpriteRenderer.flipX = spriteRenderer.flipX;
-            IllusionSpriteRenderer.color = new Color(1, 1, 1, 0.5f);
-            Destroy(Illusion, 0.2f);
+                            DealDamage(enemy, (int)(atk * 0.6f), 0, 0);
+                            EnemyHitByDash.Add(enemy);
+                        }
+                    }
+                }
 
-            dashTime += Time.fixedDeltaTime;
-            yield return new WaitForFixedUpdate();
+                rb2d.velocity = CalculateMovement(movementInputs, GetDashDistance());
+
+                animator.SetFloat("move", Mathf.Abs(moveHorizontal) + Mathf.Abs(moveVertical));
+
+                GameObject Illusion = Instantiate(IllusionPrefab, transform.position, Quaternion.identity);
+                SpriteRenderer IllusionSpriteRenderer = Illusion.GetComponentInChildren<SpriteRenderer>();
+                IllusionSpriteRenderer.sprite = spriteRenderer.sprite;
+                IllusionSpriteRenderer.flipX = spriteRenderer.flipX;
+                IllusionSpriteRenderer.color = new Color(1, 1, 1, 0.5f);
+                Destroy(Illusion, 0.2f);
+
+                dashTime += Time.fixedDeltaTime;
+                yield return new WaitForFixedUpdate();
+            }
         }
 
         yield return null;
@@ -227,11 +244,11 @@ public class PlayerMelee : PlayerBase
             $"regenerate {HealPerSecond_HpPercentage * 100}% max HP every second. {SkillCooldown}s cooldown.";
 
 
-        if (Skills.Contains(SkillTree_Manager.SkillName.DASH_HASTEN))
+        if (Skills.Contains(SkillTree_Manager.SkillName.DASH_TOUCH))
         {
-            info.SpecialName = "Evasion - Hasten";
+            info.SpecialName = "Evasion - Gentle Touch";
             info.SpecialText =
-                $"Dash a long distance toward the movement direction and briefly becomes invulnerable during the process. {DashCooldown}s cooldown.";
+                $"Dash a short distance toward the movement direction and briefly becomes invulnerable during the process, hitting an enemy extends the dash's duration. {DashCooldown}s cooldown.";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.DASH_LETHAL))
         {

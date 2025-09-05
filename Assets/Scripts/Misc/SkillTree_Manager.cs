@@ -28,7 +28,7 @@ public class SkillTree_Manager : MonoBehaviour
         EQUIPMENT_SCOPE,
         EQUIPMENT_RADIO,
         EQUIPMENT_PROVISIONS,
-        DASH_HASTEN,
+        DASH_TOUCH,
         DASH_LETHAL,
         DASH_FAITH,
         WINDBLOW_NORTH,
