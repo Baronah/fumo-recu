@@ -12,7 +12,7 @@ public class SkillTree_Manager : MonoBehaviour
     [SerializeField] GameObject SENSES_BLOCK, TECHS_BLOCK, SPECS_BLOCK, TECHS_PRECEDE_BLOCK, SPECS_PRECEDE_BLOCK;
     [SerializeField] Button SensesUnlockBtn, TechsUnlockBtn, SpecsUnlockBtn;
     [SerializeField] short FUMO_COST_SENSE = 3, FUMO_COST_TECHS = 3, FUMO_COST_SPECS = 3;
-    [SerializeField] TMP_Text FumoCnt;
+    [SerializeField] TMP_Text FumoCnt, SelectedCnt;
 
     public enum SkillType
     {
@@ -49,7 +49,11 @@ public class SkillTree_Manager : MonoBehaviour
         JUGGERNAUNT_PULL,
         JUGGERNAUNT_AFTERSHOCK,
         VICTORY_ATK,
-        VICTORY_MSPD
+        VICTORY_MSPD,
+        SPIRAL_MORE,
+        SPIRAL_TRAVEL,
+        SPIRAL_SHADOW,
+        BLACKFLASH,
     }
 
     public static SkillTree_Manager Instance;
@@ -103,9 +107,9 @@ public class SkillTree_Manager : MonoBehaviour
         SPECS_BLOCK.SetActive(!IsSpecsUnlocked && !SPECS_PRECEDE_BLOCK.activeSelf);
 
         int fumo = PlayerPrefs.GetInt("Fumo", 0);
-        SensesUnlockBtn.interactable = fumo > FUMO_COST_SENSE;
-        TechsUnlockBtn.interactable = fumo > FUMO_COST_TECHS;
-        SpecsUnlockBtn.interactable = fumo > FUMO_COST_SPECS;
+        SensesUnlockBtn.interactable = fumo >= FUMO_COST_SENSE;
+        TechsUnlockBtn.interactable = fumo >= FUMO_COST_TECHS;
+        SpecsUnlockBtn.interactable = fumo >= FUMO_COST_SPECS;
 
         FumoCnt.text = "x " + fumo;
     }
@@ -281,6 +285,7 @@ public class SkillTree_Manager : MonoBehaviour
             item.sprite = defaultSkillIcon;
         }
 
+        int selectedCnt = CharacterPrefabsStorage.Skills.Count;
         short cnt = 0;
         foreach (var item in CharacterPrefabsStorage.Skills)
         {
@@ -288,8 +293,15 @@ public class SkillTree_Manager : MonoBehaviour
             cnt++;
         }
 
-        if (CharacterPrefabsStorage.Skills.Count >= MaxSkillCount)
+        bool isMaxed = CharacterPrefabsStorage.Skills.Count >= MaxSkillCount;
+        if (isMaxed)
             allSkills.ForEach (s => s.Button.interactable = false);
+
+        SelectedCnt.text = isMaxed
+            ?
+            $"<color=#FFF775>Selected: {selectedCnt}/{MaxSkillCount}</color>"
+            :
+            $"<color=#A1A1A1>Selected: {selectedCnt}/{MaxSkillCount}</color>";
     }
 
     public void ForceQuit()

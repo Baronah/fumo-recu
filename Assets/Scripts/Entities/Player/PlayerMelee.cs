@@ -11,7 +11,7 @@ public class PlayerMelee : PlayerBase
     [SerializeField] private float DashDuration = 0.5f;
     [SerializeField] private float DashCooldown = 6f;
 
-    [SerializeField] private GameObject SkillEffect, SkillEffect_2, AftershockEffect;
+    [SerializeField] private GameObject SkillEffect, SkillEffect_2, AftershockEffect, BlackflashEffect;
     [SerializeField] private float SkillCooldown = 30f;
     [SerializeField] private float SkillDuration = 7f;
     [SerializeField] private float BurstHeal_HpPercentage = 0.35f;
@@ -40,6 +40,7 @@ public class PlayerMelee : PlayerBase
 
             SkillEffect.SetActive(skillActive);
             SkillEffect_2.SetActive(Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_IGNITE) && skillActive);
+            BlackflashEffect.SetActive(AtkBuffs.ContainsKey("BLACKFLASH_ATK_BUFF") && AtkBuffs["BLACKFLASH_ATK_BUFF"].IsInEffect);
             FUpdateCnt = 0;
         }
     }
@@ -128,7 +129,6 @@ public class PlayerMelee : PlayerBase
         {
             allowDashes = false;
             StartCoroutine(StartMovementLockout(DashDuration));
-            StartCoroutine(StartAttackLockout(DashDuration));
 
             float invulDuration = DashDuration * 2f;
             if (Skills.Contains(SkillTree_Manager.SkillName.DASH_FAITH))
@@ -198,7 +198,15 @@ public class PlayerMelee : PlayerBase
 
         foreach (var target in targets)
         {
-            DealDamage(target, atk);
+            if (IsDashing && Skills.Contains(SkillTree_Manager.SkillName.BLACKFLASH))
+            {
+                defPen += 50;
+                ApplyEffect(Effect.AffectedStat.ATK, "BLACKFLASH_ATK_BUFF", 100, 5, true, true);
+                DealDamage(target, (int)(atk * 2.5f), 0, 0);
+                defPen -= 50;
+                DisplayDamage("<color=black><size=60>BLACKFLASH!</size></color>", new(0, 50));
+            }
+            else DealDamage(target, atk);
         }
         yield return null;
     }
@@ -332,26 +340,32 @@ public class PlayerMelee : PlayerBase
         {
             info.SpecialName = "Evasion - Gentle Touch";
             info.SpecialText =
-                $"Dash a short distance toward the movement direction and briefly becomes invulnerable during the process, hitting an enemy extends the dash's duration. {DashCooldown}s cooldown.";
+                $"Dash a short distance toward the movement direction and briefly becomes invulnerable during the process, hitting an enemy extends the dash's duration.";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.DASH_LETHAL))
         {
             info.SpecialName = "Evasion - Lethal Tempo";
             info.SpecialText =
-                $"Dash a short distance toward the movement direction, briefly becomes invulnerable during the process and damage all enemies self coming into contact with. {DashCooldown}s cooldown.";
+                $"Dash a short distance toward the movement direction, briefly becomes invulnerable during the process and damage all enemies self coming into contact with.";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.DASH_FAITH))
         {
             info.SpecialName = "Evasion - Leap of Faith";
             info.SpecialText =
-                $"Dash a short distance toward the movement direction and becomes invulnerable during the process and for a brief moment afterward. {DashCooldown}s cooldown.";
+                $"Dash a short distance toward the movement direction and becomes invulnerable during the process and for a brief moment afterward.";
         }
         else
         {
             info.SpecialName = "Evasion";
             info.SpecialText =
-                $"Dash a short distance toward the movement direction and briefly becomes invulnerable during the process. {DashCooldown}s cooldown.";
+                $"Dash a short distance toward the movement direction and briefly becomes invulnerable during the process.";
         }
+
+        if (Skills.Contains(SkillTree_Manager.SkillName.BLACKFLASH))
+        {
+            info.SpecialText += " Landing an attack during this period increases its damage to 250% and grants you a decaying ATK buff.";
+        }
+        info.SpecialText += $" {DashCooldown}s cooldown.";
 
         bool hasUpgrade = true;
         if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_DURATION))

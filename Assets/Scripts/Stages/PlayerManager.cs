@@ -76,6 +76,7 @@ public class PlayerManager : MonoBehaviour
 
     private void Start()
     {
+        playerStartType = CharacterPrefabsStorage.startingPlayer;
         sfxs = GetComponents<AudioSource>().ToList();
         sfxs.Remove(sfxs.ElementAt(0)); // Remove the music audio source
 
@@ -151,9 +152,16 @@ public class PlayerManager : MonoBehaviour
         ResetAllCooldown();
 
         bool activePlayerIsMelee = IsStageStarted ? player is PlayerMelee : playerStartType != PlayerType.MELEE;
-        if (activePlayerIsMelee)
+        if (IsStageStarted && player)
         {
-            player.GetComponent<PlayerMelee>().ReleaseAfterShock();
+            if (activePlayerIsMelee)
+            {
+                player.GetComponent<PlayerMelee>().ReleaseAfterShock();
+            }
+            else
+            {
+                player.GetComponent<PlayerRanged>().OnPlayerSwap_SpawnIllusion();
+            }
         }
 
         Vector3 spawnPosition = IsStageStarted ? player.transform.position : PlayerSpawnpoint.position;
@@ -196,7 +204,15 @@ public class PlayerManager : MonoBehaviour
             ActivePlayer.sprite = MeleeIcon;
         }
 
+        AssignPlayerSkillSprites(player);
         StartCoroutine(SwapCooldownE(SwapCooldown, swapCooldownTimer));
+    }
+
+    void AssignPlayerSkillSprites(PlayerBase player)
+    {
+        AttackSprite.sprite = AttackCD.sprite = player.AttackSprite;
+        SkillSprite.sprite = SkillCD.sprite = player.SkillSprite;
+        SpecialSprite.sprite = SpecialCD.sprite = player.SpecialSprite;
     }
 
     public void Register(PlayerBase player)
@@ -215,9 +231,7 @@ public class PlayerManager : MonoBehaviour
 
     IEnumerator AssignSwappedPlayerAttributes(PlayerBase newPlayer)
     {
-        AttackSprite.sprite = AttackCD.sprite = newPlayer.AttackSprite;
-        SkillSprite.sprite = SkillCD.sprite = newPlayer.SkillSprite;
-        SpecialSprite.sprite = SpecialCD.sprite = newPlayer.SpecialSprite;
+        AssignPlayerSkillSprites(newPlayer);
 
         short percentageHealth = player.GetHealthPercentage();
         newPlayer.SetHealth(Mathf.Max(1, newPlayer.GetMaxHealth() *  percentageHealth / 100));

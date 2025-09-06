@@ -12,6 +12,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static Cinemachine.DocumentationSortingAttribute;
 using static EnemyBase;
+using static PlayerManager;
 using static StageManager;
 using static UnityEngine.Rendering.VirtualTexturing.Debugging;
 
@@ -75,6 +76,9 @@ public class LevelSelectionScript : MonoBehaviour
 
     private AudioSource[] sfxs;
 
+    [SerializeField] Image StartingPlayerIconImg, StartingPlayerGlowImg;
+    [SerializeField] Sprite PlayerMeleIcon, PlayerRangedIcon;
+
     private void Start()
     {
         FindAnyObjectByType<SkillTree_Manager>(FindObjectsInactive.Include).GetPlayerProgress();
@@ -97,6 +101,7 @@ public class LevelSelectionScript : MonoBehaviour
 
         Time.timeScale = 1f;
         AssignLevels();
+        UpdateStartingPlayerIcon();
     }
 
     void AssignLevels()
@@ -129,7 +134,9 @@ public class LevelSelectionScript : MonoBehaviour
         {
             int levelIndex = startLevelIndex + i;
 
-            if (levelIndex >= Mathf.Min(highestLevelCompleted + 1, TotalLevels)) break;
+            if (levelIndex >= TotalLevels) break;
+
+            bool levelUnlocked = levelIndex < highestLevelCompleted + 1;
 
             var targetLevel = characterPrefabsStorage.SceneAssetReferences[levelIndex];
             var runtimeKey = targetLevel.RuntimeKey.ToString();
@@ -158,7 +165,20 @@ public class LevelSelectionScript : MonoBehaviour
             }
 
             string capturedKey = runtimeKey;
-            level.GetComponent<Button>().onClick.AddListener(() => SelectLevel(levelIndex, capturedKey));
+
+            Button levelButton = level.GetComponent<Button>();
+            levelButton.onClick.AddListener(() => SelectLevel(levelIndex, capturedKey));
+            levelButton.interactable = levelUnlocked;
+
+            Transform Lock = level.transform.Find("Lock");
+            Lock.gameObject.SetActive(!levelUnlocked);
+
+            Image[] imgs = level.GetComponentsInChildren<Image>();
+            foreach (var item in imgs)
+            {
+                if (item.transform == Lock || item.transform.parent == Lock) continue;
+                item.color = levelUnlocked ? Color.white : new(0.18f, 0.18f, 0.18f);
+            }
 
             LevelPrefabs.Add(level);
         }
@@ -186,6 +206,30 @@ public class LevelSelectionScript : MonoBehaviour
         MapPreviewImgOverlay.sprite = MapPreviewImg.sprite = Map_SSs[selectedIndex];
 
         StartCoroutine(ScaleLevelSelection(true));
+    }
+
+    public void SwapStartingPlayerType()
+    {
+        PlayerType current = CharacterPrefabsStorage.startingPlayer;
+        if (current == PlayerType.MELEE) CharacterPrefabsStorage.startingPlayer = PlayerType.RANGED;
+        else CharacterPrefabsStorage.startingPlayer = PlayerType.MELEE;
+
+        UpdateStartingPlayerIcon();
+    }
+
+    private void UpdateStartingPlayerIcon()
+    {
+        PlayerType current = CharacterPrefabsStorage.startingPlayer;
+        if (current == PlayerType.MELEE)
+        {
+            StartingPlayerIconImg.sprite = PlayerMeleIcon;
+            StartingPlayerGlowImg.color = new(0, 0.48f, 1f);
+        }
+        else
+        {
+            StartingPlayerIconImg.sprite = PlayerRangedIcon;
+            StartingPlayerGlowImg.color = new(0.95f, 0, 1f);
+        }
     }
 
     string GetLevelDescription(int index)

@@ -78,20 +78,28 @@ public class EnemyBase : EntityBase
     private bool isUsingPathfinding = false; // Track if we're currently using pathfinding
     private float stuckTimer = 0f; // Track how long we've been stuck
     private Vector2 lastPosition = Vector2.zero; // Track last position for stuck detection
-    private float stuckThreshold = 3f; // Time before considering stuck
-    private float stuckMovementThreshold = 5f; // Distance moved to not be considered stuck
+    private float stuckThreshold = 2f; // Time before considering stuck
+    private float stuckMovementThreshold = 35f; // Distance moved to not be considered stuck
+
+    private Collider2D stuckBoxCollider;
+
+    private const short PathfindCntThreshold = 100, ScanPlayerCntThreshold = 15, MoveCntThreshold = 15;
+    private short ScanPlayerCnt = 0, MoveCnt = 0, PathfindCnt = 0;
 
     public override void InitializeComponents()
     {
         if (IsComponentsInitialized) return;
 
         base.InitializeComponents();
+        PathfindCnt = (short)UnityEngine.Random.Range(0, PathfindCntThreshold);
+        MoveCnt = (short)UnityEngine.Random.Range(0, ScanPlayerCntThreshold);
+        ScanPlayerCnt = (short)UnityEngine.Random.Range(0, MoveCntThreshold);
 
         if (!ViewOnlyMode)
         {
             DetectSymbol = transform.Find("Spotted").GetComponentInChildren<TMP_Text>();
-
             FeetPosition = transform.Find("Feetposition");
+            stuckBoxCollider = colliders.FirstOrDefault(f => !f.isTrigger);
 
             // Initialize pathfinding grid (shared among all enemies)
             pathfindingGrid ??= new PathfindingGrid(gridCellSize, obstacleLayer);
@@ -120,8 +128,6 @@ public class EnemyBase : EntityBase
             count++;
         }
     }
-
-    private short ScanPlayerCnt = 0, MoveCnt = 0, PathfindCnt = 0;
 
     public override void FixedUpdate()
     {
@@ -160,13 +166,13 @@ public class EnemyBase : EntityBase
         }
         else
         {
-            return Checkpoints.Count > 1 ? Checkpoints[CurrentCheckpointIndex].transform.position : transform.position;
+            return Checkpoints.Count > 1 ? Checkpoints[CurrentCheckpointIndex].transform.position : FeetPosition.position;
         }
     }
 
     private void UpdatePathfinding()
     {
-        if (PathfindCnt <= 35)
+        if (PathfindCnt <= PathfindCntThreshold)
         {
             PathfindCnt++;
             return;
@@ -180,7 +186,7 @@ public class EnemyBase : EntityBase
         float distanceToDestination = Vector2.Distance(currentPos, desiredDestination);
 
         // Use pathfinding threshold for all movement types
-        if (distanceToDestination < 50f)
+        if (distanceToDestination <= 50f)
         {
             isUsingPathfinding = false;
             currentPath.Clear();
@@ -220,6 +226,7 @@ public class EnemyBase : EntityBase
             return;
         }
 
+        pathfindingRadius = Mathf.Min(1500f, distanceToDestination);
         // Determine what changed to decide if we need path updates
         Vector2 currentTargetPos = SpottedPlayer ? SpottedPlayer.transform.position : desiredDestination;
 
@@ -352,7 +359,7 @@ public class EnemyBase : EntityBase
             if (currentWaypointIndex < currentPath.Count)
             {
                 Vector2 currentWaypoint = currentPath[currentWaypointIndex];
-                float distanceToWaypoint = Vector2.Distance(transform.position, currentWaypoint);
+                float distanceToWaypoint = Vector2.Distance(FeetPosition.position, currentWaypoint); // Changed from transform.position
 
                 if (distanceToWaypoint < waypointReachDistance)
                 {
@@ -369,7 +376,7 @@ public class EnemyBase : EntityBase
 
             // Check if pathfinding still needed
             Vector2 finalTarget = GetUniversalDestination();
-            Vector2 currentPos = transform.position;
+            Vector2 currentPos = FeetPosition.position; // Changed from transform.position
             Vector2 dirToFinal = (finalTarget - currentPos).normalized;
             float distToFinal = Vector2.Distance(currentPos, finalTarget);
 
@@ -393,7 +400,7 @@ public class EnemyBase : EntityBase
     {
         if (currentWaypointIndex >= currentPath.Count) return currentPath[currentPath.Count - 1];
 
-        Vector2 currentPos = transform.position;
+        Vector2 currentPos = FeetPosition.position; // Changed from transform.position
         Vector2 currentWaypoint = currentPath[currentWaypointIndex];
 
         // Look ahead to see if we can skip waypoints
@@ -425,7 +432,7 @@ public class EnemyBase : EntityBase
 
     public override void Move()
     {
-        if (MoveCnt < 15)
+        if (MoveCnt < MoveCntThreshold)
         {
             MoveCnt++;
             return;
@@ -434,8 +441,8 @@ public class EnemyBase : EntityBase
 
         if (IsFrozen || IsStunned || !IsAlive()) return;
 
-        if (!SpottedPlayer 
-            && MoveToOverridePosition 
+        if (!SpottedPlayer
+            && MoveToOverridePosition
             && Vector2.Distance(AttackPosition.position, OverridePosition) <= OverridePositionCheckRadius)
         {
             MoveToOverridePosition = false;
@@ -444,8 +451,8 @@ public class EnemyBase : EntityBase
 
         if (IsMovementLocked) return;
 
-        // Stuck detection and handling
-        Vector2 currentPos = transform.position;
+        // Stuck detection and handling using FeetPosition
+        Vector2 currentPos = FeetPosition.position; // Changed from transform.position
         if (Vector2.Distance(currentPos, lastPosition) < stuckMovementThreshold)
         {
             stuckTimer += Time.fixedDeltaTime * 15f; // Account for MoveCnt skip
@@ -461,7 +468,7 @@ public class EnemyBase : EntityBase
         lastPosition = currentPos;
 
         Vector3 destination = GetCurrentDestination();
-        Vector2 direction =  destination - (SpottedPlayer && !isUsingPathfinding ? AttackPosition.position : transform.position);
+        Vector2 direction = destination - (SpottedPlayer && !isUsingPathfinding ? AttackPosition.position : (Vector3)FeetPosition.position); // Changed from transform.position
         float distanceToDestination = direction.magnitude;
 
         // Stop if we're very close to destination
@@ -484,6 +491,13 @@ public class EnemyBase : EntityBase
 
     private void HandleStuckState()
     {
+        if (!isUsingPathfinding) return;
+
+        StartCoroutine(TemporarilyDisableHitbox());
+        stuckTimer = 0;
+
+        /***************
+         
         // Force path recalculation
         currentPath.Clear();
         currentWaypointIndex = 0;
@@ -500,6 +514,18 @@ public class EnemyBase : EntityBase
         {
             rb2d.velocity = CalculateMovement(randomDirection);
         }
+
+        *********************/
+    }
+
+    IEnumerator TemporarilyDisableHitbox()
+    {
+        Collider2D colliderBox = stuckBoxCollider;
+        if (!colliderBox) yield break;
+
+        colliderBox.isTrigger = true;
+        yield return new WaitForSeconds(1.0f);
+        colliderBox.isTrigger = false;
     }
 
     private Vector2 GetAvoidanceDirection(Vector2 originalDirection, float distanceToDestination)
@@ -574,7 +600,7 @@ public class EnemyBase : EntityBase
 
     public void ScanPlayer()
     {
-        if (ScanPlayerCnt < 20)
+        if (ScanPlayerCnt < ScanPlayerCntThreshold)
         {
             ScanPlayerCnt++;
             return;
@@ -777,6 +803,8 @@ public class EnemyBase : EntityBase
 
     protected void MoveTowardTheSourceOfAttack(EntityBase source)
     {
+        if (SpottedPlayer) return;
+
         MoveToOverridePositionJumpCnt++;
         FaceToward(source.transform.position);
         MovementLockout = 0;

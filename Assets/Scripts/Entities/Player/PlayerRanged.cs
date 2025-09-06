@@ -1,9 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public class PlayerRanged : PlayerBase
 {
+    [SerializeField] GameObject ProjectileSkill_2, ProjectileSkill_3;
     [SerializeField] private GameObject AttackRangeIndicator, Warning, SkillEffect, FreezeEffect;
 
     [SerializeField] private Transform SkillPosition;
@@ -17,10 +20,13 @@ public class PlayerRanged : PlayerBase
     [SerializeField] private float FreezeCooldown = 11.5f;
     [SerializeField] private float FreezeCastDuration = 0.25f;
 
+    [SerializeField] private GameObject IllusionPrefab;
+
     private bool CanUseSkill = true, IsSkillActive = false, CanUseFreeze = true;
     private RectTransform AttackRangeIndicatorRect;
 
     private EntityBase target;
+    private float skillCurrentDuration;
 
     public override void Start()
     {
@@ -45,6 +51,22 @@ public class PlayerRanged : PlayerBase
         }
 
         SkillEffect.SetActive(IsSkillActive && IsAlive());
+    }
+
+    public void OnPlayerSwap_SpawnIllusion()
+    {
+        if (!Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_SHADOW) || !IsSkillActive) return;
+
+        // inherits stats and skill duration and start casting skill on time for remaining duration
+        GameObject o = Instantiate(IllusionPrefab, transform.position, Quaternion.identity);
+        PlayerCasterIllusion playerCasterIllusion = o.GetComponent<PlayerCasterIllusion>();
+        playerCasterIllusion.InitializeComponents();
+        playerCasterIllusion.SetInherit(
+            ATK: (short)(atk * 0.4f), 
+            duration: SkillDuration - skillCurrentDuration, 
+            Skill_DamageMulitplier, 
+            Skill_AtkInterval, 
+            flipX: spriteRenderer.flipX);
     }
 
     public override void FlipAttackPosition()
@@ -80,6 +102,9 @@ public class PlayerRanged : PlayerBase
 
         if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_SOUTH))
             FreezeDurationMin = Mathf.Max(FreezeDurationMin, 2f);
+
+        if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_MORE))
+            Skill_DamageMulitplier *= 0.6f;
     }
 
     protected override void GetControlInputs()
@@ -223,45 +248,123 @@ public class PlayerRanged : PlayerBase
 
         animator.SetTrigger("skill");
         IsSkillActive = true;
-        float count = 0;
-        float angleOffset = 0; 
-        while (count < SkillDuration)
+        skillCurrentDuration = 0;
+        float angleOffset = 0;
+
+        short loopCnt = 0;
+        bool shootAdditionalBullets = Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_MORE),
+             homingOnFirstTarget = Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_TRAVEL);
+
+        EntityBase lockInTarget = homingOnFirstTarget 
+            ? SearchForNearestEntityAroundSelf(typeof(EnemyBase))
+            : null;
+
+        float lockInTargetDamageMul = 1.0f;
+        while (skillCurrentDuration < SkillDuration)
         {
             Vector3 sourcePosition = SkillPosition.position;
             if (sfxs[2]) sfxs[2].Play();
 
-            for (int i = 0; i < 360; i += 30) 
+            float lifeSpan = 1.5f;
+            float speed = ProjectileSpeed * 0.25f;
+            for (int i = 0; i < 360; i += 30)
             {
                 float currentAngle = i + angleOffset;
 
                 float angleInRadians = currentAngle * Mathf.Deg2Rad;
 
-                float circleRadius = 30f + (count * 5f); 
+                float circleRadius = 30f + (skillCurrentDuration * 5f);
                 Vector3 targetPosition = new Vector3(
                     sourcePosition.x + Mathf.Cos(angleInRadians) * circleRadius,
                     sourcePosition.y + Mathf.Sin(angleInRadians) * circleRadius,
                     sourcePosition.z
                 );
 
-                CreateProjectileAndShootToward(
-                    ProjectilePrefab,
-                    new DamageInstance(0, (int)(atk * Skill_DamageMulitplier), 0),
-                    sourcePosition,
-                    targetPosition,
-                    projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
-                    travelSpeed: ProjectileSpeed * 0.25f,
-                    acceleration: ProjectileSpeed * 0.25f,
-                    lifeSpan: 1.5f,
-                    targetType: typeof(EnemyBase));
-            }
+                if (lockInTarget && lockInTarget.IsAlive())
+                {
+                    CreateProjectileAndShootToward(
+                        lockInTarget,
+                        new DamageInstance(0, (int)(atk * Skill_DamageMulitplier * lockInTargetDamageMul), 0),
+                        sourcePosition,
+                        projectileType: ProjectileScript.ProjectileType.HOMING_TO_SPECIFIC_TARGET
+                        );
 
+                    if (lockInTargetDamageMul > 0.2f) lockInTargetDamageMul -= 0.01f;
+                }
+                else
+                {
+                    CreateProjectileAndShootToward(
+                        ProjectilePrefab,
+                        new DamageInstance(0, (int)(atk * Skill_DamageMulitplier), 0),
+                        sourcePosition,
+                        targetPosition,
+                        projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
+                        travelSpeed: speed,
+                        acceleration: speed,
+                        lifeSpan: lifeSpan,
+                        targetType: typeof(EnemyBase));
+                }
+
+                if (shootAdditionalBullets)
+                {
+                    currentAngle = i - angleOffset - 15;
+                    angleInRadians = currentAngle * Mathf.Deg2Rad;
+
+                    targetPosition = new Vector3(
+                        sourcePosition.x + Mathf.Cos(angleInRadians) * circleRadius,
+                        sourcePosition.y + Mathf.Sin(angleInRadians) * circleRadius,
+                        sourcePosition.z
+                    );
+
+                    CreateProjectileAndShootToward(
+                        ProjectileSkill_2,
+                        new DamageInstance(0, (int)(atk * Skill_DamageMulitplier), 0),
+                        sourcePosition,
+                        targetPosition,
+                        projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
+                        travelSpeed: speed,
+                        acceleration: speed,
+                        lifeSpan: lifeSpan,
+                        targetType: typeof(EnemyBase));
+                }
+            }
             angleOffset += 6;
+
+            if (shootAdditionalBullets && loopCnt > 4)
+            {
+                for (int i = 0; i < 360; i += 15)
+                {
+                    float angleInRadians = i * Mathf.Deg2Rad;
+                    float circleRadius = 30f + (skillCurrentDuration * 5f);
+                    Vector3 targetPosition = new Vector3(
+                        sourcePosition.x + Mathf.Cos(angleInRadians) * circleRadius,
+                        sourcePosition.y + Mathf.Sin(angleInRadians) * circleRadius,
+                        sourcePosition.z
+                    );
+
+                    CreateProjectileAndShootToward(
+                        ProjectileSkill_3,
+                        new DamageInstance(0, (int)(atk * Skill_DamageMulitplier), 0),
+                        sourcePosition,
+                        targetPosition,
+                        projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
+                        travelSpeed: speed * 2,
+                        acceleration: speed * 2,
+                        lifeSpan: lifeSpan * 0.6f,
+                        targetType: typeof(EnemyBase));
+                }
+
+                if (loopCnt >= 8) loopCnt = 0;
+            }
+            
             yield return new WaitForSeconds(Skill_AtkInterval);
-            count += Skill_AtkInterval;
+            skillCurrentDuration += Skill_AtkInterval;
+            loopCnt++;
         }
 
         animator.SetTrigger("skill_end");
         IsSkillActive = false;
+        skillCurrentDuration = SkillDuration;
         yield return null;
     }
 
@@ -272,11 +375,40 @@ public class PlayerRanged : PlayerBase
         info.AttackText = $"Lauches a projectile toward the nearest enemy within range, " +
             $"dealing {atk} {damageType.ToString().ToLower()} damage.";
 
-        info.SkillName = "Der Tag neigt sich";
-        info.SkillText =
-            $"In the next {SkillDuration} seconds: becomes unable to move and attack, continuously unleashes waves of projectiles " +
-            $"spreading in all direction around self. Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
-            $"{SkillCooldown}s cooldown.";
+        if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_MORE))
+        {
+            info.SkillName = "Der Tag neigt sich - Flowering Night";
+            info.SkillText =
+                $"In the next {SkillDuration} seconds: becomes unable to move and attack, continuously unleashes waves of projectiles " +
+                $"spreading in all direction around self. Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
+                $"{SkillCooldown}s cooldown.";
+        }
+        else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_TRAVEL))
+        {
+            info.SkillName = "Der Tag neigt sich - Phantom Bullets";
+            info.SkillText =
+                $"In the next {SkillDuration} seconds: becomes unable to move and attack, and lock-on to the nearest enemy within attack range. " +
+                $"Continuously unleashes waves of projectiles spreading in all direction around self " +
+                $". Each projectile hits the first enemy it comes into contact with (if there is a locked enemy, all projectiles homing toward them instead), dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
+                $"{SkillCooldown}s cooldown.";
+        }
+        else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_SHADOW))
+        {
+            info.SkillName = "Der Tag neigt sich - Twilight of Wolumonde";
+            info.SkillText =
+                $"In the next {SkillDuration} seconds: becomes unable to move and attack, continuously unleashes waves of projectiles " +
+                $"spreading in all direction around self. Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
+                $"Swapping during this skill leaves behind a phantom that maintains the same effect for the remaining duration." +
+                $"{SkillCooldown}s cooldown.";
+        }
+        else
+        {
+            info.SkillName = "Der Tag neigt sich";
+            info.SkillText =
+                $"In the next {SkillDuration} seconds: becomes unable to move and attack, continuously unleashes waves of projectiles " +
+                $"spreading in all direction around self. Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
+                $"{SkillCooldown}s cooldown.";
+        }
 
         if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_TIMEUP))
         {

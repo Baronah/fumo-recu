@@ -668,13 +668,15 @@ MonoBehaviour:
   attackRange: 0
   attackWindupTime: 0
   attackInterval: 0
+  hpRegenFlat: 0
+  hpRegenPercentage: 0
   IsFreezeImmune: 0
   IsStunImmune: 0
   IsPhysicalImmune: 0
   IsMagicalImmune: 0
   canRevive: 0
-  isInvulnerable: 0
   isInvisible: 0
+  InvulnerableTimer: 0
   damageType: 1
   attackPattern: 1
   ProjectilePrefab: {fileID: 1707831507938423826, guid: f80dd11dc4cc0ba4ab073dc632da03aa, type: 3}
@@ -683,6 +685,7 @@ MonoBehaviour:
   DamagePopup: {fileID: 7498904281893358320, guid: b09dfacba160b6d47938cf47f8dea3c9, type: 3}
   ccBar: {fileID: 7702315061174201758}
   AttackAnimation: {fileID: 7400000, guid: cfc2392c28256a7458936cb08b03e7ce, type: 2}
+  sfxs: []
   preferredMoveAnimationPlaySpeed: 0.85
   preferredAttackAnimationSpeed: 0.9
   AttackSprite: {fileID: 21300000, guid: 1146632b55a73c34fa3b2bf1794f10ec, type: 3}
@@ -693,6 +696,9 @@ MonoBehaviour:
   SkillDes: 
   SpecialName: 
   SpecialDes: 
+  Skills: 
+  ProjectileSkill_2: {fileID: 823679449479629327, guid: f623b44ff3216784da0e64470a2e59de, type: 3}
+  ProjectileSkill_3: {fileID: 7531047425192547471, guid: 36af0100b9ffca845ab2dcd317ad8830, type: 3}
   AttackRangeIndicator: {fileID: 7574998143464888112}
   Warning: {fileID: 6080019599566292019}
   SkillEffect: {fileID: 2390494206778937756}
@@ -704,10 +710,11 @@ MonoBehaviour:
   Skill_AtkInterval: 0.15
   FreezeRange: 420
   FreezeDurationMin: 0.5
-  FreeDurationMax: 4
+  FreezeDurationMax: 4
   MinDistanceForFreezeDuration: 100
   FreezeCooldown: 10.5
   FreezeCastDuration: 0.1
+  IllusionPrefab: {fileID: 4804969973133499271, guid: 09bcf3452a6a99f4a94ce939d3a3fc57, type: 3}
 --- !u!82 &770774110143472001
 AudioSource:
   m_ObjectHideFlags: 0

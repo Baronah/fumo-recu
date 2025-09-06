@@ -1,0 +1,119 @@
+using System.Collections;
+using UnityEngine;
+
+public class PlayerCasterIllusion : EntityBase
+{
+    [SerializeField] private Transform SkillPosition;
+    [SerializeField] private GameObject SkillEffect;
+    private float SkillDuration = 7f;
+    private float Skill_DamageMulitplier = 0.25f;
+    private float Skill_AtkInterval = 0.25f;
+
+    public override void InitializeComponents()
+    {
+        base.InitializeComponents();
+        isInvisible = true;
+        SetInvulnerable(9999f);
+    }
+
+    public void SetInherit(short ATK, float duration, float multiplier, float interval, bool flipX)
+    {
+        InitSpriteColor = new(1, 0, 0.15f, 0.6f);
+        spriteRenderer.color = InitSpriteColor;
+        bAtk = atk = ATK;
+        SkillDuration = duration;
+        Skill_DamageMulitplier = multiplier;
+        Skill_AtkInterval = interval;
+        spriteRenderer.flipX = flipX;
+        HandleSpriteFlipping();
+
+        StartCoroutine(CastSkill());
+    }
+
+    public override void Move()
+    {
+        
+    }
+
+    public override IEnumerator Attack()
+    {
+        yield return null;
+    }
+
+    public override void FlipAttackPosition()
+    {
+        base.FlipAttackPosition();
+        SkillPosition.localPosition = new Vector3(
+            -SkillPosition.localPosition.x,
+            SkillPosition.localPosition.y,
+            SkillPosition.localPosition.z
+        );
+
+        SkillEffect.transform.localPosition = new Vector3(
+            -SkillEffect.transform.localPosition.x,
+            SkillEffect.transform.localPosition.y,
+            SkillEffect.transform.localPosition.z
+        );
+    }
+
+    public override void FixedUpdate()
+    {
+        base.FixedUpdate();
+        InitSpriteColor = new(1, 0, 0.15f, 0.4f);
+        spriteRenderer.color = InitSpriteColor;
+    }
+
+    public IEnumerator CastSkill()
+    {
+        yield return null;
+        if (!IsAlive()) yield break;
+
+        animator.SetTrigger("skill");
+        float count = 0;
+        float angleOffset = 0;
+
+        short loopCnt = 0;
+        while (count < SkillDuration)
+        {
+            Vector3 sourcePosition = SkillPosition.position;
+            if (sfxs[2]) sfxs[2].Play();
+
+            float lifeSpan = 1.5f;
+            float speed = ProjectileSpeed * 0.25f;
+            for (int i = 0; i < 360; i += 30)
+            {
+                float currentAngle = i + angleOffset;
+
+                float angleInRadians = currentAngle * Mathf.Deg2Rad;
+
+                float circleRadius = 30f + (count * 5f);
+                Vector3 targetPosition = new Vector3(
+                    sourcePosition.x + Mathf.Cos(angleInRadians) * circleRadius,
+                    sourcePosition.y + Mathf.Sin(angleInRadians) * circleRadius,
+                    sourcePosition.z
+                );
+
+                CreateProjectileAndShootToward(
+                    ProjectilePrefab,
+                    new DamageInstance(0, (int)(atk * Skill_DamageMulitplier), 0),
+                    sourcePosition,
+                    targetPosition,
+                    projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
+                    travelSpeed: speed,
+                    acceleration: speed,
+                    lifeSpan: lifeSpan,
+                    targetType: typeof(EnemyBase));
+            }
+            angleOffset += 6;
+
+            yield return new WaitForSeconds(Skill_AtkInterval);
+            count += Skill_AtkInterval;
+            loopCnt++;
+        }
+
+        animator.SetTrigger("skill_end");
+        yield return null;
+
+        Destroy(this.gameObject);
+    }
+}

@@ -602,9 +602,9 @@ public class EntityBase : MonoBehaviour
 
     public virtual void DealDamage(EntityBase target, int damage)
     {
-        if (damageType == DamageType.PHYSICAL) DealDamage(target, atk, 0, 0);
-        else if (damageType == DamageType.MAGICAL) DealDamage(target, 0, atk, 0);
-        else DealDamage(target, 0, 0, atk);
+        if (damageType == DamageType.PHYSICAL) DealDamage(target, damage, 0, 0);
+        else if (damageType == DamageType.MAGICAL) DealDamage(target, 0, damage, 0);
+        else DealDamage(target, 0, 0, damage);
     }
 
     public virtual void DealDamage(EntityBase target, DamageInstance damage)
