@@ -11,8 +11,11 @@ public class SkillTree_Manager : MonoBehaviour
 
     [SerializeField] GameObject SENSES_BLOCK, TECHS_BLOCK, SPECS_BLOCK, TECHS_PRECEDE_BLOCK, SPECS_PRECEDE_BLOCK;
     [SerializeField] Button SensesUnlockBtn, TechsUnlockBtn, SpecsUnlockBtn;
+    [SerializeField] TMP_Text SensesUnlockTxt, TechsUnlockTxt, SpecsUnlockTxt;
     [SerializeField] short FUMO_COST_SENSE = 3, FUMO_COST_TECHS = 3, FUMO_COST_SPECS = 3;
     [SerializeField] TMP_Text FumoCnt, SelectedCnt;
+
+    private short PlayerMaxSkills = 0;
 
     public enum SkillType
     {
@@ -39,7 +42,7 @@ public class SkillTree_Manager : MonoBehaviour
         DASH_FAITH,
         WINDBLOW_NORTH,
         WINDBLOW_SOUTH,
-        FREEZE_TIMEUP,
+        FREEZE_ICEAGE,
         FREEZE_CHARGE,
         FREEZE_SUPERCONDUCT,
         OBSCURE_VISION,
@@ -54,6 +57,12 @@ public class SkillTree_Manager : MonoBehaviour
         SPIRAL_TRAVEL,
         SPIRAL_SHADOW,
         BLACKFLASH,
+        MINT_PHALANX,
+        MINT_WINDRUSH,
+        ATTENTION_BOOK,
+        ATTENTION_DEVICE,
+        MAJOR_DEBUT,
+        DASH_AFTERIMAGES,
     }
 
     public static SkillTree_Manager Instance;
@@ -72,7 +81,7 @@ public class SkillTree_Manager : MonoBehaviour
     private HashSet<SkillName> exclusions = new();
 
     Image SkillViewPanelImg;
-    Image[] TechImgs;
+    [SerializeField] Image[] TechImgs;
 
     [SerializeField] Button SelectButton, OkButton;
     [SerializeField] private short MaxSkillCount = 2;   
@@ -83,10 +92,17 @@ public class SkillTree_Manager : MonoBehaviour
           SensesSkillViewPanelColor = new(0, 0.59f, 0.65f),
           TechsSkillViewPanelColor = new(0.57f, 0, 0.8f);
 
+    [SerializeField] private string[] SecretKeys = { 
+        "ANGOUNOWALTZ",
+        "NOODLES",
+    };
+
+
     public void GetPlayerProgress()
     {
         string[] CompletedLevels = PlayerPrefs.GetString("CompletedLevels", "").Split(' ');
-        bool techUnlocked = CompletedLevels.Any(s => s.Contains("_CM"));
+        bool techUnlocked = CompletedLevels.Any(s => s.Contains("FM-02") || s.Contains("FM-02_CM")) 
+                        && CompletedLevels.Any(s => s.Contains("_CM"));
 
         TechViewBtn.interactable = techUnlocked;
         Block.SetActive(!techUnlocked);
@@ -97,6 +113,13 @@ public class SkillTree_Manager : MonoBehaviour
         bool IsSensesUnlocked = PlayerPrefs.GetInt("SensesUnlocked", 0) != 0,
              IsTechUnlocked = PlayerPrefs.GetInt("TechsUnlocked", 0) != 0,
              IsSpecsUnlocked = PlayerPrefs.GetInt("SpecsUnlocked", 0) != 0;
+
+        if (IsTechUnlocked || IsSpecsUnlocked)
+            PlayerMaxSkills = 3;
+        else if (IsSensesUnlocked)
+            PlayerMaxSkills = 2;
+        else 
+            PlayerMaxSkills = 0;
 
         SENSES_BLOCK.SetActive(!IsSensesUnlocked);
         TECHS_PRECEDE_BLOCK.SetActive(!IsSensesUnlocked);
@@ -112,6 +135,27 @@ public class SkillTree_Manager : MonoBehaviour
         SpecsUnlockBtn.interactable = fumo >= FUMO_COST_SPECS;
 
         FumoCnt.text = "x " + fumo;
+        SensesUnlockTxt.text = $"Spend       x{FUMO_COST_SENSE} to unlock this branch \n(+2 technique slots).";
+        TechsUnlockTxt.text = $"Spend       x{FUMO_COST_TECHS} to unlock this branch \n(+1 technique slot).";
+        SpecsUnlockTxt.text = $"Spend         x{FUMO_COST_SPECS} to unlock this branch.";
+
+        int maxSkill = Mathf.Min(PlayerMaxSkills, MaxSkillCount);
+        for (int i = 0; i < maxSkill; i++)
+        {
+            Image techImg = TechImgs[i];
+            if (i + 1 > maxSkill)
+            {
+                techImg.color = new(0.35f, 0.35f, 0.35f);
+                techImg.GetComponentsInChildren<Image>(true)[1].gameObject.SetActive(true);
+            }
+            else
+            {
+                techImg.color = Color.white;
+                techImg.GetComponentsInChildren<Image>(true)[1].gameObject.SetActive(false);
+            }
+        }
+
+        OnSelect_Update();
     }
 
     public void UnlockSense()
@@ -119,25 +163,29 @@ public class SkillTree_Manager : MonoBehaviour
         int fumo = PlayerPrefs.GetInt("Fumo", 0);
         if (fumo < FUMO_COST_SENSE) return;
 
+
         fumo -= FUMO_COST_SENSE;
         PlayerPrefs.SetInt("Fumo", fumo);
         PlayerPrefs.SetInt("SensesUnlocked", 1);
         PlayerPrefs.Save();
 
         CheckUnlockStatus();
+        Clear();
     }
 
     public void UnlockTechs()
     {
         int fumo = PlayerPrefs.GetInt("Fumo", 0);
         if (fumo < FUMO_COST_TECHS) return;
-
+        
+        
         fumo -= FUMO_COST_TECHS;
         PlayerPrefs.SetInt("Fumo", fumo);
         PlayerPrefs.SetInt("TechsUnlocked", 1);
         PlayerPrefs.Save();
 
         CheckUnlockStatus();
+        Clear();
     }
 
     public void UnlockSpecs()
@@ -145,12 +193,14 @@ public class SkillTree_Manager : MonoBehaviour
         int fumo = PlayerPrefs.GetInt("Fumo", 0);
         if (fumo < FUMO_COST_SPECS) return;
 
+
         fumo -= FUMO_COST_SPECS;
         PlayerPrefs.SetInt("Fumo", fumo);
         PlayerPrefs.SetInt("SpecsUnlocked", 1);
         PlayerPrefs.Save();
 
         CheckUnlockStatus();
+        Clear();
     }
 
     private void OnEnable()
@@ -163,9 +213,8 @@ public class SkillTree_Manager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            CheckUnlockStatus();
 
-            allSkills = FindObjectsOfType<SkillTree_SkillComponent>().ToList();
+            allSkills = FindObjectsOfType<SkillTree_SkillComponent>(true).ToList();
             allSkills.ForEach(skill =>
             {
                 Instantiate(TickOverlay, skill.transform.position, Quaternion.identity, skill.transform);
@@ -176,8 +225,8 @@ public class SkillTree_Manager : MonoBehaviour
             defaultSkillIcon = skillIconImage.sprite;
             defaultSkillName = skillNameText.text;
             defaultSkillDetailsText = skillDetailsText.text;
+            SelectedCnt.text = $"<color=#a1a1a1>Selected: {CharacterPrefabsStorage.Skills.Count}/{MaxSkillCount}</color>";
 
-            TechImgs = Techs.GetComponentsInChildren<Image>();
             for (int i = 0; i < TechImgs.Length; i++)
             {
                 TechImgs[i].gameObject.SetActive(MaxSkillCount >= (i + 1));
@@ -196,6 +245,33 @@ public class SkillTree_Manager : MonoBehaviour
 
         OkButton.interactable = CharacterPrefabsStorage.Skills.Count > 0;
         SelectButton.interactable = selectingSkill && CharacterPrefabsStorage.Skills.Count < MaxSkillCount;
+
+        EnterSecretCode();
+    }
+
+    string PlayerInputStr = string.Empty;
+    void EnterSecretCode()
+    {
+        if (PlayerPrefs.GetInt("SecretCodeRedeemed", 0) != 0) return; 
+
+        foreach (char c in Input.inputString)
+        {
+            if (!char.IsLetter(c)) continue;
+
+            PlayerInputStr += char.ToUpper(c);
+
+            if (SecretKeys.Any(s => PlayerInputStr.Contains(s)))
+            {
+                int fumo = PlayerPrefs.GetInt("Fumo", 0);
+                fumo += 10;
+                PlayerPrefs.SetInt("Fumo", fumo);
+                PlayerPrefs.SetInt("SecretCodeRedeemed", 1);
+                PlayerPrefs.Save();
+
+                CheckUnlockStatus();
+                Clear();
+            }
+        }
     }
 
     public void OnSkillSelected(SkillTree_SkillComponent skill)
@@ -285,6 +361,8 @@ public class SkillTree_Manager : MonoBehaviour
             item.sprite = defaultSkillIcon;
         }
 
+        int maxSkill = Mathf.Min(PlayerMaxSkills, MaxSkillCount);
+
         int selectedCnt = CharacterPrefabsStorage.Skills.Count;
         short cnt = 0;
         foreach (var item in CharacterPrefabsStorage.Skills)
@@ -293,15 +371,18 @@ public class SkillTree_Manager : MonoBehaviour
             cnt++;
         }
 
-        bool isMaxed = CharacterPrefabsStorage.Skills.Count >= MaxSkillCount;
+        bool isMaxed = CharacterPrefabsStorage.Skills.Count >= maxSkill;
         if (isMaxed)
-            allSkills.ForEach (s => s.Button.interactable = false);
+            allSkills.ForEach(s =>
+            {
+                if (s.Button) s.Button.interactable = false;
+            });
 
         SelectedCnt.text = isMaxed
             ?
-            $"<color=#FFF775>Selected: {selectedCnt}/{MaxSkillCount}</color>"
+            $"<color=#FFF775>Selected: {selectedCnt}/{maxSkill}</color>"
             :
-            $"<color=#A1A1A1>Selected: {selectedCnt}/{MaxSkillCount}</color>";
+            $"<color=#A1A1A1>Selected: {selectedCnt}/{maxSkill}</color>";
     }
 
     public void ForceQuit()

@@ -87,6 +87,10 @@ MonoBehaviour:
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  - m_AssetGUID: dd53f2b97b488b7408c59f57db847d04
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
   - m_AssetGUID: 93e86f3bb47d4094991140c0a33d3c2d
     m_SubObjectName: 
     m_SubObjectType: 
@@ -99,3 +103,11 @@ MonoBehaviour:
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  LevelTitles:
+  - Hold me tight
+  - Entrance
+  - Weft & Warp
+  - Slow Down
+  - Crimson Dusk
+  - Eternal Sunshine
+  - Loop & Loop

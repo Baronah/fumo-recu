@@ -10,6 +10,7 @@ public class Effect
         HP,
         ARNG,
         MSPD,
+        ASPD,
     }
 
     public AffectedStat affectedStat;
@@ -78,6 +79,7 @@ public class Effect
             AffectedStat.ARNG => Helder.b_attackRange,
             AffectedStat.HP => Helder.mHealth,
             AffectedStat.MSPD => Helder.b_moveSpeed,
+            AffectedStat.ASPD => 100,
             _ => 0,
         };
     }

@@ -29,6 +29,8 @@ public class EntityBase : MonoBehaviour
 
     public float hpRegenFlat = 0, hpRegenPercentage = 0;
 
+    public short weight = 0;
+
     public int GetMaxHealth() => mHealth;
     public short GetHealthPercentage() => (short)Mathf.Max(1, health * 100 / mHealth);
     public short GetMissinghealthPercentage() => (short)((mHealth - health) * 100 / mHealth);
@@ -99,7 +101,7 @@ public class EntityBase : MonoBehaviour
 
     protected bool IsComponentsInitialized = false;
 
-    protected Dictionary<string, Effect>
+    public Dictionary<string, Effect>
                     AtkBuffs = new(),
                     AtkDebuffs = new(),
                     DefBuffs = new(),
@@ -107,7 +109,9 @@ public class EntityBase : MonoBehaviour
                     ResBuffs = new(),
                     ResDebuffs = new(),
                     MspdBuffs = new(),
-                    MspdDebuffs = new();
+                    MspdDebuffs = new(),
+                    AspdBuffs = new(),
+                    AspdDebuffs = new();
 
     private List<Effect> AllEffects()
     {
@@ -119,6 +123,8 @@ public class EntityBase : MonoBehaviour
             .Concat(ResDebuffs.Values)
             .Concat(MspdBuffs.Values)
             .Concat(MspdDebuffs.Values)
+            .Concat(AspdBuffs.Values)
+            .Concat(AspdDebuffs.Values)
             .ToList();
     }
 
@@ -230,9 +236,16 @@ public class EntityBase : MonoBehaviour
     }
 
     // use negative values for debuffs
-    public void ApplyEffect(AffectedStat affectedStat, string Key, float Value, float Duration, bool IsPercentageBased, bool DecayOverDuration = false)
+    public enum EffectPersistType
+    {
+        PERSIST,
+        DECAY
+    };
+
+    public void ApplyEffect(AffectedStat affectedStat, string Key, float Value, float Duration, bool IsPercentageBased, EffectPersistType persistType = EffectPersistType.PERSIST)
     {
         bool IsDebuff = Value < 0;
+        bool DecayOverDuration = persistType == EffectPersistType.DECAY;
 
         if (IsDebuff)
         {
@@ -267,6 +280,13 @@ public class EntityBase : MonoBehaviour
                     else
                         MspdDebuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
                     break;
+
+                case AffectedStat.ASPD:
+                    if (AspdDebuffs.ContainsKey(Key))
+                        AspdDebuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased, DecayOverDuration);
+                    else
+                        AspdDebuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
+                    break;
             }
         }
         else
@@ -300,6 +320,13 @@ public class EntityBase : MonoBehaviour
                     else
                         MspdBuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
                     break;
+
+                case AffectedStat.ASPD:
+                    if (AspdBuffs.ContainsKey(Key))
+                        AspdBuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased, DecayOverDuration);
+                    else
+                        AspdBuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
+                    break;
             }
         }
 
@@ -320,7 +347,7 @@ public class EntityBase : MonoBehaviour
     }
 
     float prevAtkAdd = 0, prevDefAdd = 0, prevResAdd = 0;
-    float prevMspdAdd = 0;
+    float prevMspdAdd = 0, prevAspdAdd = 0;
     public void CalculateBuffsAndDebuffs()
     {
         BDB_Cnt = 0;
@@ -329,9 +356,10 @@ public class EntityBase : MonoBehaviour
         def -= (short) prevDefAdd;
         res -= (short) prevResAdd;
         moveSpeed -= prevMspdAdd;
+        ASPD -= prevAspdAdd;
 
         prevAtkAdd = prevDefAdd = prevResAdd = 0;
-        prevMspdAdd = 0;
+        prevMspdAdd = prevAspdAdd = 0;
 
         // Buffs
         List<Effect> atkBuffsList = new(AtkBuffs.Values.Where(a => a.IsInEffect).ToList());
@@ -386,10 +414,17 @@ public class EntityBase : MonoBehaviour
             }
         });
 
+        List<Effect> aspdBuffsList = new(AspdBuffs.Values.Where(a => a.IsInEffect).ToList());
+        aspdBuffsList.ForEach(a =>
+        {
+            prevAspdAdd += a.Value;
+        });
+
         float simAtk = (atk + prevAtkAdd),
             simDef = (def + prevDefAdd),
             simRes = (res + prevResAdd),
-             simMspd = moveSpeed + prevMspdAdd;
+             simMspd = moveSpeed + prevMspdAdd,
+             simAspd = ASPD + prevAspdAdd;
 
         // Debuffs
         List<Effect> sortedAtkDebuffs = new(AtkDebuffs.Values.Where(a => a.IsInEffect).ToList());
@@ -459,15 +494,32 @@ public class EntityBase : MonoBehaviour
             }
         });
 
+        List<Effect> sortedAspdDebuffs = new(AspdDebuffs.Values.Where(a => a.IsInEffect).ToList());
+        sortedAspdDebuffs.ForEach(a =>
+        {
+            if (a.IsPercentage)
+            {
+                prevAspdAdd -= (simAspd * a.Value / 100);
+                simAspd -= (simAspd * a.Value / 100);
+            }
+            else
+            {
+                prevAspdAdd -= a.Value;
+                simAspd -= a.Value;
+            }
+        });
+
         if (prevMspdAdd * -1 >= moveSpeed) prevMspdAdd = moveSpeed * -1;
         if (prevAtkAdd * -1 >= atk) prevAtkAdd = atk * -1;
         if (prevDefAdd * -1 >= def) prevDefAdd = def * -1;
         if (prevResAdd * -1 >= res) prevResAdd = res * -1;
+        if (simAspd < 20) prevAspdAdd = ASPD - 20; 
 
         atk += (short) prevAtkAdd;
         def += (short) prevDefAdd;
         res += (short) prevResAdd;
         moveSpeed += prevMspdAdd;
+        ASPD += prevAspdAdd;
     }
 
     private float regenTimer = 0;
@@ -937,27 +989,39 @@ public class EntityBase : MonoBehaviour
         yield return null;
     }
 
-    public void PullEntityTowards(EntityBase targetEntity, Transform targetPosition, float pullForce, float duration)
-        => StartCoroutine(ApplyForceCoroutine(targetEntity, targetPosition, pullForce, duration, true));
+    public void PullEntityTowards(EntityBase targetEntity, Transform targetPosition, float pullForce, float duration, bool hasReferencePosition = true)
+        => StartCoroutine(ApplyForceCoroutine(targetEntity, targetPosition.position, pullForce, duration, true, hasReferencePosition));
 
-    public void PushEntityFrom(EntityBase targetEntity, Transform sourcePosition, float pushForce, float duration)
-        => StartCoroutine(ApplyForceCoroutine(targetEntity, sourcePosition, pushForce, duration, false));
+    public void PushEntityFrom(EntityBase targetEntity, Transform sourcePosition, float pushForce, float duration, bool hasReferencePosition = true)
+        => StartCoroutine(ApplyForceCoroutine(targetEntity, sourcePosition.position, pushForce, duration, false, hasReferencePosition));
 
-    private IEnumerator ApplyForceCoroutine(EntityBase targetEntity, Transform referencePosition, float force, float duration, bool isPull)
+    public void PullEntityTowards(EntityBase targetEntity, Vector3 targetPosition, float pullForce, float duration, bool hasReferencePosition = true)
+    => StartCoroutine(ApplyForceCoroutine(targetEntity, targetPosition, pullForce, duration, true, hasReferencePosition));
+
+    public void PushEntityFrom(EntityBase targetEntity, Vector3 sourcePosition, float pushForce, float duration, bool hasReferencePosition = true)
+        => StartCoroutine(ApplyForceCoroutine(targetEntity, sourcePosition, pushForce, duration, false, hasReferencePosition));
+
+    private IEnumerator ApplyForceCoroutine(EntityBase targetEntity, Vector3 referencePosition, float force, float duration, bool isPull, bool hasReferencePosition = true)
     {
+        float ForceValue = force * duration / 0.03f;
+        float ForceValueAfterWeight = ForceValue - targetEntity.weight;
+        if (ForceValueAfterWeight <= 0.5f) yield break;
+
+        float multiplier = ForceValueAfterWeight / ForceValue;
+        force *= multiplier;
+
         targetEntity.StopMovement();
         targetEntity.CancelAttack();
         StartCoroutine(targetEntity.StartMovementLockout(duration + 0.1f));
         float elapsedTime = 0f;
-        float initialDistance = Vector3.Distance(targetEntity.transform.position, referencePosition.position);
+        float initialDistance = Vector3.Distance(targetEntity.transform.position, referencePosition);
         float minDistanceForPull = 20f;
 
-        if (initialDistance <= minDistanceForPull && isPull)
+        if (hasReferencePosition && initialDistance <= minDistanceForPull && isPull)
         {
             yield break;
         }
 
-        Vector3 lastValidPosition = targetEntity.transform.position;
         float lastDistance = initialDistance;
 
         while (elapsedTime < duration)
@@ -968,12 +1032,12 @@ public class EntityBase : MonoBehaviour
                 yield break;
             }
 
-            float currentDistance = Vector3.Distance(targetEntity.transform.position, referencePosition.position);
+            float currentDistance = Vector3.Distance(targetEntity.transform.position, referencePosition);
 
             if (isPull)
             {
                 // Stop if reached minimum distance
-                if (currentDistance <= minDistanceForPull)
+                if (hasReferencePosition && currentDistance <= minDistanceForPull)
                 {
                     targetEntity.rb2d.velocity = Vector2.zero;
                     break;
@@ -987,9 +1051,14 @@ public class EntityBase : MonoBehaviour
                 }
             }
 
-            Vector3 directionVector = isPull
-                ? (referencePosition.position - targetEntity.transform.position).normalized
-                : (targetEntity.transform.position - referencePosition.position).normalized;
+            Vector3 directionVector;
+            if (hasReferencePosition)
+            {
+                directionVector = isPull
+                            ? (referencePosition - targetEntity.transform.position).normalized
+                            : (targetEntity.transform.position - referencePosition).normalized;
+            }
+            else directionVector = referencePosition;
 
             if (isPull)
             {
@@ -1103,7 +1172,7 @@ public class EntityBase : MonoBehaviour
         return SearchForEntitiesAroundCertainPoint(type, transform.position, r, catchInvisibles, take);
     }
 
-    public virtual List<EntityBase> SearchForEntitiesAroundCertainPoint(Type type, Vector2 pos, float r, bool catchInvisibles = false, short take = -1)
+    public static List<EntityBase> SearchForEntitiesAroundCertainPoint(Type type, Vector2 pos, float r, bool catchInvisibles = false, short take = -1)
     {
         Collider2D[] collider2Ds = Physics2D.OverlapCircleAll(pos, r);
         List<EntityBase> entityBases = new List<EntityBase>();
@@ -1132,7 +1201,7 @@ public class EntityBase : MonoBehaviour
         return SearchForNearestEntityAroundCertainPoint(type, AttackPosition.position, attackRange, catchInvisible);
     }
 
-    public virtual EntityBase SearchForNearestEntityAroundCertainPoint(Type type, Vector2 pos, float r, bool catchInvisibles = false)
+    public static EntityBase SearchForNearestEntityAroundCertainPoint(Type type, Vector2 pos, float r, bool catchInvisibles = false)
     {
         var targets = SearchForEntitiesAroundCertainPoint(type, pos, r, catchInvisibles, 1);
         if (targets == null || targets.Count <= 0) return null;

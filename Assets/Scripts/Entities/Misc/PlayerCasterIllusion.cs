@@ -1,27 +1,34 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerCasterIllusion : EntityBase
 {
     [SerializeField] private Transform SkillPosition;
-    [SerializeField] private GameObject SkillEffect;
+    [SerializeField] private GameObject SkillEffect, SkillBarObj;
+    private Slider SkillBar;
+
     private float SkillDuration = 7f;
+    private float SkillCurrentDuration = 0;
+    
     private float Skill_DamageMulitplier = 0.25f;
     private float Skill_AtkInterval = 0.25f;
 
     public override void InitializeComponents()
     {
+        SkillBar = SkillBarObj.GetComponentInChildren<Slider>();
         base.InitializeComponents();
         isInvisible = true;
         SetInvulnerable(9999f);
     }
 
-    public void SetInherit(short ATK, float duration, float multiplier, float interval, bool flipX)
+    public void SetInherit(short ATK, float maxDuration, float duration, float multiplier, float interval, bool flipX)
     {
-        InitSpriteColor = new(1, 0, 0.15f, 0.6f);
+        InitSpriteColor = new(1, 0, 0.15f, 0.75f);
         spriteRenderer.color = InitSpriteColor;
         bAtk = atk = ATK;
-        SkillDuration = duration;
+        SkillDuration = maxDuration;
+        SkillCurrentDuration = duration;
         Skill_DamageMulitplier = multiplier;
         Skill_AtkInterval = interval;
         spriteRenderer.flipX = flipX;
@@ -68,47 +75,56 @@ public class PlayerCasterIllusion : EntityBase
         yield return null;
         if (!IsAlive()) yield break;
 
+        SkillBarObj.SetActive(true);
         animator.SetTrigger("skill");
-        float count = 0;
+        float count = SkillCurrentDuration, intervalCount = Skill_AtkInterval;
         float angleOffset = 0;
 
-        short loopCnt = 0;
+        SkillBar.maxValue = SkillDuration;
+        SkillBar.value = SkillDuration - count;
+
+        float lifeSpan = 1.5f;
+        float speed = ProjectileSpeed * 0.25f;
+
         while (count < SkillDuration)
         {
-            Vector3 sourcePosition = SkillPosition.position;
-            if (sfxs[2]) sfxs[2].Play();
-
-            float lifeSpan = 1.5f;
-            float speed = ProjectileSpeed * 0.25f;
-            for (int i = 0; i < 360; i += 30)
+            SkillBar.value = SkillDuration - count;
+            if (intervalCount >= Skill_AtkInterval)
             {
-                float currentAngle = i + angleOffset;
+                Vector3 sourcePosition = SkillPosition.position;
+                intervalCount = 0;
+                if (sfxs[2]) sfxs[2].Play();
 
-                float angleInRadians = currentAngle * Mathf.Deg2Rad;
+                for (int i = 0; i < 360; i += 30)
+                {
+                    float currentAngle = i + angleOffset;
 
-                float circleRadius = 30f + (count * 5f);
-                Vector3 targetPosition = new Vector3(
-                    sourcePosition.x + Mathf.Cos(angleInRadians) * circleRadius,
-                    sourcePosition.y + Mathf.Sin(angleInRadians) * circleRadius,
-                    sourcePosition.z
-                );
+                    float angleInRadians = currentAngle * Mathf.Deg2Rad;
 
-                CreateProjectileAndShootToward(
-                    ProjectilePrefab,
-                    new DamageInstance(0, (int)(atk * Skill_DamageMulitplier), 0),
-                    sourcePosition,
-                    targetPosition,
-                    projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
-                    travelSpeed: speed,
-                    acceleration: speed,
-                    lifeSpan: lifeSpan,
-                    targetType: typeof(EnemyBase));
+                    float circleRadius = 30f + (count * 5f);
+                    Vector3 targetPosition = new Vector3(
+                        sourcePosition.x + Mathf.Cos(angleInRadians) * circleRadius,
+                        sourcePosition.y + Mathf.Sin(angleInRadians) * circleRadius,
+                        sourcePosition.z
+                    );
+
+                    CreateProjectileAndShootToward(
+                        ProjectilePrefab,
+                        new DamageInstance(0, (int)(atk * Skill_DamageMulitplier), 0),
+                        sourcePosition,
+                        targetPosition,
+                        projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
+                        travelSpeed: speed,
+                        acceleration: speed,
+                        lifeSpan: lifeSpan,
+                        targetType: typeof(EnemyBase));
+                }
+                angleOffset += 6;
             }
-            angleOffset += 6;
 
-            yield return new WaitForSeconds(Skill_AtkInterval);
-            count += Skill_AtkInterval;
-            loopCnt++;
+            yield return null;
+            count += Time.deltaTime;
+            intervalCount += Time.deltaTime;
         }
 
         animator.SetTrigger("skill_end");

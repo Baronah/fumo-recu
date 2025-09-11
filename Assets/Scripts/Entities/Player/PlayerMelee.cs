@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerMelee : PlayerBase
 {
-    [SerializeField] private GameObject IllusionPrefab;
+    [SerializeField] private GameObject IllusionPrefab, AfterimagePrefabs;
     [SerializeField] private float DashSpeed = 3500f;
     [SerializeField] private float DashDuration = 0.5f;
     [SerializeField] private float DashCooldown = 6f;
 
-    [SerializeField] private GameObject SkillEffect, SkillEffect_2, AftershockEffect, BlackflashEffect;
+    [SerializeField] private GameObject SkillEffect, SkillEffect_2, AftershockEffect, BlackflashEffect, SwirlEffect;
     [SerializeField] private float SkillCooldown = 30f;
     [SerializeField] private float SkillDuration = 7f;
     [SerializeField] private float BurstHeal_HpPercentage = 0.35f;
@@ -20,13 +21,25 @@ public class PlayerMelee : PlayerBase
     [SerializeField] private float ResBoost = 10;
     [SerializeField] private float AtkBoost = 0.25f;
     [SerializeField] private float SpeedBoost = 0.35f;
+    [SerializeField] private GameObject SkillBarObj;
+    private Slider SkillBar;
 
     [SerializeField] float PullRadius = 400, DoTRadius = 220f, AoERadius = 300f;
+    [SerializeField] float AfterShockDamageConversionRatio = 0.75f;
 
     private bool IsSkillActive = false, IsDashing = false, CanUseSkill = true, CanUseDash = true;
     private short atkAdd, defAdd, resAdd, speedAdd;
 
     private HashSet<EntityBase> EnemyHitByDash = new HashSet<EntityBase>();
+    bool Debut = false;
+
+    private PlayerMeleeAfterimage DashAfterImages = null;
+
+    public override void InitializeComponents()
+    {
+        SkillBar = SkillBarObj.GetComponentInChildren<Slider>();
+        base.InitializeComponents();
+    }
 
     short FUpdateCnt = 0;
     public override void FixedUpdate()
@@ -34,13 +47,15 @@ public class PlayerMelee : PlayerBase
         base.FixedUpdate();
 
         FUpdateCnt++;
-        if (FUpdateCnt >= 3)
+        if (FUpdateCnt >= 5)
         {
             bool skillActive = IsSkillActive && IsAlive();
 
             SkillEffect.SetActive(skillActive);
             SkillEffect_2.SetActive(Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_IGNITE) && skillActive);
-            BlackflashEffect.SetActive(AtkBuffs.ContainsKey("BLACKFLASH_ATK_BUFF") && AtkBuffs["BLACKFLASH_ATK_BUFF"].IsInEffect);
+            BlackflashEffect.SetActive(IsAlive() && AtkBuffs.ContainsKey("BLACKFLASH_ATK_BUFF") && AtkBuffs["BLACKFLASH_ATK_BUFF"].IsInEffect);
+            SkillBarObj.SetActive(skillActive);
+
             FUpdateCnt = 0;
         }
     }
@@ -55,6 +70,16 @@ public class PlayerMelee : PlayerBase
         }
     }
 
+    public override void OnFieldEnter()
+    {
+        base.OnFieldEnter();
+        if (Skills.Contains(SkillTree_Manager.SkillName.MAJOR_DEBUT))
+        {
+            Debut = true;
+            UseSpecial();
+        }
+    }
+
     protected override void GetControlInputs()
     {
         if (!IsAlive()) return;
@@ -63,13 +88,13 @@ public class PlayerMelee : PlayerBase
         {
             AttackCoroutine = StartCoroutine(Attack());
         }
-        else if (Input.GetKeyDown(playerManager.SkillKey) && CanUseSkill && !IsSkillActive)
+        else if (Input.GetKeyDown(playerManager.SkillKey))
         {
-            StartCoroutine(ActivateSkill());
+            UseSkill();
         }
-        else if (Input.GetKeyDown(playerManager.SpecialKey) && CanUseDash && !IsDashing)
+        else if (Input.GetKeyDown(playerManager.SpecialKey))
         {
-            StartCoroutine(Dash());
+            UseSpecial();
         }
         else
         {
@@ -79,9 +104,11 @@ public class PlayerMelee : PlayerBase
 
     IEnumerator DashLockout()
     {
+        float CD = Debut ? 0 : DashCooldown;
+
         CanUseDash = false;
-        StartCoroutine(playerManager.SpecialCooldown(DashCooldown));
-        yield return new WaitForSeconds(DashCooldown);
+        StartCoroutine(playerManager.SpecialCooldown(CD));
+        yield return new WaitForSeconds(CD);
         CanUseDash = true;
     }
 
@@ -93,6 +120,21 @@ public class PlayerMelee : PlayerBase
         CanUseSkill = true;
     }
 
+    public override void UseSpecial()
+    {
+        if (IsDashing) return;
+
+        if (CanUseDash && !DashAfterImages)
+        {
+            base.UseSpecial();
+            StartCoroutine(Dash());
+        }
+        else if (Skills.Contains(SkillTree_Manager.SkillName.DASH_AFTERIMAGES) && DashAfterImages)
+        {
+            StartCoroutine(DashBackToAfterImages());
+        }
+    }
+    
     public float GetDashDistance()
     {
         float distance = DashSpeed + moveSpeed * 5f;
@@ -102,10 +144,18 @@ public class PlayerMelee : PlayerBase
 
     IEnumerator Dash()
     {
-        if (!CanUseDash) yield break;
+        if (!CanUseDash || DashAfterImages) yield break;
 
         StartCoroutine(DashLockout());
         IsDashing = true;
+        Debut = false;
+
+        if (Skills.Contains(SkillTree_Manager.SkillName.DASH_AFTERIMAGES))
+        {
+            GameObject o = Instantiate(AfterimagePrefabs, transform.position, Quaternion.identity);
+            DashAfterImages = o.GetComponent<PlayerMeleeAfterimage>();
+            DashAfterImages.GetComponentInChildren<SpriteRenderer>().flipX = spriteRenderer.flipX;
+        }
 
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
@@ -177,15 +227,44 @@ public class PlayerMelee : PlayerBase
                 IllusionSpriteRenderer.color = new Color(1, 1, 1, 0.5f);
                 Destroy(Illusion, 0.2f);
 
-                dashTime += Time.fixedDeltaTime;
-                yield return new WaitForFixedUpdate();
+                dashTime += Time.deltaTime;
+                yield return null;
             }
+
+            yield return null;
         }
 
         yield return null;
         rb2d.velocity = Vector2.zero;
         IsDashing = false;
         if (EnemyHitByDash.Count > 0) EnemyHitByDash.Clear();
+    }
+
+    IEnumerator DashBackToAfterImages()
+    {
+        if (!DashAfterImages || !Skills.Contains(SkillTree_Manager.SkillName.DASH_AFTERIMAGES)) yield break;
+
+        DashAfterImages.OnPlayerDashCallback();
+        IsDashing = true;
+
+        if (sfxs[1]) sfxs[1].Play();
+
+        StartCoroutine(StartMovementLockout(DashDuration));
+
+        float invulDuration = DashDuration;
+        SetInvulnerable(invulDuration);
+
+        bool prevFlipX = spriteRenderer.flipX;
+        spriteRenderer.flipX = DashAfterImages.GetComponentInChildren<SpriteRenderer>().flipX;
+
+        if (spriteRenderer.flipX != prevFlipX) FlipAttackPosition();
+
+        transform.position = PrevPosition = DashAfterImages.transform.position;
+
+        Destroy(DashAfterImages.gameObject);
+        yield return null;
+        rb2d.velocity = Vector2.zero;
+        IsDashing = false;
     }
 
     public override IEnumerator OnAttackComplete()
@@ -201,7 +280,7 @@ public class PlayerMelee : PlayerBase
             if (IsDashing && Skills.Contains(SkillTree_Manager.SkillName.BLACKFLASH))
             {
                 defPen += 50;
-                ApplyEffect(Effect.AffectedStat.ATK, "BLACKFLASH_ATK_BUFF", 100, 5, true, true);
+                ApplyEffect(Effect.AffectedStat.ATK, "BLACKFLASH_ATK_BUFF", 100, 5, true, EffectPersistType.DECAY);
                 DealDamage(target, (int)(atk * 2.5f), 0, 0);
                 defPen -= 50;
                 DisplayDamage("<color=black><size=60>BLACKFLASH!</size></color>", new(0, 50));
@@ -209,6 +288,14 @@ public class PlayerMelee : PlayerBase
             else DealDamage(target, atk);
         }
         yield return null;
+    }
+
+    public override void UseSkill()
+    {
+        if (!CanUseSkill || IsSkillActive) return;
+
+        base.UseSkill();
+        StartCoroutine(ActivateSkill());
     }
 
     bool extendSkillDuration = false;
@@ -234,13 +321,18 @@ public class PlayerMelee : PlayerBase
         speedAdd = (short) (b_moveSpeed * SpeedBoost);
         moveSpeed += speedAdd;
 
+        SkillBar.value = SkillBar.maxValue = SkillDuration;
+
         if (CanPull)
         {
+            GameObject o = Instantiate(SwirlEffect, transform.position, Quaternion.identity);
+            Destroy(o, 1.5f);
+            
             var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, PullRadius, true);
             foreach (EntityBase enemy in enemies)
             {
                 PullEntityTowards(enemy, transform, 2.5f, 0.1f);
-                ApplyEffect(Effect.AffectedStat.MSPD, "JUGGERNAUNT_PULL_DEBUFF_MSPD", -40f, 1.25f, true);
+                enemy.ApplyEffect(Effect.AffectedStat.MSPD, "JUGGERNAUNT_PULL_DEBUFF_MSPD", -40f, 1.25f, true);
             }
         }
         else if (CanDoT)
@@ -260,6 +352,8 @@ public class PlayerMelee : PlayerBase
             c += Time.deltaTime;
             t += Time.deltaTime;
 
+            SkillBar.value = d - c;
+
             if (extendSkillDuration && durationAdded < d)
             {
                 float bonus = 0.5f;
@@ -273,11 +367,13 @@ public class PlayerMelee : PlayerBase
                 Heal(mHealth * HealPerSecond_HpPercentage);
                 if (CanPull)
                 {
+                    GameObject o = Instantiate(SwirlEffect, transform.position, Quaternion.identity);
+                    Destroy(o, 1.5f);
                     var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, PullRadius, true);
                     foreach (EntityBase enemy in enemies)
                     {
                         PullEntityTowards(enemy, transform, 2.5f, 0.1f);
-                        ApplyEffect(Effect.AffectedStat.MSPD, "JUGGERNAUNT_PULL_DEBUFF_MSPD", -40f, 1.25f, true);
+                        enemy.ApplyEffect(Effect.AffectedStat.MSPD, "JUGGERNAUNT_PULL_DEBUFF_MSPD", -40f, 1.25f, true);
                     }
                 }
                 else if (CanDoT)
@@ -305,7 +401,14 @@ public class PlayerMelee : PlayerBase
         ReleaseAfterShock();
     }
 
-    public void ReleaseAfterShock()
+    public override void OnFieldSwapOut()
+    {
+        base.OnFieldSwapOut();
+        ReleaseAfterShock();
+        if (DashAfterImages) Destroy(DashAfterImages.gameObject);
+    }
+
+    private void ReleaseAfterShock()
     {
         if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_AFTERSHOCK) && damageTakenDuringSkill > 0)
         {
@@ -314,7 +417,7 @@ public class PlayerMelee : PlayerBase
             var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, AoERadius, true);
             foreach (EntityBase enemy in enemies)
             {
-                DealDamage(enemy, damageTakenDuringSkill / 2, 0, 0);
+                DealDamage(enemy, (int)(damageTakenDuringSkill * AfterShockDamageConversionRatio), 0, 0);
             }
         }
         damageTakenDuringSkill = 0;
@@ -354,6 +457,13 @@ public class PlayerMelee : PlayerBase
             info.SpecialText =
                 $"Dash a short distance toward the movement direction and becomes invulnerable during the process and for a brief moment afterward.";
         }
+        else if (Skills.Contains(SkillTree_Manager.SkillName.DASH_AFTERIMAGES))
+        {
+            info.SpecialName = "Evasion - Time Traveler";
+            info.SpecialText =
+                $"Dash a short distance toward the movement direction, leaving behind an afterimage and briefly becomes invulnerable during the process. The afterimage lasts " +
+                $"3 seconds, casting this skill again during that period will teleport you back to the its location.";
+        }
         else
         {
             info.SpecialName = "Evasion";
@@ -390,7 +500,7 @@ public class PlayerMelee : PlayerBase
             info.SkillText =
                 $"Immediately heals self for {BurstHeal_HpPercentage * 100}% max HP. In the next {SkillDuration} seconds: " +
                 $"ATK +{AtkBoost * 100}%, DEF +{DefBoost * 100}%, RES +{ResBoost}, MSPD +{SpeedBoost * 100}%. " +
-                $"Every second, regenerates {HealPerSecond_HpPercentage * 100}% max HP and reduces the MSPD of all nearby enemies by 30% and pulls them toward self. ";
+                $"Every second, regenerates {HealPerSecond_HpPercentage * 100}% max HP and reduces the MSPD of all nearby enemies by 40% and pulls them toward self. ";
         }
         else
         {
@@ -405,7 +515,7 @@ public class PlayerMelee : PlayerBase
         if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_AFTERSHOCK))
         {
             if (!hasUpgrade) info.SkillName = "Juggernaunt - Aftershock";
-            info.SkillText += " After skill ends, deal physical damage equals to 50% damage taken during the duration to all nearby enemies.";
+            info.SkillText += $" After skill ends, deal physical damage equals to {AfterShockDamageConversionRatio * 100}% damage taken during the duration to all nearby enemies.";
         }
 
         info.SkillText += $"{SkillCooldown}s cooldown.";

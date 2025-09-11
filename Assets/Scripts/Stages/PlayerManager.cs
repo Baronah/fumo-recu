@@ -25,7 +25,7 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private Sprite MeleeIcon, RangedIcon;
     [SerializeField] private TMP_Text txtViewKey, txtAttackKey, txtSpecialKey, txtSkillKey;
 
-    public KeyCode ViewKey = KeyCode.V, SwapKey = KeyCode.Space, AttackKey = KeyCode.Z, SkillKey = KeyCode.A, SpecialKey = KeyCode.X;
+    public KeyCode SwapViewKey = KeyCode.B, ViewKey = KeyCode.V, SwapKey = KeyCode.Space, AttackKey = KeyCode.Z, SkillKey = KeyCode.A, SpecialKey = KeyCode.X;
 
     private PlayerBase player;
     public PlayerBase activePlayer => player;
@@ -72,11 +72,12 @@ public class PlayerManager : MonoBehaviour
         SkillView_Overlay.SetActive(false);
         TechInfoSect.SetActive(false);
         PlayerInfoSect.SetActive(true);
+
+        GetPlayerStartType();
     }
 
     private void Start()
     {
-        playerStartType = CharacterPrefabsStorage.startingPlayer;
         sfxs = GetComponents<AudioSource>().ToList();
         sfxs.Remove(sfxs.ElementAt(0)); // Remove the music audio source
 
@@ -89,6 +90,24 @@ public class PlayerManager : MonoBehaviour
         txtAttackKey.text = GetCharFromKeyCode(AttackKey).ToString();
         txtSkillKey.text = GetCharFromKeyCode(SkillKey).ToString();
         txtSpecialKey.text = GetCharFromKeyCode(SpecialKey).ToString();
+    }
+
+    private void GetPlayerStartType()
+    {
+        playerStartType = CharacterPrefabsStorage.startingPlayer;
+        if (playerStartType == PlayerType.MELEE)
+        {
+            SwapToPlayer.sprite = RangedIcon;
+            ActivePlayer.sprite = MeleeIcon;
+            Swapsymbol.transform.rotation = Quaternion.Euler(0, 0, 0);
+        }
+        else
+        {
+            SwapToPlayer.sprite = MeleeIcon;
+            ActivePlayer.sprite = RangedIcon;
+            Swapsymbol.transform.rotation = Quaternion.Euler(0, 0, 180);
+            swapCurrentRotation = -180;
+        }
     }
 
     private void Update()
@@ -127,12 +146,15 @@ public class PlayerManager : MonoBehaviour
         {
             ViewSkill();
         }
+        else if (Input.GetKeyDown(SwapViewKey))
+        {
+            SwapView();
+        }
     }
 
     public void GetPlayerSkills()
     {
-        var skills = CharacterPrefabsStorage.Skills.Select(x => x.Key).ToHashSet();
-        if (skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_RADIO))
+        if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.EQUIPMENT_RADIO))
         {
             SwapCooldown *= 0.85f;
         }
@@ -151,32 +173,37 @@ public class PlayerManager : MonoBehaviour
 
         ResetAllCooldown();
 
-        bool activePlayerIsMelee = IsStageStarted ? player is PlayerMelee : playerStartType != PlayerType.MELEE;
+        PlayerType swapToPlayertype;
+        if (IsStageStarted)
+        {
+            swapToPlayertype = 
+                player is PlayerMelee
+                ?
+                PlayerType.RANGED
+                :
+                PlayerType.MELEE;
+        }
+        else
+        {
+            swapToPlayertype = playerStartType;
+        }
+
         if (IsStageStarted && player)
         {
-            if (activePlayerIsMelee)
-            {
-                player.GetComponent<PlayerMelee>().ReleaseAfterShock();
-            }
-            else
-            {
-                player.GetComponent<PlayerRanged>().OnPlayerSwap_SpawnIllusion();
-            }
+            player.OnFieldSwapOut();
         }
 
         Vector3 spawnPosition = IsStageStarted ? player.transform.position : PlayerSpawnpoint.position;
 
         GameObject Effect = Instantiate(SwapEffect, spawnPosition, Quaternion.identity);
-        GameObject newPlayerPrefab = activePlayerIsMelee
-            ? CharacterPrefabsStorage.PlayerPrefabs[(int) PlayerType.RANGED] 
-            : CharacterPrefabsStorage.PlayerPrefabs[(int)PlayerType.MELEE];
+        GameObject newPlayerPrefab = CharacterPrefabsStorage.PlayerPrefabs[(int) swapToPlayertype];
         
         Instantiate(newPlayerPrefab, spawnPosition, Quaternion.identity);
         swapSfx.Play();
 
         StartCoroutine(FadeOut(Effect, IsStageStarted ? 1f : 2f));
 
-        if (activePlayerIsMelee)
+        if (swapToPlayertype == PlayerType.RANGED)
         {
             SwapToPlayer.sprite = MeleeIcon;
             ActivePlayer.sprite = RangedIcon;
@@ -187,25 +214,13 @@ public class PlayerManager : MonoBehaviour
             ActivePlayer.sprite = MeleeIcon;
         }
 
-        StartCoroutine(SwapCooldownE(SwapCooldown, swapCooldownTimer));
+        StartCoroutine(SwapCooldownE(SwapCooldown, swapCooldownTimer, IsStageStarted));
     }
 
     public void SwapCooldownOnStart()
     {
-        bool activePlayerIsMelee = player is not PlayerMelee;
-        if (activePlayerIsMelee)
-        {
-            SwapToPlayer.sprite = MeleeIcon;
-            ActivePlayer.sprite = RangedIcon;
-        }
-        else
-        {
-            SwapToPlayer.sprite = RangedIcon;
-            ActivePlayer.sprite = MeleeIcon;
-        }
-
         AssignPlayerSkillSprites(player);
-        StartCoroutine(SwapCooldownE(SwapCooldown, swapCooldownTimer));
+        StartCoroutine(SwapCooldownE(SwapCooldown, swapCooldownTimer, false));
     }
 
     void AssignPlayerSkillSprites(PlayerBase player)
@@ -241,6 +256,12 @@ public class PlayerManager : MonoBehaviour
         {
             e.ChangeAggro(newPlayer);  
         });
+
+        if (player.GetSpriteRenderer().flipX) 
+        {
+            newPlayer.GetSpriteRenderer().flipX = true;
+            newPlayer.FlipAttackPosition();
+        }
 
         yield return new WaitForEndOfFrame();
         Destroy(player.gameObject);
@@ -284,14 +305,19 @@ public class PlayerManager : MonoBehaviour
         Swapsymbol.transform.rotation = endRotation;
     }
 
-    public IEnumerator SwapCooldownE(float duration, float init = 0)
+    public IEnumerator SwapCooldownE(float duration, float init = 0, bool rotateSymbol = true)
     {
         float waitDuration = duration - init;
         StartCoroutine(Cooldown(SwapCD, duration, init));
 
-        yield return StartCoroutine(RotateSwapSymbol(0.35f));
+        float minusTime = 0f;
+        if (rotateSymbol)
+        {
+            minusTime = 0.35f;
+            yield return StartCoroutine(RotateSwapSymbol(0.35f));
+        }
         Swapsymbol.color = new Color(1, 1, 1, 0.25f);
-        yield return new WaitForSeconds(waitDuration - 0.35f);
+        yield return new WaitForSeconds(waitDuration - minusTime);
         Swapsymbol.color = Color.white;
     }
 
@@ -495,6 +521,7 @@ public class PlayerManager : MonoBehaviour
 
     public void SwapView()
     {
+        if (!SkillView_Overlay.activeSelf) return;
         bool activeInfoView = !PlayerInfoSect.activeSelf;
         PlayerInfoSect.SetActive(activeInfoView);
         TechInfoSect.SetActive(!activeInfoView);

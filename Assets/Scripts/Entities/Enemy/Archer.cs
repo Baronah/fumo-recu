@@ -8,6 +8,8 @@ public class Archer : EnemyBase
     [SerializeField] private GameObject PS;
 
     private float AtkPercentageUp_count = 0;
+    public void ChargeMaxAtkStack() => AtkPercentageUp_count = AtkPercentageUp_cap;
+
     private short AtkAdd = 0;
 
     public override void InitializeComponents()

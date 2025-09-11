@@ -1,51 +1,29 @@
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class FM_05 : StageManager
 {
-    [SerializeField] private List<GameObject> CM_ActiveSudaram, CM_InactiveSudaram;
-    [SerializeField] private float PlayerBonusHP_Ratio = 0.25f;
-    [SerializeField] private float PlayerBonusMSPD_Ratio = 0.3f;
+    [SerializeField] private GameObject hiddenOriginiumTiles;
 
     public override void EnableChallengeMode()
     {
+        if (!CharacterPrefabsStorage.EnableChallengeMode) return;
         base.EnableChallengeMode();
+        if (hiddenOriginiumTiles != null)
+        {
+            hiddenOriginiumTiles.SetActive(true);
+        }
 
-        if (CharacterPrefabsStorage.EnableChallengeMode)
-        {
-            CM_ActiveSudaram.ForEach(g => g.SetActive(true));
-            foreach (var i in CM_InactiveSudaram)
-            {
-                Destroy(i);
-            }
-        }
-        else
-        {
-            foreach (var i in CM_ActiveSudaram)
-            {
-                Destroy(i);
-            }
-        }
+        var spiderSpawns = FindObjectsOfType<EnemySpawnpointScript>(true).Where(s => s.enemyPrefab == EnemyBase.EnemyCode.ORIGINIUM_SPIDER);
+        foreach (var spider in spiderSpawns) spider.enemyPrefab = EnemyBase.EnemyCode.ORIGINIUM_SPIDER_ALPHA;
     }
 
     public override void OnEnemySpawn(EnemyBase enemy)
     {
         base.OnEnemySpawn(enemy);
-        if (enemy is Sudaram sr)
-        {
-            sr.originiumPollutionBonusASPD = 100f;
-            sr.originiumPollutionDamageMultiplier = 0f;
-        }
-        else if (enemy as OriginiumSpider || enemy as OriginiumSpiderAlpha)
-        {
-            enemy.bAtk = (short)(enemy.bAtk * 0.85f);
-        }
-    }
 
-    public override void OnPlayerSpawn(PlayerBase player)
-    {
-        base.OnPlayerSpawn(player);
-        player.b_moveSpeed += player.b_moveSpeed * PlayerBonusMSPD_Ratio;
-        player.mHealth += (int)(player.mHealth * PlayerBonusHP_Ratio);
+        if (enemy is OriginiumSpiderAlpha alp) alp.mHealth = 60;
     }
 }

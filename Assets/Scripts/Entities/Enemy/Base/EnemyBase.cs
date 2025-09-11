@@ -81,8 +81,6 @@ public class EnemyBase : EntityBase
     private float stuckThreshold = 2f; // Time before considering stuck
     private float stuckMovementThreshold = 35f; // Distance moved to not be considered stuck
 
-    private Collider2D stuckBoxCollider;
-
     private const short PathfindCntThreshold = 100, ScanPlayerCntThreshold = 15, MoveCntThreshold = 15;
     private short ScanPlayerCnt = 0, MoveCnt = 0, PathfindCnt = 0;
 
@@ -99,7 +97,6 @@ public class EnemyBase : EntityBase
         {
             DetectSymbol = transform.Find("Spotted").GetComponentInChildren<TMP_Text>();
             FeetPosition = transform.Find("Feetposition");
-            stuckBoxCollider = colliders.FirstOrDefault(f => !f.isTrigger);
 
             // Initialize pathfinding grid (shared among all enemies)
             pathfindingGrid ??= new PathfindingGrid(gridCellSize, obstacleLayer);
@@ -226,7 +223,7 @@ public class EnemyBase : EntityBase
             return;
         }
 
-        pathfindingRadius = Mathf.Min(1500f, distanceToDestination);
+        pathfindingRadius = Mathf.Clamp(distanceToDestination, 700, 1800);
         // Determine what changed to decide if we need path updates
         Vector2 currentTargetPos = SpottedPlayer ? SpottedPlayer.transform.position : desiredDestination;
 
@@ -307,7 +304,7 @@ public class EnemyBase : EntityBase
     {
         if (!SpottedPlayer) return FeetPosition.position;
 
-        bool playerIsFarAway = !RecentlyScannedPlayer;
+        bool playerIsFarAway = isUsingPathfinding || Vector2.Distance(transform.position, SpottedPlayer.transform.position) > attackRange * 1.2f;
 
         Vector2 playerPos = playerIsFarAway ? SpottedPlayer.Feetposition : SpottedPlayer.transform.position;
         Vector2 enemyPos = playerIsFarAway ? FeetPosition.position : AttackPosition.position;
@@ -520,12 +517,9 @@ public class EnemyBase : EntityBase
 
     IEnumerator TemporarilyDisableHitbox()
     {
-        Collider2D colliderBox = stuckBoxCollider;
-        if (!colliderBox) yield break;
-
-        colliderBox.isTrigger = true;
+        Physics2D.IgnoreLayerCollision(gameObject.layer, 8, true);
         yield return new WaitForSeconds(1.0f);
-        colliderBox.isTrigger = false;
+        Physics2D.IgnoreLayerCollision(gameObject.layer, 8, false);
     }
 
     private Vector2 GetAvoidanceDirection(Vector2 originalDirection, float distanceToDestination)

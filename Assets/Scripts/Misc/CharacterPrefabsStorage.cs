@@ -11,10 +11,18 @@ public class CharacterPrefabsStorage : ScriptableObject
 	public AssetReference[] PlayerAssetReferences;
 	public AssetReference[] EnemyAssetReferences;
 	public AssetReference[] SceneAssetReferences;
+	public string[] LevelTitles;
 
 	public static PlayerType startingPlayer = PlayerType.MELEE;
 	public static bool EnableChallengeMode = false;
 	public static Dictionary<SkillTree_Manager.SkillName, SkillDataSet> Skills = new();
+
+	public static void ClearBattleData()
+	{
+		startingPlayer = PlayerType.MELEE;
+		EnableChallengeMode = false;
+		Skills.Clear();
+	}
 
     public static Dictionary<int, GameObject> PlayerPrefabs = new();
 	public static Dictionary<int, GameObject> EnemyPrefabs = new();

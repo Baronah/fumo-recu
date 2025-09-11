@@ -29,7 +29,7 @@ public class LevelSelectionScript : MonoBehaviour
     private Image CMToggleImg => CMToggleButton.GetComponent<Image>();
 
     [SerializeField] private TMP_Text SelectedLvlName, SelectedLvlDescription;
-    [SerializeField] private string[] Names, Descriptions, ChallengeModes;
+    [SerializeField] private string[] Descriptions, ChallengeModes;
     [SerializeField] private StageCompleteCondition[] CompleteCondition;
     [SerializeField] private StageEnvironment[] Environments;
     [SerializeField] private AppearingEnemies[] AppearingEnemies;
@@ -197,7 +197,7 @@ public class LevelSelectionScript : MonoBehaviour
 
         selectedIndex = index;
         selectedKey = runtimeKey;
-        SelectedLvlName.text = GetSceneName(selectedIndex) + ": " + Names[selectedIndex];
+        SelectedLvlName.text = GetSceneName(selectedIndex) + ": " + prefabStorage.LevelTitles[selectedIndex];
         SelectedLvlDescription.text = GetLevelDescription(selectedIndex);
 
         if (!IsMapCleared[selectedIndex]) CMToggleImg.sprite = LockedSprite;
@@ -244,7 +244,7 @@ public class LevelSelectionScript : MonoBehaviour
             string stageCompleteCondition = CompleteCondition[index] switch
             {
                 StageCompleteCondition.ELIMINATE_ALL_ENEMIES => "<color=red><Annihilation></color> Eliminate all enemies to complete the stage.",
-                StageCompleteCondition.RETRIEVE_FUMO => "<color=#00ffff><Rescue></color> Reach the location of the Fumo to complete the stage.",
+                StageCompleteCondition.RETRIEVE_FUMO => "<color=#00ffb7><Rescue></color> Reach the location of the Fumo to complete the stage.",
                 _ => "Unknown condition"
             };
 
@@ -254,7 +254,9 @@ public class LevelSelectionScript : MonoBehaviour
                 string envDes = env switch
                 {
                     EnvironmentType.KEYS => "<color=purple><Key></color> Collect to remove the terrains with corresponding color.",
+                    EnvironmentType.ONE_WAY_PASSAGE => "<color=#d6d930><One-directional Passage></color> Can only be passed through when appoarched from a certain direction.",
                     EnvironmentType.ORIGINIUM_TILES => "<color=#C40000><Originium Pollution></color> Continuously deals true damage to the player and enemy units standing on it.",
+                    EnvironmentType.HEAT_PUMP_VENT => "<color=#ff9a03><Heatpump Vent></color> Continuously pushes the player and enemies within range toward a certain direction.",
                     _ => "Unknown environment"
                 };
                 environmentDescription += $"{envDes}\n";
@@ -745,7 +747,11 @@ public class LevelSelectionScript : MonoBehaviour
 
     public void Confirm() => StartCoroutine(ConfirmLevelSelection());
 
-    public void Quit() => SceneManager.LoadScene("MainMenu");
+    public void Quit()
+    {
+        CharacterPrefabsStorage.ClearBattleData();
+        SceneManager.LoadScene("MainMenu");
+    }
 }
 
 [Serializable] public class StageEnvironment 

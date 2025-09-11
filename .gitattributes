@@ -58,3 +58,4 @@
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
 FM-03.unity filter=lfs diff=lfs merge=lfs -text
+FM-04.unity filter=lfs diff=lfs merge=lfs -text

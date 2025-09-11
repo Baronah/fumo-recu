@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerRanged : PlayerBase
 {
@@ -14,6 +17,8 @@ public class PlayerRanged : PlayerBase
     [SerializeField] private float SkillDuration = 7f;
     [SerializeField] private float Skill_DamageMulitplier = 0.25f;
     [SerializeField] private float Skill_AtkInterval = 0.25f;
+    [SerializeField] private GameObject SkillBarObj;
+    private Slider SkillBar;
 
     [SerializeField] private float FreezeRange = 800f;
     [SerializeField] private float FreezeDurationMin = 1f, FreezeDurationMax = 4f, MinDistanceForFreezeDuration = 150f;
@@ -27,6 +32,8 @@ public class PlayerRanged : PlayerBase
 
     private EntityBase target;
     private float skillCurrentDuration;
+
+    private bool Debut = false;
 
     public override void Start()
     {
@@ -50,11 +57,21 @@ public class PlayerRanged : PlayerBase
             );
         }
 
-        SkillEffect.SetActive(IsSkillActive && IsAlive());
+        bool SkillActive = IsSkillActive && IsAlive();
+        SkillEffect.SetActive(SkillActive);
+        SkillBarObj.SetActive(SkillActive);
     }
 
-    public void OnPlayerSwap_SpawnIllusion()
+    public override void InitializeComponents()
     {
+        SkillBar = SkillBarObj.GetComponentInChildren<Slider>();
+        base.InitializeComponents();
+    }
+
+    public override void OnFieldSwapOut()
+    {
+        base.OnFieldSwapOut();
+
         if (!Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_SHADOW) || !IsSkillActive) return;
 
         // inherits stats and skill duration and start casting skill on time for remaining duration
@@ -62,8 +79,9 @@ public class PlayerRanged : PlayerBase
         PlayerCasterIllusion playerCasterIllusion = o.GetComponent<PlayerCasterIllusion>();
         playerCasterIllusion.InitializeComponents();
         playerCasterIllusion.SetInherit(
-            ATK: (short)(atk * 0.4f), 
-            duration: SkillDuration - skillCurrentDuration, 
+            ATK: (short)(atk * 0.4f),
+            maxDuration: SkillDuration,
+            duration: skillCurrentDuration,
             Skill_DamageMulitplier, 
             Skill_AtkInterval, 
             flipX: spriteRenderer.flipX);
@@ -93,18 +111,23 @@ public class PlayerRanged : PlayerBase
             FreezeCooldown *= 0.85f;
             SkillCooldown *= 0.85f;
         }
-        
-        if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_TIMEUP))
-        {
-            FreezeDurationMin *= 1.3f;
-            FreezeDurationMax *= 1.3f;
-        }
 
         if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_SOUTH))
             FreezeDurationMin = Mathf.Max(FreezeDurationMin, 2f);
 
         if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_MORE))
-            Skill_DamageMulitplier *= 0.6f;
+            Skill_DamageMulitplier *= 0.7f;
+    }
+
+    public override void OnFieldEnter()
+    {
+        base.OnFieldEnter();
+
+        if (Skills.Contains(SkillTree_Manager.SkillName.MAJOR_DEBUT))
+        {
+            Debut = true;
+            UseSpecial();
+        }
     }
 
     protected override void GetControlInputs()
@@ -115,16 +138,32 @@ public class PlayerRanged : PlayerBase
         {
             AttackCoroutine = StartCoroutine(Attack());
         }
-        else if (Input.GetKeyDown(playerManager.SkillKey) && CanUseSkill)
+        else if (Input.GetKeyDown(playerManager.SkillKey))
         {
-            StartCoroutine(CastSkill());
+            UseSkill();
         }
-        else if (Input.GetKeyDown(playerManager.SpecialKey) && CanUseFreeze)
+        else if (Input.GetKeyDown(playerManager.SpecialKey))
         {
-            StartCoroutine(CastFreeze());
+            UseSpecial();
         }
         else 
             Move();
+    }
+
+    public override void UseSkill()
+    {
+        if (!CanUseSkill) return;
+
+        base.UseSkill();
+        StartCoroutine(CastSkill());
+    }
+
+    public override void UseSpecial()
+    {
+        if (!CanUseFreeze) return;
+
+        base.UseSpecial();
+        StartCoroutine(CastFreeze());
     }
 
     IEnumerator SkillLockout()
@@ -194,7 +233,9 @@ public class PlayerRanged : PlayerBase
         Instantiate(FreezeEffect, SkillPosition.position, Quaternion.identity);
         yield return new WaitForSeconds(FreezeCastDuration - Time.fixedDeltaTime);
 
+        Dictionary<EntityBase, float> InitialHitDictionary = new();
         var hitEnemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), SkillPosition.position, FreezeRange, true);
+        
         foreach (EntityBase e in hitEnemies)
         {
             EnemyBase enemy = e as EnemyBase;
@@ -224,18 +265,59 @@ public class PlayerRanged : PlayerBase
             }
             else if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_SOUTH))
                 PullEntityTowards(enemy, AttackPosition.transform, 5.25f, 0.2f);
+
+            InitialHitDictionary.Add(e, freezeDuration);
         }
 
-        float cooldown = FreezeCooldown;
+        float cooldown = Debut ? 0 : FreezeCooldown;
         if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_CHARGE))
         {
             for (int i = 1; i <= hitEnemies.Count; i++) cooldown *= 0.85f;
         }
 
         StartCoroutine(FreezeLockout(cooldown));
+        Debut = false;
+
         animator.SetTrigger("skill_end");
         IsSkillActive = false;
         yield return null;
+
+        Dictionary<EntityBase, float> HitDictionary = new(InitialHitDictionary);
+        if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_ICEAGE))
+        {
+            while (HitDictionary.Count > 0)
+            {
+                yield return new WaitForSeconds(0.1f);
+                if (sfxs[1]) sfxs[1].Play();
+                yield return new WaitForSeconds(0.1f);
+
+                Dictionary<EntityBase, float> HitThisRound = new();
+                foreach (var pair in HitDictionary)
+                {
+                    EntityBase InitHitEnemyHit = pair.Key;
+                    Instantiate(FreezeEffect, InitHitEnemyHit.transform.position, Quaternion.identity);
+
+                    var nearbyHits = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), InitHitEnemyHit.transform.position, FreezeRange, true)
+                                    .Where(s => !InitialHitDictionary.ContainsKey(s) && !HitDictionary.ContainsKey(s));
+
+                    foreach (EntityBase nearby in nearbyHits)
+                    {
+                        EnemyBase enemy = nearby as EnemyBase;
+                        float distance = Vector3.Distance(InitHitEnemyHit.transform.position, enemy.transform.position);
+                        float freezeDuration = distance >= FreezeRange * 0.8f
+                            ?
+                            FreezeDurationMin
+                            :
+                            Mathf.Lerp(FreezeDurationMin, pair.Value, MinDistanceForFreezeDuration * 1.0f / distance);
+                        ApplyFreeze(enemy, freezeDuration);
+                        HitThisRound.Add(nearby, freezeDuration);
+                        InitialHitDictionary.Add(nearby, freezeDuration);
+                    }
+                }
+
+                HitDictionary = new(HitThisRound);
+            }
+        }
     }
 
     public IEnumerator CastSkill()
@@ -251,7 +333,6 @@ public class PlayerRanged : PlayerBase
         skillCurrentDuration = 0;
         float angleOffset = 0;
 
-        short loopCnt = 0;
         bool shootAdditionalBullets = Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_MORE),
              homingOnFirstTarget = Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_TRAVEL);
 
@@ -259,82 +340,91 @@ public class PlayerRanged : PlayerBase
             ? SearchForNearestEntityAroundSelf(typeof(EnemyBase))
             : null;
 
+        SkillBar.maxValue = SkillBar.value = SkillDuration;
+        float intervalCounter = Skill_AtkInterval;
+
         float lockInTargetDamageMul = 1.0f;
+        int yellowBulletAngle = 90;
+
         while (skillCurrentDuration < SkillDuration)
         {
-            Vector3 sourcePosition = SkillPosition.position;
-            if (sfxs[2]) sfxs[2].Play();
+            SkillBar.value = SkillDuration - skillCurrentDuration;
 
-            float lifeSpan = 1.5f;
-            float speed = ProjectileSpeed * 0.25f;
-            for (int i = 0; i < 360; i += 30)
+            if (intervalCounter >= Skill_AtkInterval)
             {
-                float currentAngle = i + angleOffset;
+                Vector3 sourcePosition = SkillPosition.position;
+                intervalCounter = 0;
+                if (sfxs[2]) sfxs[2].Play();
 
-                float angleInRadians = currentAngle * Mathf.Deg2Rad;
-
-                float circleRadius = 30f + (skillCurrentDuration * 5f);
-                Vector3 targetPosition = new Vector3(
-                    sourcePosition.x + Mathf.Cos(angleInRadians) * circleRadius,
-                    sourcePosition.y + Mathf.Sin(angleInRadians) * circleRadius,
-                    sourcePosition.z
-                );
-
-                if (lockInTarget && lockInTarget.IsAlive())
+                float lifeSpan = 1.5f;
+                float speed = ProjectileSpeed * 0.25f;
+                for (int i = 0; i < 360; i += 30)
                 {
-                    CreateProjectileAndShootToward(
-                        lockInTarget,
-                        new DamageInstance(0, (int)(atk * Skill_DamageMulitplier * lockInTargetDamageMul), 0),
-                        sourcePosition,
-                        projectileType: ProjectileScript.ProjectileType.HOMING_TO_SPECIFIC_TARGET
-                        );
+                    float currentAngle = i + angleOffset;
 
-                    if (lockInTargetDamageMul > 0.2f) lockInTargetDamageMul -= 0.01f;
-                }
-                else
-                {
-                    CreateProjectileAndShootToward(
-                        ProjectilePrefab,
-                        new DamageInstance(0, (int)(atk * Skill_DamageMulitplier), 0),
-                        sourcePosition,
-                        targetPosition,
-                        projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
-                        travelSpeed: speed,
-                        acceleration: speed,
-                        lifeSpan: lifeSpan,
-                        targetType: typeof(EnemyBase));
-                }
+                    float angleInRadians = currentAngle * Mathf.Deg2Rad;
 
-                if (shootAdditionalBullets)
-                {
-                    currentAngle = i - angleOffset - 15;
-                    angleInRadians = currentAngle * Mathf.Deg2Rad;
-
-                    targetPosition = new Vector3(
+                    float circleRadius = 30f + (skillCurrentDuration * 5f);
+                    Vector3 targetPosition = new Vector3(
                         sourcePosition.x + Mathf.Cos(angleInRadians) * circleRadius,
                         sourcePosition.y + Mathf.Sin(angleInRadians) * circleRadius,
                         sourcePosition.z
                     );
 
-                    CreateProjectileAndShootToward(
-                        ProjectileSkill_2,
-                        new DamageInstance(0, (int)(atk * Skill_DamageMulitplier), 0),
-                        sourcePosition,
-                        targetPosition,
-                        projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
-                        travelSpeed: speed,
-                        acceleration: speed,
-                        lifeSpan: lifeSpan,
-                        targetType: typeof(EnemyBase));
-                }
-            }
-            angleOffset += 6;
+                    if (lockInTarget && lockInTarget.IsAlive())
+                    {
+                        CreateProjectileAndShootToward(
+                            lockInTarget,
+                            new DamageInstance(0, (int)(atk * Skill_DamageMulitplier * lockInTargetDamageMul), 0),
+                            sourcePosition,
+                            projectileType: ProjectileScript.ProjectileType.HOMING_TO_SPECIFIC_TARGET
+                            );
 
-            if (shootAdditionalBullets && loopCnt > 4)
-            {
-                for (int i = 0; i < 360; i += 15)
+                        if (lockInTargetDamageMul > 0.2f) lockInTargetDamageMul -= 0.01f;
+                    }
+                    else
+                    {
+                        CreateProjectileAndShootToward(
+                            ProjectilePrefab,
+                            new DamageInstance(0, (int)(atk * Skill_DamageMulitplier), 0),
+                            sourcePosition,
+                            targetPosition,
+                            projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
+                            travelSpeed: speed,
+                            acceleration: speed,
+                            lifeSpan: lifeSpan,
+                            targetType: typeof(EnemyBase));
+                    }
+
+                    if (shootAdditionalBullets)
+                    {
+                        currentAngle = i - angleOffset - 15;
+                        angleInRadians = currentAngle * Mathf.Deg2Rad;
+
+                        targetPosition = new Vector3(
+                            sourcePosition.x + Mathf.Cos(angleInRadians) * circleRadius,
+                            sourcePosition.y + Mathf.Sin(angleInRadians) * circleRadius,
+                            sourcePosition.z
+                        );
+
+                        CreateProjectileAndShootToward(
+                            ProjectileSkill_2,
+                            new DamageInstance(0, (int)(atk * Skill_DamageMulitplier), 0),
+                            sourcePosition,
+                            targetPosition,
+                            projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
+                            travelSpeed: speed,
+                            acceleration: speed,
+                            lifeSpan: lifeSpan,
+                            targetType: typeof(EnemyBase));
+                    }
+                }
+                angleOffset += 6;
+
+                if (shootAdditionalBullets)
                 {
-                    float angleInRadians = i * Mathf.Deg2Rad;
+                    int angle = yellowBulletAngle;
+                    float angleInRadians = angle * Mathf.Deg2Rad;
                     float circleRadius = 30f + (skillCurrentDuration * 5f);
                     Vector3 targetPosition = new Vector3(
                         sourcePosition.x + Mathf.Cos(angleInRadians) * circleRadius,
@@ -344,7 +434,7 @@ public class PlayerRanged : PlayerBase
 
                     CreateProjectileAndShootToward(
                         ProjectileSkill_3,
-                        new DamageInstance(0, (int)(atk * Skill_DamageMulitplier), 0),
+                        new DamageInstance(0, (int)(atk * Skill_DamageMulitplier * 2), 0),
                         sourcePosition,
                         targetPosition,
                         projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
@@ -352,14 +442,71 @@ public class PlayerRanged : PlayerBase
                         acceleration: speed * 2,
                         lifeSpan: lifeSpan * 0.6f,
                         targetType: typeof(EnemyBase));
-                }
 
-                if (loopCnt >= 8) loopCnt = 0;
+                    angle *= -1;
+                    angleInRadians = angle * Mathf.Deg2Rad;
+                    targetPosition = new Vector3(
+                            sourcePosition.x + Mathf.Cos(angleInRadians) * circleRadius,
+                            sourcePosition.y + Mathf.Sin(angleInRadians) * circleRadius,
+                            sourcePosition.z
+                        );
+
+                    CreateProjectileAndShootToward(
+                        ProjectileSkill_3,
+                        new DamageInstance(0, (int)(atk * Skill_DamageMulitplier * 2), 0),
+                        sourcePosition,
+                        targetPosition,
+                        projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
+                        travelSpeed: speed * 2,
+                        acceleration: speed * 2,
+                        lifeSpan: lifeSpan * 0.6f,
+                        targetType: typeof(EnemyBase));
+
+                    angle += 180;
+                    angleInRadians = angle * Mathf.Deg2Rad;
+                    targetPosition = new Vector3(
+                        sourcePosition.x + Mathf.Cos(angleInRadians) * circleRadius,
+                        sourcePosition.y + Mathf.Sin(angleInRadians) * circleRadius,
+                        sourcePosition.z
+                    );
+
+                    CreateProjectileAndShootToward(
+                        ProjectileSkill_3,
+                        new DamageInstance(0, (int)(atk * Skill_DamageMulitplier * 2), 0),
+                        sourcePosition,
+                        targetPosition,
+                        projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
+                        travelSpeed: speed * 2,
+                        acceleration: speed * 2,
+                        lifeSpan: lifeSpan * 0.6f,
+                        targetType: typeof(EnemyBase));
+
+                    angle *= -1;
+                    angleInRadians = angle * Mathf.Deg2Rad;
+                    targetPosition = new Vector3(
+                            sourcePosition.x + Mathf.Cos(angleInRadians) * circleRadius,
+                            sourcePosition.y + Mathf.Sin(angleInRadians) * circleRadius,
+                            sourcePosition.z
+                        );
+
+                    CreateProjectileAndShootToward(
+                        ProjectileSkill_3,
+                        new DamageInstance(0, (int)(atk * Skill_DamageMulitplier * 2), 0),
+                        sourcePosition,
+                        targetPosition,
+                        projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
+                        travelSpeed: speed * 2,
+                        acceleration: speed * 2,
+                        lifeSpan: lifeSpan * 0.6f,
+                        targetType: typeof(EnemyBase));
+
+                    yellowBulletAngle += 12;
+                }
             }
             
-            yield return new WaitForSeconds(Skill_AtkInterval);
-            skillCurrentDuration += Skill_AtkInterval;
-            loopCnt++;
+            yield return null;
+            skillCurrentDuration += Time.deltaTime;
+            intervalCounter += Time.deltaTime;
         }
 
         animator.SetTrigger("skill_end");
@@ -379,7 +526,7 @@ public class PlayerRanged : PlayerBase
         {
             info.SkillName = "Der Tag neigt sich - Flowering Night";
             info.SkillText =
-                $"In the next {SkillDuration} seconds: becomes unable to move and attack, continuously unleashes waves of projectiles " +
+                $"In the next {SkillDuration} seconds: becomes unable to move and attack, continuously unleashes multiple waves of projectiles " +
                 $"spreading in all direction around self. Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
                 $"{SkillCooldown}s cooldown.";
         }
@@ -410,11 +557,12 @@ public class PlayerRanged : PlayerBase
                 $"{SkillCooldown}s cooldown.";
         }
 
-        if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_TIMEUP))
+        if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_ICEAGE))
         {
-            info.SpecialName = "Zeropoint Burst - Ice Age";
+            info.SpecialName = "Zeropoint Burst - Snow Blossom";
             info.SpecialText =
-                $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds based on distance";
+                $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds based on distance. Frozen enemies continues to " +
+                $"create an extra freeze ring around their position (trigger once per enemy) ";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_CHARGE))
         {

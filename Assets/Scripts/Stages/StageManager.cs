@@ -9,10 +9,12 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static EnemyBase;
+using static SkillTree_Manager;
 using Image = UnityEngine.UI.Image;
 
 public class StageManager : MonoBehaviour
 {
+    public int LevelIndex = 0;
     private bool PressedAnyKey = false;
     private bool IsStageStarted = false;
     private bool IsStagePaused = false;
@@ -62,6 +64,8 @@ public class StageManager : MonoBehaviour
     {
         KEYS,
         ORIGINIUM_TILES,
+        ONE_WAY_PASSAGE,
+        HEAT_PUMP_VENT,
     };
 
     public EnvironmentType[] StageEvironmentTypes;
@@ -74,6 +78,11 @@ public class StageManager : MonoBehaviour
     public virtual void Start()
     {
         LevelName = SceneManager.GetActiveScene().name;
+        Title.text = $"<b><size=120>{LevelName}</size></b>\n{prefabStorage.LevelTitles[LevelIndex]}";
+
+        o_QuitBtn.onClick.AddListener(QuitStage);
+        o_RetryBtn.onClick.AddListener(RetryStage);
+        PauseButton.GetComponent<Button>().onClick.AddListener(TogglePauseStage);
 
         StartCoroutine(OnStartOverlayFadeout());
 
@@ -143,6 +152,17 @@ public class StageManager : MonoBehaviour
             enemy.bAtk = (short)(enemy.bAtk * ChallengeModeStatsModifier);
             enemy.bDef = (short)(enemy.bDef * ChallengeModeStatsModifier);
             enemy.mHealth = (int)(enemy.mHealth * ChallengeModeStatsModifier);
+        }
+
+        foreach (var skillData in CharacterPrefabsStorage.Skills)
+        {
+            SkillName skill = skillData.Key;
+            switch (skill)
+            {
+
+                case SkillName.GRAVITY:
+                    break;
+            }
         }
     }
 
@@ -425,8 +445,7 @@ public class StageManager : MonoBehaviour
         EnemySpawnpointScript.OnStageRetry();
         CharacterPrefabsStorage.EnemyPrefabs.Clear();
         CharacterPrefabsStorage.PlayerPrefabs.Clear();
-        CharacterPrefabsStorage.Skills.Clear();
-        CharacterPrefabsStorage.EnableChallengeMode = false;
+        CharacterPrefabsStorage.ClearBattleData();
 
         IsFirstTimeStageEnter = true;
         Time.timeScale = 1f;

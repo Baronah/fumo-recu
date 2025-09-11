@@ -5088,7 +5088,7 @@ MonoBehaviour:
   CanDetectThroughWalls: 0
   originiumPollutionEffect: {fileID: 1025464345471623337}
   originiumPollutionBonusASPD: 60
-  originiumPollutionDamageMultiplier: 0.4
+  originiumPollutionDamageMultiplier: 0.25
 --- !u!82 &6578555615704739346
 AudioSource:
   m_ObjectHideFlags: 0

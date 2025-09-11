@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Checkpoint
   - Fumo
+  - OneDirectionalPassage
   layers:
   - Default
   - TransparentFX
@@ -16,8 +17,8 @@ TagManager:
   - Enemy
   - Player
   - Obstacle
-  - 
-  - 
+  - OneDirectionalPassage
+  - Border
   - 
   - 
   - 

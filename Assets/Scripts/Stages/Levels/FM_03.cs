@@ -2,16 +2,20 @@ using UnityEngine;
 
 public class FM_03 : StageManager
 {
-    [SerializeField] private float CM_OriginiutantASPD_Bonus = 100f;
+    [SerializeField] private short EnemyWeightIncrement = 1;
 
     public override void OnEnemySpawn(EnemyBase enemy)
     {
         base.OnEnemySpawn(enemy);
 
+        if (enemy is Archer a)
+        {
+            a.ChargeMaxAtkStack();
+        }
+
         if (CharacterPrefabsStorage.EnableChallengeMode)
         {
-            if (enemy as Originiutant) enemy.ASPD += CM_OriginiutantASPD_Bonus;
-            enemy.IsPhysicalImmune = enemy.IsMagicalImmune = true;
+            enemy.weight += EnemyWeightIncrement;
         }
     }
 }

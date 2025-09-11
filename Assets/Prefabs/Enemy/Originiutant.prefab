@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 6683127852095149412}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.42, y: 0.62, z: 0}
+  m_LocalPosition: {x: 3.1, y: 0.62, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -181,7 +181,7 @@ MonoBehaviour:
   resIgn: 0
   lifeSteal: 0
   b_moveSpeed: 185
-  b_attackRange: 90
+  b_attackRange: 100
   b_attackWindupTime: 0.7
   b_attackInterval: 3.7
   MIN_PHYSICAL_DMG: 0.05

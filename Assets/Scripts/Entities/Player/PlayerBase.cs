@@ -36,6 +36,37 @@ public class PlayerBase : EntityBase
 
         SetInvulnerable(1f);
         IsComponentsInitialized = true;
+
+        OnFieldEnter();
+    }
+
+    public override void FixedUpdate()
+    {
+        base.FixedUpdate();
+        AttentionBuff();
+    }
+
+    float countUp = 0;
+    void AttentionBuff()
+    {
+        countUp += Time.fixedDeltaTime;
+        if (countUp < 0.4f) return;
+        countUp = 0;
+
+        if (health > mHealth * 0.8f && Skills.Contains(SkillTree_Manager.SkillName.ATTENTION_BOOK))
+        {
+            ApplyEffect(Effect.AffectedStat.ATK, "ATTENTION_BUFF", 25, 0.5f, true);
+            ApplyEffect(Effect.AffectedStat.ASPD, "ATTENTION_BUFF", 30, 0.5f, true);
+        }
+        else if (health <= mHealth * 0.5f && Skills.Contains(SkillTree_Manager.SkillName.ATTENTION_DEVICE))
+        {
+            ApplyEffect(Effect.AffectedStat.DEF, "ATTENTION_BUFF", 60, 0.5f, true);
+            ApplyEffect(Effect.AffectedStat.RES, "ATTENTION_BUFF", 20, 0.5f, false);
+        }
+    }
+
+    public virtual void OnFieldEnter()
+    {
     }
 
     public virtual void GetBonusSkill()
@@ -67,6 +98,10 @@ public class PlayerBase : EntityBase
         }
     }
 
+    public virtual void OnFieldSwapOut()
+    {
+    }
+
     protected virtual void GetControlInputs()
     {
         if (!IsAlive()) return;
@@ -76,6 +111,16 @@ public class PlayerBase : EntityBase
             StartCoroutine(Attack());
         }
         else Move();
+    }
+
+    public virtual void UseSpecial()
+    {
+
+    }
+
+    public virtual void UseSkill()
+    {
+
     }
 
     public override void Move()
@@ -166,9 +211,9 @@ public class PlayerBase : EntityBase
         if (!target.IsAlive())
         {
             if (Skills.Contains(SkillTree_Manager.SkillName.VICTORY_ATK))
-                ApplyEffect(Effect.AffectedStat.ATK, "VICTORY_ATK_BUFF", 50, 5, true, true);
+                ApplyEffect(Effect.AffectedStat.ASPD, "VICTORY_ASPD_BUFF", 100, 5, false, EffectPersistType.DECAY);
             else if (Skills.Contains(SkillTree_Manager.SkillName.VICTORY_MSPD))
-                ApplyEffect(Effect.AffectedStat.MSPD, "VICTORY_MSPD_BUFF", 50, 5, true, true);
+                ApplyEffect(Effect.AffectedStat.MSPD, "VICTORY_MSPD_BUFF", 50, 5, true, EffectPersistType.DECAY);
         }
     }
 
