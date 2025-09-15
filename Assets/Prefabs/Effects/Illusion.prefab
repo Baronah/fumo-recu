@@ -33,6 +33,10 @@ PrefabInstance:
       value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 1929991105562868378, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
+      propertyPath: m_Color.a
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1929991105562868378, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
       propertyPath: m_SortingLayer
       value: 4
       objectReference: {fileID: 0}
@@ -151,9 +155,12 @@ PrefabInstance:
     - {fileID: 7084802812953052510, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
     - {fileID: 1457099365488019423, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
     - {fileID: 8499964098267969337, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
+    - {fileID: 298429500308331594, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
     m_RemovedGameObjects:
     - {fileID: 8862777151816814461, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
     - {fileID: 5892063182015186684, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
+    - {fileID: 946352713013429585, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
+    - {fileID: 8951873848346902132, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}

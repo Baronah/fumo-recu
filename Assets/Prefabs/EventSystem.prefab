@@ -3225,6 +3225,7 @@ GameObject:
   - component: {fileID: 4139534699653741914}
   - component: {fileID: 5317498357378723651}
   - component: {fileID: -1018690232704555793}
+  - component: {fileID: 1177964190008527199}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -3411,16 +3412,16 @@ MonoBehaviour:
   SwapToPlayer: {fileID: 3441547545017265425}
   MeleeIcon: {fileID: 21300000, guid: 16d47974b79ddaf4886e53951e987eab, type: 3}
   RangedIcon: {fileID: 21300000, guid: 15ee98af90e40a74fb6b25aadaab346a, type: 3}
+  txtSwapKey: {fileID: 7765461523624916609}
   txtViewKey: {fileID: 6401396995967666627}
+  txtSViewKey: {fileID: 3985566345105045866}
   txtAttackKey: {fileID: 9085212085992029325}
   txtSpecialKey: {fileID: 274633529843533196}
   txtSkillKey: {fileID: 6425578946335712888}
-  SwapViewKey: 98
-  ViewKey: 118
-  SwapKey: 32
-  AttackKey: 122
-  SkillKey: 97
-  SpecialKey: 120
+  txtSlowKey: {fileID: 986042938009855314}
+  txtMapKey: {fileID: 3597342880944614737}
+  txtMapOffInstruction: {fileID: 9175915415281617496}
+  txtSkillViewOffInstruction: {fileID: 8814087736175666603}
   swapCooldownTimer: 15
   SwapMaxStacks: 2
   SwapReadyEffect: {fileID: 1358521928679694641}
@@ -3505,8 +3506,6 @@ MonoBehaviour:
   UnpausedSprite: {fileID: 21300000, guid: 96af0636a2e0062489482ce82248fbab, type: 3}
   ChallengeModeStatsModifier: 1.1
   timeScaleSlow: 0.4
-  SlowKeyCode: 113
-  ViewMapKeyCode: 109
   StageCompleteConditionType: 1
   StageEvironmentTypes: 
 --- !u!82 &4139534699653741914
@@ -3797,6 +3796,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1177964190008527199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2180949171452089868}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a474d731f8a8a8449cd59611f4c489e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentScheme: 0
 --- !u!1 &2185458422869505621
 GameObject:
   m_ObjectHideFlags: 0
@@ -4414,7 +4426,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Loading data, please wait...
+  m_text: <color=green>---Press any key to start---</color>
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5449,7 +5461,7 @@ GameObject:
   - component: {fileID: 79089772785854742}
   - component: {fileID: 5742164799772033394}
   m_Layer: 5
-  m_Name: Image
+  m_Name: SwapGuide
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7504,9 +7516,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '<b><size=120>FM-01</size></b>
+  m_text: '<b><size=120>FM-SP</size></b>
 
-    Consequence'
+    Entrance'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
   m_sharedMaterial: {fileID: 2147374, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
@@ -11088,7 +11100,7 @@ Transform:
   m_GameObject: {fileID: 8138116287106014697}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 982, y: -445, z: -110}
+  m_LocalPosition: {x: -1660, y: 0, z: -110}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

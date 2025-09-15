@@ -63,6 +63,9 @@ public class SkillTree_Manager : MonoBehaviour
         ATTENTION_DEVICE,
         MAJOR_DEBUT,
         DASH_AFTERIMAGES,
+        SWAP_START_ATK,
+        SPECIAL_MSPD,
+        SPIRAL_PHANTOM,
     }
 
     public static SkillTree_Manager Instance;
@@ -97,12 +100,10 @@ public class SkillTree_Manager : MonoBehaviour
         "NOODLES",
     };
 
-
     public void GetPlayerProgress()
     {
-        string[] CompletedLevels = PlayerPrefs.GetString("CompletedLevels", "").Split(' ');
-        bool techUnlocked = CompletedLevels.Any(s => s.Contains("FM-02") || s.Contains("FM-02_CM")) 
-                        && CompletedLevels.Any(s => s.Contains("_CM"));
+        int allTimeFumo = FumoScript.GetAllTimeFumo();
+        bool techUnlocked = allTimeFumo >= 3;
 
         TechViewBtn.interactable = techUnlocked;
         Block.SetActive(!techUnlocked);
@@ -154,15 +155,12 @@ public class SkillTree_Manager : MonoBehaviour
                 techImg.GetComponentsInChildren<Image>(true)[1].gameObject.SetActive(false);
             }
         }
-
-        OnSelect_Update();
     }
 
     public void UnlockSense()
     {
         int fumo = PlayerPrefs.GetInt("Fumo", 0);
         if (fumo < FUMO_COST_SENSE) return;
-
 
         fumo -= FUMO_COST_SENSE;
         PlayerPrefs.SetInt("Fumo", fumo);
@@ -178,7 +176,6 @@ public class SkillTree_Manager : MonoBehaviour
         int fumo = PlayerPrefs.GetInt("Fumo", 0);
         if (fumo < FUMO_COST_TECHS) return;
         
-        
         fumo -= FUMO_COST_TECHS;
         PlayerPrefs.SetInt("Fumo", fumo);
         PlayerPrefs.SetInt("TechsUnlocked", 1);
@@ -192,7 +189,6 @@ public class SkillTree_Manager : MonoBehaviour
     {
         int fumo = PlayerPrefs.GetInt("Fumo", 0);
         if (fumo < FUMO_COST_SPECS) return;
-
 
         fumo -= FUMO_COST_SPECS;
         PlayerPrefs.SetInt("Fumo", fumo);
@@ -236,6 +232,11 @@ public class SkillTree_Manager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    private void Start()
+    {
+        OnSceneLoad_GetTechs();
     }
 
     private void Update()
@@ -351,6 +352,19 @@ public class SkillTree_Manager : MonoBehaviour
         SkillViewPanelImg.color = IdleColor;
 
         OnSelect_Update();
+    }
+
+    private void OnSceneLoad_GetTechs()
+    {
+        foreach (var item in CharacterPrefabsStorage.Skills)
+        {
+            SkillTree_SkillComponent comp = allSkills.Find(s => s.skillName == item.Key);
+            if (comp == null) return;
+            exclusions = comp.OnSkillSelected(exclusions, false);
+            comp.Button.interactable = false;
+
+            OnSelect_Update();
+        }
     }
 
     [SerializeField] GameObject Techs;

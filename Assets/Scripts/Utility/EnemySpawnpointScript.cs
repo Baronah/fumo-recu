@@ -16,20 +16,20 @@ public class EnemySpawnpointScript : MonoBehaviour
         DEACTIVATE,
     };
 
-    [SerializeField] private float InitDelay = 0f;
+    [SerializeField] protected float InitDelay = 0f;
 
-    [SerializeField] private bool spotPlayerUponSpawn = false, immediateSpawn = false, showTooltips;
-    [SerializeField] private short InitTooltipsPriority = 0;
+    [SerializeField] protected bool spotPlayerUponSpawn = false, immediateSpawn = false, showTooltips;
+    [SerializeField] protected short InitTooltipsPriority = 0;
     [SerializeField] public List<EnemyCheckpointScript> enemyCheckpoints;
-    [SerializeField] private float InitWaittime;
+    [SerializeField] protected float InitWaittime;
     [SerializeField] public EnemyCode enemyPrefab;
     [SerializeField] private bool doSpawnEnemy = true;
-    [SerializeField] private short Quantity = 1;
-    [SerializeField] private float OffsetRadius = 5f;
+    [SerializeField] protected short Quantity = 1;
+    [SerializeField] protected float OffsetRadius = 5f;
 
     [SerializeField] private bool RepeatedSpawn = false;
     [ShowIf("RepeatedSpawn", true)]
-    [SerializeField] private float WaittimeBeforeNextSpawn = 5f;
+    [SerializeField] protected float WaittimeBeforeNextSpawn = 5f;
 
     [SerializeField] private GameObject[] TargetObjectsToInteract;
 
@@ -38,19 +38,19 @@ public class EnemySpawnpointScript : MonoBehaviour
     [ShowIf("RepeatedSpawn", false)]
     [SerializeField] private ActionType OnEnemyDeath_Action = ActionType.NONE;
 
-    private List<EnemyBase> SpawnEnemies = new();
-    private float extraWaittime = 0;
+    protected List<EnemyBase> SpawnEnemies = new();
+    protected float extraWaittime = 0;
 
-    private static int TooltipsPriority = 0;
+    protected static int TooltipsPriority = 0;
     public static void OnStageRetry() => TooltipsPriority = 0;
 
-    private Transform[] SpawnPositions;
-    
-    private StageManager stageManager;
+    protected Transform[] SpawnPositions;
+
+    protected StageManager stageManager;
 
     public bool UsedByChallengeMode = false;
 
-    private bool Spawned = false;
+    protected bool Spawned = false;
     public bool IsSpawnpointSpawned => Spawned;
 
     private void Awake()
@@ -72,7 +72,7 @@ public class EnemySpawnpointScript : MonoBehaviour
         enabled = true;
     }
 
-    public IEnumerator SpawnEnemy()
+    public virtual IEnumerator SpawnEnemy()
     {
         if (immediateSpawn)
         {
@@ -173,7 +173,7 @@ public class EnemySpawnpointScript : MonoBehaviour
         OnSpawnedEnemyDeath();
     }
 
-    private void OnSpawnedEnemyDeath()
+    public virtual void OnSpawnedEnemyDeath()
     {
         if (!doSpawnEnemy || RepeatedSpawn) return;
         if (SpawnEnemies.Count <= 0 || SpawnEnemies.Any(e => e.IsAlive())) return;
@@ -214,7 +214,7 @@ public class EnemySpawnpointScript : MonoBehaviour
         }
     }
 
-    public int GetEnemiesCount()
+    public virtual int GetEnemiesCount()
     {
         if (!this.gameObject) return 0;
 

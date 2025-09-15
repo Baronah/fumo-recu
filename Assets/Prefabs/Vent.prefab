@@ -5152,7 +5152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73c09d0e56968724e94ec0d11c481ce9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Strength: 0.008
-  Duration: 0.25
   Interval: 1
+  Strength: 0.5
+  Duration: 0.25
   EmitDirection: 1

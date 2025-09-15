@@ -12,7 +12,7 @@ public class PlayerMelee : PlayerBase
     [SerializeField] private float DashDuration = 0.5f;
     [SerializeField] private float DashCooldown = 6f;
 
-    [SerializeField] private GameObject SkillEffect, SkillEffect_2, AftershockEffect, BlackflashEffect, SwirlEffect;
+    [SerializeField] private GameObject SkillEffect, SkillEffect_2, AftershockEffect, AftershockEffect_2, BlackflashEffect, SwirlEffect;
     [SerializeField] private float SkillCooldown = 30f;
     [SerializeField] private float SkillDuration = 7f;
     [SerializeField] private float BurstHeal_HpPercentage = 0.35f;
@@ -24,7 +24,7 @@ public class PlayerMelee : PlayerBase
     [SerializeField] private GameObject SkillBarObj;
     private Slider SkillBar;
 
-    [SerializeField] float PullRadius = 400, DoTRadius = 220f, AoERadius = 300f;
+    [SerializeField] float PullRadius = 400, DoTRadius = 220f, AoERadius = 250f;
     [SerializeField] float AfterShockDamageConversionRatio = 0.75f;
 
     private bool IsSkillActive = false, IsDashing = false, CanUseSkill = true, CanUseDash = true;
@@ -84,15 +84,15 @@ public class PlayerMelee : PlayerBase
     {
         if (!IsAlive()) return;
 
-        if (Input.GetKeyDown(playerManager.AttackKey))
+        if (Input.GetKeyDown(InputManager.Instance.AttackKey))
         {
             AttackCoroutine = StartCoroutine(Attack());
         }
-        else if (Input.GetKeyDown(playerManager.SkillKey))
+        else if (Input.GetKeyDown(InputManager.Instance.SkillKey))
         {
             UseSkill();
         }
-        else if (Input.GetKeyDown(playerManager.SpecialKey))
+        else if (Input.GetKeyDown(InputManager.Instance.SpecialKey))
         {
             UseSpecial();
         }
@@ -137,9 +137,15 @@ public class PlayerMelee : PlayerBase
     
     public float GetDashDistance()
     {
-        float distance = DashSpeed + moveSpeed * 5f;
+        float distance = DashSpeed + moveSpeed * 2f;
 
         return distance;
+    }
+
+    public override void Move()
+    {
+        if (IsDashing) return;
+        base.Move();
     }
 
     IEnumerator Dash()
@@ -157,12 +163,11 @@ public class PlayerMelee : PlayerBase
             DashAfterImages.GetComponentInChildren<SpriteRenderer>().flipX = spriteRenderer.flipX;
         }
 
-        float moveHorizontal = Input.GetAxis("Horizontal");
-        float moveVertical = Input.GetAxis("Vertical");
+        var movementInputs = InputManager.Instance.GetMovementInput();
 
-        if (moveHorizontal == 0 && moveVertical == 0)
+        if (movementInputs == Vector2.zero)
         {
-            moveHorizontal = spriteRenderer.flipX ? -1 : 1;
+            movementInputs = spriteRenderer.flipX ? Vector2.left : Vector2.right;
         }
 
         if (sfxs[1]) sfxs[1].Play();
@@ -172,8 +177,6 @@ public class PlayerMelee : PlayerBase
             ||
             Skills.Contains(SkillTree_Manager.SkillName.DASH_TOUCH);
 
-        var movementInputs = new Vector2(moveHorizontal, moveVertical).normalized;
-        
         bool allowDashes = true;
         while (allowDashes)
         {
@@ -188,12 +191,15 @@ public class PlayerMelee : PlayerBase
 
             SetInvulnerable(invulDuration);
 
+            Vector2 dashVelocity = CalculateMovement(movementInputs, GetDashDistance());
+            rb2d.velocity = dashVelocity;
+
             float dashTime = 0f;
             while (dashTime < DashDuration)
             {
                 if (checkForCollision)
                 {
-                    var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, 45f, true);
+                    var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, 60f, true);
 
                     if (Skills.Contains(SkillTree_Manager.SkillName.DASH_TOUCH))
                     {
@@ -210,34 +216,39 @@ public class PlayerMelee : PlayerBase
                         {
                             if (!enemy || !enemy.IsAlive() || EnemyHitByDash.Contains(enemy)) continue;
 
-                            DealDamage(enemy, (int)(atk * 0.6f), 0, 0);
+                            DealDamage(enemy, atk, 0, 0);
                             EnemyHitByDash.Add(enemy);
                         }
                     }
                 }
 
-                rb2d.velocity = CalculateMovement(movementInputs, GetDashDistance());
+                animator.SetFloat("move", movementInputs.magnitude);
 
-                animator.SetFloat("move", Mathf.Abs(moveHorizontal) + Mathf.Abs(moveVertical));
+                SpawnIllusion();
 
-                GameObject Illusion = Instantiate(IllusionPrefab, transform.position, Quaternion.identity);
-                SpriteRenderer IllusionSpriteRenderer = Illusion.GetComponentInChildren<SpriteRenderer>();
-                IllusionSpriteRenderer.sprite = spriteRenderer.sprite;
-                IllusionSpriteRenderer.flipX = spriteRenderer.flipX;
-                IllusionSpriteRenderer.color = new Color(1, 1, 1, 0.5f);
-                Destroy(Illusion, 0.2f);
-
-                dashTime += Time.deltaTime;
-                yield return null;
+                dashTime += Time.fixedDeltaTime;
+                yield return new WaitForFixedUpdate();
             }
 
             yield return null;
         }
 
+        SpawnIllusion();
+
         yield return null;
         rb2d.velocity = Vector2.zero;
         IsDashing = false;
         if (EnemyHitByDash.Count > 0) EnemyHitByDash.Clear();
+    }
+
+    void SpawnIllusion()
+    {
+        GameObject Illusion = Instantiate(IllusionPrefab, transform.position, Quaternion.identity);
+        SpriteRenderer IllusionSpriteRenderer = Illusion.GetComponentInChildren<SpriteRenderer>();
+        IllusionSpriteRenderer.sprite = spriteRenderer.sprite;
+        IllusionSpriteRenderer.flipX = spriteRenderer.flipX;
+        IllusionSpriteRenderer.color = new Color(1, 1, 1, 0.5f);
+        Destroy(Illusion, 0.2f);
     }
 
     IEnumerator DashBackToAfterImages()
@@ -331,7 +342,7 @@ public class PlayerMelee : PlayerBase
             var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, PullRadius, true);
             foreach (EntityBase enemy in enemies)
             {
-                PullEntityTowards(enemy, transform, 2.5f, 0.1f);
+                PullEntityTowards(enemy, transform, 2.2f, 0.1f);
                 enemy.ApplyEffect(Effect.AffectedStat.MSPD, "JUGGERNAUNT_PULL_DEBUFF_MSPD", -40f, 1.25f, true);
             }
         }
@@ -372,7 +383,7 @@ public class PlayerMelee : PlayerBase
                     var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, PullRadius, true);
                     foreach (EntityBase enemy in enemies)
                     {
-                        PullEntityTowards(enemy, transform, 2.5f, 0.1f);
+                        PullEntityTowards(enemy, transform, 2.5f, 0.12f);
                         enemy.ApplyEffect(Effect.AffectedStat.MSPD, "JUGGERNAUNT_PULL_DEBUFF_MSPD", -40f, 1.25f, true);
                     }
                 }
@@ -413,6 +424,7 @@ public class PlayerMelee : PlayerBase
         if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_AFTERSHOCK) && damageTakenDuringSkill > 0)
         {
             Instantiate(AftershockEffect, transform.position, Quaternion.identity);
+            Instantiate(AftershockEffect_2, transform.position, Quaternion.identity);
 
             var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, AoERadius, true);
             foreach (EntityBase enemy in enemies)

@@ -301,6 +301,7 @@ MonoBehaviour:
   attackInterval: 0
   hpRegenFlat: 0
   hpRegenPercentage: 0
+  weight: 1
   IsFreezeImmune: 0
   IsStunImmune: 0
   IsPhysicalImmune: 0
@@ -317,6 +318,7 @@ MonoBehaviour:
   ccBar: {fileID: 3699022713693373004}
   AttackAnimation: {fileID: 7400000, guid: 38cef02e111cc2741872318b17372723, type: 2}
   sfxs: []
+  IsBeingShifted: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 1
   enemyCode: 5

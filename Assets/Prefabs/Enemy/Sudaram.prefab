@@ -5029,6 +5029,7 @@ MonoBehaviour:
   attackInterval: 3
   hpRegenFlat: 0
   hpRegenPercentage: 0
+  weight: 2
   IsFreezeImmune: 0
   IsStunImmune: 0
   IsPhysicalImmune: 0
@@ -5047,6 +5048,7 @@ MonoBehaviour:
   sfxs:
   - {fileID: 6578555615704739346}
   - {fileID: -760533550074903822}
+  IsBeingShifted: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 1
   enemyCode: 12

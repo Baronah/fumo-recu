@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using static OneDirectionalPassage;
 
-public class Vent : MonoBehaviour
+public class Vent : EnvironmentalTileBase
 {
-    public float Strength = 1.0f, Duration = 0.2f, Interval = 2f;
+    public float Strength = 1.0f, Duration = 0.2f;
 
     public TargetDirection EmitDirection;
     private readonly Dictionary<EntityBase, Collider2D> Entities = new();
 
-    private void Start()
+    public override void OnStageStart()
     {
-        StartCoroutine(Blow());
+        Interval += Duration;
+        base.OnStageStart();
     }
 
-    IEnumerator Blow()
+    public override IEnumerator HandleUnitWithinRange()
     {
         while (true)
         {
@@ -34,42 +35,49 @@ public class Vent : MonoBehaviour
                 var item = pair.Value;
                 if (!item || item.isTrigger) continue;
 
-                pair.Key.PushEntityFrom(pair.Key, pushDirection, Strength, Duration, false);
+                var entity = pair.Key;
+                entity.PushEntityFrom(pair.Key, pushDirection, Strength, Duration, false);
+                OnEntityStay(entity);
             }
 
-            yield return new WaitForSeconds(Interval + Duration);
+            yield return new WaitForSeconds(Interval);
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    public override void OnTriggerEnter2D(Collider2D collision)
     {
+        EntityBase entityBase = collision.GetComponent<EntityBase>();
         if (!collision
                 || collision.isTrigger
                     || !collision.gameObject 
-                        || !collision.GetComponent<EntityBase>()
+                        || !entityBase
                             || Entities.ContainsKey(collision.GetComponent<EntityBase>())) return;
         
-        Entities.Add(collision.GetComponent<EntityBase>(), collision);
+        Entities.Add(entityBase, collision);
+        OnEntityEnter(entityBase);
     }
 
-    private void OnTriggerStay2D(Collider2D collision)
+    public override void OnTriggerStay2D(Collider2D collision)
     {
+        EntityBase entityBase = collision.GetComponent<EntityBase>();
         if (!collision
                 || collision.isTrigger
                     || !collision.gameObject
-                        || !collision.GetComponent<EntityBase>()
+                        || !entityBase
                             || Entities.ContainsKey(collision.GetComponent<EntityBase>())) return;
 
-        Entities.Add(collision.GetComponent<EntityBase>(), collision);
+        Entities.Add(entityBase, collision);
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
+    public override void OnTriggerExit2D(Collider2D collision)
     {
+        EntityBase entityBase = collision.GetComponent<EntityBase>();
         if (!collision
                 || !collision.gameObject
-                    || !collision.GetComponent<EntityBase>()
+                    || !entityBase
                         || !Entities.ContainsKey(collision.GetComponent<EntityBase>())) return;
 
-        Entities.Remove(collision.GetComponent<EntityBase>());
+        Entities.Remove(entityBase);
+        OnEntityExit(entityBase);
     }
 }

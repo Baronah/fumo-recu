@@ -832,6 +832,7 @@ MonoBehaviour:
   attackInterval: 0
   hpRegenFlat: 0
   hpRegenPercentage: 0
+  weight: 0
   IsFreezeImmune: 0
   IsStunImmune: 0
   IsPhysicalImmune: 0
@@ -850,6 +851,9 @@ MonoBehaviour:
   sfxs: []
   preferredMoveAnimationPlaySpeed: 0.85
   preferredAttackAnimationSpeed: 0.9
+  ObstacleLayers:
+    serializedVersion: 2
+    m_Bits: 0
   AttackSprite: {fileID: 21300000, guid: 1146632b55a73c34fa3b2bf1794f10ec, type: 3}
   SkillSprite: {fileID: 21300000, guid: 425d049a62ac11f4bbb9a798b005c93f, type: 3}
   SpecialSprite: {fileID: 21300000, guid: 0da9d9817e86b52448dcab10e8b6f47f, type: 3}
@@ -861,6 +865,7 @@ MonoBehaviour:
   Skills: 
   ProjectileSkill_2: {fileID: 823679449479629327, guid: f623b44ff3216784da0e64470a2e59de, type: 3}
   ProjectileSkill_3: {fileID: 7531047425192547471, guid: 36af0100b9ffca845ab2dcd317ad8830, type: 3}
+  ProjectileSkill_4: {fileID: 1843306785305443223, guid: 51806182df99dc34788a3cc6e447e4de, type: 3}
   AttackRangeIndicator: {fileID: 7574998143464888112}
   Warning: {fileID: 6080019599566292019}
   SkillEffect: {fileID: 2390494206778937756}

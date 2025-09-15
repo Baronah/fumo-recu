@@ -93,7 +93,7 @@ public class SkillTree_SkillComponent : MonoBehaviour
         Overlay.gameObject.SetActive(CharacterPrefabsStorage.Skills.ContainsKey(skillName));
     }
 
-    public HashSet<SkillName> OnSkillSelected(HashSet<SkillName> existings)
+    public HashSet<SkillName> OnSkillSelected(HashSet<SkillName> existings, bool addToPlayerSkill = true)
     {
         selfButton.interactable = false;
         foreach (var skill in mutuallyExclusiveSkills)
@@ -103,20 +103,24 @@ public class SkillTree_SkillComponent : MonoBehaviour
             skillComponent.selfButton.interactable = false;
         }
 
-        CharacterPrefabsStorage.Skills.Add(
-            skillName, 
-            new SkillDataSet()
-                { 
+        if (addToPlayerSkill)
+        {
+            CharacterPrefabsStorage.Skills.Add(
+                skillName,
+                new SkillDataSet()
+                {
                     skillType = skillType,
                     skillIcon = skillIcon,
                     nameInString = skillNameText,
                     skillDescription = skillDescription,
                 }
-            );
-        foreach (var item in CharacterPrefabsStorage.Skills)
-        {
-            if (mutuallyExclusiveSkills.Contains(item.Key))
-                CharacterPrefabsStorage.Skills.Remove(item.Key);
+                );
+
+            foreach (var item in CharacterPrefabsStorage.Skills)
+            {
+                if (mutuallyExclusiveSkills.Contains(item.Key))
+                    CharacterPrefabsStorage.Skills.Remove(item.Key);
+            }
         }
 
         existings.AddRange(mutuallyExclusiveSkills);

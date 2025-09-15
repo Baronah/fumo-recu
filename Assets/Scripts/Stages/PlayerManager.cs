@@ -23,10 +23,13 @@ public class PlayerManager : MonoBehaviour
 
     [SerializeField] private Image Swapsymbol, AttackSprite, AttackCD, SkillSprite, SkillCD, SpecialSprite, SpecialCD, SwapCD, ActivePlayer, SwapToPlayer;
     [SerializeField] private Sprite MeleeIcon, RangedIcon;
-    [SerializeField] private TMP_Text txtViewKey, txtAttackKey, txtSpecialKey, txtSkillKey;
 
-    public KeyCode SwapViewKey = KeyCode.B, ViewKey = KeyCode.V, SwapKey = KeyCode.Space, AttackKey = KeyCode.Z, SkillKey = KeyCode.A, SpecialKey = KeyCode.X;
+    [Header("Input guide")]
+    [SerializeField] private TMP_Text txtSwapKey; 
+    [SerializeField] private TMP_Text txtViewKey, txtSViewKey, txtAttackKey, txtSpecialKey, txtSkillKey, txtSlowKey, txtMapKey;
+    [SerializeField] private TMP_Text txtMapOffInstruction, txtSkillViewOffInstruction;
 
+    [Header("Swap system")]
     private PlayerBase player;
     public PlayerBase activePlayer => player;
 
@@ -40,8 +43,9 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private Image[] SwapStacksImg;
     [SerializeField] private Sprite SwapStackAvailable, SwapStackUnavailable;
 
-    [SerializeField] private GameObject PlayerInfoSect, TechInfoSect;
-    [SerializeField] private GameObject SkillView_Overlay, SkillView;
+    [Header("Skill View")]
+    [SerializeField] private GameObject PlayerInfoSect;
+    [SerializeField] private GameObject TechInfoSect, SkillView_Overlay, SkillView;
     [SerializeField] private Image PlayerIcon, SkillView_Attack, SkillView_Skill, SkillView_Special;
     [SerializeField] private TMP_Text SkillView_Attributes, SkillView_AttackText, SkillView_SkillName, SkillView_SkillText, SkillView_SpecialName, SkillView_SpecialText;
     private Coroutine skillViewCoroutine;
@@ -74,6 +78,27 @@ public class PlayerManager : MonoBehaviour
         PlayerInfoSect.SetActive(true);
 
         GetPlayerStartType();
+        UpdateKeybindTexts();
+    }
+
+    public void UpdateKeybindTexts()
+    {
+        txtViewKey.text = KeybindButton.GetDisplayNameForKey(InputManager.Instance.ViewInfoKey);
+        txtAttackKey.text = KeybindButton.GetDisplayNameForKey(InputManager.Instance.AttackKey);
+        txtSkillKey.text = KeybindButton.GetDisplayNameForKey(InputManager.Instance.SkillKey);
+        txtSpecialKey.text = KeybindButton.GetDisplayNameForKey(InputManager.Instance.SpecialKey);
+        txtSwapKey.text = KeybindButton.GetDisplayNameForKey(InputManager.Instance.PlayerSwapKey);
+        txtSViewKey.text = KeybindButton.GetDisplayNameForKey(InputManager.Instance.SwapInfoKey);
+        txtSlowKey.text = KeybindButton.GetDisplayNameForKey(InputManager.Instance.SlowKey);
+        txtMapKey.text = KeybindButton.GetDisplayNameForKey(InputManager.Instance.ViewMapKey);
+
+        txtMapOffInstruction.text = 
+            $"Use your movement keys to move the camera." +
+            $"\nUse [Ctrl] + [your move up/down keys] to zoom In/Out." +
+            $"\nPress '{KeybindButton.GetDisplayNameForKey(InputManager.Instance.ViewMapKey)}' again to close this.";
+
+        txtSkillViewOffInstruction.text =
+            $"Press '{KeybindButton.GetDisplayNameForKey(InputManager.Instance.ViewInfoKey)}' again to close this.";
     }
 
     private void Start()
@@ -85,11 +110,6 @@ public class PlayerManager : MonoBehaviour
         SwapPlayer();
 
         mainCamera = FindObjectOfType<CameraMovement>();
-
-        txtViewKey.text = GetCharFromKeyCode(ViewKey).ToString();
-        txtAttackKey.text = GetCharFromKeyCode(AttackKey).ToString();
-        txtSkillKey.text = GetCharFromKeyCode(SkillKey).ToString();
-        txtSpecialKey.text = GetCharFromKeyCode(SpecialKey).ToString();
     }
 
     private void GetPlayerStartType()
@@ -138,15 +158,15 @@ public class PlayerManager : MonoBehaviour
         
         SwapReadyEffect.SetActive(CanSwapPlayer);
 
-        if (Input.GetKeyDown(SwapKey) && CanSwapPlayer)
+        if (Input.GetKeyDown(InputManager.Instance.PlayerSwapKey) && CanSwapPlayer)
         {
             SwapPlayer();
         }
-        else if (Input.GetKeyDown(ViewKey))
+        else if (Input.GetKeyDown(InputManager.Instance.ViewInfoKey))
         {
             ViewSkill();
         }
-        else if (Input.GetKeyDown(SwapViewKey))
+        else if (Input.GetKeyDown(InputManager.Instance.SwapInfoKey))
         {
             SwapView();
         }
@@ -366,26 +386,6 @@ public class PlayerManager : MonoBehaviour
 
         renderer.color = new Color(startColor.r, startColor.g, startColor.b, 0f);
         Destroy(o);
-    }
-
-    char GetCharFromKeyCode(KeyCode key)
-    {
-        bool shift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
-
-        if (key >= KeyCode.A && key <= KeyCode.Z)
-        {
-            return shift ? key.ToString()[0] : char.ToLower(key.ToString()[0]);
-        }
-
-        if (key >= KeyCode.Alpha0 && key <= KeyCode.Alpha9)
-        {
-            string normal = "0123456789";
-            string shifted = ")!@#$%^&*(";
-            int index = key - KeyCode.Alpha0;
-            return shift ? shifted[index] : normal[index];
-        }
-
-        return '\0';
     }
 
     public DamageInstance OnPlayerDamageTarget(PlayerBase player, DamageInstance dmg, EntityBase target)

@@ -47,7 +47,6 @@ public class StageManager : MonoBehaviour
     [SerializeField] protected float ChallengeModeStatsModifier = 1.2f;
 
     [SerializeField] private float timeScaleSlow = 0.4f;
-    [SerializeField] private KeyCode SlowKeyCode = KeyCode.Q, ViewMapKeyCode = KeyCode.M;
     private bool isSlowing = false;
 
     private bool IsEnemyAlive => EntityManager.Enemies.Any(e => e && e.IsAlive()) || enemySpawnpoints.Any(e => !e.IsSpawnpointSpawned);
@@ -56,6 +55,7 @@ public class StageManager : MonoBehaviour
     {
         ELIMINATE_ALL_ENEMIES,
         RETRIEVE_FUMO,
+        PROTECT_FUMO,
     };
 
     public StageCompleteCondition StageCompleteConditionType = StageCompleteCondition.ELIMINATE_ALL_ENEMIES;
@@ -63,9 +63,10 @@ public class StageManager : MonoBehaviour
     public enum EnvironmentType
     {
         KEYS,
-        ORIGINIUM_TILES,
+        ORIGINIUM_TILE,
         ONE_WAY_PASSAGE,
         HEAT_PUMP_VENT,
+        MEDICAL_TILE,
     };
 
     public EnvironmentType[] StageEvironmentTypes;
@@ -73,12 +74,18 @@ public class StageManager : MonoBehaviour
     private PlayerManager playerManager;
 
 
-    bool IsStageReady = false, IsStageEnd = false, IsStageEndOverlayActive = false, StageClearedNMFirsttime = false;
+    bool IsStageReady = false,
+        IsStageEnd = false,
+        IsStageEndOverlayActive = false,
+        IsResultVitory = false,
+        StageClearedNMFirsttime = false;
 
     public virtual void Start()
     {
         LevelName = SceneManager.GetActiveScene().name;
-        Title.text = $"<b><size=120>{LevelName}</size></b>\n{prefabStorage.LevelTitles[LevelIndex]}";
+        Title.text = LevelIndex < 1000 
+            ? $"<b><size=120>{LevelName}</size></b>\n{prefabStorage.LevelTitles[LevelIndex]}"
+            : $"<b><size=120>{LevelName}</size></b>\nDeath";
 
         o_QuitBtn.onClick.AddListener(QuitStage);
         o_RetryBtn.onClick.AddListener(RetryStage);
@@ -264,12 +271,12 @@ public class StageManager : MonoBehaviour
         {
             TogglePauseStage();
         }
-        else if (Input.GetKeyDown(SlowKeyCode))
+        else if (Input.GetKeyDown(InputManager.Instance.SlowKey))
         {
             isSlowing = !isSlowing;
             SlowImg.color = isSlowing ? Color.white : new(0.15f, 0.15f, 0.15f);
         }
-        else if (Input.GetKeyDown(ViewMapKeyCode))
+        else if (Input.GetKeyDown(InputManager.Instance.ViewMapKey))
         {
             ViewMap();
         }
@@ -312,7 +319,7 @@ public class StageManager : MonoBehaviour
             if (!playerManager.IsPlayerAlive)
             {
                 IsStageStarted = false;
-                OnStageEnd(false);
+                OnStageEnd(ResultType.PLAYER_DEFEATED);
                 FadeInResult();
                 yield break; // Exit the coroutine if player is dead
             }
@@ -321,26 +328,48 @@ public class StageManager : MonoBehaviour
                 && GetEnemyCount() <= 0)
             {
                 IsStageStarted = false;
-                OnStageEnd(playerManager.IsPlayerAlive);
+                OnStageEnd(playerManager.IsPlayerAlive ? ResultType.ENEMIES_DEFEATED : ResultType.PLAYER_DEFEATED);
                 FadeInResult();
             }
         }
     }
 
-    public virtual void OnStageEnd(bool resultIsWin)
+    public enum ResultType
+    {
+        ENEMIES_DEFEATED,
+        PLAYER_DEFEATED,
+        FUMO_RETRIEVED,
+        FUMO_PROTECTED,
+        FUMO_LOST,
+    }
+    public virtual void OnStageEnd(ResultType resultType)
     {
         PauseButton.gameObject.SetActive(false);
         IsStageEnd = true;
         FindObjectsOfType<EnemySpawnpointScript>().ToList().ForEach(e => e.enabled = false);
         
-        TMP_Text text = pauseOverlay.GetComponentInChildren<TMP_Text>();
-        text.text = resultIsWin ?
-            (CharacterPrefabsStorage.EnableChallengeMode
-            ? "<color=#ff3b3b>Challenge Completed!</color>"
-            : "<color=green>Stage Completed!</color>")
-            : "<color=red>Defeated</color>";
+        IsResultVitory = resultType == ResultType.ENEMIES_DEFEATED || resultType == ResultType.FUMO_RETRIEVED || resultType == ResultType.FUMO_PROTECTED;
 
-        if (resultIsWin) ProceedAsVictory(text);
+        TMP_Text text = pauseOverlay.GetComponentInChildren<TMP_Text>();
+        text.text = resultType switch
+        {
+            ResultType.ENEMIES_DEFEATED => 
+                CharacterPrefabsStorage.EnableChallengeMode
+                    ? "<color=#ff3b3b>Challenge Completed!</color>"
+                    : "<color=green>Enemies Eliminated!</color>",
+            ResultType.FUMO_RETRIEVED => 
+                CharacterPrefabsStorage.EnableChallengeMode
+                    ? "<color=#ff3b3b>Challenge Completed!</color>"
+                    : "<color=green>Fumo Retrieved!</color>",
+            ResultType.FUMO_PROTECTED => 
+                CharacterPrefabsStorage.EnableChallengeMode
+                    ? "<color=#ff3b3b>Challenge Completed!</color>"
+                    : "<color=green>Fumo Protected!</color>",
+            ResultType.PLAYER_DEFEATED => "<color=red>Defeated!</color>",
+            ResultType.FUMO_LOST => "<color=red>Fumo Stolen!</color>",
+        };
+
+        if (IsResultVitory) ProceedAsVictory(text);
     }
 
     void ProceedAsVictory(TMP_Text text)
@@ -396,7 +425,9 @@ public class StageManager : MonoBehaviour
     void AddFumo()
     {
         int fumoCount = PlayerPrefs.GetInt("Fumo", 0);
+        int aFumoCount = PlayerPrefs.GetInt("AllTimeFumo", fumoCount);
         PlayerPrefs.SetInt("Fumo", fumoCount + 1);
+        PlayerPrefs.SetInt("AllTimeFumo", aFumoCount + 1);
     }
 
     void FadeInResult()
@@ -445,7 +476,9 @@ public class StageManager : MonoBehaviour
         EnemySpawnpointScript.OnStageRetry();
         CharacterPrefabsStorage.EnemyPrefabs.Clear();
         CharacterPrefabsStorage.PlayerPrefabs.Clear();
-        CharacterPrefabsStorage.ClearBattleData();
+        CharacterPrefabsStorage.EnableChallengeMode = false;
+
+        if (IsResultVitory) CharacterPrefabsStorage.ClearBattleData();
 
         IsFirstTimeStageEnter = true;
         Time.timeScale = 1f;
@@ -462,8 +495,32 @@ public class StageManager : MonoBehaviour
         player.SetInvulnerable(9999f);
         EntityManager.Enemies.ForEach(e => { if (e) e.InstaKill(); });
         IsStageStarted = false; 
-        OnStageEnd(true);
+        OnStageEnd(ResultType.FUMO_RETRIEVED);
         StartCoroutine(ZoomInFumo(FumoObj.gameObject));
+    }
+
+    public void OnPlayerFumoProtected(FumoScript FumoObj)
+    {
+        if (StageCompleteConditionType != StageCompleteCondition.PROTECT_FUMO) return;
+
+        playerManager.enabled = playerManager.activePlayer.enabled = FumoObj.enabled = false;
+
+        EntityManager.Enemies.ForEach(e => { if (e) e.InstaKill(); });
+        IsStageStarted = false;
+        OnStageEnd(ResultType.FUMO_PROTECTED);
+        StartCoroutine(ZoomInFumo(FumoObj.gameObject));
+    }
+
+    public void OnEnemyFumoPickup(EnemyBase enemy, Collider2D FumoObj)
+    {
+        if (StageCompleteConditionType != StageCompleteCondition.PROTECT_FUMO) return;
+
+        playerManager.enabled = playerManager.activePlayer.enabled = FumoObj.enabled = false;
+
+        IsStageStarted = false;
+        Destroy(FumoObj.gameObject);
+        OnStageEnd(ResultType.FUMO_LOST);
+        FadeInResult();
     }
 
     IEnumerator ZoomInFumo(GameObject fumoObj)

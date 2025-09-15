@@ -84,6 +84,8 @@ public class EntityBase : MonoBehaviour
     public bool IsMovementLocked => MovementLockout > 0 || IsFrozen || IsStunned;
     public bool IsAttackLocked => AttackLockout > 0 || IsFrozen || IsStunned;
 
+    public bool IsBeingShifted = false;
+
     private bool TriggeredOnDeath = false;
 
     protected float FreezeTimer = 0f, StunTimer = 0f;
@@ -825,7 +827,6 @@ public class EntityBase : MonoBehaviour
     {
         spriteRenderer.color = Color.blue;
         ccSlider.value = FreezeTimer;
-        StopMovement();
     }
 
     public virtual void OnFreezeExit()
@@ -894,11 +895,10 @@ public class EntityBase : MonoBehaviour
 
     public virtual IEnumerator Attack()
     {
-        if (attackPattern == AttackPattern.NONE || IsStunned || IsFrozen) yield break;
+        if (!CanAttack || IsAttackLocked) yield break;
 
         animator.SetBool("attack", true);
         LockoutMovementOnAttackCoroutine = StartCoroutine(LockoutMovementsOnAttack());
-        yield break;
     }
 
     // Called by the animation event
@@ -1012,6 +1012,8 @@ public class EntityBase : MonoBehaviour
 
         targetEntity.StopMovement();
         targetEntity.CancelAttack();
+        targetEntity.IsBeingShifted = true;
+
         StartCoroutine(targetEntity.StartMovementLockout(duration + 0.1f));
         float elapsedTime = 0f;
         float initialDistance = Vector3.Distance(targetEntity.transform.position, referencePosition);
@@ -1074,13 +1076,15 @@ public class EntityBase : MonoBehaviour
                 targetEntity.rb2d.AddForce(directionVector * decayedForce, ForceMode2D.Force);
             }
 
+            targetEntity.IsBeingShifted = true;
             lastDistance = currentDistance;
-            elapsedTime += Time.deltaTime;
-            yield return null;
+            elapsedTime += Time.fixedDeltaTime;
+            yield return new WaitForFixedUpdate();
         }
 
         // Ensure entity stops at the end
         targetEntity.rb2d.velocity = Vector2.zero;
+        targetEntity.IsBeingShifted = false;
     }
 
     public void StopForceEffects(EntityBase targetEntity)

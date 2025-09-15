@@ -84,9 +84,13 @@ public class EnemyBase : EntityBase
     private const short PathfindCntThreshold = 100, ScanPlayerCntThreshold = 15, MoveCntThreshold = 15;
     private short ScanPlayerCnt = 0, MoveCnt = 0, PathfindCnt = 0;
 
+    private StageManager StageManager;
+
     public override void InitializeComponents()
     {
         if (IsComponentsInitialized) return;
+
+        StageManager = FindObjectOfType<StageManager>(true);
 
         base.InitializeComponents();
         PathfindCnt = (short)UnityEngine.Random.Range(0, PathfindCntThreshold);
@@ -488,7 +492,14 @@ public class EnemyBase : EntityBase
 
     private void HandleStuckState()
     {
-        if (!isUsingPathfinding) return;
+        bool disableHitbox = 
+            isUsingPathfinding && !IsBeingShifted && rb2d.velocity.magnitude > 0;
+        
+        if (!disableHitbox)
+        {
+            stuckTimer = 0;
+            return;
+        }
 
         StartCoroutine(TemporarilyDisableHitbox());
         stuckTimer = 0;
@@ -517,8 +528,14 @@ public class EnemyBase : EntityBase
 
     IEnumerator TemporarilyDisableHitbox()
     {
-        Physics2D.IgnoreLayerCollision(gameObject.layer, 8, true);
-        yield return new WaitForSeconds(1.0f);
+        float c = 0, d = 1;
+        while (c < d)
+        {
+            bool ignoreLayer = isUsingPathfinding && !IsBeingShifted && rb2d.velocity.magnitude > 0;
+            Physics2D.IgnoreLayerCollision(gameObject.layer, 8, ignoreLayer);
+            c += Time.fixedDeltaTime;
+            yield return new WaitForFixedUpdate();
+        }
         Physics2D.IgnoreLayerCollision(gameObject.layer, 8, false);
     }
 
@@ -636,7 +653,7 @@ public class EnemyBase : EntityBase
             if (!spottedViaAlert && !CanDetectThroughWalls)
             {
                 float distance = Vector3.Distance(RecentlyScannedPlayer.transform.position, transform.position);
-                if (distance > Mathf.Max(120f, DetectionRange * 0.4f))
+                if (distance > Mathf.Max(100f, DetectionRange * 0.3f))
                 {
                     var checkObstacle = Physics2D.Raycast(
                         transform.position,
@@ -741,6 +758,12 @@ public class EnemyBase : EntityBase
             && collision.gameObject == Checkpoints[CurrentCheckpointIndex].gameObject)
         {
             OnCheckpointReach();
+        }
+
+        FumoScript fumoScript = collision.gameObject.GetComponent<FumoScript>();
+        if (fumoScript && fumoScript.ObjectiveType == FumoScript.FumoObjectiveType.PROTECT && collision.gameObject.CompareTag("Fumo"))
+        {
+            StageManager.OnEnemyFumoPickup(this, collision);
         }
     }
 

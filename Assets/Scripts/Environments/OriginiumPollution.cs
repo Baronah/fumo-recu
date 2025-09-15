@@ -4,17 +4,14 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class OriginiumPollution : MonoBehaviour
+public class OriginiumPollution : EnvironmentalTileBase
 {
-    [SerializeField] private float Interval = 1.0f;
     [SerializeField] private float TrueDamagePerTick = 15f;
     [SerializeField] private float EnemyDamageMultiplier = 1.0f;
 
-    private List<EntityBase> entitiesWithin = new List<EntityBase>();
-
-    private void Start()
+    public override void OnStageStart()
     {
-        StartCoroutine(DamageUnitsWithinRange());
+        base.OnStageStart();
         StartCoroutine(Pulse());
     }
 
@@ -46,98 +43,47 @@ public class OriginiumPollution : MonoBehaviour
         }
     }
 
-    IEnumerator DamageUnitsWithinRange()
+    public override void OnEntityEnter(EntityBase entity)
     {
-        while (true)
+        base.OnEntityEnter(entity);
+        if (entity is Sudaram s)
         {
-            yield return new WaitForSeconds(Interval);
+            s.OnOriginiumPollutionEnter();
+        }
+        else if (entity is OriginiumSpider os)
+        {
+            os.Pollute();
+            os.InstaKill();
+        }
+        else if (entity is OriginiumSpiderAlpha osa)
+        {
+            osa.Pollute();
+            osa.InstaKill();
+        }
+    }
 
-            entitiesWithin.ForEach(e =>
+    public override void OnEntityStay(EntityBase e)
+    {
+        base.OnEntityStay(e);
+        int damage = (int)(e as EnemyBase ? TrueDamagePerTick * EnemyDamageMultiplier : TrueDamagePerTick);
+
+        if (e && e.IsAlive())
+        {
+            if (e is Sudaram sr) damage = (int)(damage * sr.originiumPollutionDamageMultiplier);
+            else if (e is PlayerBase pb && pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_A))
             {
-                int damage = (int)(e as EnemyBase ? TrueDamagePerTick * EnemyDamageMultiplier : TrueDamagePerTick);
-                
-                if (e && e.IsAlive())
-                {
-                    if (e is Sudaram sr) damage = (int)(damage * sr.originiumPollutionDamageMultiplier);
-                    else if (e is PlayerBase pb && pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_A))
-                    {
-                        damage = (int)(damage * 0.6f);
-                    }
+                damage = (int)(damage * 0.6f);
+            }
 
-                    if (e is OriginiumSpider os)
-                    {
-                        os.Pollute();
-                        os.InstaKill();
-                    }
-                    else if (e is OriginiumSpiderAlpha osa)
-                    {
-                        osa.Pollute();
-                        osa.InstaKill();
-                    }
-                    else
-                    {
-                        if (e is PlayerBase pb)
-                        {
-                            if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_B))
-                            {
-                                pb.ApplyEffect(Effect.AffectedStat.ATK, "GEOGOLIST_ATK_BUFF", 50, Interval, true);
-                            }
-                            else if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_C))
-                            {
-                                pb.ApplyEffect(Effect.AffectedStat.MSPD, "GEOGOLIST_MSPD_BUFF", 50, Interval, true);
-                            }
-                        }
-
-                        e.TakeDamage(new(0, 0, damage), null);
-                    }
-                }
-            });
+            e.TakeDamage(new(0, 0, damage), null);
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    public override void OnEntityExit(EntityBase entity)
     {
-        if (!collision) return;
+        base.OnEntityExit(entity);
 
-        EntityBase entityBase = collision.GetComponent<EntityBase>();
-        if (!entityBase || !entityBase.IsAlive() || entitiesWithin.Contains(entityBase)) return;
-        if (collision.isTrigger && collision.GetComponent<PlayerBase>()) return; 
-
-        entitiesWithin.Add(entityBase);
-
-        if (entityBase is Sudaram s)
-        {
-            s.OnOriginiumPollutionEnter();
-        }
-    }
-
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if (!collision) return;
-
-        EntityBase entityBase = collision.GetComponent<EntityBase>();
-        if (!entityBase || !entityBase.IsAlive() || entitiesWithin.Contains(entityBase)) return;
-        if (collision.isTrigger && collision.GetComponent<PlayerBase>()) return;
-
-        entitiesWithin.Add(entityBase);
-
-        if (entityBase is Sudaram s)
-        {
-            s.OnOriginiumPollutionEnter();
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (!collision) return;
-
-        EntityBase entityBase = collision.GetComponent<EntityBase>();
-        if (!entityBase || !entityBase.IsAlive() || !entitiesWithin.Contains(entityBase)) return;
-        if (collision.isTrigger && collision.GetComponent<PlayerBase>()) return;
-
-        entitiesWithin.Remove(entityBase);
-
-        if (entityBase is Sudaram s)
+        if (entity is Sudaram s)
         {
             s.OnOriginiumPollutionExit();
         }

@@ -23,6 +23,14 @@ public class FumoScript : MonoBehaviour
     AudioSource audioSource;
     GameObject sprite;
 
+    public enum FumoObjectiveType
+    {
+        PICK_UP,
+        PROTECT,
+    }
+
+    public FumoObjectiveType ObjectiveType = FumoObjectiveType.PICK_UP;
+
     public GameObject Fumo => sprite;
 
     private bool isPickedUp = false, isSquishing = false;
@@ -169,5 +177,20 @@ public class FumoScript : MonoBehaviour
     {
         originalScale = sprite.transform.localScale;
         GetComponentInChildren<Button>().interactable = true;
+    }
+
+    public static int GetAllTimeFumo()
+    {
+        int aFumo = 0;
+        string[] CompletedLevels = PlayerPrefs.GetString("CompletedLevels", "").Split(' ');
+        foreach (var level in CompletedLevels)
+        {
+            if (level.StartsWith("FM-"))
+                aFumo++;
+            if (level.EndsWith("_CM"))
+                aFumo++;
+        }
+
+        return aFumo;
     }
 }

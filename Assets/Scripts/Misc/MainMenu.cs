@@ -45,7 +45,7 @@ public class MainMenu : MonoBehaviour
         }
         Garden.color = new Color(Garden.color.r, Garden.color.g, Garden.color.b, 0.8f);
 
-        yield return new WaitForSeconds(8f);
+        yield return new WaitForSeconds(14f);
         Title.GetComponent<DVDLogo>().enabled = true; // Enable DVDLogo script
     }
 

@@ -20,7 +20,6 @@ public class CharacterPrefabsStorage : ScriptableObject
 	public static void ClearBattleData()
 	{
 		startingPlayer = PlayerType.MELEE;
-		EnableChallengeMode = false;
 		Skills.Clear();
 	}
 

@@ -5,6 +5,7 @@ using static SkillTree_Manager;
 
 public class PlayerBase : EntityBase
 {
+    public LayerMask ObstacleLayers;
     public Sprite AttackSprite, SkillSprite, SpecialSprite;
     public string AttackDes, SkillName, SkillDes, SpecialName, SpecialDes;
     protected PlayerManager playerManager;
@@ -23,6 +24,7 @@ public class PlayerBase : EntityBase
     public override void InitializeComponents()
     {
         if (IsComponentsInitialized) return;
+        ObstacleLayers = LayerMask.GetMask("Obstacle", "OnedirectionalPassage", "Border");
         StageManager = FindObjectOfType<StageManager>();
         StageManager.OnPlayerSpawn(this);
 
@@ -67,6 +69,10 @@ public class PlayerBase : EntityBase
 
     public virtual void OnFieldEnter()
     {
+        if (Skills.Contains(SkillTree_Manager.SkillName.SWAP_START_ATK))
+        {
+            ApplyEffect(Effect.AffectedStat.ATK, "SWAP_START_ATKBUFF", 50f, 4f, true, EffectPersistType.PERSIST);
+        }
     }
 
     public virtual void GetBonusSkill()
@@ -106,7 +112,7 @@ public class PlayerBase : EntityBase
     {
         if (!IsAlive()) return;
 
-        if (Input.GetKeyDown(KeyCode.Z))
+        if (Input.GetKeyDown(InputManager.Instance.AttackKey))
         {
             StartCoroutine(Attack());
         }
@@ -115,7 +121,10 @@ public class PlayerBase : EntityBase
 
     public virtual void UseSpecial()
     {
-
+        if (Skills.Contains(SkillTree_Manager.SkillName.SPECIAL_MSPD))
+        {
+            ApplyEffect(Effect.AffectedStat.MSPD, "SPECIAL_MSPD_BUFF", 100, 1.5f, true, EffectPersistType.PERSIST);
+        }
     }
 
     public virtual void UseSkill()
@@ -126,27 +135,22 @@ public class PlayerBase : EntityBase
     public override void Move()
     {
         if (IsMovementLocked) return;
-        
-        float moveHorizontal = Input.GetAxis("Horizontal");
-        float moveVertical = Input.GetAxis("Vertical");
 
-        var movementInputs = new Vector2(moveHorizontal, moveVertical).normalized;
-
+        Vector2 movementInputs = InputManager.Instance.GetMovementInput();
         rb2d.velocity = CalculateMovement(movementInputs);
 
-        animator.SetFloat("move", Mathf.Abs(moveHorizontal) + Mathf.Abs(moveVertical));
+        // Calculate movement magnitude for animator
+        float moveMagnitude = Mathf.Abs(movementInputs.x) + Mathf.Abs(movementInputs.y);
+        animator.SetFloat("move", moveMagnitude);
 
         base.Move();
     }
 
     public override IEnumerator Attack()
     {
-        if (!IsAlive() || IsAttackLocked) yield break;
+        if (!CanAttack || IsAttackLocked) yield break;
         
         StartCoroutine(base.Attack());
-
-        yield return new WaitForSeconds(GetWindupTime());
-        yield return null;
     }
 
     public override IEnumerator OnAttackComplete()
@@ -163,8 +167,9 @@ public class PlayerBase : EntityBase
 
     public override IEnumerator LockoutMovementsOnAttack()
     {
+        StartCoroutine(base.LockoutMovementsOnAttack());
         StartCoroutine(playerManager.AttackCooldown(GetAttackLockoutTime()));
-        return base.LockoutMovementsOnAttack();
+        yield return null;
     }
 
     public virtual PlayerTooltipsInfo GetPlayerTooltipsInfo()
@@ -227,7 +232,8 @@ public class PlayerBase : EntityBase
     {
         if (!collision || !collision.gameObject) return;
 
-        if (collision.gameObject.CompareTag("Fumo"))
+        FumoScript fumoScript = collision.gameObject.GetComponent<FumoScript>();
+        if (fumoScript && fumoScript.ObjectiveType == FumoScript.FumoObjectiveType.PICK_UP && collision.gameObject.CompareTag("Fumo"))
         {
             StageManager.OnPlayerFumoPickup(this, collision);
         }

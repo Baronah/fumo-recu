@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 public class PlayerRanged : PlayerBase
 {
-    [SerializeField] GameObject ProjectileSkill_2, ProjectileSkill_3;
+    [SerializeField] GameObject ProjectileSkill_2, ProjectileSkill_3, ProjectileSkill_4;
     [SerializeField] private GameObject AttackRangeIndicator, Warning, SkillEffect, FreezeEffect;
 
     [SerializeField] private Transform SkillPosition;
@@ -134,15 +134,15 @@ public class PlayerRanged : PlayerBase
     {
         if (!IsAlive() || IsSkillActive) return;
 
-        if (Input.GetKeyDown(playerManager.AttackKey))
+        if (Input.GetKeyDown(InputManager.Instance.AttackKey))
         {
             AttackCoroutine = StartCoroutine(Attack());
         }
-        else if (Input.GetKeyDown(playerManager.SkillKey))
+        else if (Input.GetKeyDown(InputManager.Instance.SkillKey))
         {
             UseSkill();
         }
-        else if (Input.GetKeyDown(playerManager.SpecialKey))
+        else if (Input.GetKeyDown(InputManager.Instance.SpecialKey))
         {
             UseSpecial();
         }
@@ -259,12 +259,12 @@ public class PlayerRanged : PlayerBase
                     ?
                     0.1f
                     :
-                    Mathf.Lerp(0.1f, 0.2f, MinDistanceForFreezeDuration * 1.0f / distance);
+                    Mathf.Lerp(0.12f, 0.23f, MinDistanceForFreezeDuration * 1.0f / distance);
 
-                PushEntityFrom(enemy, transform, 5f, pushDuration);
+                PushEntityFrom(enemy, AttackPosition.transform, 1.5f, pushDuration);
             }
             else if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_SOUTH))
-                PullEntityTowards(enemy, AttackPosition.transform, 5.25f, 0.2f);
+                PullEntityTowards(enemy, AttackPosition.transform, 2f, 0.25f);
 
             InitialHitDictionary.Add(e, freezeDuration);
         }
@@ -515,6 +515,74 @@ public class PlayerRanged : PlayerBase
         yield return null;
     }
 
+    public override void DealDamage(EntityBase target, int pDmg, int mDmg, int tDmg, bool allowWhenDisabled = false)
+    {
+        base.DealDamage(target, pDmg, mDmg, tDmg, allowWhenDisabled);
+        if (IsSkillActive && Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_PHANTOM) && !target.IsAlive())
+        {
+            StartCoroutine(CreateExtraFlowers(target.transform.position, SkillDuration - skillCurrentDuration));
+        }
+    }
+
+    public IEnumerator CreateExtraFlowers(Vector3 position, float duration)
+    {
+        float angleOffset = 0;
+
+        float intervalCounter = Skill_AtkInterval;
+        float count = 0;
+        duration = Mathf.Clamp(duration, 0.5f, 1.5f);
+
+        GameObject E_SkillEffect = Instantiate(SkillEffect, position, Quaternion.identity);
+        E_SkillEffect.GetComponent<SpriteRenderer>().color = Color.green;
+        E_SkillEffect.transform.localScale = new(30, 30, 30);
+        E_SkillEffect.SetActive(true);
+        Destroy(E_SkillEffect, duration + 0.2f);
+
+        yield return new WaitForSeconds(0.2f);
+
+        while (count < duration)
+        {
+            if (intervalCounter >= Skill_AtkInterval)
+            {
+                Vector3 sourcePosition = position;
+                intervalCounter = 0;
+                if (sfxs[2]) sfxs[2].Play();
+
+                float lifeSpan = 1.5f;
+                float speed = ProjectileSpeed * 0.25f;
+                for (int i = 0; i < 360; i += 30)
+                {
+                    float currentAngle = (i + angleOffset) * -1;
+
+                    float angleInRadians = currentAngle * Mathf.Deg2Rad;
+
+                    float circleRadius = 30f + (count * 5f);
+                    Vector3 targetPosition = new Vector3(
+                        sourcePosition.x + Mathf.Cos(angleInRadians) * circleRadius,
+                        sourcePosition.y + Mathf.Sin(angleInRadians) * circleRadius,
+                        sourcePosition.z
+                    );
+
+                    CreateProjectileAndShootToward(
+                        ProjectileSkill_4,
+                        new DamageInstance(0, (int)(atk * Skill_DamageMulitplier * 0.7f), 0),
+                        sourcePosition,
+                        targetPosition,
+                        projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
+                        travelSpeed: speed,
+                        acceleration: speed,
+                        lifeSpan: lifeSpan,
+                        targetType: typeof(EnemyBase));
+                }
+                angleOffset += 6;
+            }
+
+            yield return null;
+            count += Time.deltaTime;
+            intervalCounter += Time.deltaTime;
+        }
+    }
+
     public override PlayerTooltipsInfo GetPlayerTooltipsInfo()
     {
         var info = base.GetPlayerTooltipsInfo();
@@ -532,11 +600,20 @@ public class PlayerRanged : PlayerBase
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_TRAVEL))
         {
-            info.SkillName = "Der Tag neigt sich - Phantom Bullets";
+            info.SkillName = "Der Tag neigt sich - Ghost Lead";
             info.SkillText =
                 $"In the next {SkillDuration} seconds: becomes unable to move and attack, and lock-on to the nearest enemy within attack range. " +
                 $"Continuously unleashes waves of projectiles spreading in all direction around self " +
                 $". Each projectile hits the first enemy it comes into contact with (if there is a locked enemy, all projectiles homing toward them instead), dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
+                $"{SkillCooldown}s cooldown.";
+        }
+        else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_PHANTOM))
+        {
+            info.SkillName = "Der Tag neigt sich - Phantom Bullets";
+            info.SkillText =
+                $"In the next {SkillDuration} seconds: becomes unable to move and attack, continuously unleashes waves of projectiles " +
+                $"spreading in all direction around self. Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
+                $"If an enemy is defeated while the skill is active, another waves of projectiles will be created at their position, these 1.5 seconds. " +
                 $"{SkillCooldown}s cooldown.";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_SHADOW))
