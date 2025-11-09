@@ -12,6 +12,10 @@ public class Vent : EnvironmentalTileBase
 
     public override void OnStageStart()
     {
+        if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.TERRAIN))
+        {
+            Strength *= 2f;
+        }
         Interval += Duration;
         base.OnStageStart();
     }

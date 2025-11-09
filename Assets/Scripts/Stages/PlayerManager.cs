@@ -172,11 +172,17 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    public bool MintBlessing = false;
     public void GetPlayerSkills()
     {
         if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.EQUIPMENT_RADIO))
         {
             SwapCooldown *= 0.85f;
+        }
+
+        if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.JUST_A_NICE_LOOKING_ROCK))
+        {
+            MintBlessing = true;
         }
     }
 
@@ -208,18 +214,18 @@ public class PlayerManager : MonoBehaviour
             swapToPlayertype = playerStartType;
         }
 
-        if (IsStageStarted && player)
-        {
-            player.OnFieldSwapOut();
-        }
-
         Vector3 spawnPosition = IsStageStarted ? player.transform.position : PlayerSpawnpoint.position;
 
         GameObject Effect = Instantiate(SwapEffect, spawnPosition, Quaternion.identity);
         GameObject newPlayerPrefab = CharacterPrefabsStorage.PlayerPrefabs[(int) swapToPlayertype];
         
-        Instantiate(newPlayerPrefab, spawnPosition, Quaternion.identity);
+        GameObject inPlayer = Instantiate(newPlayerPrefab, spawnPosition, Quaternion.identity);
         swapSfx.Play();
+
+        if (IsStageStarted && player)
+        {
+            player.OnFieldSwapOut(inPlayer.GetComponent<PlayerBase>());
+        }
 
         StartCoroutine(FadeOut(Effect, IsStageStarted ? 1f : 2f));
 

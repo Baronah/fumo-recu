@@ -37,6 +37,29 @@ public class DamageInstance
         MagicalDamage = (int)(MagicalDamage * mPercentage);
         TrueDamage = (int)(TrueDamage * tPercentage);
     }
+
+    public void Set(int physical, int magical, int trueDamage)
+    {
+        PhysicalDamage = physical;
+        MagicalDamage = magical;
+        TrueDamage = trueDamage;
+    }
+
+    public void Set(int amount)
+    {
+        Set(amount, amount, amount);
+    }
+
+    public void SetTotal(int amount)
+    {
+        if (amount == 1)
+        {
+            Set(0, 0, 1);
+            return;
+        }
+        int split = amount / 3;
+        Set(split, split, amount - (split * 2));
+    }
 }
 
 public interface IDamageStep

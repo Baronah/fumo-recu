@@ -22,6 +22,7 @@ public class PlayerMelee : PlayerBase
     [SerializeField] private float AtkBoost = 0.25f;
     [SerializeField] private float SpeedBoost = 0.35f;
     [SerializeField] private GameObject SkillBarObj;
+    private Color SkillEffectColor;
     private Slider SkillBar;
 
     [SerializeField] float PullRadius = 400, DoTRadius = 220f, AoERadius = 250f;
@@ -38,6 +39,7 @@ public class PlayerMelee : PlayerBase
     public override void InitializeComponents()
     {
         SkillBar = SkillBarObj.GetComponentInChildren<Slider>();
+        SkillEffectColor = SkillEffect.GetComponent<SpriteRenderer>().color;
         base.InitializeComponents();
     }
 
@@ -60,13 +62,19 @@ public class PlayerMelee : PlayerBase
         }
     }
 
-    public override void GetBonusSkill()
+    public override void GetSkillTreeEffects()
     {
-        base.GetBonusSkill();
+        base.GetSkillTreeEffects();
         if (Skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_RADIO))
         {
             DashCooldown *= 0.85f;
             SkillCooldown *= 0.85f;
+        }
+
+        if (Skills.Contains(SkillTree_Manager.SkillName.JUST_A_NICE_LOOKING_ROCK))
+        {
+            DashCooldown *= 0.948f;
+            SkillCooldown *= 0.948f;
         }
     }
 
@@ -285,6 +293,12 @@ public class PlayerMelee : PlayerBase
                     .Where(t => t && t.IsAlive());
 
         if (sfxs[0] && targets.Count() > 0) sfxs[0].Play();
+        
+        float atk = this.atk;
+        if (Skills.Contains(SkillTree_Manager.SkillName.HEAVY_HITTER))
+        {
+            atk *= GetHeavyHitterMultiplier();
+        }
 
         foreach (var target in targets)
         {
@@ -296,8 +310,12 @@ public class PlayerMelee : PlayerBase
                 defPen -= 50;
                 DisplayDamage("<color=black><size=60>BLACKFLASH!</size></color>", new(0, 50));
             }
-            else DealDamage(target, atk);
+            else DealDamage(target, (int) atk);
+
+            if (IsHeavyHitterMaxed) ApplyStun(target, 0.5f);
         }
+
+        timerSinceLastAttack = 0f;
         yield return null;
     }
 
@@ -306,18 +324,20 @@ public class PlayerMelee : PlayerBase
         if (!CanUseSkill || IsSkillActive) return;
 
         base.UseSkill();
-        StartCoroutine(ActivateSkill());
+        StartCoroutine(ActivateSkill(SkillDuration));
     }
 
     bool extendSkillDuration = false;
     int damageTakenDuringSkill = 0;
-    IEnumerator ActivateSkill()
+    float juggernauntCurrentDuration = 0;
+    IEnumerator ActivateSkill(float duration, bool fromInherit = false)
     {
         if (!IsAlive() || IsSkillActive || !CanUseSkill) yield break;
-        StartCoroutine(SkillLockout());
+        if (!fromInherit) StartCoroutine(SkillLockout());
 
         if (sfxs[2]) sfxs[2].Play();
 
+        juggernauntCurrentDuration = 0;
         IsSkillActive = true;
         bool CanPull = Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_PULL),
              CanDoT = Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_IGNITE);
@@ -330,9 +350,9 @@ public class PlayerMelee : PlayerBase
         resAdd = (short) (ResBoost);
         res += resAdd;
         speedAdd = (short) (b_moveSpeed * SpeedBoost);
-        moveSpeed += speedAdd;
+        moveSpeed += speedAdd; 
 
-        SkillBar.value = SkillBar.maxValue = SkillDuration;
+        SkillBar.value = SkillBar.maxValue = duration;
 
         if (CanPull)
         {
@@ -355,20 +375,20 @@ public class PlayerMelee : PlayerBase
             }
         }
 
-        float c = 0, t = 0, d = SkillDuration;
+        float t = 0, d = duration;
         float durationAdded = 0;
 
-        while (c < d)
+        while (juggernauntCurrentDuration < d)
         {
-            c += Time.deltaTime;
+            juggernauntCurrentDuration += Time.deltaTime;
             t += Time.deltaTime;
 
-            SkillBar.value = d - c;
-
+            SkillBar.value = d - juggernauntCurrentDuration;
+            
             if (extendSkillDuration && durationAdded < d)
             {
                 float bonus = 0.5f;
-                c -= bonus;
+                juggernauntCurrentDuration -= bonus;
                 durationAdded += bonus;
                 extendSkillDuration = false;
             }
@@ -385,6 +405,7 @@ public class PlayerMelee : PlayerBase
                     {
                         PullEntityTowards(enemy, transform, 2.5f, 0.12f);
                         enemy.ApplyEffect(Effect.AffectedStat.MSPD, "JUGGERNAUNT_PULL_DEBUFF_MSPD", -40f, 1.25f, true);
+                        enemy.ApplyEffect(Effect.AffectedStat.ASPD, "JUGGERNAUNT_PULL_DEBUFF_ASPD", -33f, 1.25f, false);
                     }
                 }
                 else if (CanDoT)
@@ -412,9 +433,23 @@ public class PlayerMelee : PlayerBase
         ReleaseAfterShock();
     }
 
-    public override void OnFieldSwapOut()
+    public override void OnFieldSwapOut(PlayerBase swapInPlayer)
     {
-        base.OnFieldSwapOut();
+        base.OnFieldSwapOut(swapInPlayer);
+        if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_SHINDOUKAKU)
+            && IsSkillActive)
+        {
+            PlayerRanged ranged = swapInPlayer.GetComponent<PlayerRanged>();
+            ranged.SetJuggernauntInherit(SkillDuration - juggernauntCurrentDuration,
+                BurstHeal_HpPercentage, 
+                HealPerSecond_HpPercentage,
+                DefBoost,
+                ResBoost,
+                AtkBoost, 
+                SpeedBoost
+            );
+        }
+
         ReleaseAfterShock();
         if (DashAfterImages) Destroy(DashAfterImages.gameObject);
     }
@@ -423,6 +458,7 @@ public class PlayerMelee : PlayerBase
     {
         if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_AFTERSHOCK) && damageTakenDuringSkill > 0)
         {
+            SkillEffect.GetComponent<SpriteRenderer>().color = SkillEffectColor;
             Instantiate(AftershockEffect, transform.position, Quaternion.identity);
             Instantiate(AftershockEffect_2, transform.position, Quaternion.identity);
 
@@ -430,6 +466,7 @@ public class PlayerMelee : PlayerBase
             foreach (EntityBase enemy in enemies)
             {
                 DealDamage(enemy, (int)(damageTakenDuringSkill * AfterShockDamageConversionRatio), 0, 0);
+                enemy.ApplyEffect(Effect.AffectedStat.MSPD, "AFTERSHOCK_MSPD_DEBUFF", -99f, 1f, true, EffectPersistType.DECAY);
             }
         }
         damageTakenDuringSkill = 0;
@@ -440,7 +477,11 @@ public class PlayerMelee : PlayerBase
         if (IsSkillActive && IsAlive() && damage.TotalDamage > 0)
         {
             extendSkillDuration = Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_DURATION);
-            if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_AFTERSHOCK)) damageTakenDuringSkill += damage.TotalDamage;
+            if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_AFTERSHOCK))
+            {
+                if (damageTakenDuringSkill <= 0) SkillEffect.GetComponent<SpriteRenderer>().color = new(1, 0.6f, 0, 0.25f);
+                damageTakenDuringSkill += damage.TotalDamage;
+            }
         }
         base.TakeDamage(damage, source);
     }
@@ -471,7 +512,7 @@ public class PlayerMelee : PlayerBase
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.DASH_AFTERIMAGES))
         {
-            info.SpecialName = "Evasion - Time Traveler";
+            info.SpecialName = "Evasion - 'Yesterday Once More'";
             info.SpecialText =
                 $"Dash a short distance toward the movement direction, leaving behind an afterimage and briefly becomes invulnerable during the process. The afterimage lasts " +
                 $"3 seconds, casting this skill again during that period will teleport you back to the its location.";
@@ -512,7 +553,20 @@ public class PlayerMelee : PlayerBase
             info.SkillText =
                 $"Immediately heals self for {BurstHeal_HpPercentage * 100}% max HP. In the next {SkillDuration} seconds: " +
                 $"ATK +{AtkBoost * 100}%, DEF +{DefBoost * 100}%, RES +{ResBoost}, MSPD +{SpeedBoost * 100}%. " +
-                $"Every second, regenerates {HealPerSecond_HpPercentage * 100}% max HP and reduces the MSPD of all nearby enemies by 40% and pulls them toward self. ";
+                $"Every second, regenerates {HealPerSecond_HpPercentage * 100}% max HP while reduces the MSPD and ASPD of all nearby enemies by 33% and pulls them toward self. ";
+        }
+        else if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_SHINDOUKAKU))
+        {
+            info.SkillName = "Juggernaunt - Shindoukaku";
+            info.SkillText =
+                $"Immediately heals self for {BurstHeal_HpPercentage * 100}% max HP. In the next {SkillDuration} seconds: " +
+                $"ATK +{AtkBoost * 100}%, DEF +{DefBoost * 100}%, RES +{ResBoost}, MSPD +{SpeedBoost * 100}%. " +
+                $"Upon swapping, transfers this effect to the swapped in character and extends its duration for 2 more seconds. ";
+        }
+        else if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_AFTERSHOCK))
+        {
+            if (!hasUpgrade) info.SkillName = "Juggernaunt - Aftershock";
+            info.SkillText += $" After skill ends or upon swapping, deal physical damage equals to {AfterShockDamageConversionRatio * 100}% damage taken during the duration to all nearby enemies.";
         }
         else
         {
@@ -522,12 +576,6 @@ public class PlayerMelee : PlayerBase
                 $"Immediately heals self for {BurstHeal_HpPercentage * 100}% max HP. In the next {SkillDuration} seconds: " +
                 $"ATK +{AtkBoost * 100}%, DEF +{DefBoost * 100}%, RES +{ResBoost}, MSPD +{SpeedBoost * 100}% and " +
                 $"regenerate {HealPerSecond_HpPercentage * 100}% max HP every second. ";
-        }
-
-        if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_AFTERSHOCK))
-        {
-            if (!hasUpgrade) info.SkillName = "Juggernaunt - Aftershock";
-            info.SkillText += $" After skill ends, deal physical damage equals to {AfterShockDamageConversionRatio * 100}% damage taken during the duration to all nearby enemies.";
         }
 
         info.SkillText += $"{SkillCooldown}s cooldown.";

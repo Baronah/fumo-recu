@@ -13,7 +13,7 @@ public class SkillTree_SkillComponent : MonoBehaviour
     public SkillName skillName;
 
     public Sprite skillIcon => skillIconImage.sprite;
-    public string skillNameText, skillDescription;
+    public string skillNameText, skillDescription, favorText;
     public SkillName[] mutuallyExclusiveSkills;
 
     private Button selfButton;
@@ -21,7 +21,7 @@ public class SkillTree_SkillComponent : MonoBehaviour
 
     private Image skillIconImage;
 
-    public Transform Overlay;
+    [HideInInspector] public Transform Overlay;
 
     private void Awake()
     {

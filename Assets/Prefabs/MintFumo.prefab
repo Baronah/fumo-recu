@@ -110,6 +110,7 @@ MonoBehaviour:
   squishDuration: 0.15
   squishAmount: 0.35
   SkillRange: 800
+  ObjectiveType: 0
 --- !u!82 &-1878488280740500059
 AudioSource:
   m_ObjectHideFlags: 0
@@ -551,7 +552,7 @@ GameObject:
   - component: {fileID: 5853964528117141298}
   - component: {fileID: 3239770844223441837}
   m_Layer: 0
-  m_Name: Particle System (1)
+  m_Name: Particle System_Mi2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -570,7 +571,7 @@ Transform:
   m_LocalScale: {x: 3.5, y: 3.5, z: 3.5}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 2505863896189975802}
+  m_Father: {fileID: 5155710157892025582}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!198 &5853964528117141298
 ParticleSystem:
@@ -5475,8 +5476,7 @@ RectTransform:
   - {fileID: 5476551288292665524}
   - {fileID: 90570569894815653}
   - {fileID: 3054770548884442699}
-  - {fileID: 4027341528505430378}
-  - {fileID: 2486442585961117068}
+  - {fileID: 5155710157892025582}
   m_Father: {fileID: 5588182984637199621}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -5496,7 +5496,7 @@ GameObject:
   - component: {fileID: 6448134158723048030}
   - component: {fileID: 2457350749165818804}
   m_Layer: 0
-  m_Name: Particle System
+  m_Name: Particle System_Mi1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5515,7 +5515,7 @@ Transform:
   m_LocalScale: {x: 3.5, y: 3.5, z: 3.5}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 2505863896189975802}
+  m_Father: {fileID: 5155710157892025582}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!198 &6448134158723048030
 ParticleSystem:
@@ -10314,6 +10314,43 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!1 &8566706026168760347
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5155710157892025582}
+  m_Layer: 0
+  m_Name: Particles
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &5155710157892025582
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8566706026168760347}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4027341528505430378}
+  - {fileID: 2486442585961117068}
+  m_Father: {fileID: 2505863896189975802}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &8781224293817681688
 GameObject:
   m_ObjectHideFlags: 0

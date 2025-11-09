@@ -311,6 +311,14 @@ PrefabInstance:
       propertyPath: m_Offset.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8775152862550477468, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Value
+      value: 160
+      objectReference: {fileID: 0}
+    - target: {fileID: 8775152862550477468, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_MaxValue
+      value: 160
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7523077825662678453, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
     m_RemovedGameObjects:
@@ -369,17 +377,20 @@ MonoBehaviour:
   b_attackInterval: 3
   MIN_PHYSICAL_DMG: 0.05
   MIN_MAGICAL_DMG: 0.1
-  health: 0
-  atk: 0
-  def: 0
-  res: 0
+  health: 160
+  atk: 50
+  def: 20
+  res: 20
   ASPD: 100
-  moveSpeed: 0
-  attackRange: 0
-  attackWindupTime: 0
-  attackInterval: 0
+  moveSpeed: 100
+  attackRange: 110
+  attackWindupTime: 0.57
+  attackInterval: 3
   hpRegenFlat: 0
   hpRegenPercentage: 0
+  weight: 3
+  damageReduction: 0
+  damageAmplify: 0
   IsFreezeImmune: 0
   IsStunImmune: 0
   IsPhysicalImmune: 0
@@ -395,16 +406,27 @@ MonoBehaviour:
   DamagePopup: {fileID: 7498904281893358320, guid: b09dfacba160b6d47938cf47f8dea3c9, type: 3}
   ccBar: {fileID: 754730279402599387}
   AttackAnimation: {fileID: 7400000, guid: a09a6a5b301f7034a95e77b2c60a63a9, type: 2}
-  sfxs: []
+  sfxs:
+  - {fileID: -5450917385555761551}
+  - {fileID: -8733238294579501206}
+  IsBeingShifted: 0
+  FreezeTimer: 0
+  StunTimer: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 0.9
+  reviveDuration: 5
+  postReviveDuration: 0
   enemyCode: 3
   SpotPlayerUponSpawn: 0
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
   TooltipsPriority: 0
   TooltipsHoldtime: 8
-  Description: Enemy lore or description
-  Skillset: Enemy skillset
+  Description: A combatant who has once in the verge of death. The dance on the edge
+    of life and death has given them a unique tactical system. Through Arts Resonance,
+    they are able to create a barrier that absorbs damage.
+  Skillset: "\u2022 Has a barrier that absorbs damage.\n\u2022 Upon losing the barrier,
+    gains increased MSPD and ASPD.\n\u2022 When alerted by a Sentinel, the barrier
+    will be loss instantly."
   DetectionRange: 240
   DangerRange_RatioOfAttackRange: 0.65
   MinimumDistanceFromPlayer: 50
@@ -433,6 +455,7 @@ MonoBehaviour:
   barrierMaxHealth: 100
   speedMultuplierOnBarrierBreak: 1.75
   AspdBonusOnBarrierBreak: 50
+  weightPenaltyOnBarrierBreak: 2
 --- !u!82 &-5450917385555761551
 AudioSource:
   m_ObjectHideFlags: 0

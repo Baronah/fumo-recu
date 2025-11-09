@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class Sentinel : EnemyBase
 {
-    [SerializeField] private float SpeedBuffOnAlert = 1.35f;
-    [SerializeField] private float AtkBuffOnAlert = 1.2f;
+    [SerializeField] public float SpeedBuffOnAlert = 1.35f;
+    [SerializeField] public float AtkBuffOnAlert = 1.2f;
     [SerializeField] private GameObject DetectCircle;
 
     private RectTransform DetectCircleRectTransform;

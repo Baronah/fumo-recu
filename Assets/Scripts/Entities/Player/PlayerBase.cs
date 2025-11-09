@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using static SkillTree_Manager;
 
 public class PlayerBase : EntityBase
@@ -10,6 +11,10 @@ public class PlayerBase : EntityBase
     public string AttackDes, SkillName, SkillDes, SpecialName, SpecialDes;
     protected PlayerManager playerManager;
     protected StageManager StageManager;
+
+    [SerializeField] protected GameObject HH_Effect_parent;
+    [SerializeField] private Material HH_Fill_Material;
+    [SerializeField] protected Image HH_Effect_fill;
 
     private Transform TransformFeetposition;
     public Vector3 Feetposition => TransformFeetposition.position;
@@ -28,7 +33,8 @@ public class PlayerBase : EntityBase
         StageManager = FindObjectOfType<StageManager>();
         StageManager.OnPlayerSpawn(this);
 
-        GetBonusSkill();
+        GetSkillTreeEffects();
+        HH_Effect_parent.SetActive(Skills.Contains(SkillTree_Manager.SkillName.HEAVY_HITTER));
 
         base.InitializeComponents();
         TransformFeetposition = transform.Find("Feetposition");
@@ -62,8 +68,20 @@ public class PlayerBase : EntityBase
         }
         else if (health <= mHealth * 0.5f && Skills.Contains(SkillTree_Manager.SkillName.ATTENTION_DEVICE))
         {
-            ApplyEffect(Effect.AffectedStat.DEF, "ATTENTION_BUFF", 60, 0.5f, true);
-            ApplyEffect(Effect.AffectedStat.RES, "ATTENTION_BUFF", 20, 0.5f, false);
+            ApplyEffect(Effect.AffectedStat.DEF, "ATTENTION_BUFF", 35, 0.5f, false);
+            ApplyEffect(Effect.AffectedStat.RES, "ATTENTION_BUFF", 25, 0.5f, false);
+        }
+    }
+
+    public override void UpdateCooldowns()
+    {
+        base.UpdateCooldowns();
+        if (Skills.Contains(SkillTree_Manager.SkillName.HEAVY_HITTER))
+        {
+            timerSinceLastAttack += Time.deltaTime;
+            HH_Effect_fill.fillAmount = Mathf.Lerp(0, 1f, timerSinceLastAttack / heavyHitterMaxTimer);
+            HH_Effect_fill.color = IsHeavyHitterMaxed ? Color.white : new(0.81f, 0.12f, 0.12f);
+            HH_Effect_fill.material = IsHeavyHitterMaxed ? null : HH_Fill_Material;
         }
     }
 
@@ -75,7 +93,7 @@ public class PlayerBase : EntityBase
         }
     }
 
-    public virtual void GetBonusSkill()
+    public virtual void GetSkillTreeEffects()
     {
         foreach (var skill in CharacterPrefabsStorage.Skills)
         {
@@ -100,12 +118,24 @@ public class PlayerBase : EntityBase
                     mHealth += (int)(mHealth * 0.1f);
                     hpRegenPercentage += 0.005f;
                     break;
+                case SkillTree_Manager.SkillName.HEAVY_HITTER:
+                    ASPD -= 40;
+                    break;
+                case SkillTree_Manager.SkillName.JUST_A_NICE_LOOKING_ROCK:
+                    mHealth = (int) (mHealth * 1.052f);
+                    bAtk = (short) (bAtk * 1.052f);
+                    bDef += 5;
+                    bRes += 5;
+                    ASPD += 5;
+                    b_moveSpeed += b_moveSpeed * 0.052f;
+                    break;
             }
         }
     }
 
-    public virtual void OnFieldSwapOut()
+    public virtual void OnFieldSwapOut(PlayerBase swapInPlayer)
     {
+        swapInPlayer.timerSinceLastAttack = timerSinceLastAttack;
     }
 
     protected virtual void GetControlInputs()
@@ -204,14 +234,37 @@ public class PlayerBase : EntityBase
 
     public override void TakeDamage(DamageInstance damage, EntityBase source)
     {
-        base.TakeDamage(damage, source); 
-        
+        base.TakeDamage(damage, source);
+
         if (source)
             playerManager.OnPlayerAttacked(damage.TotalDamage * 1.0f / (mHealth * 0.5f));
     }
 
+    public float heavyHitterMaxTimer = 10f;
+    protected float timerSinceLastAttack = 0f;
+    protected float GetHeavyHitterMultiplier()
+    {
+        if (!Skills.Contains(SkillTree_Manager.SkillName.HEAVY_HITTER)) return 1f;
+        float multiplier = 1f + Mathf.Lerp(0f, 2.5f, timerSinceLastAttack / heavyHitterMaxTimer);
+        return multiplier;
+    }
+
+    protected bool IsHeavyHitterMaxed =>
+        Skills.Contains(SkillTree_Manager.SkillName.HEAVY_HITTER)
+        && 
+        timerSinceLastAttack >= heavyHitterMaxTimer;
+
     public override void DealDamage(EntityBase target, int pDmg, int mDmg, int tDmg, bool allowWhenDisabled = false)
     {
+        if (Skills.Contains(SkillTree_Manager.SkillName.BREAK_THE_ICE) && target.IsFrozen)
+        {
+            float freezeDuration = target.FreezeTimer;
+            target.EndFreeze();
+
+            int bonusDmg = (int)(atk * freezeDuration * 0.5f + target.mHealth * (0.1f + freezeDuration * 0.02f));
+            tDmg += bonusDmg;
+        }
+
         base.DealDamage(target, pDmg, mDmg, tDmg, allowWhenDisabled);
         if (!target.IsAlive())
         {
@@ -224,6 +277,14 @@ public class PlayerBase : EntityBase
 
     public override void OnDeath()
     {
+        if (!IsAlive() && playerManager.MintBlessing)
+        {
+            Heal((int)(mHealth * 0.52f), healThroughDead: true);
+            playerManager.MintBlessing = false;
+            SetInvulnerable(1.52f);
+            return;
+        }
+
         base.OnDeath();
         playerManager.OnPlayerDeath();
     }

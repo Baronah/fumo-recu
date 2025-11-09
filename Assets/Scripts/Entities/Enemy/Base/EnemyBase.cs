@@ -22,6 +22,7 @@ public class EnemyBase : EntityBase
         ORIGINIUTANT,
         ORIGINIUM_SPIDER_ALPHA,
         SUDARAM,
+        SHROUDED_ASSASSIN,
     }
 
     public EnemyCode enemyCode;
@@ -492,10 +493,7 @@ public class EnemyBase : EntityBase
 
     private void HandleStuckState()
     {
-        bool disableHitbox = 
-            isUsingPathfinding && !IsBeingShifted && rb2d.velocity.magnitude > 0;
-        
-        if (!disableHitbox)
+        if (!IsValidForTerrainIgnore)
         {
             stuckTimer = 0;
             return;
@@ -531,13 +529,14 @@ public class EnemyBase : EntityBase
         float c = 0, d = 1;
         while (c < d)
         {
-            bool ignoreLayer = isUsingPathfinding && !IsBeingShifted && rb2d.velocity.magnitude > 0;
-            Physics2D.IgnoreLayerCollision(gameObject.layer, 8, ignoreLayer);
+            Physics2D.IgnoreLayerCollision(gameObject.layer, 8, IsValidForTerrainIgnore);
             c += Time.fixedDeltaTime;
             yield return new WaitForFixedUpdate();
         }
         Physics2D.IgnoreLayerCollision(gameObject.layer, 8, false);
     }
+
+    bool IsValidForTerrainIgnore => isUsingPathfinding && !IsBeingShifted && !IsStunned && !IsFrozen;
 
     private Vector2 GetAvoidanceDirection(Vector2 originalDirection, float distanceToDestination)
     {

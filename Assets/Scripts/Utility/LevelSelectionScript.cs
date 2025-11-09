@@ -44,6 +44,7 @@ public class LevelSelectionScript : MonoBehaviour
         EnemyName,
         EnemyPattern,
         EnemyDescription,
+        Weight,
         Rating_HP, 
         Rating_DEF, 
         Rating_RES, 
@@ -400,24 +401,24 @@ public class LevelSelectionScript : MonoBehaviour
 
     void ResetInformation()
     {
-        EnemyIcon.sprite = DefaultEnemyIcon;
-
-        Rating_CALV.text = Rating_DRNG.text = Rating_MSPD.text = Rating_ASPD.text = 
-            Rating_ARNG.text = Rating_DEF.text = Rating_RES.text = Rating_ATK.text = 
-            Rating_HP.text = EnemyPattern.text = EnemyName.text = "N/A";
-
+        SetEnemyDefaultUI();
         EnemyDescription.text = 
             "Select an enemy to view their information.";
     }
 
     void SetUnknownEnemyInfo()
     {
-        EnemyIcon.sprite = DefaultEnemyIcon;
-        Rating_CALV.text = Rating_DRNG.text = Rating_MSPD.text = Rating_ASPD.text = 
-            Rating_ARNG.text = Rating_DEF.text = Rating_RES.text = Rating_ATK.text = 
-            Rating_HP.text = EnemyPattern.text = EnemyName.text = "N/A";
+        SetEnemyDefaultUI();
         EnemyDescription.text = 
             "You haven't encountered this enemy yet.";
+    }
+
+    void SetEnemyDefaultUI()
+    {
+        EnemyIcon.sprite = DefaultEnemyIcon;
+        Weight.text = Rating_CALV.text = Rating_DRNG.text = Rating_MSPD.text = Rating_ASPD.text =
+            Rating_ARNG.text = Rating_DEF.text = Rating_RES.text = Rating_ATK.text =
+            Rating_HP.text = EnemyPattern.text = EnemyName.text = "N/A";
     }
 
     public IEnumerator GetEnemyInformation(EnemyCode enemyCode, Vector3 position)
@@ -443,6 +444,8 @@ public class LevelSelectionScript : MonoBehaviour
         EnemyName.text = enemy.Name;
         EnemyPattern.text = $"{enemy.attackPattern} {enemy.damageType}";
         
+        Weight.text = enemy.weight.ToString();
+
         // hp
         if (enemy.mHealth <= 25) 
             Rating_HP.text = "E";

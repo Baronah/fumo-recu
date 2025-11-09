@@ -66,6 +66,12 @@ public class SkillTree_Manager : MonoBehaviour
         SWAP_START_ATK,
         SPECIAL_MSPD,
         SPIRAL_PHANTOM,
+        HEAVY_HITTER,
+        JUGGERNAUNT_SHINDOUKAKU,
+        BREAK_THE_ICE,
+        HUNGER,
+        TERRAIN,
+        JUST_A_NICE_LOOKING_ROCK,
     }
 
     public static SkillTree_Manager Instance;
@@ -320,7 +326,8 @@ public class SkillTree_Manager : MonoBehaviour
             _ => IdleColor,
         };
 
-        skillDetailsText.text = skill.skillDescription;
+        skillDetailsText.text = 
+            (skill.skillDescription + $"\n\n<i><color=#b1b1b1>{skill.favorText}</color></i>").Replace(@"\n", "\n");
         skillNameText.text = skill.skillNameText;
         skillIconImage.sprite = skill.skillIcon;
     }

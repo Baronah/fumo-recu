@@ -5590,6 +5590,22 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 4325063826441302204}
   m_SourcePrefab: {fileID: 100100000, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
+--- !u!1 &1940547992953852007 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7991820289360490147, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
+  m_PrefabInstance: {fileID: 8360528276066401988}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4047708612106510638 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5488420796603703274, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
+  m_PrefabInstance: {fileID: 8360528276066401988}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &5243118203891644840 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4379148182149629804, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
@@ -5641,6 +5657,8 @@ MonoBehaviour:
   hpRegenFlat: 0
   hpRegenPercentage: 0
   weight: 0
+  damageReduction: 0
+  damageAmplify: 0
   IsFreezeImmune: 0
   IsStunImmune: 0
   IsPhysicalImmune: 0
@@ -5657,8 +5675,11 @@ MonoBehaviour:
   ccBar: {fileID: 8729259124278131605}
   AttackAnimation: {fileID: 7400000, guid: 38cef02e111cc2741872318b17372723, type: 2}
   sfxs: []
+  IsBeingShifted: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 1
+  reviveDuration: 5
+  postReviveDuration: 0
   ObstacleLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -5670,7 +5691,11 @@ MonoBehaviour:
   SkillDes: 
   SpecialName: 
   SpecialDes: 
+  HH_Effect_parent: {fileID: 1940547992953852007}
+  HH_Fill_Material: {fileID: 2100000, guid: 25baa0b986f248947843c72757292d02, type: 2}
+  HH_Effect_fill: {fileID: 4047708612106510638}
   Skills: 
+  heavyHitterMaxTimer: 10
   IllusionPrefab: {fileID: 7614525393990378507, guid: c6fa58abea2ebf043a4612afde7194bd, type: 3}
   AfterimagePrefabs: {fileID: 8715830305643004679, guid: 25e5cb859428c344dbe7ba0856015cef, type: 3}
   DashSpeed: 1700

@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class PlayerRanged : PlayerBase
 {
     [SerializeField] GameObject ProjectileSkill_2, ProjectileSkill_3, ProjectileSkill_4;
-    [SerializeField] private GameObject AttackRangeIndicator, Warning, SkillEffect, FreezeEffect;
+    [SerializeField] private GameObject AttackRangeIndicator, Warning, SkillEffect, FreezeEffect, JuggEffect;
 
     [SerializeField] private Transform SkillPosition;
     [SerializeField] private float SkillCooldown = 30f;
@@ -68,9 +68,9 @@ public class PlayerRanged : PlayerBase
         base.InitializeComponents();
     }
 
-    public override void OnFieldSwapOut()
+    public override void OnFieldSwapOut(PlayerBase swapInPlayer)
     {
-        base.OnFieldSwapOut();
+        base.OnFieldSwapOut(swapInPlayer);
 
         if (!Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_SHADOW) || !IsSkillActive) return;
 
@@ -103,14 +103,23 @@ public class PlayerRanged : PlayerBase
         );
     }
 
-    public override void GetBonusSkill()
+    public override void GetSkillTreeEffects()
     {
-        base.GetBonusSkill();
+        base.GetSkillTreeEffects();
         if (Skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_RADIO))
         {
             FreezeCooldown *= 0.85f;
             SkillCooldown *= 0.85f;
         }
+
+        if (Skills.Contains(SkillTree_Manager.SkillName.JUST_A_NICE_LOOKING_ROCK))
+        {
+            FreezeCooldown *= 0.948f;
+            SkillCooldown *= 0.948f;
+        }
+
+        if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_ICEAGE))
+            FreezeDurationMin += 1f;
 
         if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_SOUTH))
             FreezeDurationMin = Mathf.Max(FreezeDurationMin, 2f);
@@ -211,8 +220,20 @@ public class PlayerRanged : PlayerBase
         if (!target) yield break;
 
         if (sfxs[0]) sfxs[0].Play();
+
+        int currentAtk = atk;
+        float atkPostBonus = atk;
+        if (Skills.Contains(SkillTree_Manager.SkillName.HEAVY_HITTER))
+        {
+            atkPostBonus *= GetHeavyHitterMultiplier();
+            timerSinceLastAttack = 0f;
+        }
+
+        atk = (short)atkPostBonus;
         CreateProjectileAndShootToward(target, ProjectileType, ProjectileSpeed);
         target = null;
+
+        atk = (short)currentAtk;
     }
 
     public IEnumerator CastFreeze()
@@ -331,6 +352,7 @@ public class PlayerRanged : PlayerBase
         animator.SetTrigger("skill");
         IsSkillActive = true;
         skillCurrentDuration = 0;
+        flowerCount = 0;
         float angleOffset = 0;
 
         bool shootAdditionalBullets = Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_MORE),
@@ -515,12 +537,17 @@ public class PlayerRanged : PlayerBase
         yield return null;
     }
 
+    short flowerCount = 0;
     public override void DealDamage(EntityBase target, int pDmg, int mDmg, int tDmg, bool allowWhenDisabled = false)
     {
         base.DealDamage(target, pDmg, mDmg, tDmg, allowWhenDisabled);
-        if (IsSkillActive && Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_PHANTOM) && !target.IsAlive())
+        if (IsSkillActive 
+            && Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_PHANTOM) 
+            && !target.IsAlive()
+            && flowerCount <= 3)
         {
             StartCoroutine(CreateExtraFlowers(target.transform.position, SkillDuration - skillCurrentDuration));
+            flowerCount++;
         }
     }
 
@@ -583,6 +610,64 @@ public class PlayerRanged : PlayerBase
         }
     }
 
+    private float BurstHeal_HpPercentage = 0.35f;
+    private float HealPerSecond_HpPercentage = 0.05f;
+    private float DefBoost = 0.5f;
+    private float ResBoost = 10;
+    private float AtkBoost = 0.25f;
+    private float SpeedBoost = 0.35f;
+    public void SetJuggernauntInherit(float duration, float BurstHeal_HpPercentage, float HPS_Percentage, float DefBoost, float ResBoost, float AtkBoost, float SpeedBoost)
+    {
+        this.BurstHeal_HpPercentage = BurstHeal_HpPercentage;
+        this.HealPerSecond_HpPercentage = HPS_Percentage;
+        this.DefBoost = DefBoost;
+        this.ResBoost = ResBoost;
+        this.AtkBoost = AtkBoost;
+        this.SpeedBoost = SpeedBoost;
+        StartCoroutine(ActivateJuggernaunt(duration + 2));
+    }
+
+    float juggernauntCurrentDuration = 0;
+    private short atkAdd, defAdd, resAdd, speedAdd;
+    protected IEnumerator ActivateJuggernaunt(float duration)
+    {
+        yield return new WaitUntil(() => IsComponentsInitialized);
+        JuggEffect.SetActive(true);
+        juggernauntCurrentDuration = 0;
+
+        atkAdd = (short)(bAtk * AtkBoost);
+        atk += atkAdd;
+        defAdd = (short)(bDef * DefBoost);
+        def += defAdd;
+        resAdd = (short)(ResBoost);
+        res += resAdd;
+        speedAdd = (short)(b_moveSpeed * SpeedBoost);
+        moveSpeed += speedAdd;
+
+        float t = 1.0f, d = duration;
+
+        while (juggernauntCurrentDuration < d)
+        {
+            juggernauntCurrentDuration += Time.deltaTime;
+            t += Time.deltaTime;
+
+            if (t >= 1.0f)
+            {
+                Heal(mHealth * HealPerSecond_HpPercentage);
+                t = 0;
+            }
+
+            yield return null;
+        }
+
+        Heal(mHealth * HealPerSecond_HpPercentage);
+        atk -= atkAdd;
+        def -= defAdd;
+        res -= resAdd;
+        moveSpeed -= speedAdd;
+        JuggEffect.SetActive(false);
+    }
+
     public override PlayerTooltipsInfo GetPlayerTooltipsInfo()
     {
         var info = base.GetPlayerTooltipsInfo();
@@ -613,7 +698,7 @@ public class PlayerRanged : PlayerBase
             info.SkillText =
                 $"In the next {SkillDuration} seconds: becomes unable to move and attack, continuously unleashes waves of projectiles " +
                 $"spreading in all direction around self. Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
-                $"If an enemy is defeated while the skill is active, another waves of projectiles will be created at their position, these 1.5 seconds. " +
+                $"If an enemy is defeated while the skill is active, another waves of projectiles will be created at their position, lasting up to 1.5 seconds (triggers up to 3 times). " +
                 $"{SkillCooldown}s cooldown.";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_SHADOW))

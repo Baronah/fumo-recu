@@ -501,6 +501,9 @@ MonoBehaviour:
   attackInterval: 0
   hpRegenFlat: 0
   hpRegenPercentage: 0
+  weight: 0
+  damageReduction: 0
+  damageAmplify: 0
   IsFreezeImmune: 0
   IsStunImmune: 0
   IsPhysicalImmune: 0
@@ -517,8 +520,11 @@ MonoBehaviour:
   ccBar: {fileID: 5384541712598859992}
   AttackAnimation: {fileID: 0}
   sfxs: []
+  IsBeingShifted: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 1
+  reviveDuration: 5
+  postReviveDuration: 0
   enemyCode: 2
   SpotPlayerUponSpawn: 0
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
@@ -552,7 +558,7 @@ MonoBehaviour:
   MoveToOverridePositionSpeedMultiplierJump: 0.35
   CanDetectThroughWalls: 0
   SpeedBuffOnAlert: 1.35
-  AtkBuffOnAlert: 1.2
+  AtkBuffOnAlert: 1.5
   DetectCircle: {fileID: 5466385592610398606}
 --- !u!82 &3220264862875923812
 AudioSource:

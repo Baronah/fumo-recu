@@ -11,6 +11,10 @@ public class OriginiumPollution : EnvironmentalTileBase
 
     public override void OnStageStart()
     {
+        if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.TERRAIN))
+        {
+            TrueDamagePerTick *= 2f;
+        }
         base.OnStageStart();
         StartCoroutine(Pulse());
     }

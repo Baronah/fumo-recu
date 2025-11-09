@@ -9,6 +9,7 @@ public class FM_07 : StageManager
 
     [SerializeField] private TMP_Text timerText;
     [SerializeField] private float targetTimer = 240f;
+    [SerializeField] private float laterSpawnsActivateTimegate = 120f, modifySpawnInterval = 45f;
     float stageTimer = 0;
 
     FumoScript fumo;
@@ -66,10 +67,12 @@ public class FM_07 : StageManager
         if (stageTimer >= targetTimer) return;
         base.Update();
 
+        if (!IsStageStarted) return;
+
         stageTimer += Time.deltaTime;
 
         float countTimer = targetTimer - stageTimer;
-        timerText.text = $"{Mathf.FloorToInt(countTimer / 60).ToString("00")}:{Mathf.FloorToInt(countTimer % 60).ToString("00")}";
+        timerText.text = $"{Mathf.FloorToInt(countTimer / 60):00}:{Mathf.FloorToInt(countTimer % 60):00}";
 
         if (fumo && stageTimer >= targetTimer)
         {
@@ -79,12 +82,12 @@ public class FM_07 : StageManager
 
         modifySpawnTimer += Time.deltaTime;
 
-        if (stageTimer >= 120 && !laterSpawn.activeSelf)
+        if (stageTimer >= laterSpawnsActivateTimegate && !laterSpawn.activeSelf)
         {
             laterSpawn.SetActive(true);
         }
 
-        if (modifySpawnTimer >= 60)
+        if (modifySpawnTimer >= modifySpawnInterval)
         {
             ModifySpawnRate();
         }
@@ -104,18 +107,11 @@ public class FM_07 : StageManager
                 }
                 break;
             case 1:
-                foreach (var spawn in EndlessSpawns)
-                {
-                    spawn.enemyPrefabs.Clear();
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.HEIR);
-                }
-                break;
             case 2:
                 foreach (var spawn in EndlessSpawns)
                 {
                     spawn.enemyPrefabs.Clear();
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ZEALOT);
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.MATTERLLURGIST);
+                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.HEIR);
                 }
                 break;
             case 3:

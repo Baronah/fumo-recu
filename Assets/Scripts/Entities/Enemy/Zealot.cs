@@ -8,6 +8,8 @@ public class Zealot : EnemyBase
     [SerializeField] private float barrierMaxHealth = 100f;
     [SerializeField] private float speedMultuplierOnBarrierBreak = 1.5f;
     [SerializeField] private float AspdBonusOnBarrierBreak = 50;
+    [SerializeField] private short weightPenaltyOnBarrierBreak = 2;
+
     private float barrierHealth;
 
     private Color barrierinitialColor;
@@ -56,6 +58,7 @@ public class Zealot : EnemyBase
             {
                 moveSpeed *= speedMultuplierOnBarrierBreak;
                 ASPD += AspdBonusOnBarrierBreak;
+                weight -= weightPenaltyOnBarrierBreak;
             }
         }
         else
@@ -69,7 +72,7 @@ public class Zealot : EnemyBase
         Description = "A combatant who has once in the verge of death. The dance on the edge of life and death has given them a unique tactical system. Through Arts Resonance, they are able to create a barrier that absorbs damage.";
         Skillset = 
             "• Has a barrier that absorbs damage.\n" +
-            "• Upon losing the barrier, gains increased MSPD and ASPD.\n" +
+            "• Upon losing the barrier, gains increased MSPD and ASPD, but reduced weight.\n" +
             "• When alerted by a Sentinel, the barrier will be loss instantly.";
         TooltipsDescription = "Melee unit, attacks deal physical damage. <color=green>Has a barrier that absorbs damage</color>, and gains <color=yellow>greatly increased MSPD and ASPD</color> when the barrier is destroyed. " +
             "<color=yellow>If alerted early</color>, <color=red>forfeits</color> self barrier.";

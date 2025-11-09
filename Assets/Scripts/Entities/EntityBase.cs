@@ -30,6 +30,7 @@ public class EntityBase : MonoBehaviour
     public float hpRegenFlat = 0, hpRegenPercentage = 0;
 
     public short weight = 0;
+    public short damageReduction = 0, damageAmplify = 0;
 
     public int GetMaxHealth() => mHealth;
     public short GetHealthPercentage() => (short)Mathf.Max(1, health * 100 / mHealth);
@@ -88,7 +89,7 @@ public class EntityBase : MonoBehaviour
 
     private bool TriggeredOnDeath = false;
 
-    protected float FreezeTimer = 0f, StunTimer = 0f;
+    public float FreezeTimer = 0f, StunTimer = 0f;
 
     public bool IsFrozen => FreezeTimer > 0f;
     public bool IsStunned => StunTimer > 0f;
@@ -224,7 +225,7 @@ public class EntityBase : MonoBehaviour
     short BDB_Cnt = 0;
     public virtual void FixedUpdate()
     {
-        if (!IsAlive() && !TriggeredOnDeath) OnDeath();
+        if (!IsAlive() && !TriggeredOnDeath && !canRevive) OnDeath();
 
         Regen();
         UpdateCooldowns();
@@ -546,7 +547,10 @@ public class EntityBase : MonoBehaviour
         if (FreezeTimer > 0f) OnFreezeMaintain();
         else if (PrevFrozen && FreezeTimer <= 0f) OnFreezeExit();
 
+        bool PrevStunned = StunTimer > 0f;
         StunTimer -= Time.deltaTime;
+        if (StunTimer > 0f) OnStunMaintain();
+        else if (PrevStunned && StunTimer <= 0f) OnStunExit();
 
         AttackLockout -= Time.deltaTime;
         MovementLockout -= Time.deltaTime;
@@ -743,9 +747,17 @@ public class EntityBase : MonoBehaviour
     {
         health -= damage.TotalDamage;
         if (health < 0) health = 0;
-        healthBar?.SetHealth(health);
+        healthBar.SetHealth(health);
 
-        if (health <= 0) OnDeath();
+        if (health <= 0)
+        {
+            if (!canRevive) OnDeath();
+            else
+            {
+                StopAllCoroutines();
+                StartCoroutine(Revive());
+            }
+        }
     }
 
     public void SetHealth(int health)
@@ -799,7 +811,7 @@ public class EntityBase : MonoBehaviour
 
     public virtual void ApplyFreeze(EntityBase target, float duration)
     {
-        if (target.IsFreezeImmune) return;
+        if (target.IsFreezeImmune || !target.IsAlive()) return;
 
         target.animator.speed = 0f;
         target.FreezeTimer = Mathf.Max(target.FreezeTimer, duration);
@@ -812,7 +824,7 @@ public class EntityBase : MonoBehaviour
 
     public virtual void ApplyStun(EntityBase target, float duration)
     {
-        if (target.IsStunImmune) return;
+        if (target.IsStunImmune || !target.IsAlive()) return;
 
         target.animator.speed = 0f;
         target.StunTimer = Mathf.Max(target.StunTimer, duration);
@@ -820,7 +832,7 @@ public class EntityBase : MonoBehaviour
         target.CancelAttack();
 
         target.ccBar.SetActive(true);
-        target.ccSlider.value = target.ccSlider.maxValue = target.FreezeTimer;
+        target.ccSlider.value = target.ccSlider.maxValue = target.StunTimer;
     }
 
     public virtual void OnFreezeMaintain()
@@ -839,6 +851,34 @@ public class EntityBase : MonoBehaviour
         animator.speed = 1f;
         ccSlider.value = 0;   
         ccBar.SetActive(false);
+    }
+
+    public void EndFreeze()
+    {
+        FreezeTimer = 0f;
+        OnFreezeExit();
+    }
+
+    public virtual void OnStunMaintain()
+    {
+        ccSlider.value = StunTimer;
+    }
+
+    public virtual void OnStunExit()
+    {
+        if (StunTimer > 0f) return;
+
+        animator.SetBool("attack", false);
+        StunTimer = 0f;
+        animator.speed = 1f;
+        ccSlider.value = 0;
+        ccBar.SetActive(false);
+    }
+
+    public void EndStun()
+    {
+        StunTimer = 0f;
+        OnStunExit();
     }
 
     public virtual Vector2 CalculateMovement(Vector2 normalizedMovementVector) => CalculateMovement(normalizedMovementVector, moveSpeed);
@@ -970,23 +1010,34 @@ public class EntityBase : MonoBehaviour
         target.healthBar.SetHealth(target.health);
     }
 
+    [SerializeField] protected float reviveDuration = 5;
+    [SerializeField] protected float postReviveDuration = 0;
     public virtual IEnumerator Revive()
     {
-        float duration = 5;
+        if (!canRevive) yield break;
 
-        StartCoroutine(StartMovementLockout(duration));
-        StartCoroutine(StartAttackLockout(duration));
-        animator.SetTrigger("revive");
+        float lockoutDuration = reviveDuration + postReviveDuration + 1f;
+        animator.SetTrigger("die");
+        health = 1;
+        StartCoroutine(StartMovementLockout(lockoutDuration));
+        StartCoroutine(StartAttackLockout(lockoutDuration));
+        SetInvulnerable(lockoutDuration);
+
+        yield return new WaitForSeconds(1f);
 
         float c = 0;
-        while (c < duration)
+        while (c < reviveDuration)
         {
-            health = (int) Mathf.Lerp(0, mHealth, c * 1.0f / duration);
+            health = (int) Mathf.Lerp(1, mHealth, c * 1.0f / reviveDuration);
+            SetHealth(health);
             c += Time.deltaTime;
             yield return null;
         }
 
-        yield return null;
+        animator.SetTrigger("revive");
+        health = mHealth;
+        SetHealth(health);
+        canRevive = false;
     }
 
     public void PullEntityTowards(EntityBase targetEntity, Transform targetPosition, float pullForce, float duration, bool hasReferencePosition = true)

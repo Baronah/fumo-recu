@@ -92,6 +92,8 @@ public class EnemySpawnpointScript : MonoBehaviour
 
         foreach (var obj in TargetObjectsToInteract)
         {
+            if (!obj) continue;
+
             switch (OnEnemySpawn_Action)
             {
                 case ActionType.NONE:
@@ -181,6 +183,8 @@ public class EnemySpawnpointScript : MonoBehaviour
         SpawnEnemies.Clear();
         foreach (var obj in TargetObjectsToInteract)
         {
+            if (!obj) continue;
+
             switch (OnEnemyDeath_Action)
             {
                 case ActionType.NONE:

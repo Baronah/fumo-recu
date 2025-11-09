@@ -74,6 +74,10 @@ MonoBehaviour:
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  - m_AssetGUID: da8df2270d968194888b754dda8baad8
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
   SceneAssetReferences:
   - m_AssetGUID: 47cced8b560266540b85272099795159
     m_SubObjectName: 
@@ -107,6 +111,10 @@ MonoBehaviour:
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  - m_AssetGUID: a030743e38a074747bed2154188883a1
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
   LevelTitles:
   - Hold me tight
   - Entrance
@@ -116,3 +124,4 @@ MonoBehaviour:
   - Eternal Sunshine
   - Loop & Loop
   - Siren
+  - World Apart

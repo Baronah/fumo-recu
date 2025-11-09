@@ -5029,7 +5029,9 @@ MonoBehaviour:
   attackInterval: 3
   hpRegenFlat: 0
   hpRegenPercentage: 0
-  weight: 2
+  weight: 3
+  damageReduction: 0
+  damageAmplify: 0
   IsFreezeImmune: 0
   IsStunImmune: 0
   IsPhysicalImmune: 0
@@ -5049,8 +5051,12 @@ MonoBehaviour:
   - {fileID: 6578555615704739346}
   - {fileID: -760533550074903822}
   IsBeingShifted: 0
+  FreezeTimer: 0
+  StunTimer: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 1
+  reviveDuration: 5
+  postReviveDuration: 0
   enemyCode: 12
   SpotPlayerUponSpawn: 0
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}

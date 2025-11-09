@@ -15,23 +15,23 @@ using Image = UnityEngine.UI.Image;
 public class StageManager : MonoBehaviour
 {
     public int LevelIndex = 0;
-    private bool PressedAnyKey = false;
-    private bool IsStageStarted = false;
-    private bool IsStagePaused = false;
+    protected bool PressedAnyKey = false;
+    protected bool IsStageStarted = false;
+    protected bool IsStagePaused = false;
     public bool ReadIsStagePaused => IsStagePaused;
 
-    private static bool IsFirstTimeStageEnter = true;
+    protected static bool IsFirstTimeStageEnter = true;
 
     [SerializeField] private GameObject pauseOverlay, titleOverlay, mapOverview, mapCamera;
     [SerializeField] private EnemyCode[] appearingEnemies;
     [SerializeField] private TMP_Text RemainingEnemiesTxt;
-    private GameObject RemainingEnemiesGO => RemainingEnemiesTxt.transform.parent.gameObject;
+    protected GameObject RemainingEnemiesGO => RemainingEnemiesTxt.transform.parent.gameObject;
 
     [SerializeField] private float extraEnemyWaittime = 0f, extraPlayerWaittime = 1.5f;
     [SerializeField] private TMP_Text Title, LoadingState;
     [SerializeField] private CharacterPrefabsStorage prefabStorage;
 
-    private CameraMovement mainCamera;
+    protected CameraMovement mainCamera;
     [SerializeField] private float ShowcaseSize;
     [SerializeField] private Transform[] CameraShowcases;
     [SerializeField] private float[] Waittimes;
@@ -40,16 +40,16 @@ public class StageManager : MonoBehaviour
     [SerializeField] private Button o_QuitBtn, o_RetryBtn;
     [SerializeField] private Sprite PausedSprite, UnpausedSprite;
 
-    private string LevelName;
+    protected string LevelName;
     protected AudioSource BGM;
-    private EnemySpawnpointScript[] enemySpawnpoints;
+    protected EnemySpawnpointScript[] enemySpawnpoints;
 
     [SerializeField] protected float ChallengeModeStatsModifier = 1.2f;
 
-    [SerializeField] private float timeScaleSlow = 0.4f;
-    private bool isSlowing = false;
+    [SerializeField] protected float timeScaleSlow = 0.4f;
+    protected bool isSlowing = false;
 
-    private bool IsEnemyAlive => EntityManager.Enemies.Any(e => e && e.IsAlive()) || enemySpawnpoints.Any(e => !e.IsSpawnpointSpawned);
+    protected bool IsEnemyAlive => EntityManager.Enemies.Any(e => e && e.IsAlive()) || enemySpawnpoints.Any(e => !e.IsSpawnpointSpawned);
 
     public enum StageCompleteCondition
     {
@@ -166,8 +166,18 @@ public class StageManager : MonoBehaviour
             SkillName skill = skillData.Key;
             switch (skill)
             {
-
                 case SkillName.GRAVITY:
+                    float mspdReduction = 12f + enemy.weight * 3f;
+                    enemy.ApplyEffect(Effect.AffectedStat.MSPD, "GRAVITY_DEBUFF", mspdReduction, 9999f, true);
+                    break;
+                case SkillName.OBSCURE_VISION:
+                    enemy.b_attackRange *= 0.8f;
+                    enemy.DetectionRange *= 0.8f;
+                    break;
+                case SkillName.HUNGER:
+                    enemy.bAtk = (short)(enemy.bAtk * 1.5f);
+                    enemy.ASPD += 30;
+                    enemy.mHealth = (int)(enemy.mHealth * 0.6f);
                     break;
             }
         }
@@ -175,6 +185,20 @@ public class StageManager : MonoBehaviour
 
     public virtual void OnPlayerSpawn(PlayerBase player)
     {
+        foreach (var skillData in CharacterPrefabsStorage.Skills)
+        {
+            SkillName skill = skillData.Key;
+            switch (skill)
+            {
+                case SkillName.GRAVITY:
+                    float mspdReduction = 12f + player.weight * 3f;
+                    player.ApplyEffect(Effect.AffectedStat.MSPD, "GRAVITY_DEBUFF", mspdReduction, 9999f, true);
+                    break;
+                case SkillName.OBSCURE_VISION:
+                    player.b_attackRange *= 0.8f;
+                    break;
+            }
+        }
     }
 
     private IEnumerator LoadRequiredPrefabs()
