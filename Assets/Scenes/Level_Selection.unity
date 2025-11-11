@@ -2381,40 +2381,18 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Everybody likes <color=#00FFD5>Mint</color> arknights.\nAnd since fumo
-    exists, everybody also likes <color=#00FFD5>Mint Arknights fumo</color>.\n\n<color=#00FFD5>Mint
-    fumo</color>.\nMerely the thought about the existence of such greatness brings
-    comfort, soothness, a peace within one's mind.\n\nSince ancient time, it was
-    believed that: <color=#b1b1b1>\"Simply by owning <color=#00FFD5>Mint fumo</color>,
-    simply by owning more of them, one can reach their peakest of strength, unleashing
-    their inner potential to the fullest.\"</color>\n\nIt was, the peakest of line.\n\n<color=#00FFD5>Mint
-    fumo</color> was believed.\n\n<color=#00FFD5>Mint fumo</color> was worshipped.\n\nLife
-    was so beautiful.\n\n<color=#00FFD5>Mint fumo</color>. <color=#00FFD5>Mint fumo</color>.
-    My <color=#00FFD5>Mint fumo</color>.\n\n...\n\n<color=#b1b1b1>\"But... has anyone
-    even seen <color=#00FFD5>Mint fumo</color>?\"</color>\n\nAdmist the joys, a quetion
-    raised. \n\nThe atmosphere changed into dead silence.\n\n<color=yellow>\"How
-    does one own <color=#00FFD5>Mint fumo</color>?\"</color>\n\nWhat is this even
-    about.\n\nSilly question. \n\nOf course we all know the answer, right?\n\n<color=#b1b1b1>\"How...
-    does one own... <color=#00FFD5>Mint fumo</color>?\nHow does one own...\nHow do
-    I...\n...\"</color>\n\n...\n\n...\n\nNobody, knew the answer.\n\n...\n\n...\n\nLife
-    stopped being good, ever since then.\n\n...\n\nCenturies passed. And the answer
-    to that question had never been found.\n\nHumanity worked day and night, studied,
-    observed, hoped to find an answer, even a smallest clue would've been a great
-    help.\n\nDespite all of that...\n\nNot even the tiniest bit of progress was made.\n\nHumanity
-    was in utter despair. \n\nThey have lost all hope. \n\nThey was this near to
-    accept the broken truth: <color=#00FFD5>Mint fumo</color>, perhaps, has never
-    been real. \n\nWell, it was until they decided to ask me, who happened to have
-    the answer, because I made up all this shit. Lmao.\n\n<color=yellow>So,</color>\nTo
-    own <color=#00FFD5>Mint fumo</color>, you have to complete STAGES. Every stage
-    can give you up to 2 <color=#00FFD5>Mint fumos</color>: One in Normal mode and
-    one in <color=red>Challenge Mode</color>. That's all!\n\n...\n\nThe crowd cheered
-    up.\n\nHaving heard the answer, humanity rejoiced.\n\nThey lit up the biggest
-    fire to celebrate, which didn't make sense at all because we are in the modern
-    society, no one celebrates like that wtf.\n\nWell, anyway.\nThough the previous
-    searches for an answer didn't directly lead to an outcome, we had uncovered a
-    lot of other truths about our surroundings, and learnt a lot of it.\n\nHence,
-    it had been brought into the textbook, had a dedicated chapter under the name:\n<i>The
-    <color=#00FFD5>Mint</color>'s researches.</i>"
+  m_text: "A private place filled with books, theories, ideas, prototypes, and a
+    bunch of everything else. \nEach is a mystery awaiting to be figured out.\n\nShe
+    comes here whenever new idea sparks,\nI come here whenever new idea sparks,\nTo
+    implement. To try. To experiment. Or simply, to write it down.\n\nShe also uses
+    this place to store valuable items to her, such as samples for experiment, books,
+    novel-looking ores, or just thing she really likes.\n\nIn short, it's a little
+    of everything!\nWelcome to Mint's research.\nWelcome to my research.\n\nFeel
+    free to look around, and if there's something that you need here, you may bring
+    it along.\nThough, remember to return them when you're finished. \n\nYou are
+    welcomed to this place anytime! \n\n<color=#b1b1b1>Oh, and also, this is her
+    secret base. \nShe loves it here more than anywhere. \nDon't tell anyone else
+    about it, okay?</color>\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: b246c4190f4e46ec9352fe15a7b09ce0, type: 2}
@@ -30995,10 +30973,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '<color=#00FFD5>MINT</color>''S RESEARCHES
+  m_text: '<color=#00FFD5>MINT</color>''S RESEARCH
 
     <color=#d1d1d1><size=24>Let''s
-    do something crazy!</size></color>'
+    try something crazy!</size></color>'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
   m_sharedMaterial: {fileID: 2147374, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
