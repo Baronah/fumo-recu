@@ -27,8 +27,6 @@ public class MainMenu : MonoBehaviour
         InitValues();
         TitleStartColor = Title.color;
         StartCoroutine(GardenFadeIn());
-
-        Application.targetFrameRate = 60;
     }
 
     IEnumerator GardenFadeIn()

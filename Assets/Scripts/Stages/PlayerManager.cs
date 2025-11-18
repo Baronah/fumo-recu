@@ -505,15 +505,15 @@ public class PlayerManager : MonoBehaviour
 
         EmptyTechViewsText.text = hasTech
             ?
-            "Techniques:"
+            "RESEARCHES:"
             :
-            "No technique was selected :(";
+            "";
         
         for (int i = 0; i < TechViews.Length; i++)
         {
             GameObject techView = TechViews[i];
-            techView.SetActive((i + 1) <= techCount);
-            if (!techView.activeSelf) continue;
+            bool hasTechThisLoop = (i + 1) <= techCount;
+            if (!hasTechThisLoop) continue;
             
             SkillDataSet skillDataSet = CharacterPrefabsStorage.Skills.ElementAt(i).Value;
             Image skillIcon = techView.GetComponentInChildren<Image>();

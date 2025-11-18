@@ -9,6 +9,11 @@ public class OriginiumPollution : EnvironmentalTileBase
     [SerializeField] private float TrueDamagePerTick = 15f;
     [SerializeField] private float EnemyDamageMultiplier = 1.0f;
 
+    public override StageManager.EnvironmentType GetEnvironmentType()
+    {
+        return StageManager.EnvironmentType.ORIGINIUM_TILE;
+    }
+
     public override void OnStageStart()
     {
         if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.TERRAIN))

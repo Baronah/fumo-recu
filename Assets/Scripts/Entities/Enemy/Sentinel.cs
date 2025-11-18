@@ -36,9 +36,14 @@ public class Sentinel : EnemyBase
         DetectCircle.SetActive(IsAlive());
     }
 
+    bool alarmed = false;
     public override void OnFirsttimePlayerSpot(bool viaAlert = false)
     {
         base.OnFirsttimePlayerSpot();
+
+        if (alarmed) return;
+
+        alarmed = true;
         animator.SetTrigger("skill");
         StartCoroutine(ExpandDetectCircle());
 

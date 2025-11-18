@@ -314,7 +314,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1333956751212545712, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_Size.y
-      value: 2.2922719
+      value: 1.8200454
       objectReference: {fileID: 0}
     - target: {fileID: 1333956751212545712, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_Offset.x
@@ -322,7 +322,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1333956751212545712, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_Offset.y
-      value: -0.6164509
+      value: -0.85256416
       objectReference: {fileID: 0}
     - target: {fileID: 3072902088734969017, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_Controller
@@ -466,6 +466,9 @@ MonoBehaviour:
   attackInterval: 2
   hpRegenFlat: 0
   hpRegenPercentage: 0
+  weight: 0
+  damageReduction: 0
+  damageAmplify: 0
   IsFreezeImmune: 0
   IsStunImmune: 0
   IsPhysicalImmune: 0
@@ -482,8 +485,13 @@ MonoBehaviour:
   ccBar: {fileID: 798767698844814004}
   AttackAnimation: {fileID: 7400000, guid: 7d08df8c00c3b8649bf4b5a495e316f0, type: 2}
   sfxs: []
+  IsBeingShifted: 0
+  FreezeTimer: 0
+  StunTimer: 0
   preferredMoveAnimationPlaySpeed: 1.7
   preferredAttackAnimationSpeed: 0.85
+  reviveDuration: 5
+  postReviveDuration: 0
   enemyCode: 9
   SpotPlayerUponSpawn: 0
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}

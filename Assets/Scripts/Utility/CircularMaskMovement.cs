@@ -1,0 +1,29 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class CircularMaskMover : MonoBehaviour
+{
+    public bool UseMouseMovement = false;
+    public Material maskMaterial;
+    public float radius = 0f, bgColor = 1f;
+
+    void Update()
+    {
+        if (UseMouseMovement)
+        {
+            // Convert mouse position to normalized screen coordinates (0 to 1)
+            Vector2 mousePos = Input.mousePosition;
+            Vector2 screenPos = new Vector2(mousePos.x / Screen.width, mousePos.y / Screen.height);
+            maskMaterial.SetVector("_Center", new Vector4(screenPos.x, screenPos.y, 0, 0));
+        }
+
+        // Calculate aspect ratio (width divided by height)
+        float aspectRatio = (float)Screen.width / Screen.height;
+
+        // Update the shader's properties
+        maskMaterial.SetFloat("_Radius", radius);
+        maskMaterial.SetColor("_Color", new Color(0, 0, 0, bgColor));
+        maskMaterial.SetFloat("_ScreenAspect", aspectRatio); // Set the aspect ratio to the shader
+    }
+}

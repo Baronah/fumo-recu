@@ -2,16 +2,28 @@ using UnityEngine;
 
 public class FM_04 : StageManager
 {
-    [SerializeField] private float CM_OriginiutantASPD_Bonus = 100f;
+    [SerializeField] private float SentinelExtraSpeedBuff = 0.5f;
+    [SerializeField] private float SentinelExtraAtkBuff = 0.6f;
+    [SerializeField] private short EnemyWeightIncrement = 1;
 
     public override void OnEnemySpawn(EnemyBase enemy)
     {
         base.OnEnemySpawn(enemy);
 
+        if (enemy is Archer a)
+        {
+            a.ChargeMaxAtkStack();
+        }
+
         if (CharacterPrefabsStorage.EnableChallengeMode)
         {
-            if (enemy as Originiutant) enemy.ASPD += CM_OriginiutantASPD_Bonus;
-            enemy.IsPhysicalImmune = enemy.IsMagicalImmune = true;
+            enemy.weight += EnemyWeightIncrement;
+            
+            if (enemy is Sentinel s)
+            {
+                s.SpeedBuffOnAlert += SentinelExtraSpeedBuff;
+                s.AtkBuffOnAlert += SentinelExtraAtkBuff;
+            }
         }
     }
 }

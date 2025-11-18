@@ -13,7 +13,7 @@ public class SkillTree_SkillComponent : MonoBehaviour
     public SkillName skillName;
 
     public Sprite skillIcon => skillIconImage.sprite;
-    public string skillNameText, skillDescription, favorText;
+    public string skillNameText, skillDescription, favorText, skillDescriptionInShort = "";
     public SkillName[] mutuallyExclusiveSkills;
 
     private Button selfButton;
@@ -112,7 +112,7 @@ public class SkillTree_SkillComponent : MonoBehaviour
                     skillType = skillType,
                     skillIcon = skillIcon,
                     nameInString = skillNameText,
-                    skillDescription = skillDescription,
+                    skillDescription = skillDescriptionInShort == "" ? skillDescription : skillDescriptionInShort,
                 }
                 );
 

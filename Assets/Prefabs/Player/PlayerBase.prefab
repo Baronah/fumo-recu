@@ -338,6 +338,8 @@ MonoBehaviour:
   AttackAnimation: {fileID: 0}
   sfxs: []
   IsBeingShifted: 0
+  FreezeTimer: 0
+  StunTimer: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 1
   reviveDuration: 5
@@ -356,6 +358,7 @@ MonoBehaviour:
   HH_Effect_parent: {fileID: 7991820289360490147}
   HH_Fill_Material: {fileID: 2100000, guid: 25baa0b986f248947843c72757292d02, type: 2}
   HH_Effect_fill: {fileID: 5488420796603703274}
+  RockEffect: {fileID: 5523869800612596793, guid: 652a37322c30aae499a7cd8b40f7c35d, type: 3}
   Skills: 
   heavyHitterMaxTimer: 10
 --- !u!114 &8499964098267969337

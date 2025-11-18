@@ -10,6 +10,11 @@ public class Vent : EnvironmentalTileBase
     public TargetDirection EmitDirection;
     private readonly Dictionary<EntityBase, Collider2D> Entities = new();
 
+    public override StageManager.EnvironmentType GetEnvironmentType()
+    {
+        return StageManager.EnvironmentType.HEAT_PUMP_VENT;
+    }
+
     public override void OnStageStart()
     {
         if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.TERRAIN))

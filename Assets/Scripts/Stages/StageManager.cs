@@ -91,6 +91,7 @@ public class StageManager : MonoBehaviour
         o_RetryBtn.onClick.AddListener(RetryStage);
         PauseButton.GetComponent<Button>().onClick.AddListener(TogglePauseStage);
 
+
         StartCoroutine(OnStartOverlayFadeout());
 
         mainCamera = GetComponentInChildren<CameraMovement>(true);
@@ -104,6 +105,7 @@ public class StageManager : MonoBehaviour
             item.volume = sfxValue;
         }
 
+        timeDilation.gameObject.SetActive(CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.TIME_DILATION));
         RemainingEnemiesGO.SetActive(StageCompleteConditionType == StageCompleteCondition.ELIMINATE_ALL_ENEMIES);
 
         EnableChallengeMode();
@@ -145,6 +147,81 @@ public class StageManager : MonoBehaviour
 
         image.color = Color.clear;
         Destroy(Overlay);
+    }
+
+    [SerializeField] GameObject timeDilation;
+    IEnumerator TimeDilationCoroutine()
+    {
+        Slider timeDilationSlider = timeDilation.GetComponentInChildren<Slider>();
+        Image fillRect = timeDilationSlider.fillRect.GetComponent<Image>();
+        float cycleSwap = 10f, cooldown = 2f;
+        float speedBuff = 60f, speedDebuff = 50f;
+
+        while (!IsStageEnd)
+        {
+            timeDilationSlider.value = 0f;
+            timeDilationSlider.maxValue = cycleSwap;
+            fillRect.color = Color.cyan;
+
+            // debuff
+            EntityManager.Enemies.ForEach(e =>
+            {
+                if (!e || !e.IsAlive()) return;
+                e.ApplyEffect(Effect.AffectedStat.MSPD, "TIME_DILATION_MSPD_DEBUFF", -speedDebuff, cycleSwap, true);
+                e.ApplyEffect(Effect.AffectedStat.ASPD, "TIME_DILATION_ASPD_DEBUFF", -speedDebuff, cycleSwap, true);
+            });
+            float count = 0;
+            while (count < cycleSwap)
+            {
+                count += Time.deltaTime;
+                timeDilationSlider.value = count;
+
+                yield return null;
+            }
+
+            timeDilationSlider.maxValue = cooldown;
+            timeDilationSlider.value = timeDilationSlider.maxValue;
+            fillRect.color = new(0.87f, 0.87f, 0.87f);
+            count = 0f;
+
+            while (count < cooldown)
+            {
+                count += Time.deltaTime;
+                timeDilationSlider.value = cooldown - count;
+                yield return null;
+            }
+
+            // buff
+            timeDilationSlider.value = 0f;
+            timeDilationSlider.maxValue = cycleSwap;
+            fillRect.color = Color.yellow;
+            EntityManager.Enemies.ForEach(e =>
+            {
+                if (!e || !e.IsAlive()) return;
+                e.ApplyEffect(Effect.AffectedStat.MSPD, "TIME_DILATION_MSPD_BUFF", speedBuff, cycleSwap, true);
+                e.ApplyEffect(Effect.AffectedStat.ASPD, "TIME_DILATION_ASPD_BUFF", speedBuff, cycleSwap, true);
+            });
+
+            count = 0f;
+            while (count < cycleSwap)
+            {
+                count += Time.deltaTime;
+                timeDilationSlider.value = count;
+                yield return null;
+            }
+
+            timeDilationSlider.maxValue = cooldown;
+            timeDilationSlider.value = timeDilationSlider.maxValue;
+            fillRect.color = new(0.87f, 0.87f, 0.87f);
+            count = 0f;
+
+            while (count < cooldown)
+            {
+                count += Time.deltaTime;
+                timeDilationSlider.value = cooldown - count;
+                yield return null;
+            }
+        }
     }
 
     public virtual void EnableChallengeMode()
@@ -269,6 +346,10 @@ public class StageManager : MonoBehaviour
         OnStageReady();
         IsStageStarted = true;
         StartCoroutine(CheckStageStatus());
+        if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.TIME_DILATION))
+        {
+            StartCoroutine(TimeDilationCoroutine());
+        }
     }
 
     public virtual void Update()

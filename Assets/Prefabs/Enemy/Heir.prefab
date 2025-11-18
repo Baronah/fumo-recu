@@ -252,15 +252,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Bloodthirsty Heir
   Icon: {fileID: 21300000, guid: 34023941c46cc37408c4b83eb4cd8ec0, type: 3}
-  mHealth: 55
+  mHealth: 50
   bAtk: 10
   bDef: 0
-  bRes: 40
+  bRes: 30
   defPen: 0
   defIgn: 0
   resPen: 0
   resIgn: 0
-  lifeSteal: 1.2
+  lifeSteal: 1.1
   b_moveSpeed: 90
   b_attackRange: 30
   b_attackWindupTime: 0.1
@@ -278,6 +278,9 @@ MonoBehaviour:
   attackInterval: 0
   hpRegenFlat: 0
   hpRegenPercentage: 0
+  weight: 0
+  damageReduction: 0
+  damageAmplify: 0
   IsFreezeImmune: 0
   IsStunImmune: 0
   IsPhysicalImmune: 0
@@ -294,8 +297,13 @@ MonoBehaviour:
   ccBar: {fileID: 3695961262839361106}
   AttackAnimation: {fileID: 7400000, guid: 0ecc7133e5b0a254b963f364657db491, type: 2}
   sfxs: []
+  IsBeingShifted: 0
+  FreezeTimer: 0
+  StunTimer: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 2
+  reviveDuration: 5
+  postReviveDuration: 0
   enemyCode: 4
   SpotPlayerUponSpawn: 0
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
@@ -324,7 +332,7 @@ MonoBehaviour:
   MoveToOverridePositionSpeedMultiplier: 1
   MoveToOverridePositionSpeedMultiplierJump: 0
   CanDetectThroughWalls: 0
-  speedMultiplierOnPlayerSpot: 3.2
+  speedMultiplierOnPlayerSpot: 3
 --- !u!82 &7424751633068628821
 AudioSource:
   m_ObjectHideFlags: 0

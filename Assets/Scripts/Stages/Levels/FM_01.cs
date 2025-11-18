@@ -2,23 +2,13 @@ using UnityEngine;
 
 public class FM_01 : StageManager
 {
-    [SerializeField] private float MSPD_Multiplier = 1.25f;
+    [SerializeField] private GameObject[] CM_EnableObjs, CM_DisableObjs;
 
-    public override void OnEnemySpawn(EnemyBase enemy)
+    public override void EnableChallengeMode()
     {
-        base.OnEnemySpawn(enemy);
-
-        if (CharacterPrefabsStorage.EnableChallengeMode)
-        {
-            enemy.b_moveSpeed *= MSPD_Multiplier;
-
-            if (enemy is BloodboilKnight bk)
-            {
-                bk.atkAddPerEnemyKilled *= 2;
-                bk.mspdAddPerEnemyKilled *= 2;
-                bk.aspdAddPerEnemyKilled *= 2;
-                bk.maxStackCount /= 2;
-            }
-        }
+        if (!CharacterPrefabsStorage.EnableChallengeMode) return;
+        base.EnableChallengeMode();
+        foreach (GameObject obj in CM_EnableObjs) obj.SetActive(true);
+        foreach (GameObject obj in CM_DisableObjs) obj.SetActive(false);
     }
 }

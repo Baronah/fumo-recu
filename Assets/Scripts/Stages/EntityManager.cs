@@ -53,7 +53,6 @@ public class EntityManager : MonoBehaviour
     }
 
     private short frameCounter = 0;
-
     private void FixedUpdate()
     {
         frameCounter++;

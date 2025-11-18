@@ -2,28 +2,38 @@ using UnityEngine;
 
 public class FM_03 : StageManager
 {
-    [SerializeField] private float SentinelExtraSpeedBuff = 0.5f;
-    [SerializeField] private float SentinelExtraAtkBuff = 0.6f;
-    [SerializeField] private short EnemyWeightIncrement = 1;
+    [SerializeField] private GameObject DeactivateSentinel, ActivateSentinel;
+    [SerializeField] private float SentinelBonusMSPD_Ratio = 1.5f;
+
+    public override void EnableChallengeMode()
+    {
+        base.EnableChallengeMode();
+
+        if (CharacterPrefabsStorage.EnableChallengeMode)
+        {
+            ActivateSentinel.SetActive(true);
+            Destroy(DeactivateSentinel);
+        }
+        else
+        {
+            Destroy(ActivateSentinel);
+        }
+    }
 
     public override void OnEnemySpawn(EnemyBase enemy)
     {
         base.OnEnemySpawn(enemy);
 
-        if (enemy is Archer a)
-        {
-            a.ChargeMaxAtkStack();
-        }
-
         if (CharacterPrefabsStorage.EnableChallengeMode)
         {
-            enemy.weight += EnemyWeightIncrement;
-            
-            if (enemy is Sentinel s)
-            {
-                s.SpeedBuffOnAlert += SentinelExtraSpeedBuff;
-                s.AtkBuffOnAlert += SentinelExtraAtkBuff;
-            }
+            if (enemy as Sentinel) enemy.b_moveSpeed *= SentinelBonusMSPD_Ratio;
+        }
+
+        if (enemy as BloodboilKnight)
+        {
+            enemy.mHealth = 350;
+            enemy.def -= 10;
+            enemy.res -= 10;
         }
     }
 }

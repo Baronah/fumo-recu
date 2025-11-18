@@ -1,29 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class FM_05 : StageManager
 {
-    [SerializeField] private GameObject hiddenOriginiumTiles;
-
-    public override void EnableChallengeMode()
-    {
-        if (!CharacterPrefabsStorage.EnableChallengeMode) return;
-        base.EnableChallengeMode();
-        if (hiddenOriginiumTiles != null)
-        {
-            hiddenOriginiumTiles.SetActive(true);
-        }
-
-        var spiderSpawns = FindObjectsOfType<EnemySpawnpointScript>(true).Where(s => s.enemyPrefab == EnemyBase.EnemyCode.ORIGINIUM_SPIDER);
-        foreach (var spider in spiderSpawns) spider.enemyPrefab = EnemyBase.EnemyCode.ORIGINIUM_SPIDER_ALPHA;
-    }
+    [SerializeField] private float CM_OriginiutantASPD_Bonus = 100f;
 
     public override void OnEnemySpawn(EnemyBase enemy)
     {
         base.OnEnemySpawn(enemy);
 
-        if (enemy is OriginiumSpiderAlpha alp) alp.mHealth = 60;
+        if (CharacterPrefabsStorage.EnableChallengeMode)
+        {
+            if (enemy as Originiutant) enemy.ASPD += CM_OriginiutantASPD_Bonus;
+            enemy.IsPhysicalImmune = enemy.IsMagicalImmune = true;
+        }
     }
 }

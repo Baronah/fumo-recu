@@ -80,6 +80,8 @@ public class LevelSelectionScript : MonoBehaviour
     [SerializeField] Image StartingPlayerIconImg, StartingPlayerGlowImg;
     [SerializeField] Sprite PlayerMeleIcon, PlayerRangedIcon;
 
+    [SerializeField] TMP_Text FumoCount;
+
     private void Start()
     {
         FindAnyObjectByType<SkillTree_Manager>(FindObjectsInactive.Include).GetPlayerProgress();
@@ -103,6 +105,14 @@ public class LevelSelectionScript : MonoBehaviour
         Time.timeScale = 1f;
         AssignLevels();
         UpdateStartingPlayerIcon();
+    }
+
+    short cnt = 60;
+    private void Update()
+    {
+        if (cnt++ < 60) return;
+        FumoCount.text = "x " + PlayerPrefs.GetInt("Fumo", 0).ToString();
+        cnt = 0;
     }
 
     void AssignLevels()

@@ -16,6 +16,8 @@ public class PlayerBase : EntityBase
     [SerializeField] private Material HH_Fill_Material;
     [SerializeField] protected Image HH_Effect_fill;
 
+    [SerializeField] protected GameObject RockEffect;
+
     private Transform TransformFeetposition;
     public Vector3 Feetposition => TransformFeetposition.position;
 
@@ -103,24 +105,30 @@ public class PlayerBase : EntityBase
             switch (key)
             {
                 case SkillTree_Manager.SkillName.WINGED_STEPS_A:
-                    b_moveSpeed += b_moveSpeed * 0.2f;
+                    b_moveSpeed += b_moveSpeed * 0.25f;
                     break;
+
                 case SkillTree_Manager.SkillName.WINGED_STEPS_B:
-                    ASPD += 25;
+                    ASPD += 30;
                     break;
+
                 case SkillTree_Manager.SkillName.EQUIPMENT_BLADE:
                     defPen += 10;
                     break;
+
                 case SkillTree_Manager.SkillName.EQUIPMENT_SCOPE:
                     b_attackRange *= 1.2f;
                     break;
+
                 case SkillTree_Manager.SkillName.EQUIPMENT_PROVISIONS:
-                    mHealth += (int)(mHealth * 0.1f);
+                    mHealth += (int)(mHealth * 0.2f);
                     hpRegenPercentage += 0.005f;
                     break;
+
                 case SkillTree_Manager.SkillName.HEAVY_HITTER:
                     ASPD -= 40;
                     break;
+
                 case SkillTree_Manager.SkillName.JUST_A_NICE_LOOKING_ROCK:
                     mHealth = (int) (mHealth * 1.052f);
                     bAtk = (short) (bAtk * 1.052f);
@@ -202,6 +210,35 @@ public class PlayerBase : EntityBase
         yield return null;
     }
 
+    public void ClearAllAggro()
+    {
+        var enemies = EntityManager.Enemies;
+        foreach (var enemy in enemies)
+        {
+            enemy.ChangeAggro(null);
+        }
+    }
+
+    public void SetInvisible(float duration)
+    {
+        ClearAllAggro();
+        StartCoroutine(SetInvisibleCoroutine(duration));
+    }
+
+    IEnumerator SetInvisibleCoroutine(float duration)
+    {
+        isInvisible = true;
+        float c = 0;
+        while (c < duration)
+        {
+            spriteRenderer.color = new Color(1, 1, 1, 0.3f);
+            c += Time.fixedDeltaTime;
+            yield return new WaitForFixedUpdate();
+        }
+        spriteRenderer.color = Color.white;
+        isInvisible = false;
+    }
+
     public virtual PlayerTooltipsInfo GetPlayerTooltipsInfo()
     {
         return new PlayerTooltipsInfo
@@ -279,14 +316,21 @@ public class PlayerBase : EntityBase
     {
         if (!IsAlive() && playerManager.MintBlessing)
         {
-            Heal((int)(mHealth * 0.52f), healThroughDead: true);
-            playerManager.MintBlessing = false;
-            SetInvulnerable(1.52f);
+            MintRevive();
             return;
         }
 
         base.OnDeath();
         playerManager.OnPlayerDeath();
+    }
+
+    void MintRevive()
+    {
+        Heal((int)(mHealth * 0.52f), healThroughDead: true);
+        playerManager.MintBlessing = false;
+        SetInvulnerable(1.52f);
+
+        Instantiate(RockEffect, transform.position, Quaternion.identity);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

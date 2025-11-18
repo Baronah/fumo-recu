@@ -35,9 +35,9 @@ public class ShroudedAssassin : EnemyBase
     {
         base.FixedUpdate();
 
-        ProcessFeudBond();
         if (dashCooldownTimer > 0) dashCooldownTimer -= Time.fixedDeltaTime;
-        
+
+        ProcessFeudBond();
         DashScanCnt++;
         if (DashScanCnt >= 25 && CanUseDash)
         {
@@ -48,50 +48,40 @@ public class ShroudedAssassin : EnemyBase
     }
 
     private PlayerBase PrevSpottedPlayer = null;
-    private float SpottedTimer = 0f;
+    private int FeudLevel = 0;
     void ProcessFeudBond()
     {
-        if (SpottedPlayer && PrevSpottedPlayer == SpottedPlayer && SpottedPlayer.IsAlive())
-        {
-            if (SpottedPlayer)
-            {
-                feudBond.transform.position = SpottedPlayer.transform.position + new Vector3(0, 100, 0);
-                feudBond.fillAmount = Mathf.Clamp01(SpottedTimer / MaxSpottedTimer);
+        if (FeudLevel >= MaxFeudLevel) return;
 
-                if (SpottedTimer < MaxSpottedTimer)
-                {
-                    SpottedTimer += Time.fixedDeltaTime;
-                    feudBond.color = new Color(Color.red.a, Color.red.g, Color.red.b, 0.35f);
-                    if (SpottedTimer >= MaxSpottedTimer)
-                    {
-                        SpottedPlayer.ApplyEffect(Effect.AffectedStat.MSPD, "ASSASSIN_SLOW", -90, 1.5f, true);
-                    }
-                }
-                else
-                {
-                    feudBond.color = Color.red;
-                    ApplyEffect(Effect.AffectedStat.MSPD, "ASSASSIN_MARK_MSPD_BUFF", 33, 0.2f, true);
-                }
-            }
-            else SpottedTimer = 0f;
-        }
-        else
+        if (SpottedPlayer)
         {
-            feudBond.fillAmount = 0f;
-            SpottedTimer = 0f;
-            PrevSpottedPlayer = SpottedPlayer;
+            feudBond.transform.position = SpottedPlayer.transform.position + new Vector3(0, 100, 0);
+            feudBond.fillAmount = Mathf.Clamp01(FeudLevel / MaxFeudLevel);
+
+            if (FeudLevel < MaxFeudLevel)
+            {
+                feudBond.color = new Color(Color.red.a, Color.red.g, Color.red.b, 0.35f);
+            }
+            else
+            {
+                feudBond.color = Color.red;
+                ApplyEffect(Effect.AffectedStat.MSPD, "ASSASSIN_MARK_MSPD_BUFF", 30f, 0.2f, true);
+                ApplyEffect(Effect.AffectedStat.MSPD, "ASSASSIN_MARK_ATK_BUFF", 30f, 0.2f, true);
+            }
         }
     }
 
-    [SerializeField] private float MaxSpottedTimer = 10f;
+    [SerializeField] private int MaxFeudLevel = 20;
     [SerializeField] private float MaxDamageReduction = 0.8f;
     public override void TakeDamage(DamageInstance damage, EntityBase source)
     {
         if (source == SpottedPlayer)
         {
-            float ratio = Mathf.Lerp(1f, 0f, SpottedTimer / MaxSpottedTimer);
+            float ratio = Mathf.Lerp(0f, 1f, FeudLevel / MaxFeudLevel);
             float reduction = 1 - ratio * MaxDamageReduction;
             damage.Multiply(reduction);
+
+            ProcessFeudBond();
         }
         else damage.SetTotal(1);
 

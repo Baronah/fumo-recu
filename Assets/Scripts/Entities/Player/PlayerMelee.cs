@@ -21,6 +21,7 @@ public class PlayerMelee : PlayerBase
     [SerializeField] private float ResBoost = 10;
     [SerializeField] private float AtkBoost = 0.25f;
     [SerializeField] private float SpeedBoost = 0.35f;
+
     [SerializeField] private GameObject SkillBarObj;
     private Color SkillEffectColor;
     private Slider SkillBar;
@@ -29,7 +30,6 @@ public class PlayerMelee : PlayerBase
     [SerializeField] float AfterShockDamageConversionRatio = 0.75f;
 
     private bool IsSkillActive = false, IsDashing = false, CanUseSkill = true, CanUseDash = true;
-    private short atkAdd, defAdd, resAdd, speedAdd;
 
     private HashSet<EntityBase> EnemyHitByDash = new HashSet<EntityBase>();
     bool Debut = false;
@@ -85,6 +85,12 @@ public class PlayerMelee : PlayerBase
         {
             Debut = true;
             UseSpecial();
+        }
+
+        if (Skills.Contains(SkillTree_Manager.SkillName.BEYOND_NIGHT))
+        {
+            SpeedBoost += 0.25f;
+            AtkBoost = -1f;
         }
     }
 
@@ -163,6 +169,7 @@ public class PlayerMelee : PlayerBase
         StartCoroutine(DashLockout());
         IsDashing = true;
         Debut = false;
+        healedOnThisDash = false;
 
         if (Skills.Contains(SkillTree_Manager.SkillName.DASH_AFTERIMAGES))
         {
@@ -192,10 +199,6 @@ public class PlayerMelee : PlayerBase
             StartCoroutine(StartMovementLockout(DashDuration));
 
             float invulDuration = DashDuration * 2f;
-            if (Skills.Contains(SkillTree_Manager.SkillName.DASH_FAITH))
-            {
-                invulDuration += 0.5f;
-            }
 
             SetInvulnerable(invulDuration);
 
@@ -343,14 +346,17 @@ public class PlayerMelee : PlayerBase
              CanDoT = Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_IGNITE);
 
         Heal(mHealth * BurstHeal_HpPercentage);
-        atkAdd = (short) (bAtk * AtkBoost);
-        atk += atkAdd;
-        defAdd = (short) (bDef * DefBoost);
-        def += defAdd;
-        resAdd = (short) (ResBoost);
-        res += resAdd;
-        speedAdd = (short) (b_moveSpeed * SpeedBoost);
-        moveSpeed += speedAdd; 
+
+        ApplyEffect(Effect.AffectedStat.ATK, "JUGGERNAUNT_SKILL_ATK_BUFF", AtkBoost * 100, 999f, true);
+        ApplyEffect(Effect.AffectedStat.DEF, "JUGGERNAUNT_SKILL_DEF_BUFF", DefBoost * 100, 999f, true);
+        ApplyEffect(Effect.AffectedStat.RES, "JUGGERNAUNT_SKILL_RES_BUFF", ResBoost, 999f, false);
+        ApplyEffect(Effect.AffectedStat.MSPD, "JUGGERNAUNT_SKILL_MSPD_BUFF", SpeedBoost * 100, 999f, true);
+
+        if (Skills.Contains(SkillTree_Manager.SkillName.BEYOND_NIGHT))
+        {
+            SetInvisible(duration);
+            ApplyEffect(Effect.AffectedStat.ATK, "BEYOND_THE_NIGHT", -100f, 999f, true);
+        }
 
         SkillBar.value = SkillBar.maxValue = duration;
 
@@ -424,11 +430,16 @@ public class PlayerMelee : PlayerBase
         }
 
         Heal(mHealth * HealPerSecond_HpPercentage);
-        atk -= atkAdd;
-        def -= defAdd;
-        res -= resAdd;
-        moveSpeed -= speedAdd;
         IsSkillActive = false;
+
+        RemoveEffect("JUGGERNAUNT_SKILL_ATK_BUFF");
+        RemoveEffect("JUGGERNAUNT_SKILL_DEF_BUFF");
+        RemoveEffect("JUGGERNAUNT_SKILL_RES_BUFF");
+        RemoveEffect("JUGGERNAUNT_SKILL_MSPD_BUFF");
+        if (Skills.Contains(SkillTree_Manager.SkillName.BEYOND_NIGHT))
+        {
+            RemoveEffect("BEYOND_THE_NIGHT");
+        }
 
         ReleaseAfterShock();
     }
@@ -472,8 +483,15 @@ public class PlayerMelee : PlayerBase
         damageTakenDuringSkill = 0;
     }
 
+    bool healedOnThisDash = false;
     public override void TakeDamage(DamageInstance damage, EntityBase source)
     {
+        if (IsDashing && !healedOnThisDash && Skills.Contains(SkillTree_Manager.SkillName.DASH_FAITH))
+        {
+            Heal(mHealth * 0.25f);
+            healedOnThisDash = true;
+        }
+
         if (IsSkillActive && IsAlive() && damage.TotalDamage > 0)
         {
             extendSkillDuration = Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_DURATION);
@@ -557,15 +575,22 @@ public class PlayerMelee : PlayerBase
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_SHINDOUKAKU))
         {
-            info.SkillName = "Juggernaunt - Shindoukaku";
+            info.SkillName = "Juggernaunt - Resonance";
             info.SkillText =
                 $"Immediately heals self for {BurstHeal_HpPercentage * 100}% max HP. In the next {SkillDuration} seconds: " +
                 $"ATK +{AtkBoost * 100}%, DEF +{DefBoost * 100}%, RES +{ResBoost}, MSPD +{SpeedBoost * 100}%. " +
                 $"Upon swapping, transfers this effect to the swapped in character and extends its duration for 2 more seconds. ";
         }
+        else if (Skills.Contains(SkillTree_Manager.SkillName.BEYOND_NIGHT))
+        {
+            info.SkillName = "Juggernaunt - Beyond the Night";
+            info.SkillText =
+                $"Immediately heals self for {BurstHeal_HpPercentage * 100}% max HP and removes all enemy aggro. In the next {SkillDuration} seconds: " +
+                $"Becomes invisible, but ATK becomes 0, DEF +{DefBoost * 100}%, RES +{ResBoost}, MSPD +{SpeedBoost * 100}%. ";
+        }
         else if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_AFTERSHOCK))
         {
-            if (!hasUpgrade) info.SkillName = "Juggernaunt - Aftershock";
+            info.SkillName = "Juggernaunt - Aftershock";
             info.SkillText += $" After skill ends or upon swapping, deal physical damage equals to {AfterShockDamageConversionRatio * 100}% damage taken during the duration to all nearby enemies.";
         }
         else

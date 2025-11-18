@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static StageManager;
 
 public class EnvironmentalTileBase : MonoBehaviour
 {
     [SerializeField] protected float Interval = 1.0f;
     protected List<EntityBase> entitiesWithin = new List<EntityBase>();
+
+    public virtual EnvironmentType GetEnvironmentType() => EnvironmentType.KEYS;
 
     private void Start()
     {

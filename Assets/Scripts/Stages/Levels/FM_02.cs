@@ -2,23 +2,7 @@ using UnityEngine;
 
 public class FM_02 : StageManager
 {
-    [SerializeField] private GameObject DeactivateSentinel, ActivateSentinel;
-    [SerializeField] private float SentinelBonusMSPD_Ratio = 1.5f;
-
-    public override void EnableChallengeMode()
-    {
-        base.EnableChallengeMode();
-
-        if (CharacterPrefabsStorage.EnableChallengeMode)
-        {
-            ActivateSentinel.SetActive(true);
-            Destroy(DeactivateSentinel);
-        }
-        else
-        {
-            Destroy(ActivateSentinel);
-        }
-    }
+    [SerializeField] private float MSPD_Multiplier = 1.25f;
 
     public override void OnEnemySpawn(EnemyBase enemy)
     {
@@ -26,7 +10,15 @@ public class FM_02 : StageManager
 
         if (CharacterPrefabsStorage.EnableChallengeMode)
         {
-            if (enemy as Sentinel) enemy.b_moveSpeed *= SentinelBonusMSPD_Ratio;
+            enemy.b_moveSpeed *= MSPD_Multiplier;
+
+            if (enemy is BloodboilKnight bk)
+            {
+                bk.atkAddPerEnemyKilled *= 2;
+                bk.mspdAddPerEnemyKilled *= 2;
+                bk.aspdAddPerEnemyKilled *= 2;
+                bk.maxStackCount /= 2;
+            }
         }
     }
 }

@@ -232,7 +232,7 @@ public class EntityBase : MonoBehaviour
         UpdateEffectDurations();
 
         BDB_Cnt++;
-        if (BDB_Cnt > 25) CalculateBuffsAndDebuffs();
+        if (BDB_Cnt >= 10) CalculateBuffsAndDebuffs();
         
         HandleSpriteFlipping();
         HandleAnimationSpeed();
@@ -333,6 +333,21 @@ public class EntityBase : MonoBehaviour
             }
         }
 
+        CalculateBuffsAndDebuffs();
+    }
+
+    public void RemoveEffect(string Key)
+    {
+        if (AtkBuffs.ContainsKey(Key)) AtkBuffs.Remove(Key);
+        if (AtkDebuffs.ContainsKey(Key)) AtkDebuffs.Remove(Key);
+        if (DefBuffs.ContainsKey(Key)) DefBuffs.Remove(Key);
+        if (DefDebuffs.ContainsKey(Key)) DefDebuffs.Remove(Key);
+        if (ResBuffs.ContainsKey(Key)) ResBuffs.Remove(Key);
+        if (ResDebuffs.ContainsKey(Key)) ResDebuffs.Remove(Key);
+        if (MspdBuffs.ContainsKey(Key)) MspdBuffs.Remove(Key);
+        if (MspdDebuffs.ContainsKey(Key)) MspdDebuffs.Remove(Key);
+        if (AspdBuffs.ContainsKey(Key)) AspdBuffs.Remove(Key);
+        if (AspdDebuffs.ContainsKey(Key)) AspdDebuffs.Remove(Key);
         CalculateBuffsAndDebuffs();
     }
 
@@ -672,14 +687,14 @@ public class EntityBase : MonoBehaviour
 
     public virtual void DealDamage(EntityBase target, int pDmg, int mDmg, int tDmg, bool allowWhenDisabled = false)
     {
-        if ((!allowWhenDisabled && (IsFrozen || IsStunned)) || !target || !target.IsAlive() || target.isInvulnerable) return;
+        if ((!allowWhenDisabled && (IsFrozen || IsStunned)) || !target || !target.IsAlive()) return;
 
         var calcDamage = DamageOutput(target, pDmg, mDmg, tDmg);
 
         target.TakeDamage(calcDamage, this);
 
         if (calcDamage.TotalDamage <= 0) return;
-        OnSuccessfulAttack(target, calcDamage);
+        if (!target.isInvulnerable) OnSuccessfulAttack(target, calcDamage);
     }
 
     public virtual void OnSuccessfulAttack(EntityBase target, DamageInstance damage)
@@ -958,8 +973,6 @@ public class EntityBase : MonoBehaviour
 
         yield return new WaitForSeconds(GetAttackAnimationLength());
         if (!IsFrozen && !IsStunned) animator.SetBool("attack", false);
-
-        yield return null;
     }
 
     public float GetWindupTime() => attackWindupTime * (100 / Mathf.Max(20, ASPD));
@@ -1054,6 +1067,8 @@ public class EntityBase : MonoBehaviour
 
     private IEnumerator ApplyForceCoroutine(EntityBase targetEntity, Vector3 referencePosition, float force, float duration, bool isPull, bool hasReferencePosition = true)
     {
+        if (targetEntity == null || targetEntity.rb2d == null || !targetEntity.IsAlive()) yield break;
+
         float ForceValue = force * duration / 0.03f;
         float ForceValueAfterWeight = ForceValue - targetEntity.weight;
         if (ForceValueAfterWeight <= 0.5f) yield break;

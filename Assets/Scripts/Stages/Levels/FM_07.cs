@@ -1,161 +1,51 @@
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 public class FM_07 : StageManager
 {
-    [SerializeField] private GameObject laterSpawn, Vents;
-    private List<EndlessEnemySpawn> EndlessSpawns;
-
-    [SerializeField] private TMP_Text timerText;
-    [SerializeField] private float targetTimer = 240f;
-    [SerializeField] private float laterSpawnsActivateTimegate = 120f, modifySpawnInterval = 45f;
-    float stageTimer = 0;
-
-    FumoScript fumo;
-
-    public override void Start()
-    {
-        fumo = FindFirstObjectByType<FumoScript>();
-        EndlessSpawns = new List<EndlessEnemySpawn>(FindObjectsOfType<EndlessEnemySpawn>(true));
-        base.Start();
-    }
+    [SerializeField] private List<GameObject> CM_ActiveSudaram, CM_InactiveSudaram;
+    [SerializeField] private float PlayerBonusHP_Ratio = 0.25f;
+    [SerializeField] private float PlayerBonusMSPD_Ratio = 0.3f;
 
     public override void EnableChallengeMode()
     {
         base.EnableChallengeMode();
-        if (CharacterPrefabsStorage.EnableChallengeMode) Vents.SetActive(true);
-        else Destroy(Vents);
+
+        if (CharacterPrefabsStorage.EnableChallengeMode)
+        {
+            CM_ActiveSudaram.ForEach(g => g.SetActive(true));
+            foreach (var i in CM_InactiveSudaram)
+            {
+                Destroy(i);
+            }
+        }
+        else
+        {
+            foreach (var i in CM_ActiveSudaram)
+            {
+                Destroy(i);
+            }
+        }
     }
 
     public override void OnEnemySpawn(EnemyBase enemy)
     {
         base.OnEnemySpawn(enemy);
-
-        if (enemy.attackPattern == EntityBase.AttackPattern.MELEE)
-            enemy.DetectionRange += 70f;
-
-        if (enemy is Wetwork w)
+        if (enemy is Sudaram sr)
         {
-            w.ChargeMaxAtkStack();
+            sr.originiumPollutionBonusASPD = 100f;
+            sr.originiumPollutionDamageMultiplier = 0f;
         }
-        else if (enemy is Archer a)
+        else if (enemy as OriginiumSpider || enemy as OriginiumSpiderAlpha)
         {
-            a.ChargeMaxAtkStack();
-        }
-        else if (enemy as Matterllurgist)
-        {
-            enemy.ASPD += 40;
+            enemy.bAtk = (short)(enemy.bAtk * 0.85f);
         }
     }
 
     public override void OnPlayerSpawn(PlayerBase player)
     {
         base.OnPlayerSpawn(player);
-        player.mHealth *= 2;
-        player.bDef += 20;
-        player.bRes += 10;
-        player.bAtk = (short)(player.bAtk * 1.5f);
-        player.ASPD += 35;
-        player.defPen += 10;
-        player.resPen += 15;
-    }
-
-    float modifySpawnTimer = 0;
-    public override void Update()
-    {
-        if (stageTimer >= targetTimer) return;
-        base.Update();
-
-        if (!IsStageStarted) return;
-
-        stageTimer += Time.deltaTime;
-
-        float countTimer = targetTimer - stageTimer;
-        timerText.text = $"{Mathf.FloorToInt(countTimer / 60):00}:{Mathf.FloorToInt(countTimer % 60):00}";
-
-        if (fumo && stageTimer >= targetTimer)
-        {
-            stageTimer = targetTimer;
-            OnPlayerFumoProtected(FindFirstObjectByType<FumoScript>());
-        }
-
-        modifySpawnTimer += Time.deltaTime;
-
-        if (stageTimer >= laterSpawnsActivateTimegate && !laterSpawn.activeSelf)
-        {
-            laterSpawn.SetActive(true);
-        }
-
-        if (modifySpawnTimer >= modifySpawnInterval)
-        {
-            ModifySpawnRate();
-        }
-    }
-
-    short modifySpawnCount = 0;
-    void ModifySpawnRate()
-    {
-        modifySpawnTimer = 0;
-        switch (modifySpawnCount)
-        {
-            case 0:
-                foreach (var spawn in EndlessSpawns)
-                {
-                    spawn.enemyPrefabs.Clear();
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.HOUND);
-                }
-                break;
-            case 1:
-            case 2:
-                foreach (var spawn in EndlessSpawns)
-                {
-                    spawn.enemyPrefabs.Clear();
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.HEIR);
-                }
-                break;
-            case 3:
-                foreach (var spawn in EndlessSpawns)
-                {
-                    spawn.enemyPrefabs.Clear();
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUM_SPIDER);
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUM_SPIDER_ALPHA);
-                }
-                break;
-            case 4:
-                foreach (var spawn in EndlessSpawns)
-                {
-                    spawn.enemyPrefabs.Clear();
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUM_SPIDER);
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUTANT);
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ZEALOT);
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.MATTERLLURGIST);
-                }
-                break;
-            case 5:
-                foreach (var spawn in EndlessSpawns)
-                {
-                    spawn.enemyPrefabs.Clear();
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.BLOODBOIL_KNIGHT);
-                }
-                break;
-            case 6:
-                foreach (var spawn in EndlessSpawns)
-                {
-                    spawn.enemyPrefabs.Clear();
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUM_SPIDER_ALPHA);
-                }
-                break;
-            case 7:
-                foreach (var spawn in EndlessSpawns)
-                {
-                    spawn.enemyPrefabs.Clear();
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.HEIR);
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUM_SPIDER_ALPHA);
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.SUDARAM);
-                }
-                break;
-        }
-        modifySpawnCount++;
+        player.b_moveSpeed += player.b_moveSpeed * PlayerBonusMSPD_Ratio;
+        player.mHealth += (int)(player.mHealth * PlayerBonusHP_Ratio);
     }
 }

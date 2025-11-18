@@ -845,8 +845,14 @@ public class EnemyBase : EntityBase
 
     public void ChangeAggro(PlayerBase player)
     {
+        if (player == null)
+        {
+            SpottedPlayer = RecentlyScannedPlayer = null;
+            return;
+        }
+
         if (!SpottedPlayer) return;
-        SpottedPlayer = player;
+        SpottedPlayer = RecentlyScannedPlayer = player;
     }
 
     public virtual void WriteStats()

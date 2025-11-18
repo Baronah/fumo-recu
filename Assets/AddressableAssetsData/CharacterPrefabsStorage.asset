@@ -79,6 +79,10 @@ MonoBehaviour:
     m_SubObjectType: 
     m_EditorAssetChanged: 0
   SceneAssetReferences:
+  - m_AssetGUID: e7097122e24de2c428e004b11709a5ac
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
   - m_AssetGUID: 47cced8b560266540b85272099795159
     m_SubObjectName: 
     m_SubObjectType: 
@@ -116,12 +120,13 @@ MonoBehaviour:
     m_SubObjectType: 
     m_EditorAssetChanged: 0
   LevelTitles:
+  - My World
   - Hold me tight
   - Entrance
   - Weft & Warp
   - Slow Down
   - Crimson Dusk
-  - Eternal Sunshine
+  - Art Class
   - Loop & Loop
   - Siren
   - World Apart

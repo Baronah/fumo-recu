@@ -1,19 +1,29 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
+using static Unity.Collections.AllocatorManager;
+using Button = UnityEngine.UI.Button;
+using Image = UnityEngine.UI.Image;
 
 public class SkillTree_Manager : MonoBehaviour
 {
     [SerializeField] Button TechViewBtn;
     [SerializeField] GameObject Block, SkillHighlight;
 
-    [SerializeField] GameObject SENSES_BLOCK, TECHS_BLOCK, SPECS_BLOCK, TECHS_PRECEDE_BLOCK, SPECS_PRECEDE_BLOCK;
+    [SerializeField] GameObject SENSES, TECHS, SPECS;
+    [SerializeField] GameObject Borders;
+
+    [SerializeField] GameObject SENSES_BLOCK, TECHS_BLOCK, SPECS_BLOCK, TECHS_PRECEDE_BLOCK, SPECS_PRECEDE_BLOCK, SIDEBAR, OVERLAY;
     [SerializeField] Button SensesUnlockBtn, TechsUnlockBtn, SpecsUnlockBtn;
     [SerializeField] TMP_Text SensesUnlockTxt, TechsUnlockTxt, SpecsUnlockTxt;
     [SerializeField] short FUMO_COST_SENSE = 3, FUMO_COST_TECHS = 3, FUMO_COST_SPECS = 3;
-    [SerializeField] TMP_Text FumoCnt, SelectedCnt;
+    [SerializeField] TMP_Text FumoCnt, SelectedCnt, FlavourTxt, Title;
+
+    [SerializeField] string[] FlavourTxts;
 
     private short PlayerMaxSkills = 0;
 
@@ -72,6 +82,9 @@ public class SkillTree_Manager : MonoBehaviour
         HUNGER,
         TERRAIN,
         JUST_A_NICE_LOOKING_ROCK,
+        BEYOND_NIGHT,
+        SPIRAL_FIELD_EXPERT,
+        TIME_DILATION,
     }
 
     public static SkillTree_Manager Instance;
@@ -121,12 +134,10 @@ public class SkillTree_Manager : MonoBehaviour
              IsTechUnlocked = PlayerPrefs.GetInt("TechsUnlocked", 0) != 0,
              IsSpecsUnlocked = PlayerPrefs.GetInt("SpecsUnlocked", 0) != 0;
 
-        if (IsTechUnlocked || IsSpecsUnlocked)
-            PlayerMaxSkills = 3;
-        else if (IsSensesUnlocked)
-            PlayerMaxSkills = 2;
-        else 
-            PlayerMaxSkills = 0;
+        PlayerMaxSkills = 0;
+        if (IsSensesUnlocked) PlayerMaxSkills += 2;
+        if (IsTechUnlocked) PlayerMaxSkills += 1;
+        if (IsSpecsUnlocked) PlayerMaxSkills += 1;
 
         SENSES_BLOCK.SetActive(!IsSensesUnlocked);
         TECHS_PRECEDE_BLOCK.SetActive(!IsSensesUnlocked);
@@ -142,9 +153,9 @@ public class SkillTree_Manager : MonoBehaviour
         SpecsUnlockBtn.interactable = fumo >= FUMO_COST_SPECS;
 
         FumoCnt.text = "x " + fumo;
-        SensesUnlockTxt.text = $"Spend       x{FUMO_COST_SENSE} to unlock this branch \n(+2 technique slots).";
-        TechsUnlockTxt.text = $"Spend       x{FUMO_COST_TECHS} to unlock this branch \n(+1 technique slot).";
-        SpecsUnlockTxt.text = $"Spend         x{FUMO_COST_SPECS} to unlock this branch.";
+        SensesUnlockTxt.text = $"Spend       x{FUMO_COST_SENSE} to unlock this branch \n(+2 slots).";
+        TechsUnlockTxt.text = $"Spend       x{FUMO_COST_TECHS} to unlock this branch \n(+1 slot).";
+        SpecsUnlockTxt.text = $"Spend         x{FUMO_COST_SPECS} to unlock this branch\n(+1 slot).";
 
         int maxSkill = Mathf.Min(PlayerMaxSkills, MaxSkillCount);
         for (int i = 0; i < maxSkill; i++)
@@ -205,9 +216,240 @@ public class SkillTree_Manager : MonoBehaviour
         Clear();
     }
 
+    public static bool ShowIntro = true;
+    public bool IsIntroPlaying;
+    [SerializeField] private GameObject QuitBtn;
+    IEnumerator Intro()
+    {
+        if (!ShowIntro) yield break;
+
+        //preps
+        OVERLAY.SetActive(true);
+        CircularMaskMover circularMaskMover = OVERLAY.GetComponent<CircularMaskMover>();
+        circularMaskMover.radius = 0f;
+
+        IsIntroPlaying = true;
+
+        int introCount = PlayerPrefs.GetInt("SkillTreeIntroCount", 0);
+        introCount++;
+
+        PlayerPrefs.SetInt("SkillTreeIntroCount", introCount);
+        PlayerPrefs.Save();
+
+        QuitBtn.SetActive(false);
+
+        List<GameObject> techBlocks = new()
+        {
+            SENSES,
+            TECHS,
+            SPECS,
+            SENSES_BLOCK,
+            TECHS_BLOCK,
+            SPECS_BLOCK,
+            TECHS_PRECEDE_BLOCK,
+            SPECS_PRECEDE_BLOCK,
+            SIDEBAR,
+            Title.gameObject,
+        };
+
+        List<Image> borderImages = Borders.GetComponentsInChildren<Image>().ToList();
+        borderImages.ForEach(img =>
+        {
+            img.fillAmount = 0;
+        });
+
+        float yFloat = 500f;
+        HashSet<SkillTree_SkillComponent> compos = allSkills.OrderBy(a => a.skillType).ToHashSet();
+        foreach (var block in techBlocks)
+        {
+            CanvasGroup cg = block.GetComponent<CanvasGroup>();
+            Vector3 originalScale = block.transform.localScale;
+
+            cg.alpha = 0;
+        }
+
+        string TitleOriginal = FlavourTxt.text;
+        if (introCount >= 10)
+        {
+            TitleOriginal = FlavourTxts[Random.Range(0, FlavourTxts.Length)];
+        }
+
+        FlavourTxt.text = "";
+
+        //intro sequence
+        yield return new WaitForSeconds(0.6f);
+
+        float overlayDurationFirstHalf = 2f, 
+              overlayDurationSecondHalf = 0.25f, 
+              firstTimeCoverRatio = 0.25f, 
+              pause = 0.5f,
+              elapsed = 0f;
+        while (elapsed < overlayDurationFirstHalf)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / overlayDurationFirstHalf);
+            circularMaskMover.radius = Mathf.Lerp(0f, firstTimeCoverRatio, t);
+            yield return null;
+        }
+        circularMaskMover.radius = firstTimeCoverRatio;
+
+        yield return new WaitForSeconds(pause);
+        elapsed = 0f;
+        while (elapsed < overlayDurationSecondHalf)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / overlayDurationSecondHalf);
+            circularMaskMover.radius = Mathf.Lerp(firstTimeCoverRatio, 1f, t);
+            yield return null;
+        }
+
+        circularMaskMover.radius = 1f;
+        OVERLAY.SetActive(false);
+
+        yield return new WaitForSeconds(0.3f);
+        yield return StartCoroutine(ZoomAndFadeIn(Title.gameObject, 1.5f));
+
+        float waitTime = 0.7f / TitleOriginal.Length;
+        foreach (char c in TitleOriginal)
+        {
+            FlavourTxt.text += c;
+            yield return new WaitForSeconds(waitTime);
+        }
+
+        yield return new WaitUntil(() => allSkills.All(s => s.Button != null));
+        yield return new WaitForSeconds(0.5f);
+
+        Vector3 targetPos = new Vector3(0, yFloat, 0);
+
+        foreach (var skill in compos)
+        {
+            skill.transform.localPosition += targetPos;
+            skill.Button.interactable = false;
+        }
+
+        foreach (var block in techBlocks)
+        {
+            if (block == SIDEBAR || block == Title.gameObject) continue;
+            StartCoroutine(ZoomAndFadeIn(block));
+            yield return new WaitForSeconds(0.25f);
+        }
+
+        yield return new WaitForSeconds(0.3f);
+
+        float delay = 0f;
+        foreach (var skill in compos)
+        {
+            StartCoroutine(Drop(skill, yFloat, delay));
+            delay += 0.025f;
+        }
+
+        borderImages.ForEach(img =>
+        {
+            StartCoroutine(FillImage(img));
+        });
+
+        yield return new WaitForSeconds(0.75f + delay);
+
+        FindObjectsOfType<UIMututallyExclusive>(true).ToList().ForEach(me =>
+        {
+            me.DoIntro();
+        });
+
+        yield return new WaitForSeconds(2f);
+        
+        StartCoroutine(ZoomAndFadeIn(SIDEBAR, 0.4f, 0));
+        yield return new WaitForSeconds(0.25f);
+
+        foreach (var skill in compos)
+        {
+            skill.Button.interactable = true;
+        }
+
+        ShowIntro = false;
+        IsIntroPlaying = false;
+        QuitBtn.SetActive(true);
+    }
+
+    IEnumerator FillImage(Image image)
+    {
+        if (image.fillMethod == Image.FillMethod.Radial360)
+        {
+            image.fillAmount = 1;
+            yield break;
+        }
+
+        float duration = 0.8f;
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            image.fillAmount = Mathf.Lerp(0, 1, elapsedTime / duration);
+            yield return null;
+        }
+        image.fillAmount = 1;
+    }
+
+    IEnumerator ZoomAndFadeIn(GameObject techBlock, float duration = 1.2f, float initDelay = 1f)
+    {
+        CanvasGroup cg = techBlock.GetComponent<CanvasGroup>();
+        Vector3 originalScale = techBlock.transform.localScale;
+
+        cg.alpha = 0;
+        if (techBlock != SIDEBAR) techBlock.transform.localScale = originalScale * 1.25f;
+
+        yield return new WaitForSeconds(initDelay);
+
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            cg.alpha = Mathf.Lerp(0, 1, elapsedTime / duration);
+            techBlock.transform.localScale = Vector3.Lerp(techBlock.transform.localScale, originalScale, elapsedTime / duration);
+            yield return null;
+        }
+
+        cg.alpha = 1;
+        techBlock.transform.localScale = originalScale;
+    }
+
+    IEnumerator Drop(SkillTree_SkillComponent skill, float yFloat, float delay)
+    {
+        Vector3 targetPos = new Vector3(skill.transform.localPosition.x, skill.transform.localPosition.y - yFloat, skill.transform.position.z);
+        yield return new WaitForSeconds(0.75f + delay);
+
+        float duration = 0.5f;
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            skill.transform.localPosition = Vector3.Lerp(skill.transform.localPosition, targetPos, elapsedTime / duration);
+            yield return null;
+        }
+        skill.transform.localPosition = targetPos;
+    }
+
     private void OnEnable()
     {
+        var scrollviews = GetComponentsInChildren<ScrollRect>(true);
+        foreach (var item in scrollviews)
+        {
+            if (item.verticalScrollbar) item.verticalScrollbar.value = 1;
+            if (item.horizontalScrollbar) item.horizontalScrollbar.value = 1;
+        }
         CheckUnlockStatus();
+
+        if (ShowIntro)
+            StartCoroutine(Intro());
+    }
+
+    private void OnDisable()
+    {
+        var scrollviews = GetComponentsInChildren<ScrollRect>(true);
+        foreach (var item in scrollviews)
+        {
+            if (item.verticalScrollbar) item.verticalScrollbar.value = 1;
+            if (item.horizontalScrollbar) item.horizontalScrollbar.value = 1;
+        }
     }
 
     private void Awake()
@@ -283,6 +525,8 @@ public class SkillTree_Manager : MonoBehaviour
 
     public void OnSkillSelected(SkillTree_SkillComponent skill)
     {
+        if (IsIntroPlaying) return;
+
         allSkills.ForEach(s => { if (!exclusions.Contains(s.skillName)) s.OnSkillClear(); });
 
         if (selectingSkill == skill)
@@ -298,6 +542,8 @@ public class SkillTree_Manager : MonoBehaviour
 
     private void DeselectSkill(SkillTree_SkillComponent skill)
     {
+        if (IsIntroPlaying) return;
+
         SkillHighlight.SetActive(false);
 
         skill.ResetMutuallyExclusive();
@@ -311,7 +557,7 @@ public class SkillTree_Manager : MonoBehaviour
 
     private void ShowSkillDetails(SkillTree_SkillComponent skill)
     {
-        if (!selectingSkill) return;
+        if (!selectingSkill || IsIntroPlaying) return;
 
         SkillHighlight.transform.position = skill.transform.position;
         SkillHighlight.SetActive(true);
@@ -334,7 +580,7 @@ public class SkillTree_Manager : MonoBehaviour
 
     public void ConfirmSkillSelect()
     {
-        if (selectingSkill == null) return;
+        if (selectingSkill == null || IsIntroPlaying) return;
         exclusions = selectingSkill.OnSkillSelected(exclusions);
         selectingSkill.Button.interactable = false;
         selectingSkill = null;

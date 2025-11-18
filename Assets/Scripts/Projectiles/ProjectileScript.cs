@@ -43,7 +43,7 @@ public class ProjectileScript : MonoBehaviour
 		ShootTowards(enemy.transform.position, enemy, projectileType, ProjectileLifespan);
     }
 
-    public void ShootTowards(Vector3 targetPosition, EntityBase enemy, ProjectileType projectileType, float ProjectileLifespan)
+    public virtual void ShootTowards(Vector3 targetPosition, EntityBase enemy, ProjectileType projectileType, float ProjectileLifespan)
     {
         this.projectileType = projectileType;
 
@@ -65,7 +65,7 @@ public class ProjectileScript : MonoBehaviour
         allowingUpdate = true;
     }
 
-    public void ShootTowards(Vector3 targetPosition, ProjectileType projectileType, float ProjectileLifespan, params Type[] enemy)
+    public virtual void ShootTowards(Vector3 targetPosition, ProjectileType projectileType, float ProjectileLifespan, params Type[] enemy)
     {
         this.projectileType = projectileType;
 
@@ -120,7 +120,7 @@ public class ProjectileScript : MonoBehaviour
 		Destroy(this.gameObject);
 	}
 
-    private void HandleHit(GameObject other)
+    public virtual void HandleHit(GameObject other)
     {
         if (!allowingUpdate) return;
 
