@@ -10,7 +10,7 @@ public class PlayerBase : EntityBase
     public Sprite AttackSprite, SkillSprite, SpecialSprite;
     public string AttackDes, SkillName, SkillDes, SpecialName, SpecialDes;
     protected PlayerManager playerManager;
-    protected StageManager StageManager;
+    protected StageManager stageManager;
 
     [SerializeField] protected GameObject HH_Effect_parent;
     [SerializeField] private Material HH_Fill_Material;
@@ -32,8 +32,8 @@ public class PlayerBase : EntityBase
     {
         if (IsComponentsInitialized) return;
         ObstacleLayers = LayerMask.GetMask("Obstacle", "OnedirectionalPassage", "Border");
-        StageManager = FindObjectOfType<StageManager>();
-        StageManager.OnPlayerSpawn(this);
+        stageManager = FindObjectOfType<StageManager>();
+        stageManager.OnPlayerSpawn(this);
 
         GetSkillTreeEffects();
         HH_Effect_parent.SetActive(Skills.Contains(SkillTree_Manager.SkillName.HEAVY_HITTER));
@@ -91,7 +91,7 @@ public class PlayerBase : EntityBase
     {
         if (Skills.Contains(SkillTree_Manager.SkillName.SWAP_START_ATK))
         {
-            ApplyEffect(Effect.AffectedStat.ATK, "SWAP_START_ATKBUFF", 50f, 4f, true, EffectPersistType.PERSIST);
+            ApplyEffect(Effect.AffectedStat.ATK, "SWAP_START_ATKBUFF", 100f, 5f, true, EffectPersistType.PERSIST);
         }
     }
 
@@ -130,8 +130,8 @@ public class PlayerBase : EntityBase
                     break;
 
                 case SkillTree_Manager.SkillName.JUST_A_NICE_LOOKING_ROCK:
-                    mHealth = (int) (mHealth * 1.052f);
-                    bAtk = (short) (bAtk * 1.052f);
+                    mHealth = (int)(mHealth * 1.052f);
+                    bAtk = (short)(bAtk * 1.052f);
                     bDef += 5;
                     bRes += 5;
                     ASPD += 5;
@@ -187,7 +187,7 @@ public class PlayerBase : EntityBase
     public override IEnumerator Attack()
     {
         if (!CanAttack || IsAttackLocked) yield break;
-        
+
         StartCoroutine(base.Attack());
     }
 
@@ -252,7 +252,7 @@ public class PlayerBase : EntityBase
             attackInterval = attackInterval,
             atk = atk,
             bAtk = bAtk,
-            bDef= bDef,
+            bDef = bDef,
             def = def,
             bRes = bRes,
             res = res,
@@ -273,7 +273,7 @@ public class PlayerBase : EntityBase
     {
         base.TakeDamage(damage, source);
 
-        if (source)
+        if (source && !isInvulnerable)
             playerManager.OnPlayerAttacked(damage.TotalDamage * 1.0f / (mHealth * 0.5f));
     }
 
@@ -288,11 +288,20 @@ public class PlayerBase : EntityBase
 
     protected bool IsHeavyHitterMaxed =>
         Skills.Contains(SkillTree_Manager.SkillName.HEAVY_HITTER)
-        && 
+        &&
         timerSinceLastAttack >= heavyHitterMaxTimer;
 
+
+    HashSet<EntityBase> Levitated = new();
     public override void DealDamage(EntityBase target, int pDmg, int mDmg, int tDmg, bool allowWhenDisabled = false)
     {
+        if (Skills.Contains(SkillTree_Manager.SkillName.BUBBLE_ARTS) && !Levitated.Contains(target))
+        {
+            mDmg += (int)(atk * 0.1f);
+            ApplyLevitate(target, 2.5f);
+            Levitated.Add(target);
+        }
+
         if (Skills.Contains(SkillTree_Manager.SkillName.BREAK_THE_ICE) && target.IsFrozen)
         {
             float freezeDuration = target.FreezeTimer;
@@ -333,6 +342,11 @@ public class PlayerBase : EntityBase
         Instantiate(RockEffect, transform.position, Quaternion.identity);
     }
 
+    public void ResumeStageBGM()
+    {
+        stageManager.StageBGM.Play();
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (!collision || !collision.gameObject) return;
@@ -340,7 +354,7 @@ public class PlayerBase : EntityBase
         FumoScript fumoScript = collision.gameObject.GetComponent<FumoScript>();
         if (fumoScript && fumoScript.ObjectiveType == FumoScript.FumoObjectiveType.PICK_UP && collision.gameObject.CompareTag("Fumo"))
         {
-            StageManager.OnPlayerFumoPickup(this, collision);
+            stageManager.OnPlayerFumoPickup(this, collision);
         }
     }
 

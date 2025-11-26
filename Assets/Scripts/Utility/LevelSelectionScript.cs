@@ -82,6 +82,8 @@ public class LevelSelectionScript : MonoBehaviour
 
     [SerializeField] TMP_Text FumoCount;
 
+    public AudioSource BGMSource => sfxs[0];
+
     private void Start()
     {
         FindAnyObjectByType<SkillTree_Manager>(FindObjectsInactive.Include).GetPlayerProgress();

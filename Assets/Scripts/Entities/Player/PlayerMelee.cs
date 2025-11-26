@@ -29,6 +29,8 @@ public class PlayerMelee : PlayerBase
     [SerializeField] float PullRadius = 400, DoTRadius = 220f, AoERadius = 250f;
     [SerializeField] float AfterShockDamageConversionRatio = 0.75f;
 
+    [SerializeField] AudioSource Ambient, Vortex, Shock;
+    
     private bool IsSkillActive = false, IsDashing = false, CanUseSkill = true, CanUseDash = true;
 
     private HashSet<EntityBase> EnemyHitByDash = new HashSet<EntityBase>();
@@ -38,6 +40,7 @@ public class PlayerMelee : PlayerBase
 
     public override void InitializeComponents()
     {
+        Ambient.volume = PlayerPrefs.GetFloat("SFX", 1.0f);
         SkillBar = SkillBarObj.GetComponentInChildren<Slider>();
         SkillEffectColor = SkillEffect.GetComponent<SpriteRenderer>().color;
         base.InitializeComponents();
@@ -354,6 +357,8 @@ public class PlayerMelee : PlayerBase
 
         if (Skills.Contains(SkillTree_Manager.SkillName.BEYOND_NIGHT))
         {
+            playerManager.ClearStageBGM(duration);
+            Ambient.Play();
             SetInvisible(duration);
             ApplyEffect(Effect.AffectedStat.ATK, "BEYOND_THE_NIGHT", -100f, 999f, true);
         }
@@ -362,6 +367,7 @@ public class PlayerMelee : PlayerBase
 
         if (CanPull)
         {
+            if (Vortex) Vortex.Play();
             GameObject o = Instantiate(SwirlEffect, transform.position, Quaternion.identity);
             Destroy(o, 1.5f);
             
@@ -409,7 +415,7 @@ public class PlayerMelee : PlayerBase
                     var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, PullRadius, true);
                     foreach (EntityBase enemy in enemies)
                     {
-                        PullEntityTowards(enemy, transform, 2.5f, 0.12f);
+                        PullEntityTowards(enemy, transform, 3f, 0.12f);
                         enemy.ApplyEffect(Effect.AffectedStat.MSPD, "JUGGERNAUNT_PULL_DEBUFF_MSPD", -40f, 1.25f, true);
                         enemy.ApplyEffect(Effect.AffectedStat.ASPD, "JUGGERNAUNT_PULL_DEBUFF_ASPD", -33f, 1.25f, false);
                     }
@@ -428,6 +434,8 @@ public class PlayerMelee : PlayerBase
 
             yield return null;
         }
+
+        if (Vortex && Vortex.isPlaying) Vortex.Stop();
 
         Heal(mHealth * HealPerSecond_HpPercentage);
         IsSkillActive = false;
@@ -469,16 +477,19 @@ public class PlayerMelee : PlayerBase
     {
         if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_AFTERSHOCK) && damageTakenDuringSkill > 0)
         {
+            Shock.Play();
             SkillEffect.GetComponent<SpriteRenderer>().color = SkillEffectColor;
             Instantiate(AftershockEffect, transform.position, Quaternion.identity);
             Instantiate(AftershockEffect_2, transform.position, Quaternion.identity);
 
+            defPen += 50;
             var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, AoERadius, true);
             foreach (EntityBase enemy in enemies)
             {
                 DealDamage(enemy, (int)(damageTakenDuringSkill * AfterShockDamageConversionRatio), 0, 0);
                 enemy.ApplyEffect(Effect.AffectedStat.MSPD, "AFTERSHOCK_MSPD_DEBUFF", -99f, 1f, true, EffectPersistType.DECAY);
             }
+            defPen -= 50;
         }
         damageTakenDuringSkill = 0;
     }

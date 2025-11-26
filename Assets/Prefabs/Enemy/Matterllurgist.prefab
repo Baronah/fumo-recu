@@ -75,6 +75,18 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1930091658959976877, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3039545837474316575, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3039545837474316575, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.79
+      objectReference: {fileID: 0}
     - target: {fileID: 3072902088734969017, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_Controller
       value: 
@@ -231,6 +243,8 @@ MonoBehaviour:
   StunTimer: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 0.9
+  IsBeingLevitated: 0
+  LevitationEffect: {fileID: 0}
   reviveDuration: 5
   postReviveDuration: 0
   enemyCode: 1

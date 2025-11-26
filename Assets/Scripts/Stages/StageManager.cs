@@ -42,6 +42,8 @@ public class StageManager : MonoBehaviour
 
     protected string LevelName;
     protected AudioSource BGM;
+    public AudioSource StageBGM => BGM;
+
     protected EnemySpawnpointScript[] enemySpawnpoints;
 
     [SerializeField] protected float ChallengeModeStatsModifier = 1.2f;
@@ -105,7 +107,9 @@ public class StageManager : MonoBehaviour
             item.volume = sfxValue;
         }
 
-        timeDilation.gameObject.SetActive(CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.TIME_DILATION));
+        timeDilation.SetActive(CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.TIME_DILATION));
+        if (StageCompleteConditionType == StageCompleteCondition.RETRIEVE_FUMO) timeDilation.transform.position += new Vector3(0, 100);
+
         RemainingEnemiesGO.SetActive(StageCompleteConditionType == StageCompleteCondition.ELIMINATE_ALL_ENEMIES);
 
         EnableChallengeMode();
@@ -631,10 +635,10 @@ public class StageManager : MonoBehaviour
     IEnumerator ZoomInFumo(GameObject fumoObj)
     {
         var stageCompletedText = pauseOverlay.GetComponentInChildren<TMP_Text>();
-        stageCompletedText.transform.position += new Vector3(0, 200);
+        stageCompletedText.transform.localPosition = new Vector3(0, 360.0729f);
 
         o_QuitBtn.transform.localScale *= 0.8f;
-        o_QuitBtn.transform.position -= new Vector3(0, 220);
+        o_QuitBtn.transform.localPosition = new Vector3(0, -370);
 
         FumoScript fumoScript = fumoObj.GetComponent<FumoScript>();
         var fumo = fumoScript.Fumo;
@@ -692,10 +696,5 @@ public class StageManager : MonoBehaviour
 
         yield return new WaitForSecondsRealtime(2f);
         FadeInResult();
-    }
-
-    public static void SpecialStageAddsOn(EntityBase entity)
-    {
-
     }
 }

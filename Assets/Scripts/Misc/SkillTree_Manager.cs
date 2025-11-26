@@ -25,6 +25,11 @@ public class SkillTree_Manager : MonoBehaviour
 
     [SerializeField] string[] FlavourTxts;
 
+    private AudioSource[] audioSources;
+    LevelSelectionScript LevelSelectionScript;
+
+    SkillTree_Outview Outview;
+
     private short PlayerMaxSkills = 0;
 
     public enum SkillType
@@ -85,6 +90,7 @@ public class SkillTree_Manager : MonoBehaviour
         BEYOND_NIGHT,
         SPIRAL_FIELD_EXPERT,
         TIME_DILATION,
+        BUBBLE_ARTS,    
     }
 
     public static SkillTree_Manager Instance;
@@ -281,7 +287,7 @@ public class SkillTree_Manager : MonoBehaviour
 
         float overlayDurationFirstHalf = 2f, 
               overlayDurationSecondHalf = 0.25f, 
-              firstTimeCoverRatio = 0.25f, 
+              firstTimeCoverRatio = 0.35f, 
               pause = 0.5f,
               elapsed = 0f;
         while (elapsed < overlayDurationFirstHalf)
@@ -306,7 +312,6 @@ public class SkillTree_Manager : MonoBehaviour
         circularMaskMover.radius = 1f;
         OVERLAY.SetActive(false);
 
-        yield return new WaitForSeconds(0.3f);
         yield return StartCoroutine(ZoomAndFadeIn(Title.gameObject, 1.5f));
 
         float waitTime = 0.7f / TitleOriginal.Length;
@@ -428,27 +433,35 @@ public class SkillTree_Manager : MonoBehaviour
         skill.transform.localPosition = targetPos;
     }
 
+    Dictionary<SkillName, SkillDataSet> skillSaves = new();
     private void OnEnable()
     {
+        skillSaves = new(CharacterPrefabsStorage.Skills);
+        if (LevelSelectionScript && LevelSelectionScript.BGMSource) LevelSelectionScript.BGMSource.Stop();
+
         var scrollviews = GetComponentsInChildren<ScrollRect>(true);
         foreach (var item in scrollviews)
         {
-            if (item.verticalScrollbar) item.verticalScrollbar.value = 1;
-            if (item.horizontalScrollbar) item.horizontalScrollbar.value = 1;
+            if (item.verticalScrollbar) item.verticalScrollbar.value = 0;
+            if (item.horizontalScrollbar) item.horizontalScrollbar.value = 0;
         }
         CheckUnlockStatus();
 
         if (ShowIntro)
             StartCoroutine(Intro());
+        else
+            OVERLAY.SetActive(false);
     }
 
     private void OnDisable()
     {
+        Outview.SetSkills();
+        if (LevelSelectionScript.BGMSource) LevelSelectionScript.BGMSource.Play();
         var scrollviews = GetComponentsInChildren<ScrollRect>(true);
         foreach (var item in scrollviews)
         {
-            if (item.verticalScrollbar) item.verticalScrollbar.value = 1;
-            if (item.horizontalScrollbar) item.horizontalScrollbar.value = 1;
+            if (item.verticalScrollbar) item.verticalScrollbar.value = 0;
+            if (item.horizontalScrollbar) item.horizontalScrollbar.value = 0;
         }
     }
 
@@ -457,6 +470,8 @@ public class SkillTree_Manager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+
+            Outview = FindObjectOfType<SkillTree_Outview>(true);
 
             allSkills = FindObjectsOfType<SkillTree_SkillComponent>(true).ToList();
             allSkills.ForEach(skill =>
@@ -475,6 +490,15 @@ public class SkillTree_Manager : MonoBehaviour
             {
                 TechImgs[i].gameObject.SetActive(MaxSkillCount >= (i + 1));
             }
+
+            audioSources = GetComponents<AudioSource>();
+            audioSources[0].volume = PlayerPrefs.GetFloat("BGM", 1f);
+            for (int i = 1; i < audioSources.Length; ++i)
+            {
+                audioSources[i].volume = PlayerPrefs.GetFloat("SFX", 1f);
+            }
+
+            LevelSelectionScript = FindObjectOfType<LevelSelectionScript>(true);
         }
         else
         {
@@ -527,6 +551,7 @@ public class SkillTree_Manager : MonoBehaviour
     {
         if (IsIntroPlaying) return;
 
+        audioSources[1].Play();
         allSkills.ForEach(s => { if (!exclusions.Contains(s.skillName)) s.OnSkillClear(); });
 
         if (selectingSkill == skill)
@@ -581,6 +606,10 @@ public class SkillTree_Manager : MonoBehaviour
     public void ConfirmSkillSelect()
     {
         if (selectingSkill == null || IsIntroPlaying) return;
+
+        if (selectingSkill.OnSelectSFX) selectingSkill.OnSelectSFX.Play();
+        else audioSources[2].Play();
+
         exclusions = selectingSkill.OnSkillSelected(exclusions);
         selectingSkill.Button.interactable = false;
         selectingSkill = null;
@@ -609,6 +638,8 @@ public class SkillTree_Manager : MonoBehaviour
 
     private void OnSceneLoad_GetTechs()
     {
+        allSkills.ForEach(s => s.OnSkillClear());
+
         foreach (var item in CharacterPrefabsStorage.Skills)
         {
             SkillTree_SkillComponent comp = allSkills.Find(s => s.skillName == item.Key);
@@ -654,7 +685,10 @@ public class SkillTree_Manager : MonoBehaviour
 
     public void ForceQuit()
     {
-        Clear();
+        CharacterPrefabsStorage.Skills = skillSaves;
+        OnSceneLoad_GetTechs();
+        Outview.SetSkills();
+
         gameObject.SetActive(false);
     }
 }

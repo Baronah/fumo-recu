@@ -38,7 +38,7 @@ public class CasterProjectileScript : ProjectileScript
                     break;
 
                 case EnvironmentType.HEAT_PUMP_VENT:
-                    ProjectileFirer.PushEntityFrom(target, ProjectileFirer.GetAttackPosition(), 0.9f, 0.1f);
+                    ProjectileFirer.PushEntityFrom(target, ProjectileFirer.GetAttackPosition(), 1f, 0.1f);
                     break;
             }
         }

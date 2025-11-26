@@ -29,7 +29,7 @@ public class SkillTree_Outview : MonoBehaviour
         SetSkills();
     }
 
-    void SetSkills()
+    public void SetSkills()
     {
         Empty.SetActive(CharacterPrefabsStorage.Skills.Count == 0);
         Fun_1.SetActive(CharacterPrefabsStorage.Skills.Count >= 1);

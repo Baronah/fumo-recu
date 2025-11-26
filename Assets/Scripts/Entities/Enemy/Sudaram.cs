@@ -73,7 +73,7 @@ public class Sudaram : EnemyBase
 
     public override IEnumerator OnAttackComplete()
     {
-        if (!CanAttack) yield break;
+        if (!CanAttack || !SpottedPlayer) yield break;
 
         if (a_audioPlayLockout <= 0 && sfxs[0])
         {

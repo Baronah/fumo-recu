@@ -25,12 +25,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2526577201265790714}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.21, y: 0.54, z: 0}
-  m_LocalScale: {x: 1.35, y: 1.35, z: 1.35}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.1235294, y: -0.91764694, z: 0}
+  m_LocalScale: {x: 0.7941177, y: 0.7941177, z: 0.7941177}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 6717527081346786045}
+  m_Father: {fileID: 1760994451792169532}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &4804839738491929246
 SpriteRenderer:
@@ -178,6 +178,14 @@ PrefabInstance:
     - target: {fileID: 2992997140416651280, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_PresetInfoIsWorld
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3039545837474316575, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 3039545837474316575, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.88
       objectReference: {fileID: 0}
     - target: {fileID: 3072902088734969017, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_Controller
@@ -329,8 +337,8 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6772246562461740860, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8348617082127357057}
-    - targetCorrespondingSourceObject: {fileID: 6772246562461740860, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
-      insertIndex: -1
+    - targetCorrespondingSourceObject: {fileID: 1779737740583634941, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      insertIndex: 1
       addedObject: {fileID: 431098661830940946}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 712479229275404704, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
@@ -414,6 +422,8 @@ MonoBehaviour:
   StunTimer: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 0.9
+  IsBeingLevitated: 0
+  LevitationEffect: {fileID: 0}
   reviveDuration: 5
   postReviveDuration: 0
   enemyCode: 3
@@ -651,6 +661,11 @@ AudioSource:
 --- !u!1 &754730279402599387 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 773491194806959642, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+  m_PrefabInstance: {fileID: 54792048885730753}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1760994451792169532 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1779737740583634941, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
   m_PrefabInstance: {fileID: 54792048885730753}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &6717527081346786045 stripped

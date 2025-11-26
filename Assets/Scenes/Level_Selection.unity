@@ -467,6 +467,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 2
   skillName: 20
   skillNameText: '''Gravity'''
@@ -1127,6 +1128,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 0
   skillName: 5
   skillNameText: Geologist - Study
@@ -1923,9 +1925,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 0
   skillName: 1
-  skillNameText: Winged Steps - Lithe
+  skillNameText: Arts Unit - Winged Steps
   skillDescription: MSPD +25%.
   favorText: 
   skillDescriptionInShort: 
@@ -2693,13 +2696,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 0
   skillName: 26
-  skillNameText: Victory Rewind - Exciment
-  skillDescription: After defeating an enemy, gains +50% MSPD that decays over 5
-    seconds.
-  favorText: 
-  skillDescriptionInShort: 
+  skillNameText: Victory Rewind - Excitement
+  skillDescription: After defeating an enemy, gains <color=#00ffe1>+50% MSPD</color>
+    that decays over 5 seconds.
+  favorText: ... that's a lot to watch in a sitting so she brought them here to gradually
+    finish it all.
+  skillDescriptionInShort: Gains a decaying MSPD buff after defeating an enemy.
   mutuallyExclusiveSkills: 19000000
   Overlay: {fileID: 0}
 --- !u!114 &216322061
@@ -4428,6 +4433,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 901397984}
+  - {fileID: 1455102867}
   - {fileID: 1043400206}
   - {fileID: 2079124274}
   - {fileID: 829003092}
@@ -4584,7 +4590,7 @@ RectTransform:
   m_Father: {fileID: 351717113}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -5021,6 +5027,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 0
   skillName: 8
   skillNameText: Equipment - Scope
@@ -5430,12 +5437,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 0
   skillName: 35
-  skillNameText: '''Major Debut'''
+  skillNameText: Mint-colored Firework
   skillDescription: Upon entering the field, your unit immediately casts their special
     skill once with no cool-down.
-  favorText: '"We''re off."'
+  favorText: Hey!! Don't try it in here!
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
@@ -5899,6 +5907,81 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -20, y: -20}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &361688225
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 361688226}
+  - component: {fileID: 361688228}
+  - component: {fileID: 361688227}
+  m_Layer: 5
+  m_Name: Image
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &361688226
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361688225}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1455102867}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -1.631, y: 0}
+  m_SizeDelta: {x: 110, y: 110}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &361688227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361688225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.7735849, g: 0.7735849, b: 0.7735849, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 4f581c1ff03dbb5448aabf2d1e62e6e1, type: 3}
+  m_Type: 3
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &361688228
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361688225}
+  m_CullTransparentMesh: 1
 --- !u!1 &368324332
 GameObject:
   m_ObjectHideFlags: 0
@@ -5950,6 +6033,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 36
   skillNameText: Evasion - 'Yesterday Once More'
@@ -6579,6 +6663,7 @@ RectTransform:
   - {fileID: 1175370154}
   - {fileID: 1587829235}
   - {fileID: 744608035}
+  - {fileID: 1341870171}
   - {fileID: 2017298144}
   m_Father: {fileID: 413935151}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6828,6 +6913,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 0
   skillName: 4
   skillNameText: Geologist - Observe
@@ -7089,6 +7175,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 0
   skillName: 33
   skillNameText: Book that can Bite
@@ -8112,7 +8199,7 @@ RectTransform:
   m_Father: {fileID: 1785972633}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0.38426718, y: 1}
+  m_AnchorMax: {x: 0.19213353, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -8410,6 +8497,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 24
   skillNameText: Juggernaunt -  Aftershock
@@ -9142,12 +9230,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 0
   skillName: 37
-  skillNameText: '''Rage'''
-  skillDescription: Upon entering the field, your unit gains <color=#ff4545>+50%
-    ATK</color> for 6 seconds.
-  favorText: 
+  skillNameText: Mint-flavored Gum
+  skillDescription: Upon entering the field, your unit gains <color=#ff4545>+100%
+    ATK</color> for 5 seconds.
+  favorText: She also has sugar-free variety, if you prefer that.
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
@@ -10804,11 +10893,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 0
   skillName: 10
   skillNameText: Equipment - Provisions
   skillDescription: Max HP +20%, recovers 1% max HP every 2 seconds.
-  favorText: 
+  favorText: No one can work with an empty stomach!
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 070000000800000009000000
   Overlay: {fileID: 0}
@@ -11308,7 +11398,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 590, y: 0}
+  m_AnchoredPosition: {x: 590, y: -150}
   m_SizeDelta: {x: 95, y: 95}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &744608036
@@ -11323,19 +11413,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 0
   skillName: 45
   skillNameText: A nice-looking piece of rock
   skillDescription: Gains a 5.2% buff in <color=green>HP</color>, <color=#ff4545>ATK</color>,
     <color=#00ffe1>MSPD</color> and <color=#ffd61f>ASPD</color>. Special and skill
     cooldowns -5.2%. The first time HP reaches 0, immediately <color=green>restores
-    52% max HP</color> and 1.52 seconds of invulnerability.
+    52% max HP</color> and gains 1.52 seconds of invulnerability.
   favorText: Even if it is an unassuming piece of ore that is covered in dirt, if
     she gives you a present, please accept it. It must be something she likes a lot
     and wants to share with you anyway.
   skillDescriptionInShort: Gains a 5.2% buff in atrributes and CDs. The first time
-    HP reaches 0, immediately <color=green>restores 52% max HP</color> and 1.52 seconds
-    of invulnerability.
+    HP reaches 0, immediately <color=green>restores 52% max HP</color> and gains
+    1.52 seconds of invulnerability.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &744608037
@@ -11471,6 +11562,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 27
   skillNameText: Der Tag Neight Sich - Flowering Night
@@ -12744,6 +12836,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 41
   skillNameText: Juggernaunt -  Resonance
@@ -13442,7 +13535,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.000061035, y: -71.15039}
+  m_AnchoredPosition: {x: -0.000061035, y: -91.1504}
   m_SizeDelta: {x: 1920, y: 724.6763}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &829003093
@@ -13695,7 +13788,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &834416418
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13729,7 +13822,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UseMouseMovement: 0
   maskMaterial: {fileID: 2100000, guid: 3b0cac448e13b4640911cbdbb6565023, type: 2}
-  radius: 1
+  radius: 0
   bgColor: 1
 --- !u!114 &834416420
 MonoBehaviour:
@@ -15185,6 +15278,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 29
   skillNameText: Der Tag Neight Sich - Twilight of Wolumonde
@@ -15949,7 +16043,7 @@ RectTransform:
   m_GameObject: {fileID: 901397983}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.05, y: 1.05, z: 1.05}
+  m_LocalScale: {x: 1.02, y: 1.02, z: 1.02}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 287254778}
@@ -17913,6 +18007,140 @@ RectTransform:
   m_AnchoredPosition: {x: -33.03322, y: 375}
   m_SizeDelta: {x: 687.60046, y: 136.95898}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1017320588
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1017320589}
+  - component: {fileID: 1017320591}
+  - component: {fileID: 1017320590}
+  m_Layer: 5
+  m_Name: Text (TMP)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1017320589
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1017320588}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1259189326}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -7.7031}
+  m_SizeDelta: {x: 1340.2101, y: 308.7849}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1017320590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1017320588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: 
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 5e61686ba236ff04b8632d6a26736acd, type: 2}
+  m_sharedMaterial: {fileID: 2509212030381675100, guid: 5e61686ba236ff04b8632d6a26736acd, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 48
+  m_fontSizeBase: 48
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_enableWordWrapping: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 1
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &1017320591
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1017320588}
+  m_CullTransparentMesh: 1
 --- !u!1 &1017618407
 GameObject:
   m_ObjectHideFlags: 0
@@ -18139,6 +18367,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 18
   skillNameText: Zeropoint Burst - Superconduct
@@ -18281,6 +18510,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 16
   skillNameText: Zeropoint Burst - Snow Blossom
@@ -19703,6 +19933,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 13
   skillNameText: Evasion - Leap of Faith
@@ -19997,6 +20228,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 2
   skillName: 44
   skillNameText: '''Raging Terrains'''
@@ -20265,6 +20497,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 46
   skillNameText: Juggernaunt - 'Beyond the Night'
@@ -20412,6 +20645,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 2
   skillName: 19
   skillNameText: '''Obscured Vision'''
@@ -20926,8 +21160,9 @@ MonoBehaviour:
   SelectedLvlName: {fileID: 1560593613}
   SelectedLvlDescription: {fileID: 751680392}
   Descriptions:
-  - Retrieve the Mint Fumo, no matter the cost.
-  - Retrieve the Mint Fumo, no matter the cost.
+  - The eastern skies glow. The wound is still open\nBut I will still go forth\nWhat
+    awaits me? Who will I meet?\n\nHello
+  - Thoses who stand higher can see clearer. And they will share their visions.
   - Though some confilicts are unavoidable, it's best to not pick up unnecessary
     fights.
   - "At its heart, weaving is the simple\u2014but powerful\u2014act of interlacing
@@ -20948,10 +21183,9 @@ MonoBehaviour:
   - The enemies are trying to steal the Fumo away, but violence still gets the better
     of them.\n<color=yellow>Swap cool-down is halved in this level. And your units
     have greatly increased attributes.</color>
-  - I shut my eyes, try to form a picture of you.\nBut even in that imaginary world,\nI
-    also lost you, along with everything else.\nNow I finally understood...
+  - Won't you set him free?
   ChallengeModes:
-  - Terrains and enemies will differ in places, and more enemies will appear.
+  - '''Hounds'' have greatly increased HP and ATK.'
   - Terrains and enemies will differ in places, and more enemies will appear.
   - Bloodboil Knightclub Elite's ability stacks twice as fast. All enemies have increased
     MSPD.
@@ -20964,7 +21198,7 @@ MonoBehaviour:
   - Terrain and enemies will differ in places.
   - One 'Sudaram' has different starting position.
   - '''Heatpump Vents'' will present.'
-  - More enemies will appear.
+  - Additional enemies will appear.
   CompleteCondition: 01000000010000000100000000000000010000000100000000000000010000000200000000000000
   Environments:
   - Environments: 
@@ -20992,7 +21226,7 @@ MonoBehaviour:
   MapPreviewImg: {fileID: 2125190412}
   MapPreviewImgOverlay: {fileID: 1141736479}
   Map_SSs:
-  - {fileID: 21300000, guid: 9967d918409eb3745bf886a799467fa2, type: 3}
+  - {fileID: 21300000, guid: 879b42d773b0d424ea3de5d3cc0f9f3c, type: 3}
   - {fileID: 21300000, guid: 9967d918409eb3745bf886a799467fa2, type: 3}
   - {fileID: 21300000, guid: 9e4c79ea50b19f54da6d5e0053134ee8, type: 3}
   - {fileID: 21300000, guid: 632a77c5043d6514996731920cab5124, type: 3}
@@ -21001,7 +21235,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 56b4ab19f2f72814bb6cb77e23c3005f, type: 3}
   - {fileID: 21300000, guid: 9bb05f389aad1764483e534119e7dc4e, type: 3}
   - {fileID: 21300000, guid: d47d60702138880468ef33839a31e69c, type: 3}
-  - {fileID: 21300000, guid: d47d60702138880468ef33839a31e69c, type: 3}
+  - {fileID: 21300000, guid: 4585c0adc4394134abb842e8db88afda, type: 3}
   DefaultEnemyIcon: {fileID: 21300000, guid: 450f341a4d8aeec45acb98c71b1a64cb, type: 3}
   EnemyDetail: {fileID: 1152686954}
   SelectedBorder: {fileID: 1857408668}
@@ -22193,12 +22427,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 0
   skillName: 38
   skillNameText: Rush Hour
   skillDescription: After using the special ability, gains <color=#00ffe1>+100% MSPD</color>
     for 1.5 seconds.
-  favorText: 
+  favorText: When the light turns green, run.
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
@@ -23134,6 +23369,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 12
   skillNameText: Evasion - Lethal Tempo
@@ -23337,6 +23573,82 @@ RectTransform:
   m_AnchoredPosition: {x: -181.24982, y: -112.50001}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1259189325
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1259189326}
+  - component: {fileID: 1259189328}
+  - component: {fileID: 1259189327}
+  m_Layer: 5
+  m_Name: Intro
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1259189326
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1259189325}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1017320589}
+  m_Father: {fileID: 1630383641}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -0.000061035, y: 0}
+  m_SizeDelta: {x: 1920, y: 1080}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1259189327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1259189325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1259189328
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1259189325}
+  m_CullTransparentMesh: 1
 --- !u!1 &1259212222
 GameObject:
   m_ObjectHideFlags: 0
@@ -25703,6 +26015,150 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1340548978}
   m_CullTransparentMesh: 1
+--- !u!1 &1341870170
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1341870171}
+  - component: {fileID: 1341870175}
+  - component: {fileID: 1341870174}
+  - component: {fileID: 1341870173}
+  - component: {fileID: 1341870172}
+  m_Layer: 5
+  m_Name: Bubble
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1341870171
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1341870170}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 412884401}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 590, y: 0}
+  m_SizeDelta: {x: 95, y: 95}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1341870172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1341870170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
+  skillType: 0
+  skillName: 49
+  skillNameText: Bubble-making Arts Unit
+  skillDescription: The first attack against an enemy deals additional 10% ATK as
+    magical damage and levitates them for 2.5 seconds.
+  favorText: A gift from her friend. The bubbles it creates have excellent plasticity
+    and will not pop easily. Very useful for cleaning things up. Beautiful too.
+  skillDescriptionInShort: 
+  mutuallyExclusiveSkills: 
+  Overlay: {fileID: 0}
+--- !u!114 &1341870173
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1341870170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 1341870174}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &1341870174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1341870170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 17611692e2e76b04aaafdee232149236, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1341870175
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1341870170}
+  m_CullTransparentMesh: 1
 --- !u!1 &1344494013
 GameObject:
   m_ObjectHideFlags: 0
@@ -25899,7 +26355,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2030416377}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.4130831
+  m_Size: 0.20654151
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -26105,6 +26561,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 0
   skillName: 34
   skillNameText: Attention-holding Device
@@ -26612,6 +27069,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 15
   skillNameText: Windblows down South
@@ -27363,7 +27821,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 296706091}
   m_Direction: 0
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.5
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -27836,6 +28294,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 17
   skillNameText: Zeropoint Burst - Hypercharge
@@ -28061,6 +28520,106 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1441265296}
   m_CullTransparentMesh: 1
+--- !u!1 &1455102866
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1455102867}
+  - component: {fileID: 1455102869}
+  - component: {fileID: 1455102868}
+  - component: {fileID: 1455102870}
+  m_Layer: 5
+  m_Name: Border_Up (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1455102867
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1455102866}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
+  m_ConstrainProportionsScale: 1
+  m_Children:
+  - {fileID: 361688226}
+  m_Father: {fileID: 287254778}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -239}
+  m_SizeDelta: {x: 2037.5801, y: 150}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1455102868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1455102866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 0.9638842, b: 0.8349056, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: f2d56b7eeb61e4b49bc9fa6bcef34447, type: 3}
+  m_Type: 3
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 0
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1455102869
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1455102866}
+  m_CullTransparentMesh: 1
+--- !u!223 &1455102870
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1455102866}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: -9999
+  m_TargetDisplay: 0
 --- !u!1 &1458117418
 GameObject:
   m_ObjectHideFlags: 0
@@ -29796,9 +30355,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 0
   skillName: 2
-  skillNameText: Winged Steps - Hasty
+  skillNameText: Arts Unit - Wind Beneath Blade
   skillDescription: ASPD +30.
   favorText: 
   skillDescriptionInShort: 
@@ -30148,6 +30708,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 47
   skillNameText: '''Field Researcher'''
@@ -30290,6 +30851,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 21
   skillNameText: Juggernaunt - Persistence
@@ -30432,9 +30994,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 0
   skillName: 42
-  skillNameText: Break the Ice
+  skillNameText: '''Defrost instruction for Frozen Equipments'''
   skillDescription: Damaging frozen targets instantly ends its effect to deal bonus
     true damage by 10% of their max HP, increasing by the freeze's remaining duration.
   favorText: 
@@ -30726,6 +31289,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 0
   skillName: 6
   skillNameText: Geologist - Explore
@@ -30868,6 +31432,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 2
   skillName: 43
   skillNameText: '''Hunger'''
@@ -31318,6 +31883,10 @@ GameObject:
   - component: {fileID: 1630383639}
   - component: {fileID: 1630383638}
   - component: {fileID: 1630383642}
+  - component: {fileID: 1630383643}
+  - component: {fileID: 1630383645}
+  - component: {fileID: 1630383644}
+  - component: {fileID: 1630383646}
   m_Layer: 5
   m_Name: SkillTree
   m_TagString: Untagged
@@ -31411,6 +31980,7 @@ RectTransform:
   - {fileID: 116689218}
   - {fileID: 390123960}
   - {fileID: 834416418}
+  - {fileID: 1259189326}
   m_Father: {fileID: 287254778}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -31425,7 +31995,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1630383637}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ca2576f9f1cf09b468e7b39bf397c26d, type: 3}
   m_Name: 
@@ -31461,11 +32031,11 @@ MonoBehaviour:
   - Let's try something crazy today!
   - '"So this is where you were! Found you."'
   - Check out these epical moves!
-  - '"She wishes to participate in more research projects."'
+  - She wishes to participate in more research projects.
   - We love theories.
   - Never afraid to try!
-  - Despite not an expert, you still want to help her in one or more ways.
   - She's happy to see you.
+  - '"There''s cookies on the table"'
   TickOverlay: {fileID: 8183961381051493274, guid: 724266122bb48054eb03beb36103efe6, type: 3}
   skillIconImage: {fileID: 954102871}
   skillNameText: {fileID: 1290484416}
@@ -31490,6 +32060,308 @@ MonoBehaviour:
   IsIntroPlaying: 0
   QuitBtn: {fileID: 812363002}
   Techs: {fileID: 739711758}
+--- !u!114 &1630383643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1630383637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d71a3004f57c43d40b50cfc828ab2778, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Overlay: {fileID: 1259189325}
+  introText: {fileID: 1017320590}
+--- !u!82 &1630383644
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1630383637}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: c524a523369be8546aacaec8e808a0ba, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!82 &1630383645
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1630383637}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 4d01daa9781a54742a5472afd8ea43ee, type: 3}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!82 &1630383646
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1630383637}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: fbcc897e44470c8468ac84b64c604851, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1642477027
 GameObject:
   m_ObjectHideFlags: 0
@@ -31980,6 +32852,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 11
   skillNameText: Evasion - Gentle Touch
@@ -32686,6 +33559,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 0
   skillName: 32
   skillNameText: '''Fumo Rescuer'' - Wind''s Whisper'
@@ -33459,6 +34333,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 0
   skillName: 9
   skillNameText: Equipment - Radio
@@ -33600,6 +34475,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 22
   skillNameText: Juggernaunt - Rim of the Sun
@@ -33742,6 +34618,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 14
   skillNameText: Windblows up North
@@ -34217,6 +35094,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 0
   skillName: 31
   skillNameText: '''Fumo Rescuer'' - Phalanx'
@@ -34492,6 +35370,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 2
   skillName: 48
   skillNameText: '''Subjective Time Dilation'''
@@ -34769,13 +35648,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 0
   skillName: 25
   skillNameText: Victory Rewind - Spirit
   skillDescription: After defeating an enemy, gains <color=#ffd61f>+100 ASPD</color>
     that decays over 5 seconds.
-  favorText: 
-  skillDescriptionInShort: 
+  favorText: Tapes of combat logs given to her by a pharmaceutical company...
+  skillDescriptionInShort: Gains a decaying ASPD buff after defeating an enemy.
   mutuallyExclusiveSkills: 1a000000
   Overlay: {fileID: 0}
 --- !u!114 &1836088406
@@ -35831,6 +36711,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 30
   skillNameText: '''Black Flash'''
@@ -36675,6 +37556,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 0
   skillName: 7
   skillNameText: Equipment - Claw
@@ -36949,7 +37831,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 508634077}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.38426718
+  m_Size: 0.19213353
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -37690,6 +38572,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 39
   skillNameText: Der Tag Neight Sich - Ghost Lead
@@ -38176,12 +39059,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 0
   skillName: 40
-  skillNameText: Heavy Hitter
-  skillDescription: ASPD -50. While not attacking, the next attack gains gradually
+  skillNameText: Very Heavy Blade
+  skillDescription: ASPD -40. While not attacking, the next attack gains gradually
     increased damage, up to +250% after 10 seconds (resets upon attacking).
-  favorText: 
+  favorText: Why does she have it?
   skillDescriptionInShort: Gradually charges up for a much stronger attack when not
     attacking (resets upon attacking).
   mutuallyExclusiveSkills: 
@@ -38451,7 +39335,7 @@ RectTransform:
   m_Father: {fileID: 689961372}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0.4130831, y: 1}
+  m_AnchorMax: {x: 0.20654151, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -38544,6 +39428,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 23
   skillNameText: Juggernaunt -  Swirling Vortex
@@ -40460,6 +41345,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 28
   skillNameText: Der Tag Neight Sich - Mystic Oriental Dream
@@ -40556,8 +41442,8 @@ CanvasRenderer:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1143179407}
   - {fileID: 643355487}
   - {fileID: 287254778}
-  - {fileID: 1143179407}
   - {fileID: 698380464}
   - {fileID: 1000768832}

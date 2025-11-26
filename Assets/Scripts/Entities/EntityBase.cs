@@ -159,6 +159,9 @@ public class EntityBase : MonoBehaviour
         colliders = GetComponents<Collider2D>();
         sfxs = GetComponents<AudioSource>();
 
+        LevitationEffect = spriteRenderer.transform.Find("Bubble").GetComponent<SpriteRenderer>();
+        LevitationEffect.color = Color.clear;
+
         ShadowSprite = spriteRenderer.transform.Find("Shadow").gameObject;
 
         InitSpriteColor = Color.white;
@@ -348,6 +351,21 @@ public class EntityBase : MonoBehaviour
         if (MspdDebuffs.ContainsKey(Key)) MspdDebuffs.Remove(Key);
         if (AspdBuffs.ContainsKey(Key)) AspdBuffs.Remove(Key);
         if (AspdDebuffs.ContainsKey(Key)) AspdDebuffs.Remove(Key);
+        CalculateBuffsAndDebuffs();
+    }
+
+    public void ClearAllEffects()
+    {
+        AtkBuffs.Clear();
+        AtkDebuffs.Clear();
+        DefBuffs.Clear();
+        DefDebuffs.Clear();
+        ResBuffs.Clear();
+        ResDebuffs.Clear();
+        MspdBuffs.Clear();
+        MspdDebuffs.Clear();
+        AspdBuffs.Clear();
+        AspdDebuffs.Clear();
         CalculateBuffsAndDebuffs();
     }
 
@@ -760,6 +778,7 @@ public class EntityBase : MonoBehaviour
 
     public void AdjustHealthOnDamageReceive(DamageInstance damage)
     {
+        if (damage.TotalDamage <= 0) return;
         health -= damage.TotalDamage;
         if (health < 0) health = 0;
         healthBar.SetHealth(health);
@@ -850,6 +869,51 @@ public class EntityBase : MonoBehaviour
         target.ccSlider.value = target.ccSlider.maxValue = target.StunTimer;
     }
 
+    public virtual void ApplyLevitate(EntityBase target, float duration)
+    {
+        ApplyStun(target, duration);
+        if (target.IsStunned) target.StartCoroutine(target.Levitate(duration));
+    }
+
+    public bool IsBeingLevitated = false;
+    public SpriteRenderer LevitationEffect;
+    IEnumerator Levitate(float duration)
+    {
+        if (IsBeingLevitated) yield break;
+
+        LevitationEffect.color = new Color(1, 1, 1, 0.3f);
+        IsBeingLevitated = true;
+
+        float floatUpDuration = Mathf.Min(0.2f, duration * 0.15f);
+        float floatDownDuration = floatUpDuration / 2;
+
+        Vector2 initPos = spriteRenderer.transform.localPosition;
+        Vector2 targetPos = initPos + new Vector2(0, 2.1f);
+        
+        float c = 0, d = floatUpDuration;
+        while (c < d)
+        {
+            spriteRenderer.transform.localPosition = Vector2.Lerp(spriteRenderer.transform.localPosition, targetPos, c * 1.0f / d);
+            c += Time.deltaTime;
+            yield return null;
+        }
+
+        spriteRenderer.transform.localPosition = targetPos;
+        
+        yield return new WaitForSeconds(duration - floatUpDuration - floatDownDuration);
+
+        c = 0; d = floatDownDuration;
+        while (c < d)
+        {
+            spriteRenderer.transform.localPosition = Vector2.Lerp(spriteRenderer.transform.localPosition, initPos, c * 1.0f / d);
+            c += Time.deltaTime;
+            yield return null;
+        }
+        spriteRenderer.transform.localPosition = initPos;
+        IsBeingLevitated = false;
+        LevitationEffect.color = Color.clear;
+    }
+
     public virtual void OnFreezeMaintain()
     {
         spriteRenderer.color = Color.blue;
@@ -858,7 +922,7 @@ public class EntityBase : MonoBehaviour
 
     public virtual void OnFreezeExit()
     {
-        if (FreezeTimer > 0f) return;
+        if (FreezeTimer > 0f || IsStunned || IsFrozen) return;
 
         animator.SetBool("attack", false);
         FreezeTimer = 0f;
@@ -881,7 +945,7 @@ public class EntityBase : MonoBehaviour
 
     public virtual void OnStunExit()
     {
-        if (StunTimer > 0f) return;
+        if (StunTimer > 0f || IsStunned || IsFrozen) return;
 
         animator.SetBool("attack", false);
         StunTimer = 0f;
@@ -901,6 +965,7 @@ public class EntityBase : MonoBehaviour
 
     public virtual void OnDeath()
     {
+        LevitationEffect.color = Color.clear;
         ccBar.SetActive(false);
         ShadowSprite.SetActive(false);
         animator.speed = 1f;
@@ -1067,7 +1132,7 @@ public class EntityBase : MonoBehaviour
 
     private IEnumerator ApplyForceCoroutine(EntityBase targetEntity, Vector3 referencePosition, float force, float duration, bool isPull, bool hasReferencePosition = true)
     {
-        if (targetEntity == null || targetEntity.rb2d == null || !targetEntity.IsAlive()) yield break;
+        if (targetEntity == null || targetEntity.rb2d == null || !targetEntity.IsAlive() || targetEntity.IsBeingLevitated) yield break;
 
         float ForceValue = force * duration / 0.03f;
         float ForceValueAfterWeight = ForceValue - targetEntity.weight;

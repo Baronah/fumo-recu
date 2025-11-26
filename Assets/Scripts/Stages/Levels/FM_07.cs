@@ -35,6 +35,7 @@ public class FM_07 : StageManager
         {
             sr.originiumPollutionBonusASPD = 100f;
             sr.originiumPollutionDamageMultiplier = 0f;
+            sr.mHealth -= 100;
         }
         else if (enemy as OriginiumSpider || enemy as OriginiumSpiderAlpha)
         {

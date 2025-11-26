@@ -150,6 +150,7 @@ public class FumoScript : MonoBehaviour
     {
         if (isPickedUp) return Vector3.zero;
 
+        isSquishing = false;
         rangeIndicator.SetActive(false);
         Vector3 spritePosition = Camera.main.WorldToScreenPoint(sprite.transform.position);
 
@@ -169,6 +170,8 @@ public class FumoScript : MonoBehaviour
         transform.localScale = originalScale;
         transform.Find("Object/Shadow").gameObject.SetActive(false);
         squishCount = 1;
+
+        audioSource.spatialBlend = 0f;
 
         return spritePosition;
     }

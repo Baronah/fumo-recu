@@ -37,7 +37,7 @@ public class PlayerManager : MonoBehaviour
     private float swapCurrentRotation = 0;
 
     private float SwapOverflowTimer = 0f;
-    private short SwapStacks = 0;
+    [SerializeField] private short SwapStacks = 0;
     [SerializeField] private short SwapMaxStacks = 2;
     [SerializeField] GameObject SwapReadyEffect;
     [SerializeField] private Image[] SwapStacksImg;
@@ -70,6 +70,8 @@ public class PlayerManager : MonoBehaviour
     private AudioSource swapSfx => sfxs[0];
     private AudioSource hit_01_sfx => sfxs[1];
     private AudioSource hit_02_sfx => sfxs[2];
+
+    public StageManager stageManager;
 
     private void Awake()
     {
@@ -110,6 +112,7 @@ public class PlayerManager : MonoBehaviour
         SwapPlayer();
 
         mainCamera = FindObjectOfType<CameraMovement>();
+        stageManager = FindObjectOfType<StageManager>(true);
     }
 
     private void GetPlayerStartType()
@@ -531,6 +534,18 @@ public class PlayerManager : MonoBehaviour
         bool activeInfoView = !PlayerInfoSect.activeSelf;
         PlayerInfoSect.SetActive(activeInfoView);
         TechInfoSect.SetActive(!activeInfoView);
+    }
+
+    public void ClearStageBGM(float duration)
+    {
+        StartCoroutine(ClearBGMCouroutine(duration));
+    }
+
+    IEnumerator ClearBGMCouroutine(float duration)
+    {
+        stageManager.StageBGM.Pause();
+        yield return new WaitForSeconds(duration);
+        stageManager.StageBGM.Play();
     }
 }
 

@@ -8,7 +8,7 @@ using static SkillTree_Manager;
 
 public class SkillTree_SkillComponent : MonoBehaviour
 {
-
+    public AudioSource OnSelectSFX;
     public SkillType skillType;
     public SkillName skillName;
 

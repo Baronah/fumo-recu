@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class MedicalTile : EnvironmentalTileBase
 {
@@ -18,6 +19,8 @@ public class MedicalTile : EnvironmentalTileBase
         {
             HealPerTick *= 2f;
         }
+
+        StartCoroutine(Pulse());
         base.OnStageStart();
     }
 
@@ -26,5 +29,37 @@ public class MedicalTile : EnvironmentalTileBase
         base.OnEntityStay(entity);
         float healAmount = UsePercentageHeal ? entity.mHealth * HealPerTick : HealPerTick;
         entity.Heal(healAmount);
+    }
+
+    IEnumerator Pulse()
+    {
+        Tilemap tilemap = GetComponent<Tilemap>();
+
+        Color init = tilemap.color; 
+        Color target = Color.green;
+        target.a = 0.8f;
+
+        float duration = 3f;
+        while (true)
+        {
+            float c = 0;
+
+            while (c < duration)
+            {
+                tilemap.color = Color.Lerp(init, target, c * 1.0f / duration);
+                c += Time.deltaTime;
+                yield return null;
+            }
+
+            c = 0;
+            while (c < duration)
+            {
+                tilemap.color = Color.Lerp(target, init, c * 1.0f / duration);
+                c += Time.deltaTime;
+                yield return null;
+            }
+
+            tilemap.color = init;
+        }
     }
 }

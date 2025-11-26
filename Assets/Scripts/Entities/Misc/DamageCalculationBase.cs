@@ -33,9 +33,9 @@ public class DamageInstance
 
     public void Multiply(float pPercentage, float mPercentage, float tPercentage)
     {
-        PhysicalDamage = (int)(PhysicalDamage * pPercentage);
-        MagicalDamage = (int)(MagicalDamage * mPercentage);
-        TrueDamage = (int)(TrueDamage * tPercentage);
+        PhysicalDamage = Mathf.CeilToInt(PhysicalDamage * pPercentage);
+        MagicalDamage = Mathf.CeilToInt(MagicalDamage * mPercentage);
+        TrueDamage = Mathf.CeilToInt(TrueDamage * tPercentage);
     }
 
     public void Set(int physical, int magical, int trueDamage)

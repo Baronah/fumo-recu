@@ -9,10 +9,14 @@ public class Wetwork : EnemyBase
     [SerializeField] private float AtkPercentageUp_cap = 2.0f;
     [SerializeField] private GameObject PS;
 
-    private float AtkPercentageUp_count = 0;
-    public void ChargeMaxAtkStack() => AtkPercentageUp_count = AtkPercentageUp_cap;
+    private float AtkPercentageUp_count = 0, DefPenUp_count = 0;
+    public void ChargeMaxAtkStack()
+    {
+        AtkPercentageUp_count = AtkPercentageUp_cap;
+        DefPenUp_count = DefPenUp_cap;
+    }
 
-    private short AtkAdd = 0;   
+    private short AtkAdd = 0, DefPenAdd = 0;   
 
     public override void InitializeComponents()
     {
@@ -32,6 +36,7 @@ public class Wetwork : EnemyBase
             if (IsAttackLocked) continue;
 
             AtkPercentageUp_count = Mathf.Min(AtkPercentageUp_count + AtkPercentageUp_perSecond, AtkPercentageUp_cap);
+            DefPenUp_count = Mathf.Min(DefPenUp_count + DefPenUp_perSecond, DefPenUp_cap);
         }
     }
 
@@ -44,10 +49,18 @@ public class Wetwork : EnemyBase
     {
         AtkAdd = (short)(bAtk * AtkPercentageUp_count);
         atk += AtkAdd;
+
+        DefPenAdd = (short) DefPenUp_count;
+        defPen += DefPenAdd;
+
         if (sfxs[0]) sfxs[0].Play();
         yield return StartCoroutine(base.OnAttackComplete());
+        
         atk -= AtkAdd;
         AtkPercentageUp_count = 0f;
+    
+        defPen -= DefPenAdd;
+        DefPenUp_count = 0f;
     }
 
     public override void OnDeath()

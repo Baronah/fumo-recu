@@ -75,81 +75,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!1 &3540591269688473455
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5277238350394738966}
-  - component: {fileID: 8248039700160051014}
-  - component: {fileID: 7523524519712557522}
-  m_Layer: 6
-  m_Name: Image
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &5277238350394738966
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3540591269688473455}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1373819293989363504}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 80, y: 80}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &8248039700160051014
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3540591269688473455}
-  m_CullTransparentMesh: 1
---- !u!114 &7523524519712557522
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3540591269688473455}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0, a: 0.34901962}
-  m_RaycastTarget: 0
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 92233ecec4a955a4eb6f467c00f376ce, type: 3}
-  m_Type: 3
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 1
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &4823490072830741474
 GameObject:
   m_ObjectHideFlags: 0
@@ -175,114 +100,12 @@ Transform:
   m_GameObject: {fileID: 4823490072830741474}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.49, y: 0.25, z: 0}
+  m_LocalPosition: {x: 2.32, y: 0.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2570123632696497706}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &6322887473764744565
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1373819293989363504}
-  - component: {fileID: 6306872134668379482}
-  - component: {fileID: 1979499075605127787}
-  - component: {fileID: 133766748657128562}
-  m_Layer: 6
-  m_Name: FeudBond
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1373819293989363504
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6322887473764744565}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.033333335, y: 0.033333335, z: 0.033333335}
-  m_ConstrainProportionsScale: 1
-  m_Children:
-  - {fileID: 5277238350394738966}
-  m_Father: {fileID: 2570123632696497706}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 3}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!223 &6306872134668379482
-Canvas:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6322887473764744565}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_RenderMode: 2
-  m_Camera: {fileID: 0}
-  m_PlaneDistance: 100
-  m_PixelPerfect: 0
-  m_ReceivesEvents: 1
-  m_OverrideSorting: 0
-  m_OverridePixelPerfect: 0
-  m_SortingBucketNormalizedSize: 0
-  m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
-  m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: -1829218833
-  m_SortingOrder: 0
-  m_TargetDisplay: 0
---- !u!114 &1979499075605127787
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6322887473764744565}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
-  m_ReferencePixelsPerUnit: 100
-  m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
-  m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
-  m_PhysicalUnit: 3
-  m_FallbackScreenDPI: 96
-  m_DefaultSpriteDPI: 96
-  m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
---- !u!114 &133766748657128562
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6322887473764744565}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_IgnoreReversedGraphics: 1
-  m_BlockingObjects: 0
-  m_BlockingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
 --- !u!1001 &9102113005617969430
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -326,6 +149,26 @@ PrefabInstance:
     - target: {fileID: 2491095902735715385, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 3039545837474316575, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3039545837474316575, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3039545837474316575, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3039545837474316575, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3039545837474316575, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.54
       objectReference: {fileID: 0}
     - target: {fileID: 3072902088734969017, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_Controller
@@ -430,9 +273,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6772246562461740860, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7017070313001575598}
-    - targetCorrespondingSourceObject: {fileID: 6772246562461740860, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1373819293989363504}
     - targetCorrespondingSourceObject: {fileID: 2491095902735715385, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6158802680478390515}
@@ -476,8 +316,8 @@ MonoBehaviour:
   Name: Shrouded Assassin
   Icon: {fileID: 21300000, guid: 768971f047b2b80438ed90c5c9bd1639, type: 3}
   mHealth: 500
-  bAtk: 100
-  bDef: 30
+  bAtk: 75
+  bDef: 60
   bRes: 30
   defPen: 0
   defIgn: 10
@@ -491,13 +331,13 @@ MonoBehaviour:
   MIN_PHYSICAL_DMG: 0.05
   MIN_MAGICAL_DMG: 0.1
   health: 500
-  atk: 100
+  atk: 75
   def: 60
   res: 30
   ASPD: 100
-  moveSpeed: 150
+  moveSpeed: 120
   attackRange: 100
-  attackWindupTime: 0.4
+  attackWindupTime: 0.25
   attackInterval: 3
   hpRegenFlat: 0
   hpRegenPercentage: 0
@@ -521,8 +361,12 @@ MonoBehaviour:
   AttackAnimation: {fileID: 7400000, guid: 36b864448fe6280478c168bbf0a532f7, type: 2}
   sfxs: []
   IsBeingShifted: 0
+  FreezeTimer: 0
+  StunTimer: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 0.9
+  IsBeingLevitated: 0
+  LevitationEffect: {fileID: 0}
   reviveDuration: 10
   postReviveDuration: 2
   enemyCode: 13
@@ -532,15 +376,21 @@ MonoBehaviour:
   TooltipsHoldtime: 6
   Description: Assassin who has abandoned his name and covered his face. Behind that
     pall is a burning fanaticism and a destined fate.
-  Skillset: "\u2022 [Feud Bonding] Greatly reduces damages taken, however this effect
-    gradually wears off the longer the current player stays on the field.\n\n<b>FIRST
-    PHASE</b>\n\n\u2022 [Pack Up] When faraway from the player, charges up and quickly
-    dash toward their position, dealing physical damage to the player if comes into
-    contact with.\n\u2022 [Held Breath] When [Feud Bonding] effects wear off, slows
-    the current player for several seconds.\n\n<b>SECOND PHASE</b>\n\n\u2022 [Toward
-    Death] Stop moving, then creates multiple illusion of self. After a short delay,
-    dashes toward these illusions in quick succession and damages the player if coming
-    into contact with them."
+  Skillset: "\u2022 [Feud Bonding] Receiving damage from the player unit builds up
+    \"Feud\" on them (stacks up to a limit). Self takes reduced damage from the attacker
+    based on how much \"Feud\" they have built up. Gains increased ATK and MSPD when
+    the target has their \"Feud\" maxed out.\n\n<b><color=red>FIRST PHASE</color></b>\n\n\u2022
+    [Pack Up] Stops moving, then charges up and quickly dash toward your position,
+    dealing physical damage if comes into contact with. Receiving damage reduces
+    this ability cool-down.\n\n\u2022 [Held Breath] When HP reaches 0, enters a revival
+    state and rapidly builds up \"Feud\" on the presenting player and slows them
+    throughout the duration. Enters the second phase afterward.\n\n<b><color=red>SECOND
+    PHASE</color></b>\n\n\u2022 DEF and RES are reduced.\n\n\u2022 [Overflowing Hatred]
+    \"Feud\" is now gradually builds up overtime, and [Feud Bonding] grants further
+    increased ATK and MSPD when at max.\n\n\u2022 [Toward Death] Stops moving, then
+    creates multiple illusion of self. After a short delay, dashes toward these illusions
+    in quick succession and damages the player if comes into contact with. Dashes'
+    speed increases as HP decreases. Receiving damage reduces this ability cool-down."
   DetectionRange: 30
   DangerRange_RatioOfAttackRange: 0.75
   MinimumDistanceFromPlayer: 20
@@ -566,11 +416,14 @@ MonoBehaviour:
   MoveToOverridePositionSpeedMultiplierJump: 0.35
   CanDetectThroughWalls: 0
   shadowClonePrefab: {fileID: 6227222074570190167, guid: aaa7e34ade2686643ad8b54869a8f08b, type: 3}
-  feudBond: {fileID: 7523524519712557522}
-  dashCooldown: 20
-  dashDuration: 0.2
+  feudBond: {fileID: 8026367807147734761, guid: 4d80df3aa8c3d4149a2671152919af1e, type: 3}
+  dashCooldown: 16
+  dashDuration: 0.17
   dashInterval: 0.15
-  dashDistance: 800
-  MaxSpottedTimer: 20
-  MaxDamageReduction: 1.5
+  dashDistance: 1000
+  dashAtkScale: 1
+  MaxFeudLevel: 20
+  MaxDamageReduction: 1
+  MaxAtkBuff: 0.3
+  MaxMspdBuff: 0.3
   trailPrefab: {fileID: 6209281345805936895, guid: 3c0261128b277894cac6bd5c079ad2f8, type: 3}
