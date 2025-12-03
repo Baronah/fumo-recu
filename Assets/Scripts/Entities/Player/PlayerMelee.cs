@@ -38,6 +38,11 @@ public class PlayerMelee : PlayerBase
 
     private PlayerMeleeAfterimage DashAfterImages = null;
 
+    public override PlayerManager.PlayerType GetPlayerType()
+    {
+        return PlayerManager.PlayerType.MELEE;
+    }
+
     public override void InitializeComponents()
     {
         Ambient.volume = PlayerPrefs.GetFloat("SFX", 1.0f);
@@ -455,7 +460,7 @@ public class PlayerMelee : PlayerBase
     public override void OnFieldSwapOut(PlayerBase swapInPlayer)
     {
         base.OnFieldSwapOut(swapInPlayer);
-        if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_SHINDOUKAKU)
+        if (swapInPlayer && Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_SHINDOUKAKU)
             && IsSkillActive)
         {
             PlayerRanged ranged = swapInPlayer.GetComponent<PlayerRanged>();
@@ -467,9 +472,10 @@ public class PlayerMelee : PlayerBase
                 AtkBoost, 
                 SpeedBoost
             );
+
+            ReleaseAfterShock();
         }
 
-        ReleaseAfterShock();
         if (DashAfterImages) Destroy(DashAfterImages.gameObject);
     }
 

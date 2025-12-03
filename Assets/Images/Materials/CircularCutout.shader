@@ -1,5 +1,6 @@
 Shader "Custom/CircularCutoutFixedAspect" {
     Properties {
+        _MainTex ("Base (RGB)", 2D) = "white" {}
         _Center ("Circle Center", Vector) = (0.5, 0.5, 0, 0)
         _Radius ("Radius", Float) = 0.37
         _EdgeSoftness ("Edge Softness", Float) = 0.25

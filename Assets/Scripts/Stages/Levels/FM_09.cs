@@ -35,7 +35,7 @@ public class FM_09 : StageManager
     {
         base.OnEnemySpawn(enemy);
 
-        enemy.DetectionRange = 5000f;
+        enemy.detectionRange = 5000f;
 
         if (CharacterPrefabsStorage.EnableChallengeMode && enemy is ShroudedAssassin assassin)
         {

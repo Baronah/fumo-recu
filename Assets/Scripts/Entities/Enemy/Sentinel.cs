@@ -29,8 +29,8 @@ public class Sentinel : EnemyBase
         if (!SpottedPlayer)
         {
             DetectCircleRectTransform.sizeDelta = new Vector2(
-                DetectionRange * 2.05f,
-                DetectionRange * 2.05f
+                detectionRange * 2.05f,
+                detectionRange * 2.05f
             );
         }
         DetectCircle.SetActive(IsAlive());

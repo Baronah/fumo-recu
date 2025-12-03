@@ -9,7 +9,6 @@ public class Sudaram : EnemyBase
     [SerializeField] public float originiumPollutionBonusASPD = 40f;
     [SerializeField] public float originiumPollutionDamageMultiplier = 0.5f;
     private bool Enhanced = false;
-    private float b_detectionRange;
 
     private static float a_audioPlayLockout = 0f, e_audioPlayLockout = 0f;
 
@@ -45,9 +44,9 @@ public class Sudaram : EnemyBase
         CanDetectThroughWalls = true;
         originiumPollutionEffect.Play();
         ASPD += originiumPollutionBonusASPD;
-        b_detectionRange = DetectionRange;
+        b_detectionRange = detectionRange;
         Enhanced = true;
-        DetectionRange = attackRange = 9999f;
+        detectionRange = attackRange = 9999f;
         StopMovement();
         attackPattern = AttackPattern.RANGED;
     }
@@ -61,7 +60,7 @@ public class Sudaram : EnemyBase
         ASPD -= originiumPollutionBonusASPD;
         Enhanced = false;
         attackRange = b_attackRange;
-        DetectionRange = b_detectionRange;
+        detectionRange = b_detectionRange;
         attackPattern = AttackPattern.MELEE;
     }
 

@@ -157,6 +157,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: BloodboilKnight
       objectReference: {fileID: 0}
+    - target: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1779737740583634941, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.9
@@ -241,6 +253,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8775152862550477468, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Value
+      value: 400
+      objectReference: {fileID: 0}
+    - target: {fileID: 8775152862550477468, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_MaxValue
+      value: 400
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7523077825662678453, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
     m_RemovedGameObjects: []
@@ -290,18 +310,20 @@ MonoBehaviour:
   b_attackInterval: 3
   MIN_PHYSICAL_DMG: 0.05
   MIN_MAGICAL_DMG: 0.1
-  health: 0
-  atk: 0
-  def: 0
-  res: 0
+  health: 400
+  atk: 50
+  def: 30
+  res: 25
   ASPD: 100
-  moveSpeed: 0
-  attackRange: 0
-  attackWindupTime: 0
-  attackInterval: 0
+  moveSpeed: 110
+  attackRange: 105
+  attackWindupTime: 0.6
+  attackInterval: 3
   hpRegenFlat: 0
   hpRegenPercentage: 0
   weight: 1
+  damageReduction: 0
+  damageAmplify: 0
   IsFreezeImmune: 0
   IsStunImmune: 0
   IsPhysicalImmune: 0
@@ -319,15 +341,24 @@ MonoBehaviour:
   AttackAnimation: {fileID: 7400000, guid: 38cef02e111cc2741872318b17372723, type: 2}
   sfxs: []
   IsBeingShifted: 0
+  FreezeTimer: 0
+  StunTimer: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 1
+  IsBeingLevitated: 0
+  LevitationEffect: {fileID: 3776788205384234200}
+  reviveDuration: 5
+  postReviveDuration: 0
   enemyCode: 5
   SpotPlayerUponSpawn: 0
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
   TooltipsPriority: 0
   TooltipsHoldtime: 6
-  Description: Enemy lore or description
-  Skillset: Enemy skillset
+  Description: A reowned knight from the Bloodboil Knightclub. The Bloodboil Knights
+    have long been known for their ferocity and aggression, from trainees to knight
+    nobles. Whenever one of their brothers falls, they gain courage and combat prowess.
+  Skillset: "\u2022 Every time an enemy is defeated, ATK, ASPD and MSPD are increased.
+    This effect stacks up to 10 times."
   DetectionRange: 200
   DangerRange_RatioOfAttackRange: 0.85
   MinimumDistanceFromPlayer: 50
@@ -357,6 +388,11 @@ MonoBehaviour:
 --- !u!1 &3699022713693373004 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 773491194806959642, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+  m_PrefabInstance: {fileID: 4174396688852057174}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &3776788205384234200 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
   m_PrefabInstance: {fileID: 4174396688852057174}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &7211870446209438570 stripped

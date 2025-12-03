@@ -119,6 +119,10 @@ MonoBehaviour:
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  - m_AssetGUID: a7895f7119506444ea1f9301e70fefe8
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
   LevelTitles:
   - To You. The Departing
   - Hold me tight
@@ -130,3 +134,4 @@ MonoBehaviour:
   - Loop & Loop
   - Siren
   - Prisoner in a Frame
+  - Black Out

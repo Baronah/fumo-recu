@@ -82,18 +82,28 @@ public class LevelSelectionScript : MonoBehaviour
 
     [SerializeField] TMP_Text FumoCount;
 
-    public AudioSource BGMSource => sfxs[0];
-
-    private void Start()
+    public AudioSource BGMSource()
     {
-        FindAnyObjectByType<SkillTree_Manager>(FindObjectsInactive.Include).GetPlayerProgress();
+        SetSfxs();
+        return sfxs[0];
+    }
 
+    private void SetSfxs()
+    {
+        if (sfxs != null) return;
         sfxs = GetComponents<AudioSource>();
         sfxs[0].volume = PlayerPrefs.GetFloat("BGM", 1f);
         for (int i = 1; i < sfxs.Length; ++i)
         {
             sfxs[i].volume = PlayerPrefs.GetFloat("SFX", 1f);
         }
+    }
+
+    private void Start()
+    {
+        FindAnyObjectByType<SkillTree_Manager>(FindObjectsInactive.Include).GetPlayerProgress();
+
+        SetSfxs();
 
         string[] encounteredEnemies = PlayerPrefs.GetString("EncounteredEnemies", string.Empty).Split(" ").ToArray();
         foreach (var enemy in encounteredEnemies)
@@ -272,6 +282,7 @@ public class LevelSelectionScript : MonoBehaviour
                     EnvironmentType.ORIGINIUM_TILE => "<color=#C40000><Originium Pollution></color> Continuously deals true damage to the player and enemy units standing on it.",
                     EnvironmentType.HEAT_PUMP_VENT => "<color=#ff9a03><Heatpump Vent></color> Continuously pushes the player and enemies within range toward a certain direction.",
                     EnvironmentType.MEDICAL_TILE => "<color=green><Medical Tile></color> Continuously heals the player and enemies standing on it.",
+                    EnvironmentType.DARK_ZONE => "<color=black><Shrouded Zone></color> Some areas of the map is covered in darkness. Units standing on those areas have reduced attack and detection range, but can not be detected and targeted by units standing on brighter areas.",
                     _ => "Unknown environment"
                 };
                 environmentDescription += $"{envDes}\n";
@@ -620,23 +631,23 @@ public class LevelSelectionScript : MonoBehaviour
             Rating_MSPD.text = "S+";
 
         // drng
-        if (enemy.DetectionRange <= 0)
+        if (enemy.detectionRange <= 0)
             Rating_DRNG.text = "E";
-        else if (enemy.DetectionRange <= 100f)
+        else if (enemy.detectionRange <= 100f)
             Rating_DRNG.text = "D";
-        else if (enemy.DetectionRange <= 200f)
+        else if (enemy.detectionRange <= 200f)
             Rating_DRNG.text = "C";
-        else if (enemy.DetectionRange <= 250f)
+        else if (enemy.detectionRange <= 250f)
             Rating_DRNG.text = "C+";
-        else if (enemy.DetectionRange <= 350f)
+        else if (enemy.detectionRange <= 350f)
             Rating_DRNG.text = "B";
-        else if (enemy.DetectionRange <= 450f)
+        else if (enemy.detectionRange <= 450f)
             Rating_DRNG.text = "B+";
-        else if (enemy.DetectionRange <= 600f)
+        else if (enemy.detectionRange <= 600f)
             Rating_DRNG.text = "A";
-        else if (enemy.DetectionRange <= 750f)
+        else if (enemy.detectionRange <= 750f)
             Rating_DRNG.text = "A+";
-        else if (enemy.DetectionRange <= 900f)
+        else if (enemy.detectionRange <= 900f)
             Rating_DRNG.text = "S";
         else
             Rating_DRNG.text = "S+";

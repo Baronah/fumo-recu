@@ -79,6 +79,18 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1333956751212545712, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_Size.x
       value: 1.252234
@@ -215,6 +227,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8775152862550477468, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Value
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 8775152862550477468, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_MaxValue
+      value: 50
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7523077825662678453, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
     m_RemovedGameObjects:
@@ -267,15 +287,15 @@ MonoBehaviour:
   b_attackInterval: 0.13
   MIN_PHYSICAL_DMG: 0.05
   MIN_MAGICAL_DMG: 0.1
-  health: 0
-  atk: 0
+  health: 50
+  atk: 10
   def: 0
-  res: 0
+  res: 30
   ASPD: 100
-  moveSpeed: 0
-  attackRange: 0
-  attackWindupTime: 0
-  attackInterval: 0
+  moveSpeed: 90
+  attackRange: 30
+  attackWindupTime: 0.1
+  attackInterval: 0.13
   hpRegenFlat: 0
   hpRegenPercentage: 0
   weight: 0
@@ -296,12 +316,15 @@ MonoBehaviour:
   DamagePopup: {fileID: 7498904281893358320, guid: b09dfacba160b6d47938cf47f8dea3c9, type: 3}
   ccBar: {fileID: 3695961262839361106}
   AttackAnimation: {fileID: 7400000, guid: 0ecc7133e5b0a254b963f364657db491, type: 2}
-  sfxs: []
+  sfxs:
+  - {fileID: 7424751633068628821}
   IsBeingShifted: 0
   FreezeTimer: 0
   StunTimer: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 2
+  IsBeingLevitated: 0
+  LevitationEffect: {fileID: 3780482149273082054}
   reviveDuration: 5
   postReviveDuration: 0
   enemyCode: 4
@@ -309,8 +332,11 @@ MonoBehaviour:
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
   TooltipsPriority: 0
   TooltipsHoldtime: 6
-  Description: Enemy lore or description
-  Skillset: Enemy skillset
+  Description: Creature from the unknown, adapting blood as their only source of
+    food. They always thirst for more blood, strengthening themselves by stealing
+    the blood of others.
+  Skillset: "\u2022 MSPD greatly increased upon spotting the player or when injured
+    for the first time.\n\u2022 Attacks restore HP proportional to damage dealt."
   DetectionRange: 110
   DangerRange_RatioOfAttackRange: 1
   MinimumDistanceFromPlayer: 10
@@ -432,6 +458,11 @@ AudioSource:
 --- !u!1 &3695961262839361106 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 773491194806959642, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+  m_PrefabInstance: {fileID: 4175205238220296264}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &3780482149273082054 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
   m_PrefabInstance: {fileID: 4175205238220296264}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &7208738346378264436 stripped

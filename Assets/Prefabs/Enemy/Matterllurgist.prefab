@@ -55,6 +55,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Matterllurgist
       objectReference: {fileID: 0}
+    - target: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1779737740583634941, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.65
@@ -174,6 +186,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 4187098589305083482}
   m_SourcePrefab: {fileID: 100100000, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+--- !u!212 &75958401430846253 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+  m_PrefabInstance: {fileID: 903654197162275747}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &389931498778135043 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 712479229275404704, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
@@ -244,7 +261,7 @@ MonoBehaviour:
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 0.9
   IsBeingLevitated: 0
-  LevitationEffect: {fileID: 0}
+  LevitationEffect: {fileID: 75958401430846253}
   reviveDuration: 5
   postReviveDuration: 0
   enemyCode: 1

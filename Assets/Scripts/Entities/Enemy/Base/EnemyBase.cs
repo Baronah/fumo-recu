@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class EnemyBase : EntityBase
 {
@@ -27,17 +28,20 @@ public class EnemyBase : EntityBase
 
     public EnemyCode enemyCode;
 
-    [SerializeField] private bool SpotPlayerUponSpawn = false;
+    private bool SpotPlayerUponSpawn = false;
     [SerializeField] private GameObject TooltipsPrefab;
-    [SerializeField] private int TooltipsPriority = 0;
+    private int TooltipsPriority = 0;
     [SerializeField] private float TooltipsHoldtime = 6f;
     public string Description = "Enemy lore or description";
     public string Skillset = "Enemy skillset";
     protected string TooltipsDescription = "the thing to appear on tooltips";
-    [SerializeField] public float DetectionRange = -1f;
+
+    [FormerlySerializedAs("DetectionRange")] public float detectionRange = -1f;
+    [HideInInspector] public float b_detectionRange;
+
     [SerializeField] public float DangerRange_RatioOfAttackRange = 0.75f;
     [SerializeField] protected float MinimumDistanceFromPlayer = 20f;
-    [SerializeField] public bool showTooltips = false;
+    bool showTooltips = false;
 
     [Header("A* Pathfinding")]
     [SerializeField] private float gridCellSize = 50f;
@@ -79,8 +83,8 @@ public class EnemyBase : EntityBase
     private bool isUsingPathfinding = false; // Track if we're currently using pathfinding
     private float stuckTimer = 0f; // Track how long we've been stuck
     private Vector2 lastPosition = Vector2.zero; // Track last position for stuck detection
-    private float stuckThreshold = 2f; // Time before considering stuck
-    private float stuckMovementThreshold = 35f; // Distance moved to not be considered stuck
+    private float stuckThreshold = 1.25f; // Time before considering stuck
+    private float stuckMovementThreshold = 25f; // Distance moved to not be considered stuck
 
     private const short PathfindCntThreshold = 100, ScanPlayerCntThreshold = 15, MoveCntThreshold = 15;
     private short ScanPlayerCnt = 0, MoveCnt = 0, PathfindCnt = 0;
@@ -109,7 +113,9 @@ public class EnemyBase : EntityBase
             AdjustChallengeModeAttributes();
         }
 
-        if (DetectionRange <= 0) DetectionRange = b_attackRange;
+        if (detectionRange <= 0) detectionRange = b_attackRange;
+        b_detectionRange = detectionRange;
+
         WriteStats();
         if (!ViewOnlyMode && SpotPlayerUponSpawn) ForceSpotPlayer();
 
@@ -536,7 +542,7 @@ public class EnemyBase : EntityBase
         Physics2D.IgnoreLayerCollision(gameObject.layer, 8, false);
     }
 
-    bool IsValidForTerrainIgnore => isUsingPathfinding && !IsBeingShifted && !IsStunned && !IsFrozen;
+    bool IsValidForTerrainIgnore => isUsingPathfinding && !IsBeingShifted && !IsStunned && !IsFrozen && animator.GetFloat("move") >= 0.1f;
 
     private Vector2 GetAvoidanceDirection(Vector2 originalDirection, float distanceToDestination)
     {
@@ -622,7 +628,7 @@ public class EnemyBase : EntityBase
         bool spottedViaAlert = false;
         if (!SpottedPlayer)
         {
-            var enemies = SearchForEntitiesAroundSelf(DetectionRange, typeof(EnemyBase), true);
+            var enemies = SearchForEntitiesAroundSelf(detectionRange, typeof(EnemyBase), true);
             foreach (var e in enemies)
             {
                 EnemyBase enemy = e as EnemyBase;
@@ -652,7 +658,7 @@ public class EnemyBase : EntityBase
             if (!spottedViaAlert && !CanDetectThroughWalls)
             {
                 float distance = Vector3.Distance(RecentlyScannedPlayer.transform.position, transform.position);
-                if (distance > Mathf.Max(100f, DetectionRange * 0.3f))
+                if (distance > Mathf.Max(100f, detectionRange * 0.3f))
                 {
                     var checkObstacle = Physics2D.Raycast(
                         transform.position,
@@ -746,7 +752,7 @@ public class EnemyBase : EntityBase
 
     public PlayerBase DetectPlayer(bool catchInvisible = false)
     {
-        return (PlayerBase)SearchForNearestEntityAroundCertainPoint(typeof(PlayerBase), SpottedPlayer ? AttackPosition.position : transform.position, SpottedPlayer ? attackRange : DetectionRange, catchInvisible);
+        return (PlayerBase)SearchForNearestEntityAroundCertainPoint(typeof(PlayerBase), SpottedPlayer ? AttackPosition.position : transform.position, SpottedPlayer ? attackRange : detectionRange, catchInvisible);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -909,7 +915,7 @@ public class EnemyBase : EntityBase
 
         // Draw detection and attack ranges
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, DetectionRange);
+        Gizmos.DrawWireSphere(transform.position, detectionRange);
 
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(AttackPosition ? AttackPosition.position : transform.position, attackRange);

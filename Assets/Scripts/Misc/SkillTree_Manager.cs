@@ -91,6 +91,7 @@ public class SkillTree_Manager : MonoBehaviour
         SPIRAL_FIELD_EXPERT,
         TIME_DILATION,
         BUBBLE_ARTS,    
+        HAIR_RIBBON,
     }
 
     public static SkillTree_Manager Instance;
@@ -124,6 +125,8 @@ public class SkillTree_Manager : MonoBehaviour
         "ANGOUNOWALTZ",
         "NOODLES",
     };
+
+    AudioSource BGM;
 
     public void GetPlayerProgress()
     {
@@ -437,7 +440,8 @@ public class SkillTree_Manager : MonoBehaviour
     private void OnEnable()
     {
         skillSaves = new(CharacterPrefabsStorage.Skills);
-        if (LevelSelectionScript && LevelSelectionScript.BGMSource) LevelSelectionScript.BGMSource.Stop();
+        LevelSelectionScript.BGMSource().Stop();
+        BGM.Play();
 
         var scrollviews = GetComponentsInChildren<ScrollRect>(true);
         foreach (var item in scrollviews)
@@ -456,7 +460,10 @@ public class SkillTree_Manager : MonoBehaviour
     private void OnDisable()
     {
         Outview.SetSkills();
-        if (LevelSelectionScript.BGMSource) LevelSelectionScript.BGMSource.Play();
+        
+        BGM.Stop();
+        LevelSelectionScript.BGMSource().Play();
+
         var scrollviews = GetComponentsInChildren<ScrollRect>(true);
         foreach (var item in scrollviews)
         {
@@ -492,7 +499,10 @@ public class SkillTree_Manager : MonoBehaviour
             }
 
             audioSources = GetComponents<AudioSource>();
+            
             audioSources[0].volume = PlayerPrefs.GetFloat("BGM", 1f);
+            BGM = audioSources[0];
+
             for (int i = 1; i < audioSources.Length; ++i)
             {
                 audioSources[i].volume = PlayerPrefs.GetFloat("SFX", 1f);
@@ -516,10 +526,27 @@ public class SkillTree_Manager : MonoBehaviour
         if (selectingSkill && SkillHighlight.activeSelf)
             SkillHighlight.transform.position = selectingSkill.transform.position;
 
-        OkButton.interactable = CharacterPrefabsStorage.Skills.Count > 0;
+        OkButton.interactable = AreDictionariesEqual(skillSaves, CharacterPrefabsStorage.Skills) == false && !IsIntroPlaying;
         SelectButton.interactable = selectingSkill && CharacterPrefabsStorage.Skills.Count < MaxSkillCount;
 
         EnterSecretCode();
+    }
+
+    bool AreDictionariesEqual<TKey, TValue>(Dictionary<TKey, TValue> dict1, Dictionary<TKey, TValue> dict2)
+    {
+        if (dict1 == null || dict2 == null)
+            return false;
+
+        if (dict1.Count != dict2.Count)
+            return false;
+
+        foreach (var pair in dict1)
+        {
+            if (!dict2.TryGetValue(pair.Key, out TValue value) || !EqualityComparer<TValue>.Default.Equals(pair.Value, value))
+                return false;
+        }
+
+        return true;
     }
 
     string PlayerInputStr = string.Empty;

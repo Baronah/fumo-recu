@@ -4,7 +4,7 @@ public class Originiutant : EnemyBase
     {
         Description = "A weaponized Originiutant mutant. Possesses an incredibly tough outer shell.";
         Skillset = "";
-        TooltipsDescription = "A weaponized Originiutant mutant. Possesses an incredibly tough outer shell.";
+        TooltipsDescription = "A weaponized Originiutant mutant. <color=yellow>Possesses an incredibly tough outer shell</color>.";
 
         base.WriteStats();
     }

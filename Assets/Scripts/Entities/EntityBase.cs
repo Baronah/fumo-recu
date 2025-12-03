@@ -9,6 +9,7 @@ using UnityEngine.UI;
 using static Cinemachine.CinemachineTargetGroup;
 using static Effect;
 using static ProjectileScript;
+using static StageManager;
 using static UnityEngine.GraphicsBuffer;
 
 public class EntityBase : MonoBehaviour
@@ -53,6 +54,25 @@ public class EntityBase : MonoBehaviour
 
     public enum DamageType { PHYSICAL, MAGICAL, TRUE }
     public DamageType damageType;
+
+    public HashSet<EnvironmentType> environmentalTilesStandingOn;
+    
+    public bool IsStandingOnEnvironmentalTile(EnvironmentType environmentType)
+    {
+        return environmentalTilesStandingOn.Contains(environmentType);
+    }
+
+    public void AddEnvironmentalTilesThisUnitStandingOn(EnvironmentType environmentType)
+    {
+        if (environmentalTilesStandingOn.Contains(environmentType)) return;
+        environmentalTilesStandingOn.Add(environmentType);
+    }
+
+    public void RemoveEnvironmentalTilesThisUnitStandingOn(EnvironmentType environmentType)
+    {
+        if (!environmentalTilesStandingOn.Contains(environmentType)) return;
+        environmentalTilesStandingOn.Remove(environmentType);
+    }
 
     public enum AttackPattern { MELEE, RANGED, NONE }
     public AttackPattern attackPattern;
@@ -114,7 +134,9 @@ public class EntityBase : MonoBehaviour
                     MspdBuffs = new(),
                     MspdDebuffs = new(),
                     AspdBuffs = new(),
-                    AspdDebuffs = new();
+                    AspdDebuffs = new(),
+                    ArngBuffs = new(),
+                    ArngDebuffs = new();
 
     private List<Effect> AllEffects()
     {
@@ -128,6 +150,8 @@ public class EntityBase : MonoBehaviour
             .Concat(MspdDebuffs.Values)
             .Concat(AspdBuffs.Values)
             .Concat(AspdDebuffs.Values)
+            .Concat(ArngBuffs.Values)
+            .Concat(ArngDebuffs.Values)
             .ToList();
     }
 
@@ -166,6 +190,8 @@ public class EntityBase : MonoBehaviour
 
         InitSpriteColor = Color.white;
         PrevPosition = transform.position;
+
+        environmentalTilesStandingOn ??= new HashSet<EnvironmentType>();
 
         health = mHealth;
         atk = bAtk;
@@ -293,6 +319,13 @@ public class EntityBase : MonoBehaviour
                     else
                         AspdDebuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
                     break;
+
+                case AffectedStat.ARNG:
+                    if (ArngDebuffs.ContainsKey(Key))
+                        ArngDebuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased, DecayOverDuration);
+                    else
+                        ArngDebuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
+                    break;
             }
         }
         else
@@ -333,6 +366,13 @@ public class EntityBase : MonoBehaviour
                     else
                         AspdBuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
                     break;
+
+                case AffectedStat.ARNG:
+                    if (ArngBuffs.ContainsKey(Key))
+                        ArngBuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased, DecayOverDuration);
+                    else
+                        ArngBuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
+                    break;
             }
         }
 
@@ -351,6 +391,8 @@ public class EntityBase : MonoBehaviour
         if (MspdDebuffs.ContainsKey(Key)) MspdDebuffs.Remove(Key);
         if (AspdBuffs.ContainsKey(Key)) AspdBuffs.Remove(Key);
         if (AspdDebuffs.ContainsKey(Key)) AspdDebuffs.Remove(Key);
+        if (ArngBuffs.ContainsKey(Key)) ArngBuffs.Remove(Key);
+        if (ArngDebuffs.ContainsKey(Key)) ArngDebuffs.Remove(Key);
         CalculateBuffsAndDebuffs();
     }
 
@@ -366,6 +408,8 @@ public class EntityBase : MonoBehaviour
         MspdDebuffs.Clear();
         AspdBuffs.Clear();
         AspdDebuffs.Clear();
+        ArngBuffs.Clear();
+        ArngDebuffs.Clear();
         CalculateBuffsAndDebuffs();
     }
 
@@ -383,19 +427,25 @@ public class EntityBase : MonoBehaviour
     }
 
     float prevAtkAdd = 0, prevDefAdd = 0, prevResAdd = 0;
-    float prevMspdAdd = 0, prevAspdAdd = 0;
+    float prevMspdAdd = 0, prevAspdAdd = 0, prevArngAdd = 0, prevDrngAdd = 0;
     public void CalculateBuffsAndDebuffs()
     {
         BDB_Cnt = 0;
         
+        EnemyBase enemyBaseCheck = this as EnemyBase;
+
         atk -= (short) prevAtkAdd;
         def -= (short) prevDefAdd;
         res -= (short) prevResAdd;
         moveSpeed -= prevMspdAdd;
         ASPD -= prevAspdAdd;
 
+        attackRange -= prevArngAdd; 
+        if (enemyBaseCheck)
+            enemyBaseCheck.detectionRange -= prevDrngAdd;
+
         prevAtkAdd = prevDefAdd = prevResAdd = 0;
-        prevMspdAdd = prevAspdAdd = 0;
+        prevMspdAdd = prevAspdAdd = prevArngAdd = prevDrngAdd = 0;
 
         // Buffs
         List<Effect> atkBuffsList = new(AtkBuffs.Values.Where(a => a.IsInEffect).ToList());
@@ -456,11 +506,33 @@ public class EntityBase : MonoBehaviour
             prevAspdAdd += a.Value;
         });
 
+
+        List<Effect> arngBuffsList = new(ArngBuffs.Values.Where(a => a.IsInEffect).ToList());
+        arngBuffsList.ForEach(a =>
+        {
+            if (a.IsPercentage)
+            {
+                prevArngAdd += b_attackRange * a.Value / 100f;
+                if (enemyBaseCheck)
+                    prevDrngAdd += enemyBaseCheck.b_detectionRange * a.Value / 100f;
+            }
+            else
+            {
+                prevArngAdd += a.Value;
+                prevDrngAdd += a.Value;
+            }
+        });
+
         float simAtk = (atk + prevAtkAdd),
-            simDef = (def + prevDefAdd),
-            simRes = (res + prevResAdd),
+             simDef = (def + prevDefAdd),
+             simRes = (res + prevResAdd),
              simMspd = moveSpeed + prevMspdAdd,
-             simAspd = ASPD + prevAspdAdd;
+             simAspd = ASPD + prevAspdAdd,
+             simArng = attackRange + prevArngAdd,
+             simDrng = 0;
+
+        if (enemyBaseCheck)
+            simDrng = enemyBaseCheck.detectionRange + prevDrngAdd;
 
         // Debuffs
         List<Effect> sortedAtkDebuffs = new(AtkDebuffs.Values.Where(a => a.IsInEffect).ToList());
@@ -545,17 +617,59 @@ public class EntityBase : MonoBehaviour
             }
         });
 
+        List<Effect> sortedArngDebuffs = new(ArngDebuffs.Values.Where(a => a.IsInEffect).ToList());
+        sortedArngDebuffs.Sort((a1, a2) => (int)(a2.Value - a1.Value));
+
+        sortedArngDebuffs.ForEach(a =>
+        {
+            if (a.IsPercentage)
+            {
+                float reduction = simArng * a.Value / 100f;
+                prevArngAdd -= reduction;
+                simArng -= reduction;
+
+                if (enemyBaseCheck)
+                {
+                    float drngReduction = simDrng * a.Value / 100f;
+                    prevDrngAdd -= drngReduction;
+                    simDrng -= drngReduction;
+                }
+            }
+            else
+            {
+                prevArngAdd -= a.Value;
+                simArng -= a.Value;
+                if (enemyBaseCheck)
+                {
+                    prevDrngAdd -= a.Value;
+                    simDrng -= a.Value;
+                }
+            }
+        });
+
         if (prevMspdAdd * -1 >= moveSpeed) prevMspdAdd = moveSpeed * -1;
         if (prevAtkAdd * -1 >= atk) prevAtkAdd = atk * -1;
         if (prevDefAdd * -1 >= def) prevDefAdd = def * -1;
         if (prevResAdd * -1 >= res) prevResAdd = res * -1;
-        if (simAspd < 20) prevAspdAdd = ASPD - 20; 
+        if (simAspd < 20) prevAspdAdd = ASPD - 20;
+
+        if (prevArngAdd * -1 >= attackRange)
+            prevArngAdd = attackRange * -1;
+
+        if (enemyBaseCheck)
+        {
+            if (prevDrngAdd * -1 >= enemyBaseCheck.detectionRange)
+                prevDrngAdd = enemyBaseCheck.detectionRange * -1;
+        }
 
         atk += (short) prevAtkAdd;
         def += (short) prevDefAdd;
         res += (short) prevResAdd;
         moveSpeed += prevMspdAdd;
         ASPD += prevAspdAdd;
+
+        attackRange += prevArngAdd;
+        if (enemyBaseCheck) enemyBaseCheck.detectionRange += prevDrngAdd;
     }
 
     private float regenTimer = 0;
@@ -650,8 +764,8 @@ public class EntityBase : MonoBehaviour
 
     public virtual IEnumerator StartMovementLockout(float m)
     {
-        StopMovement();
         MovementLockout = Mathf.Max(MovementLockout, m);
+        StopMovement();
         yield return null;
     }
 
@@ -922,11 +1036,11 @@ public class EntityBase : MonoBehaviour
 
     public virtual void OnFreezeExit()
     {
+        spriteRenderer.color = InitSpriteColor;
         if (FreezeTimer > 0f || IsStunned || IsFrozen) return;
 
         animator.SetBool("attack", false);
         FreezeTimer = 0f;
-        spriteRenderer.color = InitSpriteColor;
         animator.speed = 1f;
         ccSlider.value = 0;   
         ccBar.SetActive(false);
@@ -1015,7 +1129,11 @@ public class EntityBase : MonoBehaviour
 
     public virtual IEnumerator Attack()
     {
-        if (!CanAttack || IsAttackLocked) yield break;
+        if (!CanAttack || IsAttackLocked)
+        {
+            AttackCoroutine = null;
+            yield break;
+        }
 
         animator.SetBool("attack", true);
         LockoutMovementOnAttackCoroutine = StartCoroutine(LockoutMovementsOnAttack());
@@ -1030,7 +1148,11 @@ public class EntityBase : MonoBehaviour
     public virtual IEnumerator LockoutMovementsOnAttack()
     {
         // base example
-        if (IsAttackLocked) yield break;
+        if (IsAttackLocked)
+        {
+            LockoutMovementOnAttackCoroutine = AttackCoroutine = null;
+            yield break;
+        }
 
         StartCoroutine(StartAttackLockout(GetAttackLockoutTime()));
 
@@ -1038,6 +1160,9 @@ public class EntityBase : MonoBehaviour
 
         yield return new WaitForSeconds(GetAttackAnimationLength());
         if (!IsFrozen && !IsStunned) animator.SetBool("attack", false);
+
+        LockoutMovementOnAttackCoroutine = null;
+        AttackCoroutine = null;
     }
 
     public float GetWindupTime() => attackWindupTime * (100 / Mathf.Max(20, ASPD));
@@ -1307,7 +1432,18 @@ public class EntityBase : MonoBehaviour
         return SearchForEntitiesAroundCertainPoint(type, transform.position, r, catchInvisibles, take);
     }
 
-    public static List<EntityBase> SearchForEntitiesAroundCertainPoint(Type type, Vector2 pos, float r, bool catchInvisibles = false, short take = -1)
+    public List<EntityBase> SearchForEntitiesAroundCertainPoint(Type type, Vector2 pos, float r, bool catchInvisibles = false, short take = -1)
+    {
+        var result = Base_SearchForEntitiesAroundCertainPoint(type, pos, r, catchInvisibles, take);
+        if (!catchInvisibles && !IsStandingOnEnvironmentalTile(EnvironmentType.DARK_ZONE))
+        {
+            result = result.Where(e => e && !e.IsStandingOnEnvironmentalTile(EnvironmentType.DARK_ZONE)).ToList();
+        }
+        
+        return result;
+    }
+
+    public static List<EntityBase> Base_SearchForEntitiesAroundCertainPoint(Type type, Vector2 pos, float r, bool catchInvisibles = false, short take = -1)
     {
         Collider2D[] collider2Ds = Physics2D.OverlapCircleAll(pos, r);
         List<EntityBase> entityBases = new List<EntityBase>();
@@ -1316,12 +1452,16 @@ public class EntityBase : MonoBehaviour
         {
             EntityBase entity = collider.GetComponent<EntityBase>();
             if (!entity 
-                || !entity.IsAlive() 
-                    || (entity.isInvisible && !catchInvisibles) 
-                        || entityBases.Contains(entity)
-                            || (type != null && !type.IsAssignableFrom(entity.GetType()))) 
+                || !entity.IsComponentsInitialized
+                    || !entity.IsAlive() 
+                        || (entity.isInvisible && !catchInvisibles) 
+                            || entityBases.Contains(entity)
+                                || (type != null && !type.IsAssignableFrom(entity.GetType()))) 
                 continue;
             
+            PlayerBase pb = entity as PlayerBase;
+            if (pb && !pb.SettleSwappedInPlayer) continue;
+
             entityBases.Add(entity);
         }
 
@@ -1336,11 +1476,25 @@ public class EntityBase : MonoBehaviour
         return SearchForNearestEntityAroundCertainPoint(type, AttackPosition.position, attackRange, catchInvisible);
     }
 
-    public static EntityBase SearchForNearestEntityAroundCertainPoint(Type type, Vector2 pos, float r, bool catchInvisibles = false)
+    public static EntityBase Base_SearchForNearestEntityAroundCertainPoint(Type type, Vector2 pos, float r, bool catchInvisibles = false)
     {
-        var targets = SearchForEntitiesAroundCertainPoint(type, pos, r, catchInvisibles, 1);
-        if (targets == null || targets.Count <= 0) return null;
+        var result = Base_SearchForEntitiesAroundCertainPoint(type, pos, r, catchInvisibles, 1);
+        if (result == null || result.Count <= 0) return null;
 
-        return targets[0];
+        return result[0];
+    }
+
+    public virtual EntityBase SearchForNearestEntityAroundCertainPoint(Type type, Vector2 pos, float r, bool catchInvisibles = false)
+    {
+        var result = Base_SearchForEntitiesAroundCertainPoint(type, pos, r, catchInvisibles, 1);
+        if (result == null || result.Count <= 0) return null;
+
+        if (!catchInvisibles && !IsStandingOnEnvironmentalTile(EnvironmentType.DARK_ZONE))
+        {
+            result = result.Where(e => e && !e.IsStandingOnEnvironmentalTile(EnvironmentType.DARK_ZONE)).ToList();
+        }
+
+        if (result == null || result.Count <= 0) return null;
+        return result.Count<= 0 ? null : result[0];
     }
 }

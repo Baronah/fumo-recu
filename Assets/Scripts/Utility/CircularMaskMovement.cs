@@ -21,6 +21,12 @@ public class CircularMaskMover : MonoBehaviour
         // Calculate aspect ratio (width divided by height)
         float aspectRatio = (float)Screen.width / Screen.height;
 
+        if (!maskMaterial.HasProperty("_MainTex"))
+        { 
+            Debug.LogWarning("Material has no _MainTex property. Shader: " + maskMaterial.shader.name);
+        }
+
+
         // Update the shader's properties
         maskMaterial.SetFloat("_Radius", radius);
         maskMaterial.SetColor("_Color", new Color(0, 0, 0, bgColor));

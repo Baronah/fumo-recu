@@ -4882,6 +4882,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sudaram
       objectReference: {fileID: 0}
+    - target: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1779737740583634941, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_LocalPosition.y
       value: 1.93
@@ -5055,12 +5067,12 @@ MonoBehaviour:
   StunTimer: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 1
+  IsBeingLevitated: 0
+  LevitationEffect: {fileID: 3991348675042547751}
   reviveDuration: 5
   postReviveDuration: 0
   enemyCode: 12
-  SpotPlayerUponSpawn: 0
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
-  TooltipsPriority: 0
   TooltipsHoldtime: 6
   Description: "The Sudaram is the shroud of the dead. Once gaunt from hunger, it
     is now nourished by the power of the Nachzehrer King. For the Nachzehrer, consumption
@@ -5070,10 +5082,10 @@ MonoBehaviour:
     While standing on an <color=#CC4000>Originium Pollution</color>, stops moving
     to gain increased ASPD. Attack range becomes global, and attacks now fire several
     projectiles."
-  DetectionRange: 300
+  detectionRange: 300
+  b_detectionRange: 300
   DangerRange_RatioOfAttackRange: 0.8
   MinimumDistanceFromPlayer: 20
-  showTooltips: 0
   gridCellSize: 60
   obstacleLayer:
     serializedVersion: 2
@@ -5289,6 +5301,11 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!212 &3991348675042547751 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+  m_PrefabInstance: {fileID: 4243421152279204009}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7428814373639913365 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6772246562461740860, guid: f3221dbae6b487b49907a796747ecac4, type: 3}

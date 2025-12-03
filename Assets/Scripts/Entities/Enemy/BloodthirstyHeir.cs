@@ -46,7 +46,7 @@ public class BloodthirstyHeir : EnemyBase
         Skillset =
             "• MSPD greatly increased upon spotting the player or when injured for the first time.\n" +
             "• Attacks restore HP proportional to damage dealt.";
-        TooltipsDescription = "Melee unit, attacks deal magical damage and <color=green>heal self for a portion of damage dealt</color>. <color=yellow>Movespeed greatly increased</color> upon spotting the player or when injured for the first time.";
+        TooltipsDescription = "Attacks deal magical damage and <color=green>heal self for a portion of damage dealt</color>. <color=yellow>Movespeed greatly increased</color> upon spotting the player or when injured for the first time.";
         
         base.WriteStats();
     }

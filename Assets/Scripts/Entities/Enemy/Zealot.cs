@@ -74,7 +74,7 @@ public class Zealot : EnemyBase
             "• Has a barrier that absorbs damage.\n" +
             "• Upon losing the barrier, gains increased MSPD and ASPD, but reduced weight.\n" +
             "• When alerted by a Sentinel, the barrier will be loss instantly.";
-        TooltipsDescription = "Melee unit, attacks deal physical damage. <color=green>Has a barrier that absorbs damage</color>, and gains <color=yellow>greatly increased MSPD and ASPD</color> when the barrier is destroyed. " +
+        TooltipsDescription = "<color=green>Has a barrier that absorbs damage</color>, and gains <color=yellow>increased MSPD and ASPD</color> when the barrier is destroyed. " +
             "<color=yellow>If alerted early</color>, <color=red>forfeits</color> self barrier.";
 
         base.WriteStats();

@@ -139,6 +139,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Zealot
       objectReference: {fileID: 0}
+    - target: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1333956751212545712, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_Size.x
       value: 0.9572251
@@ -423,24 +435,22 @@ MonoBehaviour:
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 0.9
   IsBeingLevitated: 0
-  LevitationEffect: {fileID: 0}
+  LevitationEffect: {fileID: 956203906990441807}
   reviveDuration: 5
   postReviveDuration: 0
   enemyCode: 3
-  SpotPlayerUponSpawn: 0
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
-  TooltipsPriority: 0
   TooltipsHoldtime: 8
   Description: A combatant who has once in the verge of death. The dance on the edge
     of life and death has given them a unique tactical system. Through Arts Resonance,
     they are able to create a barrier that absorbs damage.
   Skillset: "\u2022 Has a barrier that absorbs damage.\n\u2022 Upon losing the barrier,
-    gains increased MSPD and ASPD.\n\u2022 When alerted by a Sentinel, the barrier
-    will be loss instantly."
-  DetectionRange: 240
+    gains increased MSPD and ASPD, but reduced weight.\n\u2022 When alerted by a
+    Sentinel, the barrier will be loss instantly."
+  detectionRange: 240
+  b_detectionRange: 240
   DangerRange_RatioOfAttackRange: 0.65
   MinimumDistanceFromPlayer: 50
-  showTooltips: 1
   gridCellSize: 60
   obstacleLayer:
     serializedVersion: 2
@@ -661,6 +671,11 @@ AudioSource:
 --- !u!1 &754730279402599387 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 773491194806959642, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+  m_PrefabInstance: {fileID: 54792048885730753}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &956203906990441807 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
   m_PrefabInstance: {fileID: 54792048885730753}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &1760994451792169532 stripped

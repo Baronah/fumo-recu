@@ -17,6 +17,8 @@ public class PlayerManager : MonoBehaviour
 
     public enum PlayerType { MELEE, RANGED }
     [SerializeField] private PlayerType playerStartType;
+    public PlayerType PlayerStartType => playerStartType;
+
     [SerializeField] private Transform PlayerSpawnpoint;
     [SerializeField] private GameObject SwapEffect;
     [SerializeField] private float SwapCooldown = 20f;
@@ -266,6 +268,7 @@ public class PlayerManager : MonoBehaviour
             this.player = player;
             virtualCamera.Follow = player.transform;
             IsStageStarted = true;
+            player.SettleSwappedInPlayer = true;
             SwapCooldownOnStart();
             return;
         }

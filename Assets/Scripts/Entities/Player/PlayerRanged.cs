@@ -62,6 +62,11 @@ public class PlayerRanged : PlayerBase
         SkillBarObj.SetActive(SkillActive);
     }
 
+    public override PlayerManager.PlayerType GetPlayerType()
+    {
+        return PlayerManager.PlayerType.RANGED;
+    }
+
     public override void InitializeComponents()
     {
         SkillBar = SkillBarObj.GetComponentInChildren<Slider>();
@@ -193,7 +198,7 @@ public class PlayerRanged : PlayerBase
 
     public override IEnumerator Attack()
     {
-        if (!IsAlive() || IsAttackLocked) yield break;
+        if (!CanAttack || IsAttackLocked) yield break;
 
         AttackRangeIndicator.SetActive(true);
         target = SearchForNearestEntityAroundCertainPoint(typeof(EnemyBase), transform.position, attackRange);
@@ -206,6 +211,7 @@ public class PlayerRanged : PlayerBase
             yield break;
         }
 
+        MovementLockout = Mathf.Max(MovementLockout, GetWindupTime() * 1.5f);
         animator.SetBool("attack", true);
         LockoutMovementOnAttackCoroutine = StartCoroutine(LockoutMovementsOnAttack());
 
@@ -333,6 +339,19 @@ public class PlayerRanged : PlayerBase
                         ApplyFreeze(enemy, freezeDuration);
                         HitThisRound.Add(nearby, freezeDuration);
                         InitialHitDictionary.Add(nearby, freezeDuration);
+
+                        if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_NORTH))
+                        {
+                            float pushDuration = distance >= FreezeRange * 0.8f
+                                ?
+                                0.1f
+                                :
+                                Mathf.Lerp(0.12f, 0.23f, MinDistanceForFreezeDuration * 1.0f / distance);
+
+                            PushEntityFrom(enemy, InitHitEnemyHit.transform, 1.5f, pushDuration);
+                        }
+                        else if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_SOUTH))
+                            PullEntityTowards(enemy, InitHitEnemyHit.transform, 2f, 0.25f);
                     }
                 }
 
@@ -723,28 +742,28 @@ public class PlayerRanged : PlayerBase
         {
             info.SpecialName = "Zeropoint Burst - Snow Blossom";
             info.SpecialText =
-                $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds based on distance. Frozen enemies continues to " +
+                $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds, inversely based on distance. Frozen enemies continues to " +
                 $"create an extra freeze ring around their position (trigger once per enemy) ";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_CHARGE))
         {
             info.SpecialName = "Zeropoint Burst - Hypercharge";
             info.SpecialText =
-                $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds based on distance. Every enemy hit " +
+                $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds, inversely based on distance. Every enemy hit " +
                 $"shortens the cool-down of the next usage by 15%";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_SUPERCONDUCT))
         {
             info.SpecialName = "Zeropoint Burst - Superconduct";
             info.SpecialText =
-                $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds based on distance " +
+                $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds, inversely based on distance " +
                 $"and reduce their DEF and RES by 50% for equivalent duration";
         }
         else
         {
             info.SpecialName = "Zeropoint Burst";
             info.SpecialText =
-                $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds based on distance";
+                $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds (closer enemies are frozen for longer)";
         }
 
         if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_NORTH))

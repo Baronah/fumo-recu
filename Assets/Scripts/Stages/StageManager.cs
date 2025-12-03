@@ -69,6 +69,7 @@ public class StageManager : MonoBehaviour
         ONE_WAY_PASSAGE,
         HEAT_PUMP_VENT,
         MEDICAL_TILE,
+        DARK_ZONE,
     };
 
     public EnvironmentType[] StageEvironmentTypes;
@@ -253,7 +254,7 @@ public class StageManager : MonoBehaviour
                     break;
                 case SkillName.OBSCURE_VISION:
                     enemy.b_attackRange *= 0.8f;
-                    enemy.DetectionRange *= 0.8f;
+                    enemy.detectionRange *= 0.8f;
                     break;
                 case SkillName.HUNGER:
                     enemy.bAtk = (short)(enemy.bAtk * 1.5f);

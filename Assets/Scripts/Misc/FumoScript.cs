@@ -71,7 +71,7 @@ public class FumoScript : MonoBehaviour
         {
             yield return new WaitForSeconds(0.5f);
 
-            var player = EntityBase.SearchForNearestEntityAroundCertainPoint(typeof(PlayerBase), transform.position, SkillRange, true);
+            var player = EntityBase.Base_SearchForNearestEntityAroundCertainPoint(typeof(PlayerBase), transform.position, SkillRange, true);
             if (!player)
             {
                 continue;

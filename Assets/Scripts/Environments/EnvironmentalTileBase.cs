@@ -33,8 +33,14 @@ public class EnvironmentalTileBase : MonoBehaviour
         }
     }
 
+    public bool IsEntityWithin(EntityBase entity)
+    {
+        return entitiesWithin.Contains(entity);
+    }
+
     public virtual void OnEntityEnter(EntityBase entity)
     {
+        entity.AddEnvironmentalTilesThisUnitStandingOn(GetEnvironmentType());
         entitiesWithin.Add(entity);
         if (entity is PlayerBase pb)
         {
@@ -51,6 +57,8 @@ public class EnvironmentalTileBase : MonoBehaviour
 
     public virtual void OnEntityStay(EntityBase entity)
     {
+        entity.AddEnvironmentalTilesThisUnitStandingOn(GetEnvironmentType());
+
         if (entity is PlayerBase pb)
         {
             if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_B))
@@ -66,6 +74,7 @@ public class EnvironmentalTileBase : MonoBehaviour
 
     public virtual void OnEntityExit(EntityBase entity)
     {
+        entity.RemoveEnvironmentalTilesThisUnitStandingOn(GetEnvironmentType());
         entitiesWithin.Remove(entity);
     }
 

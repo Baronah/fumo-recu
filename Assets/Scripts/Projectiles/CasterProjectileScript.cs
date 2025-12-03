@@ -27,18 +27,37 @@ public class CasterProjectileScript : ProjectileScript
     {
         if (ProjectileFirer)
         {
+            bool ragingTerrain = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.TERRAIN);
+            float value;
+
             switch (contactedEnvironmentType)
             {
                 case EnvironmentType.ORIGINIUM_TILE:
-                    DamageInstance.TrueDamage += (int)(Mathf.Max(1, DamageInstance.TotalDamage * 0.35f));
+                    value = 0.3f;
+                    if (ragingTerrain) value *= 2;
+
+                    DamageInstance.TrueDamage += (int)(Mathf.Max(1, DamageInstance.TotalDamage * value));
                     break;
 
                 case EnvironmentType.MEDICAL_TILE:
-                    ProjectileFirer.Heal(ProjectileFirer.mHealth * 0.04f);
+                    value = 0.04f;
+                    if (ragingTerrain) value *= 2;
+
+                    ProjectileFirer.Heal(ProjectileFirer.mHealth * value);
                     break;
 
                 case EnvironmentType.HEAT_PUMP_VENT:
-                    ProjectileFirer.PushEntityFrom(target, ProjectileFirer.GetAttackPosition(), 1f, 0.1f);
+                    value = 1f;
+                    if (ragingTerrain) value *= 2;
+
+                    ProjectileFirer.PushEntityFrom(target, ProjectileFirer.GetAttackPosition(), value, 0.1f);
+                    break;
+
+                case EnvironmentType.DARK_ZONE:
+                    value = 2f;
+                    if (ragingTerrain) value *= 2;
+
+                    target.ApplyEffect(Effect.AffectedStat.ARNG, "DARK_ZONE_CASTER_HIT_DEBUFF", -100f, value, true);
                     break;
             }
         }
@@ -64,6 +83,7 @@ public class CasterProjectileScript : ProjectileScript
                     EnvironmentType.ORIGINIUM_TILE => new(0.72f, 0, 0),
                     EnvironmentType.MEDICAL_TILE => new(0, 0.72f, 0.13f),
                     EnvironmentType.HEAT_PUMP_VENT => Color.yellow,
+                    EnvironmentType.DARK_ZONE => Color.black,
                     _ => Color.white,
                 };
 
@@ -74,6 +94,7 @@ public class CasterProjectileScript : ProjectileScript
                     EnvironmentType.ORIGINIUM_TILE => new(0.72f, 0, 0, 0.6f),
                     EnvironmentType.MEDICAL_TILE => new(0, 0.72f, 0.13f, 0.6f),
                     EnvironmentType.HEAT_PUMP_VENT => new(Color.yellow.r, Color.yellow.g, Color.yellow.b, 0.6f),
+                    EnvironmentType.DARK_ZONE => new(Color.black.r, Color.black.g, Color.black.b, 0.6f),
                     _ => Color.white,
                 };
 

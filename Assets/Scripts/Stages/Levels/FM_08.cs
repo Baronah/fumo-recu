@@ -33,7 +33,7 @@ public class FM_08 : StageManager
         base.OnEnemySpawn(enemy);
 
         if (enemy.attackPattern == EntityBase.AttackPattern.MELEE)
-            enemy.DetectionRange += 70f;
+            enemy.detectionRange += 70f;
 
         if (enemy is Wetwork w)
         {

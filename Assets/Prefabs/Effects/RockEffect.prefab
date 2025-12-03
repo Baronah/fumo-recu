@@ -98,4 +98,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MaxScale: {x: 125, y: 125, z: 125}
-  Duration: 0.35
+  Duration: 0.4

@@ -2,10 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static PlayerManager;
 using static SkillTree_Manager;
 
 public class PlayerBase : EntityBase
 {
+    public bool SettleSwappedInPlayer = false;
     public LayerMask ObstacleLayers;
     public Sprite AttackSprite, SkillSprite, SpecialSprite;
     public string AttackDes, SkillName, SkillDes, SpecialName, SpecialDes;
@@ -22,6 +24,11 @@ public class PlayerBase : EntityBase
     public Vector3 Feetposition => TransformFeetposition.position;
 
     public List<SkillName> Skills = new();
+
+    public virtual PlayerType GetPlayerType()
+    {
+        return playerManager.PlayerStartType;
+    }
 
     private void Update()
     {
@@ -45,9 +52,9 @@ public class PlayerBase : EntityBase
         playerManager.Register(this);
 
         SetInvulnerable(1f);
-        IsComponentsInitialized = true;
 
         OnFieldEnter();
+        IsComponentsInitialized = true;
     }
 
     public override void FixedUpdate()
@@ -137,6 +144,24 @@ public class PlayerBase : EntityBase
                     ASPD += 5;
                     b_moveSpeed += b_moveSpeed * 0.052f;
                     break;
+
+                case SkillTree_Manager.SkillName.HAIR_RIBBON:
+                    PlayerType playerType = GetPlayerType();
+
+                    if (CharacterPrefabsStorage.startingPlayer == playerType)
+                    {
+                        bAtk = (short)(bAtk * 1.25f);
+
+                        if (playerType == PlayerType.MELEE)
+                        {
+                            bRes += 15;
+                        }
+                        else if (playerType == PlayerType.RANGED)
+                        {
+                            b_moveSpeed += b_moveSpeed * 0.12f;
+                        }
+                    }
+                    break;
             }
         }
     }
@@ -144,6 +169,8 @@ public class PlayerBase : EntityBase
     public virtual void OnFieldSwapOut(PlayerBase swapInPlayer)
     {
         swapInPlayer.timerSinceLastAttack = timerSinceLastAttack;
+        swapInPlayer.environmentalTilesStandingOn = new(this.environmentalTilesStandingOn);
+        swapInPlayer.SettleSwappedInPlayer = true;
     }
 
     protected virtual void GetControlInputs()
@@ -188,7 +215,10 @@ public class PlayerBase : EntityBase
     {
         if (!CanAttack || IsAttackLocked) yield break;
 
-        StartCoroutine(base.Attack());
+        MovementLockout = Mathf.Max(MovementLockout, GetWindupTime() * 1.5f);
+
+        animator.SetBool("attack", true);
+        LockoutMovementOnAttackCoroutine = StartCoroutine(LockoutMovementsOnAttack());
     }
 
     public override IEnumerator OnAttackComplete()
