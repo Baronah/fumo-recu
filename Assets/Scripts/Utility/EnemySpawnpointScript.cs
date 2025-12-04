@@ -18,7 +18,7 @@ public class EnemySpawnpointScript : MonoBehaviour
 
     [SerializeField] protected float InitDelay = 0f;
 
-    [SerializeField] protected bool spotPlayerUponSpawn = false, immediateSpawn = false, showTooltips;
+    [SerializeField] public bool spotPlayerUponSpawn = false, immediateSpawn = false, showTooltips;
     [SerializeField] protected short InitTooltipsPriority = 0;
     [SerializeField] public List<EnemyCheckpointScript> enemyCheckpoints;
     [SerializeField] protected float InitWaittime;

@@ -624,9 +624,7 @@ MonoBehaviour:
   reviveDuration: 5
   postReviveDuration: 0
   enemyCode: 2
-  SpotPlayerUponSpawn: 0
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
-  TooltipsPriority: 0
   TooltipsHoldtime: 5.5
   Description: They are responsible for scouting, patrolling, and issuing early warnings
     to the entire squad. Once spotting intruder, the Herald will immediately issue
@@ -634,10 +632,10 @@ MonoBehaviour:
   Skillset: "\u2022 Unable to attack.\n\u2022 Upon spotting the player, raises an
     alarm that increases the ATK and MSPD of all presenting enemies, and makes them
     to also spot the player immediately."
-  DetectionRange: 450
+  detectionRange: 450
+  b_detectionRange: 450
   DangerRange_RatioOfAttackRange: 0
   MinimumDistanceFromPlayer: 20
-  showTooltips: 1
   gridCellSize: 60
   obstacleLayer:
     serializedVersion: 2

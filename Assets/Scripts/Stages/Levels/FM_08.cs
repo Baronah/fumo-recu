@@ -1,13 +1,14 @@
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
 public class FM_08 : StageManager
 {
-    [SerializeField] private GameObject laterSpawn, Vents;
+    [SerializeField] private GameObject laterSpawn;
     private List<EndlessEnemySpawn> EndlessSpawns;
 
-    [SerializeField] private TMP_Text timerText;
+    [SerializeField] private TMP_Text timerText, completeCond;
     [SerializeField] private float targetTimer = 240f;
     [SerializeField] private float laterSpawnsActivateTimegate = 120f, modifySpawnInterval = 45f;
     float stageTimer = 0;
@@ -24,8 +25,19 @@ public class FM_08 : StageManager
     public override void EnableChallengeMode()
     {
         base.EnableChallengeMode();
-        if (CharacterPrefabsStorage.EnableChallengeMode) Vents.SetActive(true);
-        else Destroy(Vents);
+        if (CharacterPrefabsStorage.EnableChallengeMode)
+        {
+            StageCompleteConditionType = StageCompleteCondition.PROTECT_FUMO;
+            EndlessSpawns.ForEach(s => s.spotPlayerUponSpawn = false);
+            fumo.GetComponent<Collider2D>().enabled = true;
+        }
+
+        completeCond.text = StageCompleteConditionType == StageCompleteCondition.PROTECT_FUMO ?
+            "Goal: <color=yellow>Protect the Fumo</color></b>" 
+            : "Goal: <color=yellow>Survive until time runs out</color></b>";
+
+        float countTimer = targetTimer - stageTimer;
+        timerText.text = $"{Mathf.FloorToInt(countTimer / 60):00}:{Mathf.FloorToInt(countTimer % 60):00}";
     }
 
     public override void OnEnemySpawn(EnemyBase enemy)
@@ -119,6 +131,8 @@ public class FM_08 : StageManager
                 {
                     spawn.enemyPrefabs.Clear();
                     spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUM_SPIDER);
+                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUM_SPIDER);
+                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUM_SPIDER);
                     spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUM_SPIDER_ALPHA);
                 }
                 break;
@@ -135,23 +149,15 @@ public class FM_08 : StageManager
             case 5:
                 foreach (var spawn in EndlessSpawns)
                 {
-                    spawn.enemyPrefabs.Clear();
                     spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.BLOODBOIL_KNIGHT);
+                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.BLOODBOIL_KNIGHT);
+                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUTANT);
                 }
                 break;
             case 6:
                 foreach (var spawn in EndlessSpawns)
                 {
-                    spawn.enemyPrefabs.Clear();
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUM_SPIDER_ALPHA);
-                }
-                break;
-            case 7:
-                foreach (var spawn in EndlessSpawns)
-                {
-                    spawn.enemyPrefabs.Clear();
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.HEIR);
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUM_SPIDER_ALPHA);
+                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.SUDARAM);
                     spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.SUDARAM);
                 }
                 break;

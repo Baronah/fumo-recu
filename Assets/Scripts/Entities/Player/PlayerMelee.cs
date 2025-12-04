@@ -483,7 +483,7 @@ public class PlayerMelee : PlayerBase
     {
         if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_AFTERSHOCK) && damageTakenDuringSkill > 0)
         {
-            Shock.Play();
+            if (Shock) Shock.Play();
             SkillEffect.GetComponent<SpriteRenderer>().color = SkillEffectColor;
             Instantiate(AftershockEffect, transform.position, Quaternion.identity);
             Instantiate(AftershockEffect_2, transform.position, Quaternion.identity);

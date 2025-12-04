@@ -350,19 +350,17 @@ MonoBehaviour:
   reviveDuration: 5
   postReviveDuration: 0
   enemyCode: 5
-  SpotPlayerUponSpawn: 0
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
-  TooltipsPriority: 0
   TooltipsHoldtime: 6
   Description: A reowned knight from the Bloodboil Knightclub. The Bloodboil Knights
     have long been known for their ferocity and aggression, from trainees to knight
     nobles. Whenever one of their brothers falls, they gain courage and combat prowess.
   Skillset: "\u2022 Every time an enemy is defeated, ATK, ASPD and MSPD are increased.
     This effect stacks up to 10 times."
-  DetectionRange: 200
+  detectionRange: 200
+  b_detectionRange: 200
   DangerRange_RatioOfAttackRange: 0.85
   MinimumDistanceFromPlayer: 50
-  showTooltips: 0
   gridCellSize: 60
   obstacleLayer:
     serializedVersion: 2

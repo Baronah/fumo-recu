@@ -58,6 +58,7 @@ public class StageManager : MonoBehaviour
         ELIMINATE_ALL_ENEMIES,
         RETRIEVE_FUMO,
         PROTECT_FUMO,
+        SURVIVE_FOR_GIVEN_TIME,
     };
 
     public StageCompleteCondition StageCompleteConditionType = StageCompleteCondition.ELIMINATE_ALL_ENEMIES;
@@ -451,6 +452,7 @@ public class StageManager : MonoBehaviour
         FUMO_RETRIEVED,
         FUMO_PROTECTED,
         FUMO_LOST,
+        PLAYER_SURVIVED,
     }
     public virtual void OnStageEnd(ResultType resultType)
     {
@@ -458,7 +460,7 @@ public class StageManager : MonoBehaviour
         IsStageEnd = true;
         FindObjectsOfType<EnemySpawnpointScript>().ToList().ForEach(e => e.enabled = false);
         
-        IsResultVitory = resultType == ResultType.ENEMIES_DEFEATED || resultType == ResultType.FUMO_RETRIEVED || resultType == ResultType.FUMO_PROTECTED;
+        IsResultVitory = resultType == ResultType.ENEMIES_DEFEATED || resultType == ResultType.FUMO_RETRIEVED || resultType == ResultType.FUMO_PROTECTED || resultType == ResultType.PLAYER_SURVIVED;
 
         TMP_Text text = pauseOverlay.GetComponentInChildren<TMP_Text>();
         text.text = resultType switch
@@ -471,6 +473,10 @@ public class StageManager : MonoBehaviour
                 CharacterPrefabsStorage.EnableChallengeMode
                     ? "<color=#ff3b3b>Challenge Completed!</color>"
                     : "<color=green>Fumo Retrieved!</color>",
+            ResultType.PLAYER_SURVIVED =>
+                    CharacterPrefabsStorage.EnableChallengeMode
+                    ? "<color=#ff3b3b>Challenge Completed!</color>"
+                    : "<color=green>Stage Completed!</color>",
             ResultType.FUMO_PROTECTED => 
                 CharacterPrefabsStorage.EnableChallengeMode
                     ? "<color=#ff3b3b>Challenge Completed!</color>"
@@ -611,7 +617,8 @@ public class StageManager : MonoBehaviour
 
     public void OnPlayerFumoProtected(FumoScript FumoObj)
     {
-        if (StageCompleteConditionType != StageCompleteCondition.PROTECT_FUMO) return;
+        if (StageCompleteConditionType != StageCompleteCondition.PROTECT_FUMO 
+            && StageCompleteConditionType != StageCompleteCondition.SURVIVE_FOR_GIVEN_TIME) return;
 
         playerManager.enabled = playerManager.activePlayer.enabled = FumoObj.enabled = false;
 

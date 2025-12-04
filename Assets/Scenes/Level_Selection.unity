@@ -22469,9 +22469,9 @@ MonoBehaviour:
   - The present. Everyday. And time. I will run through them all.\n<color=yellow>Your
     units have increased MSPD in this level.</color>\n<color=red>The 'Sudarim' are
     immune to damage from Originium Pollutions.</color>
-  - The enemies are trying to steal the Fumo away, but violence still gets the better
-    of them.\n<color=yellow>Swap cool-down is halved in this level. And your units
-    have greatly increased attributes.</color>
+  - Even those small fingers, were like light to me.\nHold the time tight when we
+    lived together.\nOur life go on.\n<color=yellow>Swap cool-down is halved in this
+    level. And your units have greatly increased attributes.</color>
   - Won't you set him free?
   - Even in the light, even in darkness, surely...
   ChallengeModes:
@@ -22487,10 +22487,10 @@ MonoBehaviour:
     increased ASPD.
   - Terrain and enemies will differ in places.
   - One 'Sudaram' has different starting position.
-  - '''Heatpump Vents'' will present.'
+  - Enemies will try to steal the Mint Fumo instead.
   - Additional enemies will appear.
   - 
-  CompleteCondition: 0100000001000000010000000000000001000000010000000000000001000000020000000000000001000000
+  CompleteCondition: 0100000001000000010000000000000001000000010000000000000001000000030000000000000001000000
   Environments:
   - Environments: 
   - Environments: 00000000

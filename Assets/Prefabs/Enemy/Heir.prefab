@@ -328,19 +328,17 @@ MonoBehaviour:
   reviveDuration: 5
   postReviveDuration: 0
   enemyCode: 4
-  SpotPlayerUponSpawn: 0
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
-  TooltipsPriority: 0
   TooltipsHoldtime: 6
   Description: Creature from the unknown, adapting blood as their only source of
     food. They always thirst for more blood, strengthening themselves by stealing
     the blood of others.
   Skillset: "\u2022 MSPD greatly increased upon spotting the player or when injured
     for the first time.\n\u2022 Attacks restore HP proportional to damage dealt."
-  DetectionRange: 110
+  detectionRange: 110
+  b_detectionRange: 110
   DangerRange_RatioOfAttackRange: 1
   MinimumDistanceFromPlayer: 10
-  showTooltips: 1
   gridCellSize: 60
   obstacleLayer:
     serializedVersion: 2

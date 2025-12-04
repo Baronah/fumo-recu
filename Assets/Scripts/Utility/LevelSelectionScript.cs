@@ -268,7 +268,8 @@ public class LevelSelectionScript : MonoBehaviour
             {
                 StageCompleteCondition.ELIMINATE_ALL_ENEMIES => "<color=red><Annihilation></color> Eliminate all enemies to complete the stage.",
                 StageCompleteCondition.RETRIEVE_FUMO => "<color=#00ffb7><Rescue></color> Reach the location of the Fumo to complete the stage.",
-                StageCompleteCondition.PROTECT_FUMO => "<color=yellow><Defense></color> Protect the Fumo from enemies until the time runs out to complete the stage.",
+                StageCompleteCondition.SURVIVE_FOR_GIVEN_TIME => "<color=yellow><Survive></color> Survive until the time runs out to complete the stage.",
+                StageCompleteCondition.PROTECT_FUMO => "<color=yellow><Protect></color> Protect the Fumo from enemies until the time runs out to complete the stage.",
                 _ => "Unknown condition"
             };
 
