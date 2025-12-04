@@ -330,21 +330,22 @@ public class EnemyBase : EntityBase
                 return playerPos - dirToPlayer;
 
             case AttackPattern.RANGED:
-                bool PlayerIsNearby = DetectPlayer(DangerRange_RatioOfAttackRange * attackRange, false) != null;
+                var playerInRange = DetectPlayer(attackRange, false);
+                bool PlayerIsNearby = playerInRange != null && Vector2.Distance(enemyPos, playerPos) <= attackRange * DangerRange_RatioOfAttackRange;
                 if (PlayerIsNearby)
                 {
                     enemyPos = transform.position;
                     Vector2 dirAwayFromPlayer = (enemyPos - playerPos).normalized;
                     return enemyPos + dirAwayFromPlayer * (attackRange * DangerRange_RatioOfAttackRange);
                 }
-                else if (RecentlyScannedPlayer)
+                else if (RecentlyScannedPlayer && playerInRange)
                 {
                     return enemyPos;
                 }
                 else
                 {
                     dirToPlayer = (playerPos - enemyPos).normalized;
-                    return playerPos - dirToPlayer * (attackRange * DangerRange_RatioOfAttackRange);
+                    return playerPos - dirToPlayer;
                 }
 
             default:

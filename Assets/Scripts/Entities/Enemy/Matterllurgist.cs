@@ -3,22 +3,15 @@ using UnityEngine;
 
 public class Matterllurgist : EnemyBase
 {
-    [SerializeField] private Transform ProjectilePosition;
-
-    public override void FlipAttackPosition()
-    {
-        base.FlipAttackPosition();
-        ProjectilePosition.localPosition = new Vector3(
-            -ProjectilePosition.localPosition.x,
-            ProjectilePosition.localPosition.y,
-            ProjectilePosition.localPosition.z
-        );
-    }
-
+    bool gainedASPD = false;
     public override void OnFirsttimePlayerSpot(bool viaAlert = false)
     {
         base.OnFirsttimePlayerSpot(viaAlert);
-        if (viaAlert) ASPD += 200f;
+        if (viaAlert && !gainedASPD)
+        {
+            ASPD += 200f;
+            gainedASPD = true;
+        }
     }
 
     public override IEnumerator OnAttackComplete()
