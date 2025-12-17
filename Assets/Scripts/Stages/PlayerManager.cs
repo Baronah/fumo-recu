@@ -356,12 +356,12 @@ public class PlayerManager : MonoBehaviour
     public IEnumerator Cooldown(Image CD, float duration, float init = 0)
     {
         TMP_Text Count = CD.GetComponentInChildren<TMP_Text>();
-        float c = init;
-        while (c < duration)
+        float cooldownTimer = init;
+        while (cooldownTimer < duration)
         {
-            CD.fillAmount = Mathf.Lerp(1, 0, c * 1.0f / duration);
-            Count.text = Math.Round(duration - c, 1) + "s";
-            c += Time.deltaTime;
+            CD.fillAmount = Mathf.Lerp(1, 0, cooldownTimer * 1.0f / duration);
+            Count.text = Math.Round(duration - cooldownTimer, 1) + "s";
+            cooldownTimer += Time.deltaTime;
             yield return null;
         }
 

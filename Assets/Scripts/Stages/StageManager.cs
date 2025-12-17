@@ -77,6 +77,35 @@ public class StageManager : MonoBehaviour
 
     private PlayerManager playerManager;
 
+    private TMP_Text TxtTips;
+    private readonly string[] Tips =
+    {
+        "Obstacles can block the enemy's sight of view.",
+        "Overflowing swap CD will be counted toward charges (up to 2, indicated by the green diamond on top of your swap character). " +
+            "When available, the next swap will consume a charge, but have no CD.",
+        "Buffs are carried across swaps, debuffs are not.",
+        "Swap refreshes all CDs of your character, and gives them a small window of invulnerability.",
+        "Ranged enemies tend to have larger detection range than melee.",
+        "Upgrades are temporary and will be resetted upon stage completion.",
+        "Enemies that spotted you can alert their nearby allies.",
+        "Enemies that are under the effect of crowd-control\ncan not attack nor detect you.",
+        "Long-ranged enemies will try to keep distance in combat.",
+        "When a patrolling enemy is attacked,\nthey and their nearby allies will try to rush toward the direction of the attack.",
+        "Make good use of terrains and map layout to gain advantages in combat!",
+    };
+
+    private readonly string[] Trolls =
+    {
+        "As a geology researcher, throughout the course of her on-site investigations, Mint has gradually picked up on a few practical tricks for making use of reasonable terrain to dispatch danger. When you're surrounded by a huge crowd of enemies, don't panic, get ready to cast, and find just the right time and place–now! Come on, then, you!",
+        "Everyone likes Mint Arknights.",
+        "Build your Mint Arknights.",
+        "Tsukiyoi refers to the yoizuki in Japanese, the early evening moon of August which is also called the yuzuki.",
+        "ASIAN KUNG-FU GENERATION my beloved.",
+        "Nicho5.",
+        "I never troll.",
+        "Sorry, Amanai. I'm not even angry over you right now. I bear no grudge against anyone. It's just that the world feels so, so wonderful right now. \"Throughout Heaven and Earth, I alone am the honored one\". However, even in the Gojo clan only a scant few know about this. Take the amplified and the reversal, then combine those two different expressions of infinity to create and push out imaginary mass. Imaginary technique... Purple.",
+
+    };
 
     bool IsStageReady = false,
         IsStageEnd = false,
@@ -95,6 +124,14 @@ public class StageManager : MonoBehaviour
         o_RetryBtn.onClick.AddListener(RetryStage);
         PauseButton.GetComponent<Button>().onClick.AddListener(TogglePauseStage);
 
+        TxtTips = GameObject.Find("Tips").GetComponent<TMP_Text>();
+
+        int tipCount = PlayerPrefs.GetInt("TipsCounter", 0);
+        bool IsTroll = tipCount >= 7 && Random.Range(0, 100) <= 10;
+        TxtTips.text = "<b>TIPS:</b> " + 
+            (IsTroll ? Trolls[Random.Range(0, Trolls.Length)] : Tips[Random.Range(0, Tips.Length)]);
+        PlayerPrefs.SetInt("TipsCounter", tipCount + 1);
+        PlayerPrefs.Save();
 
         StartCoroutine(OnStartOverlayFadeout());
 
@@ -250,8 +287,7 @@ public class StageManager : MonoBehaviour
             switch (skill)
             {
                 case SkillName.GRAVITY:
-                    float mspdReduction = 12f + enemy.weight * 3f;
-                    enemy.ApplyEffect(Effect.AffectedStat.MSPD, "GRAVITY_DEBUFF", mspdReduction, 9999f, true);
+                    for (int i = 1; i <= enemy.weight; ++i) enemy.b_moveSpeed *= 0.9f;
                     break;
                 case SkillName.OBSCURE_VISION:
                     enemy.b_attackRange *= 0.8f;
@@ -274,8 +310,7 @@ public class StageManager : MonoBehaviour
             switch (skill)
             {
                 case SkillName.GRAVITY:
-                    float mspdReduction = 12f + player.weight * 3f;
-                    player.ApplyEffect(Effect.AffectedStat.MSPD, "GRAVITY_DEBUFF", mspdReduction, 9999f, true);
+                    for (int i = 1; i <= player.weight; ++i) player.b_moveSpeed *= 0.9f;
                     break;
                 case SkillName.OBSCURE_VISION:
                     player.b_attackRange *= 0.8f;

@@ -19,18 +19,21 @@ public class Effect
     public float Value, Duration;
     public bool IsPercentage;
     public bool DecayOverDuration;
+    public bool TransferOnSwap = true;
 
     private float InitValue, InitDuration;
 
     public bool IsInEffect => Helder != null && Value > 0f && Duration > 0f;
 
-    public Effect(EntityBase helder, float value, float duration, bool isPercentage, bool decayOverDuration)
+    public Effect(EntityBase helder, AffectedStat affectedStat, float value, float duration, bool isPercentage, bool decayOverDuration, bool transferOnSwap)
     {
         Helder = helder;
         InitValue = Value = value;
         InitDuration = Duration = duration;
         IsPercentage = isPercentage;
         DecayOverDuration = decayOverDuration;
+        TransferOnSwap = transferOnSwap;
+        this.affectedStat = affectedStat;
     }
 
     public void Decay()
@@ -39,9 +42,9 @@ public class Effect
         Value = Mathf.Lerp(0, InitValue, Duration * 1.0f / InitDuration);
     }
 
-    public void Instantiate(EntityBase helder, float value, float duration, bool isPercentage, bool decayOverDuration = false)
+    public void Instantiate(EntityBase helder, AffectedStat affectedStat, float value, float duration, bool isPercentage, bool decayOverDuration = false, bool transferOnSwap = true)
     {
-        Instantiate(new(helder, value, duration, isPercentage, decayOverDuration));
+        Instantiate(new(helder, affectedStat, value, duration, isPercentage, decayOverDuration, transferOnSwap));
     }
 
     public void Instantiate(Effect effect)
@@ -54,6 +57,8 @@ public class Effect
         InitDuration = Duration = effect.Duration;
         IsPercentage = effect.IsPercentage;
         DecayOverDuration = effect.DecayOverDuration;
+        TransferOnSwap = effect.TransferOnSwap;
+        affectedStat = effect.affectedStat;
     }
 
     public bool IsGreaterThan(Effect other)

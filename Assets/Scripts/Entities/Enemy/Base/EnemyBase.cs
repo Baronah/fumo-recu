@@ -24,6 +24,10 @@ public class EnemyBase : EntityBase
         ORIGINIUM_SPIDER_ALPHA,
         SUDARAM,
         SHROUDED_ASSASSIN,
+        HIBERNATOR_KNIGHT,
+        GLOOMPINCER,
+        CANDLE_KNIGHT,
+        TOY,
     }
 
     public EnemyCode enemyCode;
@@ -315,7 +319,13 @@ public class EnemyBase : EntityBase
     {
         if (!SpottedPlayer) return FeetPosition.position;
 
-        bool playerIsFarAway = isUsingPathfinding || Vector2.Distance(transform.position, SpottedPlayer.transform.position) > attackRange * 1.2f;
+        var playerInRange = DetectPlayer(attackRange, false);
+        bool playerIsFarAway = 
+            playerInRange == null 
+            ||
+            isUsingPathfinding 
+            || 
+            Vector2.Distance(transform.position, SpottedPlayer.transform.position) > attackRange * 1.2f;
 
         Vector2 playerPos = playerIsFarAway ? SpottedPlayer.Feetposition : SpottedPlayer.transform.position;
         Vector2 enemyPos = playerIsFarAway ? FeetPosition.position : AttackPosition.position;
@@ -326,11 +336,9 @@ public class EnemyBase : EntityBase
                 float distanceToPlayer = Vector2.Distance(enemyPos, playerPos);
                 if (distanceToPlayer <= attackRange * DangerRange_RatioOfAttackRange) return enemyPos;
 
-                Vector2 dirToPlayer = (playerPos - enemyPos).normalized;
-                return playerPos - dirToPlayer;
+                return playerPos;
 
             case AttackPattern.RANGED:
-                var playerInRange = DetectPlayer(attackRange, false);
                 bool PlayerIsNearby = playerInRange != null && Vector2.Distance(enemyPos, playerPos) <= attackRange * DangerRange_RatioOfAttackRange;
                 if (PlayerIsNearby)
                 {
@@ -344,8 +352,7 @@ public class EnemyBase : EntityBase
                 }
                 else
                 {
-                    dirToPlayer = (playerPos - enemyPos).normalized;
-                    return playerPos - dirToPlayer;
+                    return playerPos;
                 }
 
             default:
@@ -507,15 +514,14 @@ public class EnemyBase : EntityBase
         }
 
         StartCoroutine(TemporarilyDisableHitbox());
-        stuckTimer = 0;
-
-        /***************
          
         // Force path recalculation
         currentPath.Clear();
         currentWaypointIndex = 0;
         lastPathUpdateTime = 0f;
         stuckTimer = 0f;
+
+        /*************************
 
         // Try a different approach - move slightly away from current position
         Vector2 randomDirection = UnityEngine.Random.insideUnitCircle.normalized;
@@ -658,13 +664,13 @@ public class EnemyBase : EntityBase
         {
             if (!spottedViaAlert && !CanDetectThroughWalls)
             {
-                float distance = Vector3.Distance(RecentlyScannedPlayer.transform.position, transform.position);
-                if (distance > Mathf.Max(100f, detectionRange * 0.3f))
+                float distance = Vector3.Distance(RecentlyScannedPlayer.Feetposition, FeetPosition.position);
+                if (distance > Mathf.Max(100f, detectionRange * 0.25f))
                 {
                     var checkObstacle = Physics2D.Raycast(
                         transform.position,
-                        (RecentlyScannedPlayer.transform.position - transform.position).normalized,
-                        distance - 65f,
+                        (RecentlyScannedPlayer.Feetposition - FeetPosition.position).normalized,
+                        distance - 50f,
                         obstacleLayer);
 
                     if (checkObstacle.collider != null && !colliders.Contains(checkObstacle.collider))
@@ -748,12 +754,12 @@ public class EnemyBase : EntityBase
 
     public PlayerBase DetectPlayer(float radius, bool catchInvisible = false)
     {
-        return (PlayerBase)SearchForNearestEntityAroundCertainPoint(typeof(PlayerBase), SpottedPlayer ? AttackPosition.position : transform.position, radius, catchInvisible);
+        return (PlayerBase)SearchForNearestEntityAroundCertainPoint(typeof(PlayerBase), AttackPosition.position, radius, catchInvisible);
     }
 
     public PlayerBase DetectPlayer(bool catchInvisible = false)
     {
-        return (PlayerBase)SearchForNearestEntityAroundCertainPoint(typeof(PlayerBase), SpottedPlayer ? AttackPosition.position : transform.position, SpottedPlayer ? attackRange : detectionRange, catchInvisible);
+        return (PlayerBase)SearchForNearestEntityAroundCertainPoint(typeof(PlayerBase), AttackPosition.position, SpottedPlayer ? attackRange : detectionRange, catchInvisible);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -916,7 +922,7 @@ public class EnemyBase : EntityBase
 
         // Draw detection and attack ranges
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, detectionRange);
+        Gizmos.DrawWireSphere(AttackPosition.position, detectionRange);
 
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(AttackPosition ? AttackPosition.position : transform.position, attackRange);

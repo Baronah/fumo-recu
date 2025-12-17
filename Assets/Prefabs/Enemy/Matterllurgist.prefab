@@ -272,7 +272,7 @@ MonoBehaviour:
   Skillset: "\u2022 Attacks fire up to 3 projectiles at once.\n\u2022 When alerted
     by a Sentinel, ASPD is greatly increased."
   detectionRange: 420
-  b_detectionRange: 0
+  b_detectionRange: 420
   DangerRange_RatioOfAttackRange: 0.75
   MinimumDistanceFromPlayer: 20
   gridCellSize: 60
@@ -295,7 +295,6 @@ MonoBehaviour:
   MoveToOverridePositionSpeedMultiplier: 1.5
   MoveToOverridePositionSpeedMultiplierJump: 0.35
   CanDetectThroughWalls: 0
-  ProjectilePosition: {fileID: 1440802399349756502}
 --- !u!1 &446298989067341241 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 773491194806959642, guid: f3221dbae6b487b49907a796747ecac4, type: 3}

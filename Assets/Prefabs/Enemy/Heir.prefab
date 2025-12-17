@@ -335,7 +335,7 @@ MonoBehaviour:
     the blood of others.
   Skillset: "\u2022 MSPD greatly increased upon spotting the player or when injured
     for the first time.\n\u2022 Attacks restore HP proportional to damage dealt."
-  detectionRange: 110
+  detectionRange: 140
   b_detectionRange: 110
   DangerRange_RatioOfAttackRange: 1
   MinimumDistanceFromPlayer: 10

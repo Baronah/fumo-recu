@@ -33,11 +33,6 @@ public class EnvironmentalTileBase : MonoBehaviour
         }
     }
 
-    public bool IsEntityWithin(EntityBase entity)
-    {
-        return entitiesWithin.Contains(entity);
-    }
-
     public virtual void OnEntityEnter(EntityBase entity)
     {
         entity.AddEnvironmentalTilesThisUnitStandingOn(GetEnvironmentType());
@@ -46,11 +41,11 @@ public class EnvironmentalTileBase : MonoBehaviour
         {
             if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_B))
             {
-                pb.ApplyEffect(Effect.AffectedStat.ATK, "GEOGOLIST_ATK_BUFF", 50, Interval + 0.1f, true);
+                pb.ApplyEffect(Effect.AffectedStat.ATK, "GEOGOLIST_ATK_BUFF", 50f, 9999f, true);
             }
             else if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_C))
             {
-                pb.ApplyEffect(Effect.AffectedStat.MSPD, "GEOGOLIST_MSPD_BUFF", 50, Interval + 0.1f, true);
+                pb.ApplyEffect(Effect.AffectedStat.MSPD, "GEOGOLIST_MSPD_BUFF", 50f, 9999f, true);
             }
         }
     }
@@ -58,16 +53,17 @@ public class EnvironmentalTileBase : MonoBehaviour
     public virtual void OnEntityStay(EntityBase entity)
     {
         entity.AddEnvironmentalTilesThisUnitStandingOn(GetEnvironmentType());
+        if (!entitiesWithin.Contains(entity)) entitiesWithin.Add(entity);
 
         if (entity is PlayerBase pb)
         {
             if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_B))
             {
-                pb.ApplyEffect(Effect.AffectedStat.ATK, "GEOGOLIST_ATK_BUFF", 50, Interval + 0.1f, true);
+                pb.ApplyEffect(Effect.AffectedStat.ATK, "GEOGOLIST_ATK_BUFF", 50f, 9999f, true);
             }
             else if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_C))
             {
-                pb.ApplyEffect(Effect.AffectedStat.MSPD, "GEOGOLIST_MSPD_BUFF", 50, Interval + 0.1f, true);
+                pb.ApplyEffect(Effect.AffectedStat.MSPD, "GEOGOLIST_MSPD_BUFF", 50f, 9999f, true);
             }
         }
     }
@@ -76,6 +72,17 @@ public class EnvironmentalTileBase : MonoBehaviour
     {
         entity.RemoveEnvironmentalTilesThisUnitStandingOn(GetEnvironmentType());
         entitiesWithin.Remove(entity);
+        if (entity is PlayerBase pb)
+        {
+            if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_B))
+            {
+                pb.RemoveEffect("GEOGOLIST_ATK_BUFF");
+            }
+            else if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_C))
+            {
+                pb.RemoveEffect("GEOGOLIST_MSPD_BUFF");
+            }
+        }
     }
 
     public virtual void OnTriggerEnter2D(Collider2D collision)
@@ -84,7 +91,7 @@ public class EnvironmentalTileBase : MonoBehaviour
 
         EntityBase entityBase = collision.GetComponent<EntityBase>();
         if (!entityBase || !entityBase.IsAlive() || entitiesWithin.Contains(entityBase)) return;
-        if (collision.isTrigger && collision.GetComponent<PlayerBase>()) return;
+        if (collision.isTrigger) return;
 
         OnEntityEnter(entityBase);
     }
@@ -95,7 +102,7 @@ public class EnvironmentalTileBase : MonoBehaviour
 
         EntityBase entityBase = collision.GetComponent<EntityBase>();
         if (!entityBase || !entityBase.IsAlive() || entitiesWithin.Contains(entityBase)) return;
-        if (collision.isTrigger && collision.GetComponent<PlayerBase>()) return;
+        if (collision.isTrigger) return;
 
         entitiesWithin.Add(entityBase);
     }
@@ -106,7 +113,7 @@ public class EnvironmentalTileBase : MonoBehaviour
 
         EntityBase entityBase = collision.GetComponent<EntityBase>();
         if (!entityBase || !entityBase.IsAlive() || !entitiesWithin.Contains(entityBase)) return;
-        if (collision.isTrigger && collision.GetComponent<PlayerBase>()) return;
+        if (collision.isTrigger) return;
 
         OnEntityExit(entityBase);
     }

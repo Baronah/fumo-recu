@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using static PlayerManager;
@@ -19,11 +20,20 @@ public class PlayerBase : EntityBase
     [SerializeField] protected Image HH_Effect_fill;
 
     [SerializeField] protected GameObject RockEffect;
+    
+    [SerializeField] protected GameObject WindanthemBar;
+    protected Slider WindanthemSlider;
+    protected TMP_Text WindanthemCounter;
 
     private Transform TransformFeetposition;
     public Vector3 Feetposition => TransformFeetposition.position;
 
     public List<SkillName> Skills = new();
+
+    protected Coroutine SkillCoroutine = null;
+
+    protected string WindAnthemKey = "WIND_ANTHEM_BUFF";
+    [SerializeField] protected float WindAnthemAspdBuffAmount = 15f, WindAnthemAspdBuffDuration = 15f, WindAnthemAspdBuffCap = 75f;
 
     public virtual PlayerType GetPlayerType()
     {
@@ -44,6 +54,8 @@ public class PlayerBase : EntityBase
 
         GetSkillTreeEffects();
         HH_Effect_parent.SetActive(Skills.Contains(SkillTree_Manager.SkillName.HEAVY_HITTER));
+        WindanthemSlider = WindanthemBar.GetComponentInChildren<Slider>();
+        WindanthemCounter = WindanthemBar.GetComponentInChildren<TMP_Text>();
 
         base.InitializeComponents();
         TransformFeetposition = transform.Find("Feetposition");
@@ -61,6 +73,16 @@ public class PlayerBase : EntityBase
     {
         base.FixedUpdate();
         AttentionBuff();
+
+        WindanthemBar.SetActive(IsAlive() && AspdBuffs.ContainsKey(WindAnthemKey) && AspdBuffs[WindAnthemKey].IsInEffect);
+        if (WindanthemBar.activeSelf)
+        {
+            WindanthemSlider.maxValue = WindAnthemAspdBuffDuration;
+            WindanthemSlider.value = AspdBuffs.ContainsKey(WindAnthemKey) && AspdBuffs[WindAnthemKey].IsInEffect ?
+                AspdBuffs[WindAnthemKey].Duration : 0f;
+
+            WindanthemCounter.text = ((int)(AspdBuffs[WindAnthemKey].Value / WindAnthemAspdBuffAmount)).ToString();
+        }
     }
 
     float countUp = 0;
@@ -171,6 +193,17 @@ public class PlayerBase : EntityBase
         swapInPlayer.timerSinceLastAttack = timerSinceLastAttack;
         swapInPlayer.environmentalTilesStandingOn = new(this.environmentalTilesStandingOn);
         swapInPlayer.SettleSwappedInPlayer = true;
+
+        List<Dictionary<string, Effect>> allBuffs = AllBuffs();
+        foreach (var dictionary in allBuffs)
+        {
+            foreach (var kvp in dictionary)
+            {
+                Effect buff = kvp.Value;
+                if (!buff.TransferOnSwap) continue;
+                swapInPlayer.ApplyEffect(buff.affectedStat, kvp.Key, buff.Value, buff.Duration, buff.IsPercentage, buff.DecayOverDuration ? EffectPersistType.DECAY : EffectPersistType.PERSIST);
+            }
+        }
     }
 
     protected virtual void GetControlInputs()

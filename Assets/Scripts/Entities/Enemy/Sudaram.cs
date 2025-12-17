@@ -43,10 +43,10 @@ public class Sudaram : EnemyBase
 
         CanDetectThroughWalls = true;
         originiumPollutionEffect.Play();
-        ASPD += originiumPollutionBonusASPD;
         b_detectionRange = detectionRange;
         Enhanced = true;
-        detectionRange = attackRange = 9999f;
+        ApplyEffect(Effect.AffectedStat.ARNG, "SUDARAM_POLLUTION_BUFF", 9999f, 9999f, false);
+        ApplyEffect(Effect.AffectedStat.ASPD, "SUDARAM_POLLUTION_ABUFF", originiumPollutionBonusASPD, 9999f, false);
         StopMovement();
         attackPattern = AttackPattern.RANGED;
     }
@@ -57,10 +57,9 @@ public class Sudaram : EnemyBase
 
         CanDetectThroughWalls = false;
         originiumPollutionEffect.Stop();
-        ASPD -= originiumPollutionBonusASPD;
         Enhanced = false;
-        attackRange = b_attackRange;
-        detectionRange = b_detectionRange;
+        RemoveEffect("SUDARAM_POLLUTION_BUFF");
+        RemoveEffect("SUDARAM_POLLUTION_ABUFF");
         attackPattern = AttackPattern.MELEE;
     }
 

@@ -28,6 +28,7 @@ public class PlayerRanged : PlayerBase
     [SerializeField] private GameObject IllusionPrefab;
 
     private bool CanUseSkill = true, IsSkillActive = false, CanUseFreeze = true;
+
     private RectTransform AttackRangeIndicatorRect;
 
     private EntityBase target;
@@ -41,9 +42,15 @@ public class PlayerRanged : PlayerBase
         AttackRangeIndicatorRect = AttackRangeIndicator.GetComponent<RectTransform>();
     }
 
+    short fixedUpdateCnt = 0;
     public override void FixedUpdate()
     {
         base.FixedUpdate();
+
+        fixedUpdateCnt++;
+        if (fixedUpdateCnt < 5) return;
+        fixedUpdateCnt = 0;
+
         if (!IsAlive())
         {
             AttackRangeIndicator.SetActive(false);
@@ -57,9 +64,16 @@ public class PlayerRanged : PlayerBase
             );
         }
 
-        bool SkillActive = IsSkillActive && IsAlive();
-        SkillEffect.SetActive(SkillActive);
+        bool alive = IsAlive();
+        bool SkillActive = IsSkillActive && alive, FreezeActive = IsFreezeActive && alive;
+        SkillEffect.SetActive(SkillActive || FreezeActive);
         SkillBarObj.SetActive(SkillActive);
+
+        SkillBarObj.transform.localPosition =
+            WindanthemBar.activeSelf ? new Vector3(-0.08f, -3.2f, 0) : new Vector3(-0.08f, -2.3f, 0);
+
+        ccBar.transform.localPosition =
+            SkillBarObj.activeSelf ? SkillBarObj.transform.localPosition + new Vector3(0, -0.9f, 0) : new Vector3(-0.08f, -2.3f, 0);
     }
 
     public override PlayerManager.PlayerType GetPlayerType()
@@ -70,6 +84,10 @@ public class PlayerRanged : PlayerBase
     public override void InitializeComponents()
     {
         SkillBar = SkillBarObj.GetComponentInChildren<Slider>();
+
+        freezeCooldownTimer = FreezeCooldown;
+        skillCooldownTimer = SkillCooldown;
+
         base.InitializeComponents();
     }
 
@@ -77,6 +95,11 @@ public class PlayerRanged : PlayerBase
     {
         base.OnFieldSwapOut(swapInPlayer);
 
+        SpawnIllusion();
+    }
+
+    void SpawnIllusion()
+    {
         if (!Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_SHADOW) || !IsSkillActive) return;
 
         // inherits stats and skill duration and start casting skill on time for remaining duration
@@ -84,11 +107,11 @@ public class PlayerRanged : PlayerBase
         PlayerCasterIllusion playerCasterIllusion = o.GetComponent<PlayerCasterIllusion>();
         playerCasterIllusion.InitializeComponents();
         playerCasterIllusion.SetInherit(
-            ATK: (short)(atk * 0.4f),
+            ATK: (short)(atk * 0.5f),
             maxDuration: SkillDuration,
             duration: skillCurrentDuration,
-            Skill_DamageMulitplier, 
-            Skill_AtkInterval, 
+            Skill_DamageMulitplier,
+            Skill_AtkInterval,
             flipX: spriteRenderer.flipX);
     }
 
@@ -146,7 +169,7 @@ public class PlayerRanged : PlayerBase
 
     protected override void GetControlInputs()
     {
-        if (!IsAlive() || IsSkillActive) return;
+        if (!IsAlive()) return;
 
         if (Input.GetKeyDown(InputManager.Instance.AttackKey))
         {
@@ -154,7 +177,8 @@ public class PlayerRanged : PlayerBase
         }
         else if (Input.GetKeyDown(InputManager.Instance.SkillKey))
         {
-            UseSkill();
+            if (SkillCoroutine == null) UseSkill();
+            else CancelSkill();
         }
         else if (Input.GetKeyDown(InputManager.Instance.SpecialKey))
         {
@@ -169,36 +193,92 @@ public class PlayerRanged : PlayerBase
         if (!CanUseSkill) return;
 
         base.UseSkill();
-        StartCoroutine(CastSkill());
+        SkillCoroutine = StartCoroutine(CastSkill());
+    }
+
+    void CancelSkill()
+    {
+        if (!IsSkillActive || SkillCoroutine == null) return;
+
+        if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_SHADOW)) SpawnIllusion();
+        else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_READ)) RefundSkill();
+
+        StopCoroutine(SkillCoroutine);
+        SkillCoroutine = null;
+
+        animator.SetTrigger("skill_end");
+        IsSkillActive = false;
+    }
+
+    void RefundSkill()
+    {
+        float refundPercentage,
+              spMaxRefund = 0.85f, minWinForSpMax = 0.25f, 
+              maxRefund = 0.8f, minWindowForMaxRefund = 0.5f;
+        
+        float currentDuration = skillCurrentDuration;
+        if (currentDuration < minWinForSpMax) refundPercentage = spMaxRefund;
+        else if (currentDuration <= minWindowForMaxRefund) refundPercentage = maxRefund;
+        else
+        {
+            refundPercentage = Mathf.Lerp(maxRefund, 0f, currentDuration * 1.0f / SkillDuration);
+        }
+
+        float refundTime = SkillCooldown * refundPercentage;
+        skillCooldownTimer += refundTime;
+
+        StartCoroutine(playerManager.SkillCooldown(SkillCooldown, skillCooldownTimer));
     }
 
     public override void UseSpecial()
     {
-        if (!CanUseFreeze) return;
+        if (!CanUseFreeze) return; 
+        if (IsSkillActive) CancelSkill();
 
         base.UseSpecial();
         StartCoroutine(CastFreeze());
     }
 
-    IEnumerator SkillLockout()
+    public override void Move()
+    {
+        if (IsMovementLocked) return;
+        if (IsSkillActive && InputManager.Instance.GetMovementInput().magnitude > 0) CancelSkill();
+
+        base.Move();
+    }
+
+    float skillCooldownTimer = 0f;
+    IEnumerator SkillLockout(float d)
     {
         CanUseSkill = false;
-        StartCoroutine(playerManager.SkillCooldown(SkillCooldown));
-        yield return new WaitForSeconds(SkillCooldown);
+        StartCoroutine(playerManager.SkillCooldown(d));
+        skillCooldownTimer = 0f;
+        while (skillCooldownTimer < d)
+        {
+            skillCooldownTimer += Time.deltaTime;
+            yield return null;
+        }
         CanUseSkill = true;
     }
 
+    float freezeCooldownTimer = 0f;
     IEnumerator FreezeLockout(float d)
     {
         CanUseFreeze = false;
         StartCoroutine(playerManager.SpecialCooldown(d));
-        yield return new WaitForSeconds(d);
+        freezeCooldownTimer = 0f;
+        while (freezeCooldownTimer < d)
+        {
+            freezeCooldownTimer += Time.deltaTime;
+            yield return null;
+        }
         CanUseFreeze = true;
     }
 
     public override IEnumerator Attack()
     {
         if (!CanAttack || IsAttackLocked) yield break;
+        if (IsSkillActive) CancelSkill();
 
         AttackRangeIndicator.SetActive(true);
         target = SearchForNearestEntityAroundCertainPoint(typeof(EnemyBase), transform.position, attackRange);
@@ -242,18 +322,19 @@ public class PlayerRanged : PlayerBase
         atk = (short)currentAtk;
     }
 
+    bool IsFreezeActive = false;
     public IEnumerator CastFreeze()
     {
         if (!IsAlive() || !CanUseFreeze || IsFrozen || IsStunned) yield break;
 
         CanUseFreeze = false;
+        IsFreezeActive = true;
 
         StartCoroutine(StartMovementLockout(FreezeCastDuration));
         StartCoroutine(StartAttackLockout(FreezeCastDuration));
         
         animator.SetBool("attack", false);
         animator.SetTrigger("skill");
-        IsSkillActive = true;
 
         if (sfxs[1]) sfxs[1].Play();
 
@@ -304,9 +385,9 @@ public class PlayerRanged : PlayerBase
 
         StartCoroutine(FreezeLockout(cooldown));
         Debut = false;
+        IsFreezeActive = false;
 
         animator.SetTrigger("skill_end");
-        IsSkillActive = false;
         yield return null;
 
         Dictionary<EntityBase, float> HitDictionary = new(InitialHitDictionary);
@@ -364,9 +445,8 @@ public class PlayerRanged : PlayerBase
     {
         if (!IsAlive()) yield break;
 
-        StartCoroutine(StartAttackLockout(SkillDuration));
-        StartCoroutine(StartMovementLockout(SkillDuration));
-        StartCoroutine(SkillLockout());
+        StartCoroutine(StartMovementLockout(0.15f));
+        StartCoroutine(SkillLockout(SkillCooldown));
 
         animator.SetTrigger("skill");
         IsSkillActive = true;
@@ -554,6 +634,8 @@ public class PlayerRanged : PlayerBase
         IsSkillActive = false;
         skillCurrentDuration = SkillDuration;
         yield return null;
+
+        SkillCoroutine = null;
     }
 
     short flowerCount = 0;
@@ -696,45 +778,52 @@ public class PlayerRanged : PlayerBase
 
         if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_MORE))
         {
-            info.SkillName = "Der Tag neigt sich - Flowering Night";
+            info.SkillName = "Der Tag neigt Sich - Flowering Night";
             info.SkillText =
-                $"In the next {SkillDuration} seconds: becomes unable to move and attack, continuously unleashes multiple waves of projectiles " +
-                $"spreading in all direction around self. Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
+                $"Continuously unleashes multiple waves of projectiles spreading in all direction around self, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action). " +
+                $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
                 $"{SkillCooldown}s cooldown.";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_TRAVEL))
         {
-            info.SkillName = "Der Tag neigt sich - Ghost Lead";
+            info.SkillName = "Der Tag neigt Sich - Ghost Lead";
             info.SkillText =
-                $"In the next {SkillDuration} seconds: becomes unable to move and attack, and lock-on to the nearest enemy within attack range. " +
-                $"Continuously unleashes waves of projectiles spreading in all direction around self " +
+                $"Locks-on to the nearest enemy within range and continuously unleashes waves of projectiles, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action). " +
                 $". Each projectile hits the first enemy it comes into contact with (if there is a locked enemy, all projectiles homing toward them instead), dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
                 $"{SkillCooldown}s cooldown.";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_PHANTOM))
         {
-            info.SkillName = "Der Tag neigt sich - Phantom Bullets";
+            info.SkillName = "Der Tag neigt Sich - Phantom Bullets";
             info.SkillText =
-                $"In the next {SkillDuration} seconds: becomes unable to move and attack, continuously unleashes waves of projectiles " +
-                $"spreading in all direction around self. Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
+                $"Continuously unleashes waves of projectiles spreading in all direction around self, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action). " +
+                $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
                 $"If an enemy is defeated while the skill is active, another waves of projectiles will be created at their position, lasting up to 1.5 seconds (triggers up to 3 times). " +
                 $"{SkillCooldown}s cooldown.";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_SHADOW))
         {
-            info.SkillName = "Der Tag neigt sich - Twilight of Wolumonde";
+            info.SkillName = "Der Tag neigt Sich - Twilight of Wolumonde";
             info.SkillText =
-                $"In the next {SkillDuration} seconds: becomes unable to move and attack, continuously unleashes waves of projectiles " +
-                $"spreading in all direction around self. Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
-                $"Swapping during this skill leaves behind a phantom that maintains the same effect for the remaining duration." +
+                $"Continuously unleashes waves of projectiles spreading in all direction around self, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action). " +
+                $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
+                $"Cancelling or swapping during the skill leaves behind a phantom that maintains the same effect for the remaining duration." +
+                $"{SkillCooldown}s cooldown.";
+        }
+        else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_READ))
+        {
+            info.SkillName = "Der Tag neigt Sich - Widely Read";
+            info.SkillText =
+                $"Continuously unleashes waves of projectiles spreading in all direction around self, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action, and refunds upon doing so). " +
+                $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
                 $"{SkillCooldown}s cooldown.";
         }
         else
         {
-            info.SkillName = "Der Tag neigt sich";
+            info.SkillName = "Der Tag neigt Sich";
             info.SkillText =
-                $"In the next {SkillDuration} seconds: becomes unable to move and attack, continuously unleashes waves of projectiles " +
-                $"spreading in all direction around self. Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
+                $"Continuously unleashes waves of projectiles spreading in all direction around self, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action). " +
+                $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
                 $"{SkillCooldown}s cooldown.";
         }
 

@@ -10,6 +10,7 @@ using static Cinemachine.CinemachineTargetGroup;
 using static Effect;
 using static ProjectileScript;
 using static StageManager;
+using static UnityEngine.EventSystems.EventTrigger;
 using static UnityEngine.GraphicsBuffer;
 
 public class EntityBase : MonoBehaviour
@@ -66,12 +67,24 @@ public class EntityBase : MonoBehaviour
     {
         if (environmentalTilesStandingOn.Contains(environmentType)) return;
         environmentalTilesStandingOn.Add(environmentType);
+        OnEnvironmentalTileEnter(environmentType);
+    }
+
+    public virtual void OnEnvironmentalTileEnter(EnvironmentType environmentType)
+    {
+
     }
 
     public void RemoveEnvironmentalTilesThisUnitStandingOn(EnvironmentType environmentType)
     {
         if (!environmentalTilesStandingOn.Contains(environmentType)) return;
         environmentalTilesStandingOn.Remove(environmentType);
+        OnEnvironmentalTileExit(environmentType);
+    }
+
+    public virtual void OnEnvironmentalTileExit(EnvironmentType environmentType)
+    {
+
     }
 
     public enum AttackPattern { MELEE, RANGED, NONE }
@@ -90,7 +103,10 @@ public class EntityBase : MonoBehaviour
     protected SpriteRenderer spriteRenderer;
     protected Animator animator;
     protected Rigidbody2D rb2d;
+    
     protected Collider2D[] colliders;
+    public Collider2D[] selfColliders => colliders;
+
     public AudioSource[] sfxs;
 
     private GameObject ShadowSprite;
@@ -138,7 +154,7 @@ public class EntityBase : MonoBehaviour
                     ArngBuffs = new(),
                     ArngDebuffs = new();
 
-    private List<Effect> AllEffects()
+    protected List<Effect> AllEffects()
     {
         return AtkBuffs.Values
             .Concat(AtkDebuffs.Values)
@@ -153,6 +169,32 @@ public class EntityBase : MonoBehaviour
             .Concat(ArngBuffs.Values)
             .Concat(ArngDebuffs.Values)
             .ToList();
+    }
+
+    protected List<Dictionary<string, Effect>> AllBuffs()
+    {
+        return new()
+        {
+            AtkBuffs,
+            DefBuffs,
+            ResBuffs,
+            MspdBuffs,
+            AspdBuffs,
+            ArngBuffs
+        };
+    }
+
+    protected List<Dictionary<string, Effect>> AllDebuffs()
+    {
+        return new()
+        {
+            AtkDebuffs,
+            DefDebuffs,
+            ResDebuffs,
+            MspdDebuffs,
+            AspdDebuffs,
+            ArngDebuffs
+        };
     }
 
     public virtual bool CanAttack =>
@@ -224,6 +266,7 @@ public class EntityBase : MonoBehaviour
         }
 
         StartCoroutine(OnStartCoroutine());
+        CalculateBuffsAndDebuffs();
     }
 
     IEnumerator OnStartCoroutine()
@@ -274,7 +317,7 @@ public class EntityBase : MonoBehaviour
         DECAY
     };
 
-    public void ApplyEffect(AffectedStat affectedStat, string Key, float Value, float Duration, bool IsPercentageBased, EffectPersistType persistType = EffectPersistType.PERSIST)
+    public void ApplyEffect(AffectedStat affectedStat, string Key, float Value, float Duration, bool IsPercentageBased, EffectPersistType persistType = EffectPersistType.PERSIST, bool transferOnSwap = true)
     {
         bool IsDebuff = Value < 0;
         bool DecayOverDuration = persistType == EffectPersistType.DECAY;
@@ -287,44 +330,44 @@ public class EntityBase : MonoBehaviour
             {
                 case AffectedStat.ATK:
                     if (AtkDebuffs.ContainsKey(Key))
-                        AtkDebuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased, DecayOverDuration);
+                        AtkDebuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
                     else
-                        AtkDebuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration)); 
+                        AtkDebuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap)); 
                     break;
 
                 case AffectedStat.DEF:
                     if (DefDebuffs.ContainsKey(Key))
-                        DefDebuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased, DecayOverDuration);
+                        DefDebuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
                     else
-                        DefDebuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
+                        DefDebuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
                     break;
 
                 case AffectedStat.RES:
                     if (ResDebuffs.ContainsKey(Key))
-                        ResDebuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased, DecayOverDuration);
+                        ResDebuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
                     else
-                        ResDebuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
+                        ResDebuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
                     break;
 
                 case AffectedStat.MSPD:
                     if (MspdDebuffs.ContainsKey(Key))
-                        MspdDebuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased, DecayOverDuration);
+                        MspdDebuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
                     else
-                        MspdDebuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
+                        MspdDebuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
                     break;
 
                 case AffectedStat.ASPD:
                     if (AspdDebuffs.ContainsKey(Key))
-                        AspdDebuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased, DecayOverDuration);
+                        AspdDebuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
                     else
-                        AspdDebuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
+                        AspdDebuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
                     break;
 
                 case AffectedStat.ARNG:
                     if (ArngDebuffs.ContainsKey(Key))
-                        ArngDebuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased, DecayOverDuration);
+                        ArngDebuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
                     else
-                        ArngDebuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
+                        ArngDebuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
                     break;
             }
         }
@@ -334,49 +377,49 @@ public class EntityBase : MonoBehaviour
             {
                 case AffectedStat.ATK:
                     if (AtkBuffs.ContainsKey(Key))
-                        AtkBuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased, DecayOverDuration);
+                        AtkBuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
                     else
-                        AtkBuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
+                        AtkBuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
                     break;
 
                 case AffectedStat.DEF:
                     if (DefBuffs.ContainsKey(Key))
-                        DefBuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased, DecayOverDuration);
+                        DefBuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
                     else
-                        DefBuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
+                        DefBuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
                     break;
 
                 case AffectedStat.RES:
                     if (ResBuffs.ContainsKey(Key))
-                        ResBuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased, DecayOverDuration);
+                        ResBuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
                     else
-                        ResBuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
+                        ResBuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
                     break;
 
                 case AffectedStat.MSPD:
                     if (MspdBuffs.ContainsKey(Key))
-                        MspdBuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased, DecayOverDuration);
+                        MspdBuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
                     else
-                        MspdBuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
+                        MspdBuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
                     break;
 
                 case AffectedStat.ASPD:
                     if (AspdBuffs.ContainsKey(Key))
-                        AspdBuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased, DecayOverDuration);
+                        AspdBuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
                     else
-                        AspdBuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
+                        AspdBuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
                     break;
 
                 case AffectedStat.ARNG:
                     if (ArngBuffs.ContainsKey(Key))
-                        ArngBuffs[Key].Instantiate(this, Value, Duration, IsPercentageBased, DecayOverDuration);
+                        ArngBuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
                     else
-                        ArngBuffs.Add(Key, new(this, Value, Duration, IsPercentageBased, DecayOverDuration));
+                        ArngBuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
                     break;
             }
         }
 
-        CalculateBuffsAndDebuffs();
+        if (IsComponentsInitialized) CalculateBuffsAndDebuffs();
     }
 
     public void RemoveEffect(string Key)
@@ -771,6 +814,7 @@ public class EntityBase : MonoBehaviour
 
     public virtual IEnumerator StartAttackLockout(float m)
     {
+        yield return null;
         AttackLockout = Mathf.Max(AttackLockout, m);
         yield return null;
     }

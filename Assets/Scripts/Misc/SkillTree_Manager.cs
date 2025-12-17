@@ -92,6 +92,8 @@ public class SkillTree_Manager : MonoBehaviour
         TIME_DILATION,
         BUBBLE_ARTS,    
         HAIR_RIBBON,
+        SPIRAL_READ,
+        WIND_ANTHEM,
     }
 
     public static SkillTree_Manager Instance;

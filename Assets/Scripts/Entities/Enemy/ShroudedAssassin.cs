@@ -125,8 +125,9 @@ public class ShroudedAssassin : EnemyBase
 
     public override IEnumerator Attack()
     {
-        if (IsDashing || reviving) yield break;
+        if (IsDashing || reviving || !CanAttack || IsAttackLocked) yield break;
         yield return StartCoroutine(base.Attack());
+        if (sfxs[0]) sfxs[0].Play();
     }
 
     private bool dashDoesDamage = true;
@@ -135,6 +136,8 @@ public class ShroudedAssassin : EnemyBase
     {
         EndFreeze();
         EndStun();
+        StopMovement();
+        CancelAttack();
 
         IllusionSpawnShape shape = (IllusionSpawnShape)Random.Range(0, Enum.GetValues(typeof(IllusionSpawnShape)).Length);
         if (canRevive) shape = IllusionSpawnShape.LINE;
@@ -156,14 +159,11 @@ public class ShroudedAssassin : EnemyBase
         float duration = dashScaleDuration * 4 + dashScaleInt * 4;
         if (shape == IllusionSpawnShape.FIREWORK) duration /= 2;
 
-        SetInvulnerable(duration);
-        StartCoroutine(StartAttackLockout(duration));
-        StartCoroutine(StartMovementLockout(duration)); 
-
         IsFreezeImmune = IsStunImmune = true;
         IsDashing = true;
 
         animator.SetTrigger("skill_prep");
+        if (sfxs[1]) sfxs[1].Play();
 
         Vector3 selfPos = transform.position;
         float range = Mathf.Clamp(Vector3.Distance(transform.position, SpottedPlayer.transform.position) * 2, dashDistance * 0.9f, dashDistance);
@@ -381,11 +381,13 @@ public class ShroudedAssassin : EnemyBase
         if (SpottedPlayer) FaceToward(SpottedPlayer.transform.position);
 
         animator.SetTrigger("skill_end");
-        yield return new WaitForSeconds(0.6f);
+        yield return new WaitForSeconds(0.4f);
 
-        if (SpottedPlayer)
+        if (SpottedPlayer && Vector3.Distance(SpottedPlayer.transform.position, AttackPosition.position) > attackRange * DangerRange_RatioOfAttackRange)
         {
+            yield return new WaitForSeconds(0.2f);
             animator.SetTrigger("skill_prep");
+            if (sfxs[1]) sfxs[1].Play();
             GameObject playerO = Instantiate(shadowClonePrefab, SpottedPlayer.transform.position, Quaternion.identity);
             IllusionsTransforms.Add(playerO);
             CreateIllusionsTrails(playerO, prepAdditionalTime + 0.3f);
@@ -668,13 +670,13 @@ public class ShroudedAssassin : EnemyBase
             "• [Feud Bonding] Receiving damage from the player unit builds up \"Feud\" on them (stacks up to a limit). Self takes reduced damage from the attacker based on how much \"Feud\" they have built up. " +
             "Gains increased ATK and MSPD when the target has their \"Feud\" maxed out.\n\n" +
             "<b><color=red>FIRST PHASE</color></b>\n\n" +
-            "• [Pack Up] Stops moving, then charges up and quickly dash toward your position, dealing physical damage if comes into contact with. Receving damage shortens the cool-down of the next use.\n\n" +
+            "• [Pack Up] Stops moving, becomes immune to freeze and stun, then charges up and quickly dash toward your position, dealing physical damage if comes into contact with. Receving damage shortens the cool-down of the next use.\n\n" +
             "• [Held Breath] When HP reaches 0, enters a revival state and rapidly builds up \"Feud\" on the presenting player and slows them throughout the duration. Enters the second phase afterward.\n\n" +
             
             "<b><color=red>SECOND PHASE</color></b>\n\n" +
             "• DEF and RES are reduced.\n\n" +
             "• [Overflowing Hatred] \"Feud\" is now gradually builds up overtime.\n\n" +
-            "• [Toward Death] Stops moving, then creates multiple illusion of self. After a short delay, dashes toward these illusions in quick succession and damages the player if comes into contact with. " +
+            "• [Toward Death] Stops moving, becomes immune to freeze and stun, then creates multiple illusion of self. After a short delay, dashes toward these illusions in quick succession and damages the player if comes into contact with. " +
             "Dash speed increases as HP decreases. Receving damage shortens the cool-down of the next use.";
         
         TooltipsDescription = "Assassin who has abandoned his name and covered his face. Behind that pall is a burning fanaticism and a destined fate.";

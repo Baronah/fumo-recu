@@ -3147,6 +3147,7 @@ RectTransform:
   - {fileID: 1877313648}
   - {fileID: 757650198}
   - {fileID: 1383128089}
+  - {fileID: 1687439828}
   m_Father: {fileID: 1327273163}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -9214,8 +9215,8 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 24
-  skillNameText: Juggernaunt -  Aftershock
-  skillDescription: After 'Juggernaunt' ends, 75% of the damage self has taken during
+  skillNameText: Juggernaut -  Aftershock
+  skillDescription: After 'Juggernaut' ends, 75% of the damage self has taken during
     its duration will be converted into physical and dealt to all nearby enemies
     once and inflicts a decaying 'slow'.
   favorText: This is gonna hurt a little.
@@ -11145,6 +11146,7 @@ RectTransform:
   - {fileID: 537051724}
   - {fileID: 807891797}
   - {fileID: 1110783326}
+  - {fileID: 1387309834}
   m_Father: {fileID: 1616000307}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -12366,7 +12368,7 @@ MonoBehaviour:
     bullet, the overall result is still a net positive, and more importantly, it's
     indeed beautiful.
   skillDescriptionInShort: 
-  mutuallyExclusiveSkills: 1c0000001d00000027000000
+  mutuallyExclusiveSkills: 1c0000001d0000002700000033000000
   Overlay: {fileID: 0}
 --- !u!114 &745442578
 MonoBehaviour:
@@ -13633,8 +13635,8 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 41
-  skillNameText: Juggernaunt -  Resonance
-  skillDescription: Swapping for the first time during the duration of 'Juggernaunt'
+  skillNameText: Juggernaut -  Resonance
+  skillDescription: Swapping for the first time during the duration of 'Juggernaut'
     retains its effect, and extends it by 2 seconds.
   favorText: The wheel that weaves eternity and infinity, spins the bond between
     you and I.
@@ -16100,13 +16102,13 @@ MonoBehaviour:
   skillType: 1
   skillName: 29
   skillNameText: Der Tag Neight Sich - Twilight of Wolumonde
-  skillDescription: Swapping during the duration of 'Der Tag Neight Sich' will leave
-    behind a phantom that maintains the skill for the remaining duration. The phantom
-    inherits 40% of self ATK.
+  skillDescription: While 'Der Tag Neight Sich' is active, swapping or cancelling
+    it will leave behind a phantom that maintains the skill for the remaining duration.
+    The phantom inherits 50% of self ATK.
   favorText: '"Amazing... this is really amazing!"'
-  skillDescriptionInShort: Swapping during the duration of 'Der Tag Neight Sich'
-    will leave behind a phantom that maintains the skill for the remaining duration.
-  mutuallyExclusiveSkills: 1b0000001c00000027000000
+  skillDescriptionInShort: While 'Der Tag Neight Sich' is active, swap or cancel
+    it will leave behind a phantom that maintains the skill for the remaining duration.
+  mutuallyExclusiveSkills: 1b0000001c0000002700000033000000
   Overlay: {fileID: 0}
 --- !u!114 &873688061
 MonoBehaviour:
@@ -16224,7 +16226,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -476.944, y: -20.175705}
-  m_SizeDelta: {x: 2309.192, y: 257.6958}
+  m_SizeDelta: {x: 2489.192, y: 257.6958}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!1 &880571568
 GameObject:
@@ -17265,8 +17267,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 782.0003, y: 0.14153385}
-  m_SizeDelta: {x: 450, y: 4}
+  m_AnchoredPosition: {x: 872.0003, y: 0.14153385}
+  m_SizeDelta: {x: 630, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &926643819
 MonoBehaviour:
@@ -19398,7 +19400,9 @@ MonoBehaviour:
   skillNameText: Zeropoint Burst - Superconduct
   skillDescription: Enemies hit by 'Zeropoint Burst' also have -50% DEF and RES for
     equivalent duration.
-  favorText: Did you bring the deforster?
+  favorText: Modified version of the defroster, now weakens the structure of the
+    frozen object while leaving all the ice and moisture intact. The problem is,
+    how is it called a defroster if it can't defrost anything...
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 1000000011000000
   Overlay: {fileID: 0}
@@ -21789,9 +21793,9 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 46
-  skillNameText: Juggernaunt - 'Beyond the Night'
-  skillDescription: Upon 'Juggernaunt' activation, removes all aggro from enemies
-    to self. While 'Juggernaunt' is active, ATK becomes 0, but renders self to become
+  skillNameText: Juggernaut - 'Beyond the Night'
+  skillDescription: Upon 'Juggernaut' activation, removes all aggro from enemies
+    to self. While 'Juggernaut' is active, ATK becomes 0, but renders self to become
     invisible throughout the duration and grants increased MSPD.
   favorText: "Deep inside her base, in the left corner, is a ladder leads up to the
     roof. The air above is fresh, and when night falls, as the stars shine bright,
@@ -22449,15 +22453,15 @@ MonoBehaviour:
   SelectedLvlName: {fileID: 1560593613}
   SelectedLvlDescription: {fileID: 751680392}
   Descriptions:
-  - The eastern skies glow. The wound is still open\nBut I will still go forth\nWhat
-    awaits me? Who will I meet?\n\nHello
-  - Thoses who stand higher can see clearer. And they will share their visions.
+  - The eastern skies glow. The wound is still open.\nBut I will still go forth.\nWhat
+    awaits me? Who will I meet?\n\nHello?
+  - "Ever since you left,\\nI\u2019ve been standing here,\\nholding our memories
+    in my heart,\\nliving as though searching for something."
   - Though some confilicts are unavoidable, it's best to not pick up unnecessary
     fights.
-  - "At its heart, weaving is the simple\u2014but powerful\u2014act of interlacing
-    two sets of threads: warp and weft. The warp threads are stretched vertically
-    on a loom, while the weft threads are woven side-to-side, creating a strong,
-    balanced fabric."
+  - Look, there's a marching band passing through the square, made up of no one in
+    particular. And at the moment, they dedicate this song to the girl who just started
+    running.
   - Should an enemy spots you, and their allies are nearby, running around will just
     worsen the situation. Slow down, step back, and lure them far away...\n<color=red>The
     'Archers' start with max ATK stack.</color>
@@ -22465,7 +22469,7 @@ MonoBehaviour:
     one.
   - There are many ways to fill up a blank canvas. Regardless of what you choose,
     as long as you do with with your own hands, passion, and creativity, it's all
-    beautiful and respectable.\n<color=yellow>Swap cool-down is halved in this level.</color>
+    beautiful and admirable.\n<color=yellow>Swap cool-down is halved in this level.</color>
   - The present. Everyday. And time. I will run through them all.\n<color=yellow>Your
     units have increased MSPD in this level.</color>\n<color=red>The 'Sudarim' are
     immune to damage from Originium Pollutions.</color>
@@ -22486,10 +22490,13 @@ MonoBehaviour:
   - All enemies become immune to physical and magical damage. 'Originiutants' have
     increased ASPD.
   - Terrain and enemies will differ in places.
-  - One 'Sudaram' has different starting position.
+  - More 'Caustic Originium Spiders' will appear. One 'Sudaram' has different starting
+    position.
   - Enemies will try to steal the Mint Fumo instead.
-  - Additional enemies will appear.
-  - 
+  - '''Shrouded Assassin'' has further increased MSPD and ATK when [Feud] reaches
+    max. Additional enemies will appear.'
+  - '''Gloompincers'' have increased ASPD under shrouded zones. And all enemies have
+    increased MSPD.'
   CompleteCondition: 0100000001000000010000000000000001000000010000000000000001000000030000000000000001000000
   Environments:
   - Environments: 
@@ -22502,7 +22509,7 @@ MonoBehaviour:
   - Environments: 000000000100000003000000
   - Environments: 0100000004000000
   - Environments: 0100000004000000
-  - Environments: 05000000
+  - Environments: 050000000000000002000000
   AppearingEnemies:
   - Enemies: 08000000000000000700000002000000
   - Enemies: 08000000070000000600000002000000
@@ -22514,7 +22521,7 @@ MonoBehaviour:
   - Enemies: 090000000100000003000000020000000a0000000c000000
   - Enemies: 000000000700000006000000040000000300000001000000090000000b0000000a000000050000000c000000
   - Enemies: 0d000000
-  - Enemies: 02000000
+  - Enemies: 01000000020000000e0000000f000000
   MapPreviewObj: {fileID: 340580784}
   MapPreviewImg: {fileID: 2125190412}
   MapPreviewImgOverlay: {fileID: 1141736479}
@@ -22529,7 +22536,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 9bb05f389aad1764483e534119e7dc4e, type: 3}
   - {fileID: 21300000, guid: d47d60702138880468ef33839a31e69c, type: 3}
   - {fileID: 21300000, guid: 4585c0adc4394134abb842e8db88afda, type: 3}
-  - {fileID: 21300000, guid: 4585c0adc4394134abb842e8db88afda, type: 3}
+  - {fileID: 21300000, guid: b1f48597c01544848a2d31d4e901d372, type: 3}
   DefaultEnemyIcon: {fileID: 21300000, guid: 450f341a4d8aeec45acb98c71b1a64cb, type: 3}
   EnemyDetail: {fileID: 1152686954}
   SelectedBorder: {fileID: 1857408668}
@@ -28603,6 +28610,154 @@ RectTransform:
   m_AnchoredPosition: {x: -115.950806, y: 3.2}
   m_SizeDelta: {x: 104.0894, y: 106.2447}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1387309833
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1387309834}
+  - component: {fileID: 1387309838}
+  - component: {fileID: 1387309837}
+  - component: {fileID: 1387309836}
+  - component: {fileID: 1387309835}
+  m_Layer: 5
+  m_Name: Anthem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1387309834
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1387309833}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 680112498}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 1642, y: 0}
+  m_SizeDelta: {x: 95, y: 95}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1387309835
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1387309833}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
+  skillType: 1
+  skillName: 52
+  skillNameText: '''Anthem of the Wind'''
+  skillDescription: 'For melee player: Every attack land shortens the cool-down of
+    ''Evasion'' by 0.75 seconds, every ''Evasion'' usage shortens the cool-down of
+    ''Juggernaut'' by 4 seconds, every ''Juggernaut'' usage grants +12 ASPD, lasts
+    15 seconds and stacks up to 6 times. At max stacks, gains an additional +36%
+    MSPD and all effects are doubled.'
+  favorText: Her book alone can only carry words, her arts unit alone is just a staff,
+    her originium arts alone does not excel. But, combined them together, with a
+    little more work, and even the wind will bow to her.
+  skillDescriptionInShort: 
+  mutuallyExclusiveSkills: 
+  Overlay: {fileID: 0}
+--- !u!114 &1387309836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1387309833}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 1387309837}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &1387309837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1387309833}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 64998e7a6b4e0524b854a0698225c6af, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1387309838
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1387309833}
+  m_CullTransparentMesh: 1
 --- !u!1 &1389870939
 GameObject:
   m_ObjectHideFlags: 0
@@ -32377,7 +32532,7 @@ GameObject:
   - component: {fileID: 1568703610}
   - component: {fileID: 1568703609}
   m_Layer: 5
-  m_Name: Spiral_research
+  m_Name: Field Researcher
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32399,7 +32554,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1412, y: 0}
+  m_AnchoredPosition: {x: 1642, y: 0}
   m_SizeDelta: {x: 95, y: 95}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1568703609
@@ -32418,8 +32573,9 @@ MonoBehaviour:
   skillType: 1
   skillName: 47
   skillNameText: '''Field Researcher'''
-  skillDescription: Ranged player's projectiles that come into contact with an environmental
-    tile for the first time will carry the effect and apply it upon hitting a target.
+  skillDescription: 'For ranged player: Projectiles that come into contact with an
+    environmental tile for the first time will carry the effect and apply it upon
+    hitting a target.'
   favorText: She always wanted to participate in more research projects, and if possible,
     prefers to do it by herself. But you can't be in all the places in the world,
     not when you're doing it alone.
@@ -32562,9 +32718,9 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 21
-  skillNameText: Juggernaunt - Persistence
-  skillDescription: While 'Juggernaunt' is active, receiving damage extends its duration
-    for 0.5 seconds, up to a total bonus of 100% base duration.
+  skillNameText: Juggernaut - Persistence
+  skillDescription: While 'Juggernaut' is active, receiving damage extends its duration
+    for 0.75 seconds, up to a total bonus of 100% base duration.
   favorText: It takes a little beating to get good at the game.
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 160000001700000018000000290000002e000000
@@ -34239,6 +34395,7 @@ RectTransform:
   - {fileID: 2139595023}
   - {fileID: 2001172643}
   - {fileID: 873688059}
+  - {fileID: 1766304371}
   - {fileID: 1568703608}
   m_Father: {fileID: 1327273163}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -34997,6 +35154,140 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1681436071}
+  m_CullTransparentMesh: 1
+--- !u!1 &1687439827
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1687439828}
+  - component: {fileID: 1687439830}
+  - component: {fileID: 1687439829}
+  m_Layer: 5
+  m_Name: OR (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1687439828
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1687439827}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 217699275}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 1141.9999, y: -0.000118255615}
+  m_SizeDelta: {x: 200, y: 88.3759}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1687439829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1687439827}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: or
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 5e61686ba236ff04b8632d6a26736acd, type: 2}
+  m_sharedMaterial: {fileID: 2509212030381675100, guid: 5e61686ba236ff04b8632d6a26736acd, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4292467161
+  m_fontColor: {r: 0.8490566, g: 0.8490566, b: 0.8490566, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 36
+  m_fontSizeBase: 36
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 3
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 256
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_enableWordWrapping: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 1
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &1687439830
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1687439827}
   m_CullTransparentMesh: 1
 --- !u!1 &1690011480
 GameObject:
@@ -36455,9 +36746,9 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 22
-  skillNameText: Juggernaunt - Rim of the Sun
-  skillDescription: While 'Juggernaunt' is active, a fire ring is created around
-    you, dealing 25% ATK as physical damage to nearby enemy every second.
+  skillNameText: Juggernaut - Rim of the Sun
+  skillDescription: While 'Juggernaut' is active, a fire ring is created around you,
+    dealing 25% ATK as physical damage to nearby enemy every second.
   favorText: Good thing she has a fire extinguisher here.
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 150000001700000018000000290000002e000000
@@ -36687,6 +36978,153 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1765772166}
+  m_CullTransparentMesh: 1
+--- !u!1 &1766304370
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1766304371}
+  - component: {fileID: 1766304375}
+  - component: {fileID: 1766304374}
+  - component: {fileID: 1766304373}
+  - component: {fileID: 1766304372}
+  m_Layer: 5
+  m_Name: Spiral_read
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1766304371
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1766304370}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1642477028}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 1232, y: 0}
+  m_SizeDelta: {x: 95, y: 95}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1766304372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1766304370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
+  skillType: 1
+  skillName: 51
+  skillNameText: Der Tag Neight Sich - Widely Read
+  skillDescription: Cancelling 'Der Tag Neight Sich' refunds a portion of its cool-down
+    based on the remaining duration, up to 80% within the first 0.5 seconds.
+  favorText: She is distractable, but this isn't to say she has no sense of priority.
+    When a directly pressing matter is at hand, she focuses and spares no detail
+    until it's done, but the moment the most critical part is finished, she loosens
+    up, and it's then that something else can easily steal her attention.
+  skillDescriptionInShort: Cancelling 'Der Tag Neight Sich' refunds a portion of
+    its cool-down based on the remaining duration.
+  mutuallyExclusiveSkills: 1b0000001c000000270000001d000000
+  Overlay: {fileID: 0}
+--- !u!114 &1766304373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1766304370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 1766304374}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &1766304374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1766304370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: c5faa801b8f2d8e4d959b62663845c33, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1766304375
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1766304370}
   m_CullTransparentMesh: 1
 --- !u!1 &1784673390
 GameObject:
@@ -40954,7 +41392,7 @@ MonoBehaviour:
     waves can trigger up to 3 times, and last up to 1.5 seconds.
   favorText: 
   skillDescriptionInShort: 
-  mutuallyExclusiveSkills: 1b0000001c0000001d000000
+  mutuallyExclusiveSkills: 1b0000001c0000001d00000033000000
   Overlay: {fileID: 0}
 --- !u!114 &2001172645
 MonoBehaviour:
@@ -41804,9 +42242,9 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 23
-  skillNameText: Juggernaunt -  Swirling Vortex
-  skillDescription: While 'Juggernaunt' is active, nearby enemies have -33% MSPD
-    and ASPD, and are continuously pulled toward self.
+  skillNameText: Juggernaut -  Swirling Vortex
+  skillDescription: While 'Juggernaut' is active, nearby enemies have -33% MSPD and
+    ASPD, and are continuously pulled toward self.
   favorText: '"Would you like to see some of my magic?"'
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 150000001600000018000000290000002e000000
@@ -43728,7 +44166,7 @@ MonoBehaviour:
   favorText: Her attention device didn't quite work for her. The good news is that,
     for some reasons, it worked wonder on projectiles!
   skillDescriptionInShort: 
-  mutuallyExclusiveSkills: 1b0000001d00000027000000
+  mutuallyExclusiveSkills: 1b0000001d0000002700000033000000
   Overlay: {fileID: 0}
 --- !u!114 &2139595025
 MonoBehaviour:

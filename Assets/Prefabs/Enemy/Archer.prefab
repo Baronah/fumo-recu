@@ -5087,7 +5087,7 @@ MonoBehaviour:
   resIgn: 0
   lifeSteal: 0
   b_moveSpeed: 120
-  b_attackRange: 370
+  b_attackRange: 380
   b_attackWindupTime: 0.48
   b_attackInterval: 3
   MIN_PHYSICAL_DMG: 0.05
@@ -5139,7 +5139,7 @@ MonoBehaviour:
     their targets with special bolts.
   Skillset: "\u2022 When not attacking, ATK continuously increases and resets after
     the next attack."
-  detectionRange: 400
+  detectionRange: 420
   b_detectionRange: 400
   DangerRange_RatioOfAttackRange: 0.9
   MinimumDistanceFromPlayer: 20

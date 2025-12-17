@@ -932,6 +932,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &3436828054658134337 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5220816087514864014, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
+  m_PrefabInstance: {fileID: 7477664755718121679}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &6433614081820184419 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4507761904518604716, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
@@ -1002,8 +1007,10 @@ MonoBehaviour:
   preferredMoveAnimationPlaySpeed: 0.85
   preferredAttackAnimationSpeed: 0.9
   IsBeingLevitated: 0
+  LevitationEffect: {fileID: 0}
   reviveDuration: 5
   postReviveDuration: 0
+  SettleSwappedInPlayer: 0
   ObstacleLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1019,7 +1026,11 @@ MonoBehaviour:
   HH_Fill_Material: {fileID: 2100000, guid: 25baa0b986f248947843c72757292d02, type: 2}
   HH_Effect_fill: {fileID: 3165126570593974053}
   RockEffect: {fileID: 5523869800612596793, guid: 652a37322c30aae499a7cd8b40f7c35d, type: 3}
+  WindanthemBar: {fileID: 3436828054658134337}
   Skills: 
+  WindAnthemAspdBuffAmount: 12
+  WindAnthemAspdBuffDuration: 15
+  WindAnthemAspdBuffCap: 72
   heavyHitterMaxTimer: 10
   ProjectileSkill_2: {fileID: 823679449479629327, guid: f623b44ff3216784da0e64470a2e59de, type: 3}
   ProjectileSkill_3: {fileID: 7531047425192547471, guid: 36af0100b9ffca845ab2dcd317ad8830, type: 3}
@@ -1030,7 +1041,7 @@ MonoBehaviour:
   FreezeEffect: {fileID: 1351288078136581532, guid: 62e2480aade261d40849517a0285b9d0, type: 3}
   JuggEffect: {fileID: 2687465613330957195}
   SkillPosition: {fileID: 7519469202655066874}
-  SkillCooldown: 30
+  SkillCooldown: 25
   SkillDuration: 5
   Skill_DamageMulitplier: 0.25
   Skill_AtkInterval: 0.15
