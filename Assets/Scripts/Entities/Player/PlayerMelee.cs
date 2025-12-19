@@ -35,7 +35,6 @@ public class PlayerMelee : PlayerBase
     [SerializeField] AudioSource Ambient, Vortex, Shock;
     
     private bool IsSkillActive = false, IsDashing = false, CanUseSkill = true, CanUseDash = true;
-    private bool IsWindAnthemMaxed => AspdBuffs.ContainsKey(WindAnthemKey) && AspdBuffs[WindAnthemKey].Value >= WindAnthemAspdBuffCap;
 
     private HashSet<EntityBase> EnemyHitByDash = new HashSet<EntityBase>();
     bool Debut = false;
@@ -90,8 +89,8 @@ public class PlayerMelee : PlayerBase
         base.GetSkillTreeEffects();
         if (Skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_RADIO))
         {
-            DashCooldown *= 0.85f;
-            SkillCooldown *= 0.85f;
+            DashCooldown *= 0.9f;
+            SkillCooldown *= 0.9f;
         }
 
         if (Skills.Contains(SkillTree_Manager.SkillName.JUST_A_NICE_LOOKING_ROCK))
@@ -398,9 +397,7 @@ public class PlayerMelee : PlayerBase
         bool CanPull = Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_PULL),
              CanDoT = Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_IGNITE);
         
-        bool anthemMaxed = IsWindAnthemMaxed;
         Heal(mHealth * BurstHeal_HpPercentage);
-
 
         if (Skills.Contains(SkillTree_Manager.SkillName.WIND_ANTHEM))
         {
@@ -416,7 +413,6 @@ public class PlayerMelee : PlayerBase
             else
                 ApplyEffect(Effect.AffectedStat.ASPD, WindAnthemKey, WindAnthemAspdBuffAmount, WindAnthemAspdBuffDuration, false);
         }
-
         
         ApplyEffect(Effect.AffectedStat.ATK, "JUGGERNAUNT_SKILL_ATK_BUFF", AtkBoost * 100, 999f, true, EffectPersistType.PERSIST, false);
         ApplyEffect(Effect.AffectedStat.DEF, "JUGGERNAUNT_SKILL_DEF_BUFF", DefBoost * 100, 999f, true, EffectPersistType.PERSIST, false);

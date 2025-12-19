@@ -108,6 +108,7 @@ public class PlayerRanged : PlayerBase
         playerCasterIllusion.InitializeComponents();
         playerCasterIllusion.SetInherit(
             ATK: (short)(atk * 0.5f),
+            ASPD: ASPD,
             maxDuration: SkillDuration,
             duration: skillCurrentDuration,
             Skill_DamageMulitplier,
@@ -136,8 +137,8 @@ public class PlayerRanged : PlayerBase
         base.GetSkillTreeEffects();
         if (Skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_RADIO))
         {
-            FreezeCooldown *= 0.85f;
-            SkillCooldown *= 0.85f;
+            FreezeCooldown *= 0.9f;
+            SkillCooldown *= 0.9f;
         }
 
         if (Skills.Contains(SkillTree_Manager.SkillName.JUST_A_NICE_LOOKING_ROCK))
@@ -153,7 +154,7 @@ public class PlayerRanged : PlayerBase
             FreezeDurationMin = Mathf.Max(FreezeDurationMin, 2f);
 
         if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_MORE))
-            Skill_DamageMulitplier *= 0.7f;
+            Skill_DamageMulitplier *= 0.75f;
     }
 
     public override void OnFieldEnter()
@@ -441,6 +442,13 @@ public class PlayerRanged : PlayerBase
         }
     }
 
+    public float GetSkillFiringInterval()
+    {
+        float ASPD_Dif = 100 - ASPD;
+        float ScaleFactor = 100 / (100 + ASPD_Dif / 2);
+        return Skill_AtkInterval * ScaleFactor;
+    }
+
     public IEnumerator CastSkill()
     {
         if (!IsAlive()) yield break;
@@ -462,7 +470,7 @@ public class PlayerRanged : PlayerBase
             : null;
 
         SkillBar.maxValue = SkillBar.value = SkillDuration;
-        float intervalCounter = Skill_AtkInterval;
+        float intervalCounter = GetSkillFiringInterval();
 
         float lockInTargetDamageMul = 1.0f;
         int yellowBulletAngle = 90;
@@ -471,7 +479,7 @@ public class PlayerRanged : PlayerBase
         {
             SkillBar.value = SkillDuration - skillCurrentDuration;
 
-            if (intervalCounter >= Skill_AtkInterval)
+            if (intervalCounter >= GetSkillFiringInterval())
             {
                 Vector3 sourcePosition = SkillPosition.position;
                 intervalCounter = 0;
@@ -781,7 +789,7 @@ public class PlayerRanged : PlayerBase
             info.SkillName = "Der Tag neigt Sich - Flowering Night";
             info.SkillText =
                 $"Continuously unleashes multiple waves of projectiles spreading in all direction around self, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action). " +
-                $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
+                $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD. " +
                 $"{SkillCooldown}s cooldown.";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_TRAVEL))
@@ -789,7 +797,7 @@ public class PlayerRanged : PlayerBase
             info.SkillName = "Der Tag neigt Sich - Ghost Lead";
             info.SkillText =
                 $"Locks-on to the nearest enemy within range and continuously unleashes waves of projectiles, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action). " +
-                $". Each projectile hits the first enemy it comes into contact with (if there is a locked enemy, all projectiles homing toward them instead), dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
+                $". Each projectile hits the first enemy it comes into contact with (if there is a locked enemy, all projectiles homing toward them instead), dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD. " +
                 $"{SkillCooldown}s cooldown.";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_PHANTOM))
@@ -797,7 +805,7 @@ public class PlayerRanged : PlayerBase
             info.SkillName = "Der Tag neigt Sich - Phantom Bullets";
             info.SkillText =
                 $"Continuously unleashes waves of projectiles spreading in all direction around self, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action). " +
-                $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
+                $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD. " +
                 $"If an enemy is defeated while the skill is active, another waves of projectiles will be created at their position, lasting up to 1.5 seconds (triggers up to 3 times). " +
                 $"{SkillCooldown}s cooldown.";
         }
@@ -806,7 +814,7 @@ public class PlayerRanged : PlayerBase
             info.SkillName = "Der Tag neigt Sich - Twilight of Wolumonde";
             info.SkillText =
                 $"Continuously unleashes waves of projectiles spreading in all direction around self, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action). " +
-                $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
+                $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD. " +
                 $"Cancelling or swapping during the skill leaves behind a phantom that maintains the same effect for the remaining duration." +
                 $"{SkillCooldown}s cooldown.";
         }
@@ -815,7 +823,7 @@ public class PlayerRanged : PlayerBase
             info.SkillName = "Der Tag neigt Sich - Widely Read";
             info.SkillText =
                 $"Continuously unleashes waves of projectiles spreading in all direction around self, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action, and refunds upon doing so). " +
-                $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
+                $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD. " +
                 $"{SkillCooldown}s cooldown.";
         }
         else
@@ -823,7 +831,7 @@ public class PlayerRanged : PlayerBase
             info.SkillName = "Der Tag neigt Sich";
             info.SkillText =
                 $"Continuously unleashes waves of projectiles spreading in all direction around self, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action). " +
-                $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each. " +
+                $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD. " +
                 $"{SkillCooldown}s cooldown.";
         }
 

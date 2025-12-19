@@ -22,9 +22,10 @@ public class PlayerCasterIllusion : EntityBase
         SetInvulnerable(9999f);
     }
 
-    public void SetInherit(short ATK, float maxDuration, float duration, float multiplier, float interval, bool flipX)
+    public void SetInherit(short ATK, float ASPD, float maxDuration, float duration, float multiplier, float interval, bool flipX)
     {
         InitSpriteColor = new(1, 0, 0.15f, 0.75f);
+        this.ASPD = ASPD;
         spriteRenderer.color = InitSpriteColor;
         bAtk = atk = ATK;
         SkillDuration = maxDuration;
@@ -70,6 +71,13 @@ public class PlayerCasterIllusion : EntityBase
         spriteRenderer.color = InitSpriteColor;
     }
 
+    public float GetSkillFiringInterval()
+    {
+        float ASPD_Dif = 100 - ASPD;
+        float ScaleFactor = 100 / (100 + ASPD_Dif / 2);
+        return Skill_AtkInterval * ScaleFactor;
+    }
+
     public IEnumerator CastSkill()
     {
         yield return null;
@@ -77,7 +85,8 @@ public class PlayerCasterIllusion : EntityBase
 
         SkillBarObj.SetActive(true);
         animator.SetTrigger("skill");
-        float count = SkillCurrentDuration, intervalCount = Skill_AtkInterval;
+        float count = SkillCurrentDuration, 
+              intervalCount = GetSkillFiringInterval();
         float angleOffset = 0;
 
         SkillBar.maxValue = SkillDuration;
@@ -89,7 +98,7 @@ public class PlayerCasterIllusion : EntityBase
         while (count < SkillDuration)
         {
             SkillBar.value = SkillDuration - count;
-            if (intervalCount >= Skill_AtkInterval)
+            if (intervalCount >= GetSkillFiringInterval())
             {
                 Vector3 sourcePosition = SkillPosition.position;
                 intervalCount = 0;

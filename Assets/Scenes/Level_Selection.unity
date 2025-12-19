@@ -36605,7 +36605,7 @@ MonoBehaviour:
   skillType: 0
   skillName: 9
   skillNameText: Equipment - Radio
-  skillDescription: Swap and skills cool-down -15%
+  skillDescription: Swap cool-down -15%, special and skill cool-downs -10%.
   favorText: '"Mmmm... Whuh? What? Yes, I''m listening!"'
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 07000000080000000a000000

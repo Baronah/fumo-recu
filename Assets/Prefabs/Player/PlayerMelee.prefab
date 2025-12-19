@@ -5585,7 +5585,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1929991105562868378, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
       propertyPath: m_Color.a
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3206940598239530024, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
       propertyPath: m_LocalScale.x
@@ -5703,6 +5703,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 5d1c92a74a2bafc4cb7ecfa8e080079a, type: 2}
+    - target: {fileID: 9181697832607536883, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5846086701423210909, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
     m_RemovedGameObjects: []
@@ -5745,6 +5749,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: -3648005880966443597}
   m_SourcePrefab: {fileID: 100100000, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
+--- !u!1 &823421663847655479 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9181697832607536883, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
+  m_PrefabInstance: {fileID: 8360528276066401988}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1940547992953852007 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7991820289360490147, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
@@ -5861,6 +5870,7 @@ MonoBehaviour:
   HH_Effect_fill: {fileID: 4047708612106510638}
   RockEffect: {fileID: 5523869800612596793, guid: 652a37322c30aae499a7cd8b40f7c35d, type: 3}
   WindanthemBar: {fileID: 4355685324907358026}
+  WindanthemMaxEffect: {fileID: 823421663847655479}
   Skills: 
   WindAnthemAspdBuffAmount: 12
   WindAnthemAspdBuffDuration: 15

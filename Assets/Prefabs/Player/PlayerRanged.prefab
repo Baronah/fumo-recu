@@ -877,6 +877,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 655a28e89bd3c954f8c42e7630ec70ad, type: 2}
+    - target: {fileID: 9181697832607536883, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5846086701423210909, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
     m_RemovedGameObjects: []
@@ -919,6 +923,11 @@ PrefabInstance:
 --- !u!1 &661649057430505068 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7991820289360490147, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
+  m_PrefabInstance: {fileID: 7477664755718121679}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1778343450262027836 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9181697832607536883, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
   m_PrefabInstance: {fileID: 7477664755718121679}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &3165126570593974053 stripped
@@ -1027,6 +1036,7 @@ MonoBehaviour:
   HH_Effect_fill: {fileID: 3165126570593974053}
   RockEffect: {fileID: 5523869800612596793, guid: 652a37322c30aae499a7cd8b40f7c35d, type: 3}
   WindanthemBar: {fileID: 3436828054658134337}
+  WindanthemMaxEffect: {fileID: 1778343450262027836}
   Skills: 
   WindAnthemAspdBuffAmount: 12
   WindAnthemAspdBuffDuration: 15

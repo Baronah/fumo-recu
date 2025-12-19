@@ -21,7 +21,7 @@ public class PlayerBase : EntityBase
 
     [SerializeField] protected GameObject RockEffect;
     
-    [SerializeField] protected GameObject WindanthemBar;
+    [SerializeField] protected GameObject WindanthemBar, WindanthemMaxEffect;
     protected Slider WindanthemSlider;
     protected TMP_Text WindanthemCounter;
 
@@ -34,6 +34,7 @@ public class PlayerBase : EntityBase
 
     protected string WindAnthemKey = "WIND_ANTHEM_BUFF";
     [SerializeField] protected float WindAnthemAspdBuffAmount = 15f, WindAnthemAspdBuffDuration = 15f, WindAnthemAspdBuffCap = 75f;
+    protected bool IsWindAnthemMaxed => AspdBuffs.ContainsKey(WindAnthemKey) && AspdBuffs[WindAnthemKey].Value >= WindAnthemAspdBuffCap;
 
     public virtual PlayerType GetPlayerType()
     {
@@ -78,10 +79,11 @@ public class PlayerBase : EntityBase
         if (WindanthemBar.activeSelf)
         {
             WindanthemSlider.maxValue = WindAnthemAspdBuffDuration;
-            WindanthemSlider.value = AspdBuffs.ContainsKey(WindAnthemKey) && AspdBuffs[WindAnthemKey].IsInEffect ?
-                AspdBuffs[WindAnthemKey].Duration : 0f;
+            WindanthemSlider.value = AspdBuffs[WindAnthemKey].Duration;
 
             WindanthemCounter.text = ((int)(AspdBuffs[WindAnthemKey].Value / WindAnthemAspdBuffAmount)).ToString();
+
+            WindanthemMaxEffect.SetActive(IsAlive() && IsWindAnthemMaxed);
         }
     }
 

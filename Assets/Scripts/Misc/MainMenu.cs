@@ -7,13 +7,17 @@ using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
-    [SerializeField] private Image Garden;
     [SerializeField] private Image Title;
 
     [SerializeField] private Slider BGMSlider, SFXSlider;
     [SerializeField] private TMP_Text ResolutionTxt;
     [SerializeField] private Button ResolutionUpBtn, ResolutionDownBtn;
 
+    [SerializeField] Image StartObj;
+    [SerializeField] AudioSource SquishAudioSrc;
+    [SerializeField] Image Overlay;
+
+    [SerializeField] GameObject RealMenu, FakeMenu;
     private int ResolutionIndex = 0;
 
     private Color TitleStartColor, TitleEndColor;
@@ -21,9 +25,20 @@ public class MainMenu : MonoBehaviour
 
     private AudioSource BGM;
 
-    private void Start()
+    private void Awake()
     {
         BGM = GetComponent<AudioSource>();
+        if (SaveDataManager.IsResearchUnlocked)
+        {
+            RealMenu.SetActive(true);
+            FakeMenu.SetActive(false);
+            BGM.clip = FindFirstObjectByType<SongPlayer>().Vocal;
+            BGM.Play();
+        }
+    }
+
+    private void Start()
+    {
         InitValues();
         TitleStartColor = Title.color;
         StartCoroutine(GardenFadeIn());
@@ -31,18 +46,6 @@ public class MainMenu : MonoBehaviour
 
     IEnumerator GardenFadeIn()
     {
-        yield return new WaitForSeconds(8f);
-
-        float duration = 10f;
-        float elapsed = 0f;
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            Garden.color = new Color(Garden.color.r, Garden.color.g, Garden.color.b, Mathf.Lerp(0, 0.8f, elapsed / duration));
-            yield return null;
-        }
-        Garden.color = new Color(Garden.color.r, Garden.color.g, Garden.color.b, 0.8f);
-
         yield return new WaitForSeconds(14f);
         Title.GetComponent<DVDLogo>().enabled = true; // Enable DVDLogo script
     }
@@ -163,6 +166,69 @@ public class MainMenu : MonoBehaviour
         ResolutionUpBtn.interactable = ResolutionIndex < 3;
     }
 
-    public void Play() => SceneManager.LoadScene("Level_Selection");
+    public void Play() => StartCoroutine(OnStartCoroutine());
     public void Quit() => Application.Quit();
+
+    IEnumerator OnStartCoroutine()
+    {
+        Overlay.gameObject.SetActive(true);
+        StartObj.GetComponent<Button>().interactable = false;
+
+        if (SaveDataManager.IsResearchUnlocked)
+        {
+            BGM.Stop();
+            yield return StartCoroutine(Squish());
+            yield return new WaitForSeconds(1f);
+        }
+
+        yield return StartCoroutine(OverlayFadeIn());
+
+        SceneManager.LoadSceneAsync("Level_Selection");
+    }
+
+    IEnumerator Squish()
+    {
+        float squishAmount = 0.35f, squishDuration = 0.15f;
+        Vector3 originalScale = StartObj.transform.localScale;
+        Transform targetTransform = StartObj.transform;
+        Vector3 squishedScale = new Vector3(originalScale.x * (1 + squishAmount), originalScale.y * (1 - squishAmount), originalScale.z);
+        float duration = squishDuration;
+        float elapsedTime;
+
+        elapsedTime = 0f;
+        if (SquishAudioSrc != null) SquishAudioSrc.Play();
+
+        // Squish down
+        while (elapsedTime < duration)
+        {
+            targetTransform.localScale = Vector3.Lerp(originalScale, squishedScale, (elapsedTime / duration));
+            elapsedTime += Time.unscaledDeltaTime;
+            yield return null;
+        }
+        targetTransform.localScale = squishedScale;
+        elapsedTime = 0f;
+        // Return to original scale
+        while (elapsedTime < duration)
+        {
+            targetTransform.localScale = Vector3.Lerp(squishedScale, originalScale, (elapsedTime / duration));
+            elapsedTime += Time.unscaledDeltaTime;
+            yield return null;
+        }
+        targetTransform.localScale = originalScale;
+    }
+
+    IEnumerator OverlayFadeIn()
+    {
+        float duration = 2f;
+        float elapsed = 0f;
+        Color startColor = Overlay.color;
+        Color endColor = Color.black;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            Overlay.color = Color.Lerp(startColor, endColor, elapsed / duration);
+            yield return null;
+        }
+        Overlay.color = endColor;
+    }
 }
