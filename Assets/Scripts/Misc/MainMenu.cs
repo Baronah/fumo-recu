@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -25,16 +26,42 @@ public class MainMenu : MonoBehaviour
 
     private AudioSource BGM;
 
+    private static bool firstTimeBootup = true;
     private void Awake()
     {
         BGM = GetComponent<AudioSource>();
         if (SaveDataManager.IsResearchUnlocked)
         {
             RealMenu.SetActive(true);
-            FakeMenu.SetActive(false);
             BGM.clip = FindFirstObjectByType<SongPlayer>().Vocal;
             BGM.Play();
+
+            if (firstTimeBootup) StartCoroutine(HideFakeMenu());
+            else
+            {
+                FakeMenu.SetActive(false);
+
+            }
         }
+    }
+
+    IEnumerator HideFakeMenu()
+    {
+        firstTimeBootup = false;
+        FakeMenu.GetComponentsInChildren<Button>().ToList().ForEach(b => b.interactable = false);
+        yield return new WaitForSeconds(2f);
+
+        CanvasGroup cg = FakeMenu.GetComponent<CanvasGroup>();
+        float duration = 3f;
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            cg.alpha = Mathf.Lerp(1f, 0f, elapsed / duration);
+            yield return null;
+        }
+
+        FakeMenu.SetActive(false);
     }
 
     private void Start()
@@ -46,7 +73,7 @@ public class MainMenu : MonoBehaviour
 
     IEnumerator GardenFadeIn()
     {
-        yield return new WaitForSeconds(14f);
+        yield return new WaitForSeconds(20.5f);
         Title.GetComponent<DVDLogo>().enabled = true; // Enable DVDLogo script
     }
 

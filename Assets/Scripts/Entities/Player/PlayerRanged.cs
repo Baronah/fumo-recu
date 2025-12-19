@@ -108,11 +108,10 @@ public class PlayerRanged : PlayerBase
         playerCasterIllusion.InitializeComponents();
         playerCasterIllusion.SetInherit(
             ATK: (short)(atk * 0.5f),
-            ASPD: ASPD,
             maxDuration: SkillDuration,
             duration: skillCurrentDuration,
             Skill_DamageMulitplier,
-            Skill_AtkInterval,
+            GetSkillFiringInterval(),
             flipX: spriteRenderer.flipX);
     }
 
@@ -444,8 +443,8 @@ public class PlayerRanged : PlayerBase
 
     public float GetSkillFiringInterval()
     {
-        float ASPD_Dif = 100 - ASPD;
-        float ScaleFactor = 100 / (100 + ASPD_Dif / 2);
+        float ASPD_Dif = ASPD - 100;
+        float ScaleFactor = 100 / (100 + ASPD_Dif * 0.33f);
         return Skill_AtkInterval * ScaleFactor;
     }
 

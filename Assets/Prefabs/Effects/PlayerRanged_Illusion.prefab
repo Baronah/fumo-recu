@@ -465,7 +465,10 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 655a28e89bd3c954f8c42e7630ec70ad, type: 2}
     m_RemovedComponents:
     - {fileID: 5846086701423210909, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 9181697832607536883, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
+    - {fileID: 7991820289360490147, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
+    - {fileID: 5220816087514864014, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 4379148182149629804, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
       insertIndex: 0
@@ -547,6 +550,8 @@ MonoBehaviour:
   hpRegenFlat: 0
   hpRegenPercentage: 0
   weight: 1000
+  damageReduction: 0
+  damageAmplify: 0
   IsFreezeImmune: 1
   IsStunImmune: 1
   IsPhysicalImmune: 1
@@ -563,8 +568,15 @@ MonoBehaviour:
   ccBar: {fileID: 8143205137011210618}
   AttackAnimation: {fileID: 7400000, guid: cfc2392c28256a7458936cb08b03e7ce, type: 2}
   sfxs: []
+  IsBeingShifted: 0
+  FreezeTimer: 0
+  StunTimer: 0
   preferredMoveAnimationPlaySpeed: 0.85
   preferredAttackAnimationSpeed: 0.9
+  IsBeingLevitated: 0
+  LevitationEffect: {fileID: 0}
+  reviveDuration: 5
+  postReviveDuration: 0
   SkillPosition: {fileID: 3133010215521894544}
   SkillEffect: {fileID: 5073970244535040960}
   SkillBarObj: {fileID: 5301457869692540562}
