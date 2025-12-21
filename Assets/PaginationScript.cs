@@ -6,25 +6,18 @@ using UnityEngine.UI;
 
 public class PaginationScript : MonoBehaviour
 {
-    [SerializeField] List<string> PageContents;
-    [SerializeField] TMP_Text pageContentLeft, pageContentRight;
+    [SerializeField] List<GameObject> PageContents;
     [SerializeField] Button NextPg, PrevPg;
+    [SerializeField] TMP_Text PageCnt;
 
     public int currentPage = 0;
-    public int totalPages
-    {
-        get
-        {
-            return (PageContents.Count + 1) / 2;
-        }
-    }
+    public int totalPages => PageContents.Count;
 
     private void Start()
     {
         if (PageContents.Count <= 0)
         {
-            pageContentLeft.text = "No Content";
-            pageContentRight.text = "";
+            PageContents.ForEach(page => page.SetActive(false));
             return;
         }
 
@@ -39,36 +32,35 @@ public class PaginationScript : MonoBehaviour
         NextPg.gameObject.SetActive(HasNextPage());
         PrevPg.gameObject.SetActive(HasPrevPage());
 
-        pageContentLeft.text = PageContents[currentPage].Replace(@"\n","\n");
-        if (currentPage + 1 < PageContents.Count)
-            pageContentRight.text = PageContents[currentPage + 1].Replace(@"\n", "\n");
-        else
-            pageContentRight.text = "";
+        PageContents.ForEach(page => page.SetActive(false));
+        PageContents[currentPage].SetActive(true);
+
+        PageCnt.text = $"Page {currentPage + 1} / {totalPages}";
     }
     
     bool HasNextPage()
     {
-        return currentPage + 2 < PageContents.Count;
+        return currentPage + 1 < PageContents.Count;
     }
 
     bool HasPrevPage()
     {
-        return currentPage - 2 >= 0;
+        return currentPage - 1 >= 0;
     }
 
     public void NextPage()
     {
-        if (currentPage + 2 >= PageContents.Count)
+        if (currentPage + 1 >= PageContents.Count)
             return;
-        currentPage += 2;
+        currentPage += 1;
         UpdatePageContent();
     }
 
     public void PrevPage()
     {
-        if (currentPage - 2 < 0)
+        if (currentPage - 1 < 0)
             return;
-        currentPage -= 2;
+        currentPage -= 1;
         UpdatePageContent();
     }
 }

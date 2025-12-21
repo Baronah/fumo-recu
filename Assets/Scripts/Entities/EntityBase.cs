@@ -849,25 +849,25 @@ public class EntityBase : MonoBehaviour
         return instance;
     }
 
-    public virtual void DealDamage(EntityBase target, int damage)
+    public virtual void DealDamage(EntityBase target, int damage, ProjectileScript projectileInfo = null)
     {
-        if (damageType == DamageType.PHYSICAL) DealDamage(target, damage, 0, 0);
-        else if (damageType == DamageType.MAGICAL) DealDamage(target, 0, damage, 0);
-        else DealDamage(target, 0, 0, damage);
+        if (damageType == DamageType.PHYSICAL) DealDamage(target, damage, 0, 0, projectileInfo);
+        else if (damageType == DamageType.MAGICAL) DealDamage(target, 0, damage, 0, projectileInfo);
+        else DealDamage(target, 0, 0, damage, projectileInfo);
     }
 
-    public virtual void DealDamage(EntityBase target, DamageInstance damage)
+    public virtual void DealDamage(EntityBase target, DamageInstance damage, ProjectileScript projectileInfo = null)
     {
-        DealDamage(target, damage.PhysicalDamage, damage.MagicalDamage, damage.TrueDamage);
+        DealDamage(target, damage.PhysicalDamage, damage.MagicalDamage, damage.TrueDamage, projectileInfo);
     }
 
-    public virtual void DealDamage(EntityBase target, int pDmg, int mDmg, int tDmg, bool allowWhenDisabled = false)
+    public virtual void DealDamage(EntityBase target, int pDmg, int mDmg, int tDmg, bool allowWhenDisabled = false, ProjectileScript projectileInfo = null)
     {
         if ((!allowWhenDisabled && (IsFrozen || IsStunned)) || !target || !target.IsAlive()) return;
 
         var calcDamage = DamageOutput(target, pDmg, mDmg, tDmg);
 
-        target.TakeDamage(calcDamage, this);
+        target.TakeDamage(calcDamage, this, projectileInfo);
 
         if (calcDamage.TotalDamage <= 0) return;
         if (!target.isInvulnerable) OnSuccessfulAttack(target, calcDamage);
@@ -881,7 +881,7 @@ public class EntityBase : MonoBehaviour
         }
     }
 
-    public virtual void TakeDamage(DamageInstance damage, EntityBase source)
+    public virtual void TakeDamage(DamageInstance damage, EntityBase source, ProjectileScript projectileInfo = null)
     {
         if (!this || !this.IsAlive() || this.isInvulnerable) return;
 

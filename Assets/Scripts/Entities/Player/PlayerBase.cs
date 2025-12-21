@@ -34,7 +34,7 @@ public class PlayerBase : EntityBase
 
     protected string WindAnthemKey = "WIND_ANTHEM_BUFF";
     [SerializeField] protected float WindAnthemAspdBuffAmount = 15f, WindAnthemAspdBuffDuration = 15f, WindAnthemAspdBuffCap = 75f;
-    protected bool IsWindAnthemMaxed => AspdBuffs.ContainsKey(WindAnthemKey) && AspdBuffs[WindAnthemKey].Value >= WindAnthemAspdBuffCap;
+    protected bool IsWindAnthemMaxed => AspdBuffs.ContainsKey(WindAnthemKey) && AspdBuffs[WindAnthemKey].IsInEffect && AspdBuffs[WindAnthemKey].Value >= WindAnthemAspdBuffCap;
 
     public virtual PlayerType GetPlayerType()
     {
@@ -82,9 +82,9 @@ public class PlayerBase : EntityBase
             WindanthemSlider.value = AspdBuffs[WindAnthemKey].Duration;
 
             WindanthemCounter.text = ((int)(AspdBuffs[WindAnthemKey].Value / WindAnthemAspdBuffAmount)).ToString();
-
-            WindanthemMaxEffect.SetActive(IsAlive() && IsWindAnthemMaxed);
         }
+
+        WindanthemMaxEffect.SetActive(IsAlive() && IsWindAnthemMaxed);
     }
 
     float countUp = 0;
@@ -334,9 +334,9 @@ public class PlayerBase : EntityBase
         };
     }
 
-    public override void TakeDamage(DamageInstance damage, EntityBase source)
+    public override void TakeDamage(DamageInstance damage, EntityBase source, ProjectileScript projectileInfo = null)
     {
-        base.TakeDamage(damage, source);
+        base.TakeDamage(damage, source, projectileInfo);
 
         if (source && !isInvulnerable)
             playerManager.OnPlayerAttacked(damage.TotalDamage * 1.0f / (mHealth * 0.5f));
@@ -358,7 +358,7 @@ public class PlayerBase : EntityBase
 
 
     HashSet<EntityBase> Levitated = new();
-    public override void DealDamage(EntityBase target, int pDmg, int mDmg, int tDmg, bool allowWhenDisabled = false)
+    public override void DealDamage(EntityBase target, int pDmg, int mDmg, int tDmg, bool allowWhenDisabled = false, ProjectileScript projectileInfo = null)
     {
         if (Skills.Contains(SkillTree_Manager.SkillName.BUBBLE_ARTS) && !Levitated.Contains(target))
         {

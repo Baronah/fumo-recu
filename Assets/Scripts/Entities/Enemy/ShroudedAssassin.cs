@@ -101,7 +101,7 @@ public class ShroudedAssassin : EnemyBase
 
     public int MaxFeudLevel = 20;
     public float MaxDamageReduction = 1f, MaxAtkBuff = 0.3f, MaxMspdBuff = 0.3f;
-    public override void TakeDamage(DamageInstance damage, EntityBase source)
+    public override void TakeDamage(DamageInstance damage, EntityBase source, ProjectileScript projectileInfo = null)
     {
         if (source && source == SpottedPlayer)
         {

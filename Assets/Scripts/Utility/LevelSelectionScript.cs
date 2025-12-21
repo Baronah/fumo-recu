@@ -10,11 +10,9 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static Cinemachine.DocumentationSortingAttribute;
 using static EnemyBase;
 using static PlayerManager;
 using static StageManager;
-using static UnityEngine.Rendering.VirtualTexturing.Debugging;
 
 public class LevelSelectionScript : MonoBehaviour
 {
@@ -117,6 +115,8 @@ public class LevelSelectionScript : MonoBehaviour
         Time.timeScale = 1f;
         AssignLevels();
         UpdateStartingPlayerIcon();
+
+        StartCoroutine(OverlayFadeOut());
     }
 
     short cnt = 60;
@@ -136,6 +136,11 @@ public class LevelSelectionScript : MonoBehaviour
         LevelPrefabs.Clear();
 
         Nav.SetActive(TotalPages > 1);
+        if (Nav.activeSelf)
+        {
+            Nav.transform.Find("Next").gameObject.SetActive(CurrentPageIndex < TotalPages - 1);
+            Nav.transform.Find("Prev").gameObject.SetActive(CurrentPageIndex > 0);
+        }
 
         var regex = new Regex(@"^FM-(\d+)(_CM)?$");
         int startLevelIndex = CurrentPageIndex * MaxPageSize;
@@ -281,7 +286,7 @@ public class LevelSelectionScript : MonoBehaviour
                     EnvironmentType.KEYS => "<color=purple><Key></color> Collect to remove the terrains with corresponding color.",
                     EnvironmentType.ONE_WAY_PASSAGE => "<color=#d6d930><One-directional Passage></color> Can only be passed through when appoarched from a certain direction.",
                     EnvironmentType.ORIGINIUM_TILE => "<color=#C40000><Originium Pollution></color> Continuously deals true damage to the player and enemy units standing on it.",
-                    EnvironmentType.HEAT_PUMP_VENT => "<color=#ff9a03><Heatpump Vent></color> Continuously pushes the player and enemies within range toward a certain direction.",
+                    EnvironmentType.HEAT_PUMP_VENT => "<color=#ff9a03><Heatpump Vent></color> Periodically pushes the player and enemies within range toward a certain direction.",
                     EnvironmentType.MEDICAL_TILE => "<color=green><Medical Tile></color> Continuously heals the player and enemies standing on it.",
                     EnvironmentType.DARK_ZONE => "<color=black><Shrouded Zone></color> Some areas of the map is covered in darkness. Units standing on those areas have reduced attack and detection range, but can not be detected and targeted by units standing on brighter areas.",
                     _ => "Unknown environment"
@@ -746,6 +751,22 @@ public class LevelSelectionScript : MonoBehaviour
 
         image.color = Color.black;
         DontDestroyOnLoad(Overlay);
+    }
+
+    IEnumerator OverlayFadeOut()
+    {
+        Image image = Overlay.GetComponentInChildren<Image>();
+        Overlay.SetActive(true);
+        float c = 0, d = 0.5f;
+        while (c < d)
+        {
+            image.color = Color.Lerp(Color.black, Color.clear, c * 1.0f / d);
+            c += Time.deltaTime;
+            yield return null;
+        }
+
+        image.color = Color.black;
+        Overlay.SetActive(false);
     }
 
     public void NextPage()

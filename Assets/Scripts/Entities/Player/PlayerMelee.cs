@@ -13,7 +13,7 @@ public class PlayerMelee : PlayerBase
     [SerializeField] private float DashDuration = 0.5f;
     [SerializeField] private float DashCooldown = 6f;
 
-    [SerializeField] private GameObject SkillEffect, SkillEffect_2, AftershockEffect, AftershockEffect_2, BlackflashEffect, SwirlEffect;
+    [SerializeField] private GameObject SkillEffect, SkillEffect_2, AftershockEffect, AftershockEffect_2, BlackflashEffect, SwirlEffect, CounterEffect;
     [SerializeField] private float SkillCooldown = 30f;
     [SerializeField] private float SkillDuration = 7f;
     [SerializeField] private float BurstHeal_HpPercentage = 0.35f;
@@ -32,7 +32,7 @@ public class PlayerMelee : PlayerBase
     [SerializeField] float AfterShockDamageConversionRatio = 0.75f;
     [SerializeField] TMP_Text AftershockDmgCounter;
 
-    [SerializeField] AudioSource Ambient, Vortex, Shock;
+    [SerializeField] AudioSource Ambient, Vortex, Shock, Counter;
     
     private bool IsSkillActive = false, IsDashing = false, CanUseSkill = true, CanUseDash = true;
 
@@ -243,6 +243,7 @@ public class PlayerMelee : PlayerBase
             Skills.Contains(SkillTree_Manager.SkillName.DASH_TOUCH);
 
         bool allowDashes = true;
+
         while (allowDashes)
         {
             allowDashes = false;
@@ -278,6 +279,7 @@ public class PlayerMelee : PlayerBase
                             if (!enemy || !enemy.IsAlive() || EnemyHitByDash.Contains(enemy)) continue;
 
                             DealDamage(enemy, atk, 0, 0);
+                            PushEntityFrom(enemy, transform, 3f, 0.1f);
                             EnemyHitByDash.Add(enemy);
                         }
                     }
@@ -291,6 +293,19 @@ public class PlayerMelee : PlayerBase
                 yield return new WaitForFixedUpdate();
             }
 
+            if (Skills.Contains(SkillTree_Manager.SkillName.DASH_LETHAL))
+            {
+                var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, 60f, true);
+
+                foreach (EntityBase enemy in enemies)
+                {
+                    if (!enemy || !enemy.IsAlive() || EnemyHitByDash.Contains(enemy)) continue;
+
+                    DealDamage(enemy, atk, 0, 0);
+                    PushEntityFrom(enemy, transform, 3f, 0.1f);
+                    EnemyHitByDash.Add(enemy);
+                }
+            }
             yield return null;
         }
 
@@ -560,12 +575,42 @@ public class PlayerMelee : PlayerBase
     }
 
     bool healedOnThisDash = false;
-    public override void TakeDamage(DamageInstance damage, EntityBase source)
+    public override void TakeDamage(DamageInstance damage, EntityBase source, ProjectileScript projectileInfo = null)
     {
-        if (IsDashing && !healedOnThisDash && Skills.Contains(SkillTree_Manager.SkillName.DASH_FAITH))
+        if (IsDashing && Skills.Contains(SkillTree_Manager.SkillName.DASH_FAITH))
         {
-            Heal(mHealth * 0.25f);
-            healedOnThisDash = true;
+            // reflect projectile if catches one
+            if (source && projectileInfo != null)
+            {
+                projectileInfo.GetComponent<SpriteRenderer>().color = Color.yellow;
+                CreateProjectileAndShootToward(
+                    projectileInfo.gameObject, 
+                    projectileInfo.DamageInstance,
+                    transform.position,
+                    source.transform.position,
+                    ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
+                    projectileInfo.TravelSpeed,
+                    projectileInfo.Acceleration,
+                    8,
+                    typeof(EnemyBase));
+            }
+            // otherwise reflect incoming attack as AOE
+            else
+            {
+                var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, 150f, true);
+                foreach (EntityBase enemy in enemies)
+                {
+                    DealDamage(enemy, damage.PhysicalDamage, damage.MagicalDamage, damage.TrueDamage);
+                }
+            } 
+
+            Instantiate(CounterEffect, transform.position, Quaternion.identity);
+            if (Counter && !Counter.isPlaying) Counter.Play();
+            if (!healedOnThisDash)
+            {
+                Heal(mHealth * 0.2f);
+                healedOnThisDash = true;
+            }
         }
 
         if (IsSkillActive && IsAlive() && damage.TotalDamage > 0)
@@ -622,13 +667,14 @@ public class PlayerMelee : PlayerBase
         {
             info.SpecialName = "Evasion - Lethal Tempo";
             info.SpecialText =
-                $"Dash a short distance toward the movement direction, briefly becomes invulnerable during the process and damage all enemies self coming into contact with.";
+                $"Dash a short distance toward the movement direction, briefly becomes invulnerable during the process, damage all enemies self coming into contact with and push them aside.";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.DASH_FAITH))
         {
-            info.SpecialName = "Evasion - Leap of Faith";
+            info.SpecialName = "Evasion - Breath of the Wind";
             info.SpecialText =
-                $"Dash a short distance toward the movement direction and becomes invulnerable during the process and for a brief moment afterward.";
+                $"Dash a short distance toward the movement direction. During the process, self becomes invulnerable while reflects all incoming attacks. " +
+                $"The first successful deflection also heals self.";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.DASH_AFTERIMAGES))
         {

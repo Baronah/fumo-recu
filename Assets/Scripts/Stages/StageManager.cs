@@ -1,4 +1,4 @@
-using Assets.Scripts;
+ using Assets.Scripts;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -92,6 +92,11 @@ public class StageManager : MonoBehaviour
         "Long-ranged enemies will try to keep distance in combat.",
         "When a patrolling enemy is attacked,\nthey and their nearby allies will try to rush toward the direction of the attack.",
         "Make good use of terrains and map layout to gain advantages in combat!",
+        "Need time to pull off a difficult move? Press 'SLOWKEYREPLACE' to toggle slow-mo!",
+        "'Der Tag neight Sich' (Ranged character's ultimate) can be cancelled by recast, move, attack or use special during channel time.",
+        "Enemies with higher weight are more resistant to push/pull effects.",
+        "Push/pull will also cancel attacks.",
+        "Gates with keyhole symbol can be removed by picking up the key with its corresponding color, while gates with sword symbol requires you to eliminate certain enemies in its area in order to be removed.",
     };
 
     private readonly string[] Trolls =
@@ -104,7 +109,6 @@ public class StageManager : MonoBehaviour
         "Nicho5.",
         "I never troll.",
         "Sorry, Amanai. I'm not even angry over you right now. I bear no grudge against anyone. It's just that the world feels so, so wonderful right now. \"Throughout Heaven and Earth, I alone am the honored one\". However, even in the Gojo clan only a scant few know about this. Take the amplified and the reversal, then combine those two different expressions of infinity to create and push out imaginary mass. Imaginary technique... Purple.",
-
     };
 
     bool IsStageReady = false,
@@ -130,6 +134,7 @@ public class StageManager : MonoBehaviour
         bool IsTroll = tipCount >= 7 && Random.Range(0, 100) <= 10;
         TxtTips.text = "<b>TIPS:</b> " + 
             (IsTroll ? Trolls[Random.Range(0, Trolls.Length)] : Tips[Random.Range(0, Tips.Length)]);
+        TxtTips.text = TxtTips.text.Replace("SLOWKEYREPLACE", KeybindButton.GetDisplayNameForKey(InputManager.Instance.SlowKey));    
         PlayerPrefs.SetInt("TipsCounter", tipCount + 1);
         PlayerPrefs.Save();
 

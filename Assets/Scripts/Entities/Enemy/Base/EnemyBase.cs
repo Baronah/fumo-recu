@@ -807,7 +807,7 @@ public class EnemyBase : EntityBase
         if (CurrentCheckpointIndex >= Checkpoints.Count) CurrentCheckpointIndex = 0;
     }
 
-    public override void TakeDamage(DamageInstance damage, EntityBase source)
+    public override void TakeDamage(DamageInstance damage, EntityBase source, ProjectileScript projectileInfo = null)
     {
         OnAttackReceive(source);
         base.TakeDamage(damage, source);

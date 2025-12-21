@@ -111,14 +111,14 @@ public class ProjectileScript : MonoBehaviour
 
 		if (doesDamage)
 		{
-			ProjectileFirer.DealDamage(target, DamageInstance.PhysicalDamage, DamageInstance.MagicalDamage, DamageInstance.TrueDamage, true);
+			ProjectileFirer.DealDamage(target, DamageInstance.PhysicalDamage, DamageInstance.MagicalDamage, DamageInstance.TrueDamage, true, this);
 			allowingUpdate = false;
 		}
 
-
 		if (displayMsg != string.Empty) ProjectileFirer.DisplayDamage(displayMsg, msgDisplayOffset);
-		Destroy(this.gameObject);
-	}
+        gameObject.SetActive(false);
+        Destroy(this.gameObject, 0.1f);
+    }
 
     public virtual void HandleHit(GameObject other)
     {

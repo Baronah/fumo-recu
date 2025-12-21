@@ -646,7 +646,7 @@ public class PlayerRanged : PlayerBase
     }
 
     short flowerCount = 0;
-    public override void DealDamage(EntityBase target, int pDmg, int mDmg, int tDmg, bool allowWhenDisabled = false)
+    public override void DealDamage(EntityBase target, int pDmg, int mDmg, int tDmg, bool allowWhenDisabled = false, ProjectileScript projectileScript = null)
     {
         base.DealDamage(target, pDmg, mDmg, tDmg, allowWhenDisabled);
         if (IsSkillActive 

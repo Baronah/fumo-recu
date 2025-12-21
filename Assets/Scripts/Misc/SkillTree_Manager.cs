@@ -195,8 +195,7 @@ public class SkillTree_Manager : MonoBehaviour
         PlayerPrefs.SetInt("SensesUnlocked", 1);
         PlayerPrefs.Save();
 
-        CheckUnlockStatus();
-        Clear();
+        StartCoroutine(RemoveSeals(SENSES_BLOCK));
     }
 
     public void UnlockTechs()
@@ -209,8 +208,7 @@ public class SkillTree_Manager : MonoBehaviour
         PlayerPrefs.SetInt("TechsUnlocked", 1);
         PlayerPrefs.Save();
 
-        CheckUnlockStatus();
-        Clear();
+        StartCoroutine(RemoveSeals(TECHS_BLOCK));
     }
 
     public void UnlockSpecs()
@@ -222,6 +220,60 @@ public class SkillTree_Manager : MonoBehaviour
         PlayerPrefs.SetInt("Fumo", fumo);
         PlayerPrefs.SetInt("SpecsUnlocked", 1);
         PlayerPrefs.Save();
+
+        StartCoroutine(RemoveSeals(SPECS_BLOCK));
+    }
+
+    IEnumerator RemoveSeals(GameObject BlockObject)
+    {
+        yield return new WaitForSeconds(0.5f);
+        
+        float duration = 1.5f;
+        float elapsedTime = 0f;
+        List<Image> seals = BlockObject.GetComponentsInChildren<Image>().Where(i => i.type == Image.Type.Filled).ToList();
+        if (seals.Count > 0)
+        {
+            while (elapsedTime < duration)
+            {
+                elapsedTime += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsedTime / duration);
+                seals.ForEach(img => img.fillAmount = Mathf.Lerp(1f, 0f, t));
+                yield return null;
+            }
+
+            seals.ForEach(img => img.fillAmount = 0f);
+            yield return new WaitForSeconds(1f);
+        }
+
+        Image image = BlockObject.GetComponent<Image>();
+        Color color = image.color, end = Color.white;
+        end.a = color.a;
+        duration = 0.25f;
+        elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsedTime / duration);
+            image.color = Color.Lerp(color, end, t);
+            yield return null;
+        }
+        image.color = end;
+
+        yield return new WaitForSeconds(0.2f);
+
+        CanvasGroup cg = BlockObject.GetComponent<CanvasGroup>();
+        elapsedTime = 0f;
+        duration = 1f;
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsedTime / duration);
+            cg.alpha = Mathf.Lerp(1f, 0f, t);
+            yield return null;
+        }
+
+        cg.alpha = 0f;
+        BlockObject.SetActive(false);
 
         CheckUnlockStatus();
         Clear();
