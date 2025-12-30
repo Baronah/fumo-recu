@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6185428280630795640, guid: cf24154a7dcbae84daf4eb96071044ae, type: 3}
+      propertyPath: m_CollisionDetection
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7088186993608180177, guid: cf24154a7dcbae84daf4eb96071044ae, type: 3}
       propertyPath: m_Size.x
       value: 1.460996

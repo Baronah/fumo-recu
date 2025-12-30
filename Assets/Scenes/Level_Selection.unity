@@ -5327,7 +5327,8 @@ MonoBehaviour:
     gains additional +15 RES. If the character is ranged, gains additional +12% MSPD.
   favorText: Just a regular pair of hair ribbons she made, nothing special about
     it, but if you insist...
-  skillDescriptionInShort: 
+  skillDescriptionInShort: Starting character gains increased ATK. If the character
+    is melee, gains additional RES, while ranged character gains additional MSPD.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &306148696
@@ -6799,7 +6800,7 @@ MonoBehaviour:
     to the afterimage's location.
   favorText: Have you ever asked yourself, "just how did you get so attached?"
   skillDescriptionInShort: Using 'Evasion' leaves behind an afterimage. While it
-    persists, casting 'Evasion' will teleport you to the afterimage's location.
+    persists, recast will teleport you to the afterimage's location.
   mutuallyExclusiveSkills: 0b0000000c0000000d000000
   Overlay: {fileID: 0}
 --- !u!114 &368324335
@@ -6990,6 +6991,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1032146872}
+  - {fileID: 2030034558}
   - {fileID: 1438007903}
   - {fileID: 1024717790}
   m_Father: {fileID: 1258843336}
@@ -8097,6 +8099,7 @@ RectTransform:
   - {fileID: 884472227}
   - {fileID: 1151293893}
   - {fileID: 1408261371}
+  - {fileID: 1705105677}
   m_Father: {fileID: 1258843336}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -9699,7 +9702,9 @@ MonoBehaviour:
     its duration will be converted into physical and dealt to all nearby enemies
     once and inflicts a decaying 'slow'.
   favorText: This is gonna hurt a little.
-  skillDescriptionInShort: 
+  skillDescriptionInShort: '''Juggernaut'' stores a portion of damage taken during
+    the duration, and releases it as physical damage to nearby enemies when skill
+    ends.'
   mutuallyExclusiveSkills: 150000001600000017000000290000002e000000
   Overlay: {fileID: 0}
 --- !u!114 &537051726
@@ -12899,16 +12904,13 @@ MonoBehaviour:
   skillType: 0
   skillName: 45
   skillNameText: A nice-looking piece of rock
-  skillDescription: Gains a 5.2% buff in <color=green>HP</color>, <color=#ff4545>ATK</color>,
-    <color=#00ffe1>MSPD</color> and <color=#ffd61f>ASPD</color>. Special and skill
-    cooldowns -5.2%. The first time HP reaches 0, immediately <color=green>restores
-    52% max HP</color> and gains 1.52 seconds of invulnerability.
+  skillDescription: The first time HP reaches 0, immediately <color=green>restores
+    52% max HP</color>, refreshes all special and skill's CDs and stores a swap charge.
   favorText: Even if it is an unassuming piece of ore that is covered in dirt, if
     she gives you a present, please accept it. It must be something she likes a lot
     and wants to share with you anyway.
-  skillDescriptionInShort: Gains a 5.2% buff in atrributes and CDs. The first time
-    HP reaches 0, immediately <color=green>restores 52% max HP</color> and gains
-    1.52 seconds of invulnerability.
+  skillDescriptionInShort: The first time HP reaches 0, revives with 52% max HP,
+    refreshes all skills ans swap CD.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &744608037
@@ -17035,8 +17037,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 90, y: 5.197534}
-  m_SizeDelta: {x: 300, y: 4}
+  m_AnchoredPosition: {x: 180, y: 5.197534}
+  m_SizeDelta: {x: 480, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &884472228
 MonoBehaviour:
@@ -20130,7 +20132,7 @@ GameObject:
   - component: {fileID: 1024717792}
   - component: {fileID: 1024717791}
   m_Layer: 5
-  m_Name: Freeze 2
+  m_Name: Freeze_Conduct
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20176,8 +20178,9 @@ MonoBehaviour:
   favorText: Modified version of the defroster, now weakens the structure of the
     frozen object while leaving all the ice and moisture intact. The problem is,
     how is it called a defroster if it can't defrost anything...
-  skillDescriptionInShort: 
-  mutuallyExclusiveSkills: 1000000011000000
+  skillDescriptionInShort: '''Zeropoint Burst'' now reduces the DEF and RES of frozen
+    targets.'
+  mutuallyExclusiveSkills: 100000001100000035000000
   Overlay: {fileID: 0}
 --- !u!114 &1024717792
 MonoBehaviour:
@@ -20275,7 +20278,7 @@ GameObject:
   - component: {fileID: 1032146874}
   - component: {fileID: 1032146873}
   m_Layer: 5
-  m_Name: Freeze
+  m_Name: Freeze_Bloom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20321,9 +20324,9 @@ MonoBehaviour:
     them, whose maximum freeze duration equals to the current freeze duration of
     the enemy starting it. Can only trigger once per enemy.'
   favorText: '"Please calm down a little!"'
-  skillDescriptionInShort: '''Zeropoint Burst'' now spreads the freeze to nearby
-    enemies around the targets.'
-  mutuallyExclusiveSkills: 1100000012000000
+  skillDescriptionInShort: '''Zeropoint Burst'' now spreads the freeze to enemies
+    around the targets.'
+  mutuallyExclusiveSkills: 110000001200000035000000
   Overlay: {fileID: 0}
 --- !u!114 &1032146874
 MonoBehaviour:
@@ -22050,7 +22053,8 @@ MonoBehaviour:
   favorText: ... Now, instead of letting it all out, try to keep the compressed air
     around you, and it will form a layer of protection that can deflect any incoming
     attacks. Want to try?
-  skillDescriptionInShort: 
+  skillDescriptionInShort: '''Evasion'' now deflects all incoming attacks. First
+    deflection also heals self.'
   mutuallyExclusiveSkills: 0b0000000c00000024000000
   Overlay: {fileID: 0}
 --- !u!114 &1076999606
@@ -22343,7 +22347,11 @@ MonoBehaviour:
   skillName: 44
   skillNameText: '''Raging Terrains'''
   skillDescription: Environmental effects have +100% effectiveness.
-  favorText: 
+  favorText: "As a geology researcher, throughout the course of her on-site investigations,
+    Mint has gradually picked up on a few practical tricks for making use of reasonable
+    terrain to dispatch danger. When you're surrounded by a huge crowd of enemies,
+    don't panic, get ready to cast, and find just the right time and place\u2013now!
+    Come on, then, you!"
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
@@ -22694,7 +22702,8 @@ MonoBehaviour:
     there reveals a breathtaking scenery. Beautiful, calm, and soothing...\\nAstronomy
     might not be her field of study, but you don\u2019t need to be an expert to lose
     yourself among the stars."
-  skillDescriptionInShort: 
+  skillDescriptionInShort: '''Juggernaut'' now grants stealth and increased MSPD,
+    but sets your ATK to 0.'
   mutuallyExclusiveSkills: 1500000016000000170000001800000029000000
   Overlay: {fileID: 0}
 --- !u!114 &1110783328
@@ -23315,7 +23324,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e08991fbc8d9ef2428d7759e5ac076dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefabStorage: {fileID: 11400000, guid: 0ad6776eda60e464d8b8053ebaafca42, type: 2}
   LevelPrefabTemplate: {fileID: 1013667548003452564, guid: 88a015ed534d7c741b8f325cc03171d5, type: 3}
   LevelsPoint: {fileID: 829003091}
   Overlay: {fileID: 1000768828}
@@ -23354,9 +23362,7 @@ MonoBehaviour:
   - Look, there's a marching band passing through the square, made up of no one in
     particular. And at the moment, they dedicate this song to the girl who just started
     running.
-  - Should an enemy spots you, and their allies are nearby, running around will just
-    worsen the situation. Slow down, step back, and lure them far away...\n<color=red>The
-    'Archers' start with max ATK stack.</color>
+  - Your opponents can get curious sometimes, but is that a good thing?
   - Sometimes, a seemingly unconventional solution turns out to be the most suitable
     one.
   - There are many ways to fill up a blank canvas. Regardless of what you choose,
@@ -23369,7 +23375,10 @@ MonoBehaviour:
     lived together.\nOur life go on.\n<color=yellow>Swap cool-down is halved in this
     level. And your units have greatly increased attributes.</color>
   - Won't you set him free?
-  - Even in the light, even in darkness, surely...
+  - The picture of such a day,\nIn words, I write them down and send to you.
+  - Even the malice someone held,\nEven the nights of a nameless town,\nEven you,
+    shut tightly away in yourself like this,\nI know I'll still remain connected.\nYeah,
+    let's paint it white.
   ChallengeModes:
   - '''Hounds'' have greatly increased HP and ATK.'
   - Terrains and enemies will differ in places, and more enemies will appear.
@@ -23389,7 +23398,9 @@ MonoBehaviour:
     max. Additional enemies will appear.'
   - '''Gloompincers'' have increased ASPD under shrouded zones. And all enemies have
     increased MSPD.'
-  CompleteCondition: 0100000001000000010000000000000001000000010000000000000001000000030000000000000001000000
+  - One 'Candle' is placed beforehand. Some 'Knight Territory Hibernators' will appear
+    later.
+  CompleteCondition: 010000000100000001000000000000000100000001000000000000000100000003000000000000000100000000000000
   Environments:
   - Environments: 
   - Environments: 00000000
@@ -23402,9 +23413,10 @@ MonoBehaviour:
   - Environments: 0100000004000000
   - Environments: 0100000004000000
   - Environments: 050000000000000002000000
+  - Environments: 0500000001000000
   AppearingEnemies:
-  - Enemies: 08000000000000000700000002000000
-  - Enemies: 08000000070000000600000002000000
+  - Enemies: 0000000007000000
+  - Enemies: 070000000600000002000000
   - Enemies: 000000000700000005000000
   - Enemies: 0400000003000000010000000500000002000000
   - Enemies: 060000000500000002000000
@@ -23413,15 +23425,16 @@ MonoBehaviour:
   - Enemies: 090000000100000003000000020000000a0000000c000000
   - Enemies: 000000000700000006000000040000000300000001000000090000000b0000000a000000050000000c000000
   - Enemies: 0d000000
-  - Enemies: 01000000020000000e0000000f000000
+  - Enemies: 01000000020000000c0000000e0000000f000000
+  - Enemies: 0c0000000e0000000f00000010000000
   MapPreviewObj: {fileID: 340580784}
   MapPreviewImg: {fileID: 2125190412}
   MapPreviewImgOverlay: {fileID: 1141736479}
   Map_SSs:
   - {fileID: 21300000, guid: 879b42d773b0d424ea3de5d3cc0f9f3c, type: 3}
   - {fileID: 21300000, guid: 9967d918409eb3745bf886a799467fa2, type: 3}
-  - {fileID: 21300000, guid: 9e4c79ea50b19f54da6d5e0053134ee8, type: 3}
   - {fileID: 21300000, guid: 632a77c5043d6514996731920cab5124, type: 3}
+  - {fileID: 21300000, guid: d077169654b4e6c4a8ef963e67068f30, type: 3}
   - {fileID: 21300000, guid: 2db3e185310fe304dba671a8682fc3b2, type: 3}
   - {fileID: 21300000, guid: 10f449d4de8490642914c3520bcb7690, type: 3}
   - {fileID: 21300000, guid: 56b4ab19f2f72814bb6cb77e23c3005f, type: 3}
@@ -23429,6 +23442,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: d47d60702138880468ef33839a31e69c, type: 3}
   - {fileID: 21300000, guid: 4585c0adc4394134abb842e8db88afda, type: 3}
   - {fileID: 21300000, guid: b1f48597c01544848a2d31d4e901d372, type: 3}
+  - {fileID: 21300000, guid: 1840e7b2ed14ee443b04515f932bd888, type: 3}
   DefaultEnemyIcon: {fileID: 21300000, guid: 450f341a4d8aeec45acb98c71b1a64cb, type: 3}
   EnemyDetail: {fileID: 1152686954}
   SelectedBorder: {fileID: 1857408668}
@@ -25843,7 +25857,8 @@ MonoBehaviour:
   favorText: At sufficient speed, the air pressure is large enough causes an impact.
     And if you compress it to minimize the contact surface, just like a wind blade...
     scary, isn't it?
-  skillDescriptionInShort: 
+  skillDescriptionInShort: '''Evasion'' damages collided enemies and pushes them
+    away slightly.'
   mutuallyExclusiveSkills: 0b0000000d00000024000000
   Overlay: {fileID: 0}
 --- !u!114 &1247638172
@@ -27766,10 +27781,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Own at least 3 <color=#00FFBB>Mint fumo</color>
+  m_text: 'Own at least 4 <color=#00FFBB>Mint fumo</color> and complete any <color=red>Challenge
+    Mode</color>
 
-    to access <color=yellow>Mint''s
-    Research</color>.'
+    to unlock <color=yellow>Mint''s Research</color>.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
   m_sharedMaterial: {fileID: 2147374, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
@@ -28715,7 +28730,8 @@ MonoBehaviour:
     magical damage and levitates them for 2.5 seconds.
   favorText: A gift from her friend. The bubbles it creates have excellent plasticity
     and will not pop easily. Very useful for cleaning things up. Beautiful too.
-  skillDescriptionInShort: 
+  skillDescriptionInShort: The first attack against an enemy deals bonus magical
+    damage and levitates them for 2.5 seconds.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1341870173
@@ -29940,7 +29956,9 @@ MonoBehaviour:
   favorText: Her book alone can only carry words, her arts unit alone is just a staff,
     her originium arts alone does not excel. But, combined them together, with a
     little more work, and even the wind will bow to her.
-  skillDescriptionInShort: 
+  skillDescriptionInShort: 'Melee player: Attack shortens ''Evasion'' CD, ''Evasion''
+    shortens ''Juggernaut'' CD, ''Juggernaut'' grants a stacking ASPD. At max stacks,
+    doubles the effect and has increased MSPD.'
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1387309836
@@ -31328,7 +31346,7 @@ GameObject:
   - component: {fileID: 1438007905}
   - component: {fileID: 1438007904}
   m_Layer: 5
-  m_Name: Freeze 1
+  m_Name: Freeze_Charge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31373,7 +31391,7 @@ MonoBehaviour:
     15%.
   favorText: 
   skillDescriptionInShort: 
-  mutuallyExclusiveSkills: 1000000012000000
+  mutuallyExclusiveSkills: 100000001200000035000000
   Overlay: {fileID: 0}
 --- !u!114 &1438007905
 MonoBehaviour:
@@ -33996,7 +34014,7 @@ MonoBehaviour:
   favorText: She always wanted to participate in more research projects, and if possible,
     prefers to do it by herself. But you can't be in all the places in the world,
     not when you're doing it alone.
-  skillDescriptionInShort: 
+  skillDescriptionInShort: Ranged player's projectiles can absorb the first
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1568703610
@@ -35303,7 +35321,7 @@ MonoBehaviour:
   SensesUnlockTxt: {fileID: 736717240}
   TechsUnlockTxt: {fileID: 284500406}
   SpecsUnlockTxt: {fileID: 97854339}
-  FUMO_COST_SENSE: 3
+  FUMO_COST_SENSE: 4
   FUMO_COST_TECHS: 4
   FUMO_COST_SPECS: 3
   FumoCnt: {fileID: 1976905087}
@@ -36278,7 +36296,8 @@ MonoBehaviour:
   skillDescription: During the duration of 'Evasion', coming into contact with an
     enemy extends dash's duration.
   favorText: '"Please don''t get in our way!"'
-  skillDescriptionInShort: 
+  skillDescriptionInShort: '''Evasion'' dash distance extends upon coming into contact
+    with an enemy.'
   mutuallyExclusiveSkills: 0c0000000d00000024000000
   Overlay: {fileID: 0}
 --- !u!114 &1669243630
@@ -37144,6 +37163,140 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1704830528}
+  m_CullTransparentMesh: 1
+--- !u!1 &1705105676
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1705105677}
+  - component: {fileID: 1705105679}
+  - component: {fileID: 1705105678}
+  m_Layer: 5
+  m_Name: OR (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1705105677
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1705105676}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 449770729}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 360, y: 5.0559664}
+  m_SizeDelta: {x: 200, y: 88.3759}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1705105678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1705105676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: or
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 5e61686ba236ff04b8632d6a26736acd, type: 2}
+  m_sharedMaterial: {fileID: 2509212030381675100, guid: 5e61686ba236ff04b8632d6a26736acd, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4292467161
+  m_fontColor: {r: 0.8490566, g: 0.8490566, b: 0.8490566, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 36
+  m_fontSizeBase: 36
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 3
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 256
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_enableWordWrapping: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 1
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &1705105679
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1705105676}
   m_CullTransparentMesh: 1
 --- !u!1 &1715310981
 GameObject:
@@ -38264,7 +38417,8 @@ MonoBehaviour:
   skillName: 22
   skillNameText: Juggernaut - Rim of the Sun
   skillDescription: While 'Juggernaut' is active, a fire ring is created around you,
-    dealing 25% ATK as physical damage to nearby enemy every second.
+    dealing 34% ATK as physical damage and inflicts a stacking -15% DEF to nearby
+    enemy every second.
   favorText: Good thing she has a fire extinguisher here.
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 150000001700000018000000290000002e000000
@@ -43237,7 +43391,8 @@ MonoBehaviour:
     creates another waves of projectiles starting at their position. These extra
     waves can trigger up to 3 times, and last up to 1.5 seconds.
   favorText: 
-  skillDescriptionInShort: 
+  skillDescriptionInShort: When 'Der Tag Neight Sich' defeats an enemy, it creates
+    another waves of projectiles starting at their position
   mutuallyExclusiveSkills: 1b0000001c0000001d00000033000000
   Overlay: {fileID: 0}
 --- !u!114 &2001172645
@@ -44034,6 +44189,149 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2025736696}
   m_CullTransparentMesh: 1
+--- !u!1 &2030034557
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2030034558}
+  - component: {fileID: 2030034562}
+  - component: {fileID: 2030034561}
+  - component: {fileID: 2030034560}
+  - component: {fileID: 2030034559}
+  m_Layer: 5
+  m_Name: Freeze_Hold
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2030034558
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2030034557}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 379373718}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 360, y: 0.000045776367}
+  m_SizeDelta: {x: 95, y: 95}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2030034559
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2030034557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
+  skillType: 1
+  skillName: 53
+  skillNameText: Zeropoint Burst - Focused Suppression
+  skillDescription: '''Zeropoint Burst'' can be maintained by holding down the cast
+    key for up to 5 more seconds. Self can not act while maintaining the skill.'
+  favorText: '"Yep! Leave it to me."'
+  skillDescriptionInShort: 
+  mutuallyExclusiveSkills: 110000001200000010000000
+  Overlay: {fileID: 0}
+--- !u!114 &2030034560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2030034557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 2030034561}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &2030034561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2030034557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: ffb4ba5c202198c4a8454e610df58a68, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &2030034562
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2030034557}
+  m_CullTransparentMesh: 1
 --- !u!1 &2030416376
 GameObject:
   m_ObjectHideFlags: 0
@@ -44167,7 +44465,7 @@ MonoBehaviour:
   skillDescription: While 'Juggernaut' is active, nearby enemies have -33% MSPD and
     ASPD, and are continuously pulled toward self.
   favorText: '"Would you like to see some of my magic?"'
-  skillDescriptionInShort: 
+  skillDescriptionInShort: '''Juggernaut'' now pulls nearby enemies toward self.'
   mutuallyExclusiveSkills: 150000001600000018000000290000002e000000
   Overlay: {fileID: 0}
 --- !u!114 &2037127173
@@ -46199,7 +46497,8 @@ MonoBehaviour:
     toward them.'
   favorText: Her attention device didn't quite work for her. The good news is that,
     for some reasons, it worked wonder on projectiles!
-  skillDescriptionInShort: 
+  skillDescriptionInShort: '''Der Tag Neight Sich'' homes all its bullets toward
+    the nearest enemy within range.'
   mutuallyExclusiveSkills: 1b0000001d0000002700000033000000
   Overlay: {fileID: 0}
 --- !u!114 &2139595025

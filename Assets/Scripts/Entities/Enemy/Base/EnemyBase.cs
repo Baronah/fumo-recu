@@ -27,6 +27,7 @@ public class EnemyBase : EntityBase
         HIBERNATOR_KNIGHT,
         GLOOMPINCER,
         CANDLE_KNIGHT,
+        CANDLE,
         TOY,
     }
 
@@ -64,7 +65,7 @@ public class EnemyBase : EntityBase
     protected List<Transform> Checkpoints = new();
     [SerializeField] private List<float> WaitTimes = new();
 
-    [SerializeField] private float OverridePositionCheckRadius = 120f;
+    private readonly float OverridePositionCheckRadius = 75f;
     private Vector2 OverridePosition;
     [SerializeField] private float MoveToOverridePositionSpeedMultiplier = 1.5f, MoveToOverridePositionSpeedMultiplierJump = 0.35f;
     private short MoveToOverridePositionJumpCnt = 0;
@@ -90,8 +91,10 @@ public class EnemyBase : EntityBase
     private float stuckThreshold = 1.25f; // Time before considering stuck
     private float stuckMovementThreshold = 25f; // Distance moved to not be considered stuck
 
-    private const short PathfindCntThreshold = 100, ScanPlayerCntThreshold = 15, MoveCntThreshold = 15;
+    private const short PathfindCntThreshold = 100, ScanPlayerCntThreshold = 20, MoveCntThreshold = 15;
     private short ScanPlayerCnt = 0, MoveCnt = 0, PathfindCnt = 0;
+
+    public bool IsInsignificant = false;
 
     private StageManager StageManager;
 
@@ -113,8 +116,6 @@ public class EnemyBase : EntityBase
 
             // Initialize pathfinding grid (shared among all enemies)
             pathfindingGrid ??= new PathfindingGrid(gridCellSize, obstacleLayer);
-
-            AdjustChallengeModeAttributes();
         }
 
         if (detectionRange <= 0) detectionRange = b_attackRange;
@@ -125,8 +126,6 @@ public class EnemyBase : EntityBase
 
         IsComponentsInitialized = true;
     }
-
-    public virtual void AdjustChallengeModeAttributes() { }
 
     public void ForceSpotPlayer() => StartCoroutine(ForceSpotCoroutine());
 
@@ -184,21 +183,19 @@ public class EnemyBase : EntityBase
 
     private void UpdatePathfinding()
     {
-        if (PathfindCnt <= PathfindCntThreshold)
-        {
-            PathfindCnt++;
-            return;
-        }
-        PathfindCnt = 0;
+        PathfindCnt++;
 
         if (IsFrozen || IsStunned || !IsAlive() || rb2d.velocity.magnitude <= 0) return;
+
+        if (PathfindCnt <= PathfindCntThreshold) return;
+        PathfindCnt = 0;
 
         Vector2 currentPos = FeetPosition.position;
         Vector2 desiredDestination = GetUniversalDestination();
         float distanceToDestination = Vector2.Distance(currentPos, desiredDestination);
 
         // Use pathfinding threshold for all movement types
-        if (distanceToDestination <= 50f)
+        if (distanceToDestination <= 70f)
         {
             isUsingPathfinding = false;
             currentPath.Clear();
@@ -334,7 +331,10 @@ public class EnemyBase : EntityBase
         {
             case AttackPattern.MELEE:
                 float distanceToPlayer = Vector2.Distance(enemyPos, playerPos);
-                if (distanceToPlayer <= attackRange * DangerRange_RatioOfAttackRange) return enemyPos;
+                if (distanceToPlayer <= attackRange * DangerRange_RatioOfAttackRange)
+                {
+                    return enemyPos;
+                }
 
                 return playerPos;
 
@@ -448,30 +448,26 @@ public class EnemyBase : EntityBase
 
     public override void Move()
     {
-        if (MoveCnt < MoveCntThreshold)
-        {
-            MoveCnt++;
-            return;
-        }
-        MoveCnt = 0;
+        MoveCnt++;
 
-        if (IsFrozen || IsStunned || !IsAlive()) return;
+        if (IsFrozen || IsStunned || !IsAlive() || IsMovementLocked) return;
 
         if (!SpottedPlayer
             && MoveToOverridePosition
-            && Vector2.Distance(AttackPosition.position, OverridePosition) <= OverridePositionCheckRadius)
+            && Vector2.Distance(FeetPosition.position, OverridePosition) <= OverridePositionCheckRadius)
         {
             MoveToOverridePosition = false;
             StartCoroutine(StartMovementLockout(UnityEngine.Random.Range(2f, 6f)));
         }
 
-        if (IsMovementLocked) return;
+        if (MoveCnt < MoveCntThreshold) return;
+        MoveCnt = 0;
 
         // Stuck detection and handling using FeetPosition
         Vector2 currentPos = FeetPosition.position; // Changed from transform.position
         if (Vector2.Distance(currentPos, lastPosition) < stuckMovementThreshold)
         {
-            stuckTimer += Time.fixedDeltaTime * 15f; // Account for MoveCnt skip
+            stuckTimer += Time.fixedDeltaTime * MoveCntThreshold; // Account for MoveCnt skip
             if (stuckTimer > stuckThreshold)
             {
                 HandleStuckState();
@@ -514,11 +510,9 @@ public class EnemyBase : EntityBase
         }
 
         StartCoroutine(TemporarilyDisableHitbox());
-         
+
         // Force path recalculation
-        currentPath.Clear();
-        currentWaypointIndex = 0;
-        lastPathUpdateTime = 0f;
+        ForceChangePath();
         stuckTimer = 0f;
 
         /*************************
@@ -641,6 +635,15 @@ public class EnemyBase : EntityBase
                 EnemyBase enemy = e as EnemyBase;
 
                 if (!enemy || !enemy.IsAlive() || !enemy.SpottedPlayer) continue;
+                
+                RaycastHit2D checkObstacle = Physics2D.Raycast(
+                    FeetPosition.position,
+                    (enemy.FeetPosition.position - FeetPosition.position).normalized,
+                    Vector2.Distance(FeetPosition.position, enemy.FeetPosition.position) - 50f,
+                    obstacleLayer);
+
+                if (checkObstacle && checkObstacle.collider) continue;
+
                 RecentlyScannedPlayer = enemy.SpottedPlayer;
                 spottedViaAlert = true;
                 break;
@@ -653,7 +656,7 @@ public class EnemyBase : EntityBase
             RecentlyScannedPlayer =
                 attackPattern == AttackPattern.MELEE
                 ?
-                DetectPlayer(DangerRange_RatioOfAttackRange * attackRange, true)
+                DetectPlayer(DangerRange_RatioOfAttackRange * attackRange, false)
                 :
                 DetectPlayer();
         }
@@ -691,6 +694,15 @@ public class EnemyBase : EntityBase
         }
     }
 
+    void ForceChangePath()
+    {
+        PathfindCnt = PathfindCntThreshold;
+        currentPath.Clear();
+        currentWaypointIndex = 0;
+        isUsingPathfinding = false;
+        lastPathUpdateTime = 0f;
+    }
+
     public virtual void OnFirsttimePlayerSpot(bool viaAlert = false)
     {
         MoveToOverridePosition = false;
@@ -700,9 +712,7 @@ public class EnemyBase : EntityBase
         MovementLockout = 0;
 
         // Clear current path when spotting player
-        currentPath.Clear();
-        currentWaypointIndex = 0;
-        isUsingPathfinding = false;
+        ForceChangePath();
 
         if (attackPattern == AttackPattern.NONE)
         {
@@ -767,6 +777,7 @@ public class EnemyBase : EntityBase
         if (!collision || !enabled) return;
 
         if (collision.gameObject.CompareTag("Checkpoint") 
+            && Checkpoints.Count > 0
             && collision.gameObject == Checkpoints[CurrentCheckpointIndex].gameObject)
         {
             OnCheckpointReach();
@@ -784,6 +795,7 @@ public class EnemyBase : EntityBase
         if (!collision || !enabled) return;
 
         if (collision.gameObject.CompareTag("Checkpoint") 
+            && Checkpoints.Count > 0
             && collision.gameObject == Checkpoints[CurrentCheckpointIndex].gameObject)
         {
             OnCheckpointReach();
@@ -834,6 +846,7 @@ public class EnemyBase : EntityBase
     {
         if (SpottedPlayer) return;
 
+        ForceChangePath();
         MoveToOverridePositionJumpCnt++;
         FaceToward(source.transform.position);
         MovementLockout = 0;

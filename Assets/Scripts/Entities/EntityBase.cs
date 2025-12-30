@@ -53,6 +53,8 @@ public class EntityBase : MonoBehaviour
         InvulnerableTimer = Mathf.Max(InvulnerableTimer, duration);
     }
 
+    public bool CanBeHitByProjectiles = true;
+
     public enum DamageType { PHYSICAL, MAGICAL, TRUE }
     public DamageType damageType;
 
@@ -1005,13 +1007,22 @@ public class EntityBase : MonoBehaviour
     {
         if (target.IsFreezeImmune || !target.IsAlive()) return;
 
-        target.animator.speed = 0f;
         target.FreezeTimer = Mathf.Max(target.FreezeTimer, duration);
-        target.StopMovement();
-        target.CancelAttack();
 
-        target.ccBar.SetActive(true);
-        target.ccSlider.value = target.ccSlider.maxValue = target.FreezeTimer;
+        target.OnFreezeEnter();
+    }
+
+    public virtual void OnFreezeEnter()
+    {
+        if (IsFreezeImmune || !IsAlive()) return;
+
+        animator.speed = 0f;
+        
+        StopMovement();
+        CancelAttack();
+
+        ccBar.SetActive(true);
+        ccSlider.value = ccSlider.maxValue = FreezeTimer;
     }
 
     public virtual void ApplyStun(EntityBase target, float duration)

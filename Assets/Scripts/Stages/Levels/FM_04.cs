@@ -10,11 +10,6 @@ public class FM_04 : StageManager
     {
         base.OnEnemySpawn(enemy);
 
-        if (enemy is Archer a)
-        {
-            a.ChargeMaxAtkStack();
-        }
-
         if (CharacterPrefabsStorage.EnableChallengeMode)
         {
             enemy.weight += EnemyWeightIncrement;

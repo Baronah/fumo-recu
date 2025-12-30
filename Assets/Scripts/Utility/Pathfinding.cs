@@ -14,7 +14,7 @@ public class PathfindingGrid
 
     // Cached collections for performance
     private List<Vector2Int> cellsToSearch = new List<Vector2Int>(256);
-    private List<Vector2Int> searchedCells = new List<Vector2Int>(256);
+    private HashSet<Vector2Int> searchedCells = new HashSet<Vector2Int>(256);
     private List<Vector2> finalPath = new List<Vector2>(64);
 
     // Neighbor directions

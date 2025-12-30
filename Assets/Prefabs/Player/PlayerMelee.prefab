@@ -5838,6 +5838,7 @@ MonoBehaviour:
   canRevive: 0
   isInvisible: 0
   InvulnerableTimer: 0
+  CanBeHitByProjectiles: 1
   damageType: 0
   attackPattern: 0
   ProjectilePrefab: {fileID: 0}
@@ -5909,6 +5910,7 @@ MonoBehaviour:
   Vortex: {fileID: -3648005880966443597}
   Shock: {fileID: 0}
   Counter: {fileID: 1284202634395534892}
+  ColorOverlayMat: {fileID: 2100000, guid: 25baa0b986f248947843c72757292d02, type: 2}
 --- !u!82 &6103237625377656988
 AudioSource:
   m_ObjectHideFlags: 0

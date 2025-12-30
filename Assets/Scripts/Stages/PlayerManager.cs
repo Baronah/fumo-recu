@@ -191,6 +191,7 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    Coroutine SwapCoroutine;
     public void SwapPlayer()
     {
         if (IsStageStarted && (!CanSwapPlayer || !player || !player.IsAlive())) return;
@@ -340,7 +341,7 @@ public class PlayerManager : MonoBehaviour
     public IEnumerator SwapCooldownE(float duration, float init = 0, bool rotateSymbol = true)
     {
         float waitDuration = duration - init;
-        StartCoroutine(Cooldown(SwapCD, duration, init));
+        SwapCoroutine = StartCoroutine(Cooldown(SwapCD, duration, init, true));
 
         float minusTime = 0f;
         if (rotateSymbol)
@@ -351,9 +352,11 @@ public class PlayerManager : MonoBehaviour
         Swapsymbol.color = new Color(1, 1, 1, 0.25f);
         yield return new WaitForSeconds(waitDuration - minusTime);
         Swapsymbol.color = Color.white;
+
+        SwapCoroutine = null;
     }
 
-    public IEnumerator Cooldown(Image CD, float duration, float init = 0)
+    public IEnumerator Cooldown(Image CD, float duration, float init = 0, bool isCooldownForSwap = false)
     {
         TMP_Text Count = CD.GetComponentInChildren<TMP_Text>();
         float cooldownTimer = init;
@@ -367,6 +370,7 @@ public class PlayerManager : MonoBehaviour
 
         Count.text = "";
         CD.fillAmount = 0;
+        if (isCooldownForSwap) SwapCoroutine = null; 
     }
 
     public void ResetAllCooldown()
@@ -432,6 +436,29 @@ public class PlayerManager : MonoBehaviour
         });
 
         Swapsymbol.color = new Color(1, 1, 1, 0.25f);
+    }
+
+    public void MintBlessingRevival()
+    {
+        if (!MintBlessing) return;
+
+        ResetAllCooldown();
+        if (swapCooldownTimer < SwapCooldown)
+        {
+            if (SwapCoroutine != null)
+            {
+                StopCoroutine(SwapCoroutine);
+                SwapCoroutine = null;
+            }
+
+            swapCooldownTimer = SwapCooldown;
+            Swapsymbol.color = Color.white;
+            SwapCD.fillAmount = 0;
+            SwapCD.GetComponentInChildren<TMP_Text>().text = "";
+        }
+        else if (SwapStacks < SwapMaxStacks) SwapStacks++;
+
+        MintBlessing = false;
     }
 
     public void ViewSkill()

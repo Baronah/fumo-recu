@@ -11,6 +11,7 @@ public class DarkTile : EnvironmentalTileBase
     private Dictionary<EntityBase, DarkZoneEffect> activeEffects = new Dictionary<EntityBase, DarkZoneEffect>();
 
     private Tilemap tilemap;
+    private bool isInitialized = false;
 
     [SerializeField] private float P_VisionReductionPercent = 0.4f;
     [SerializeField] private float E_VisionReductionPercent = 0.5f;
@@ -20,41 +21,32 @@ public class DarkTile : EnvironmentalTileBase
         tilemap = GetComponent<Tilemap>();
     }
 
+    private Dictionary<Vector3Int, TileBase> originalTiles = new Dictionary<Vector3Int, TileBase>();
+    private void CaptureTilemapData()
+    {
+        // Store every tile currently in the DarkTile tilemap
+        BoundsInt bounds = tilemap.cellBounds;
+        foreach (Vector3Int pos in bounds.allPositionsWithin)
+        {
+            TileBase tile = tilemap.GetTile(pos);
+            if (tile != null)
+            {
+                originalTiles[pos] = tile;
+            }
+        }
+        isInitialized = true;
+    }
+
+    // Helper method for Candleknights to check what should be there
+    public TileBase GetOriginalTile(Vector3Int pos)
+    {
+        if (!isInitialized) CaptureTilemapData();
+        return originalTiles.TryGetValue(pos, out TileBase tile) ? tile : null;
+    }
+
     public override StageManager.EnvironmentType GetEnvironmentType()
     {
         return StageManager.EnvironmentType.DARK_ZONE;
-    }
-
-    bool IsFullyInsideTilemapColliders(Collider2D[] boxes)
-    {
-        BoxCollider2D box = boxes.FirstOrDefault(b => b.isTrigger) as BoxCollider2D;
-        if (box == null) return false;
-
-        // Get the bounds of the BoxCollider2D in world space
-        Bounds bounds = box.bounds;
-
-        // Get all four corners of the box
-        Vector3[] corners = new Vector3[4]
-        {
-            new Vector3(bounds.min.x, bounds.min.y, 0), // Bottom-left
-            new Vector3(bounds.max.x, bounds.min.y, 0), // Bottom-right
-            new Vector3(bounds.min.x, bounds.max.y, 0), // Top-left
-            new Vector3(bounds.max.x, bounds.max.y, 0)  // Top-right
-        };
-
-        // Check if all corners are inside tiles
-        foreach (Vector3 corner in corners)
-        {
-            Vector3Int cellPosition = tilemap.WorldToCell(corner);
-
-            // Check if there's a tile at this position
-            if (!tilemap.HasTile(cellPosition))
-            {
-                return false; // One corner is not inside a tile
-            }
-        }
-
-        return true; // All corners are inside tiles
     }
 
     public override void OnEntityEnter(EntityBase entity)
@@ -92,7 +84,7 @@ public class DarkTile : EnvironmentalTileBase
 
     void ApplyBlindnessEffect(EntityBase entity)
     {
-        if (entity as Gloompincer) return;
+        if (entity as Gloompincer || entity as Candle) return;
 
         float percentage = entity is PlayerBase ? P_VisionReductionPercent : E_VisionReductionPercent;
         float minRange = entity.b_attackRange < 100 ? entity.b_attackRange : 100;

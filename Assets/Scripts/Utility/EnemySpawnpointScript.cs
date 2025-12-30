@@ -16,7 +16,7 @@ public class EnemySpawnpointScript : MonoBehaviour
         DEACTIVATE,
     };
 
-    [SerializeField] protected float InitDelay = 0f;
+    [SerializeField] public float InitDelay = 0f;
 
     [SerializeField] public bool spotPlayerUponSpawn = false, immediateSpawn = false, showTooltips;
     [SerializeField] protected short InitTooltipsPriority = 0;
@@ -218,6 +218,8 @@ public class EnemySpawnpointScript : MonoBehaviour
         }
     }
 
+
+    private bool IsInsignificant => SpawnEnemies.Any(e => e.IsInsignificant);
     public virtual int GetEnemiesCount()
     {
         if (!this.gameObject) return 0;
@@ -225,9 +227,11 @@ public class EnemySpawnpointScript : MonoBehaviour
         if (!stageManager) stageManager = FindObjectOfType<StageManager>(true);
         SpawnPositions ??= transform.Find("Spawnposition").GetComponentsInChildren<Transform>();
 
-        if (!doSpawnEnemy || RepeatedSpawn || SpawnPositions == null) return 0;
+        if (!doSpawnEnemy || RepeatedSpawn || SpawnPositions == null 
+            || IsInsignificant) return 0;
         if (Spawned) return SpawnEnemies.Count(e => e.IsAlive());
         return SpawnPositions.Length * Quantity;
     }
 }
+
 

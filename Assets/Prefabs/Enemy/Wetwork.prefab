@@ -4882,6 +4882,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Wetwork
       objectReference: {fileID: 0}
+    - target: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1779737740583634941, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.6
@@ -5052,6 +5064,7 @@ MonoBehaviour:
   canRevive: 0
   isInvisible: 0
   InvulnerableTimer: 0
+  CanBeHitByProjectiles: 1
   damageType: 0
   attackPattern: 0
   ProjectilePrefab: {fileID: 0}
@@ -5060,28 +5073,29 @@ MonoBehaviour:
   DamagePopup: {fileID: 7498904281893358320, guid: b09dfacba160b6d47938cf47f8dea3c9, type: 3}
   ccBar: {fileID: 6580482464572689602}
   AttackAnimation: {fileID: 7400000, guid: bdfcfd76ef9b1f744b1bd42a3e4bedcc, type: 2}
-  sfxs: []
+  sfxs:
+  - {fileID: -3934596599787445615}
   IsBeingShifted: 0
   FreezeTimer: 0
   StunTimer: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 0.9
+  IsBeingLevitated: 0
+  LevitationEffect: {fileID: 6660499202429074006}
   reviveDuration: 5
   postReviveDuration: 0
   enemyCode: 7
-  SpotPlayerUponSpawn: 0
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
-  TooltipsPriority: 0
   TooltipsHoldtime: 6
   Description: An assassin who makes up for their average skills with clever plots.
     They are adept at hiding in the darkness, sharpening their blades and continually
     increasing their ATK.
-  Skillset: "\u2022 When not attacking, ATK continuously increases and resets after
-    the next attack."
-  DetectionRange: 200
+  Skillset: "\u2022 The first attack deals greatly increased damage. This effect
+    is slowly recharged while not attacking."
+  detectionRange: 200
+  b_detectionRange: 200
   DangerRange_RatioOfAttackRange: 0.75
   MinimumDistanceFromPlayer: 20
-  showTooltips: 0
   gridCellSize: 60
   obstacleLayer:
     serializedVersion: 2
@@ -5095,10 +5109,10 @@ MonoBehaviour:
   cornerAvoidanceDistance: 300
   pathSmoothingLookahead: 2
   WaitTimes: []
-  OverridePositionCheckRadius: 100
   MoveToOverridePositionSpeedMultiplier: 1.2
   MoveToOverridePositionSpeedMultiplierJump: 0.1
   CanDetectThroughWalls: 0
+  IsInsignificant: 0
   DefPenUp_perSecond: 1
   DefPenUp_cap: 50
   AtkPercentageUp_perSecond: 0.05
@@ -5203,5 +5217,10 @@ AudioSource:
 --- !u!1 &6580482464572689602 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 773491194806959642, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+  m_PrefabInstance: {fileID: 5902371706342126296}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &6660499202429074006 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
   m_PrefabInstance: {fileID: 5902371706342126296}
   m_PrefabAsset: {fileID: 0}

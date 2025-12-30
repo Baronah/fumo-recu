@@ -56,16 +56,13 @@ public class FumoScript : MonoBehaviour
         bool canUseSkill = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.MINT_PHALANX)
                             || CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.MINT_WINDRUSH);
 
+        if (!canUseSkill) yield break;
+
         rangeIndicator.SetActive(canUseSkill);
         rectTransform.sizeDelta = new(
                 SkillRange * 2f,
                 SkillRange * 2f
             );
-
-        if (!canUseSkill)
-        {
-            yield break;
-        }
 
         while (true)
         {
@@ -77,14 +74,16 @@ public class FumoScript : MonoBehaviour
                 continue;
             }
 
-            string Key = "FUMO_SKILL_PHALANX";
+            string Key;
             if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.MINT_PHALANX))
             {
+                Key = "FUMO_SKILL_PHALANX";
                 player.ApplyEffect(Effect.AffectedStat.DEF, Key, 215, 0.6f, true);
                 player.ApplyEffect(Effect.AffectedStat.RES, Key, 25, 0.6f, false);
             }
             else if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.MINT_WINDRUSH))
             {
+                Key = "FUMO_SKILL_WINDRUSH";
                 if (player.MspdBuffs.ContainsKey(Key))
                 {
                     float BuffValue = Mathf.Min(player.MspdBuffs[Key].Value + 10, 100);
@@ -180,20 +179,5 @@ public class FumoScript : MonoBehaviour
     {
         originalScale = sprite.transform.localScale;
         GetComponentInChildren<Button>().interactable = true;
-    }
-
-    public static int GetAllTimeFumo()
-    {
-        int aFumo = 0;
-        string[] CompletedLevels = PlayerPrefs.GetString("CompletedLevels", "").Split(' ');
-        foreach (var level in CompletedLevels)
-        {
-            if (level.StartsWith("FM-"))
-                aFumo++;
-            if (level.EndsWith("_CM"))
-                aFumo++;
-        }
-
-        return aFumo;
     }
 }

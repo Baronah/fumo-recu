@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -21,6 +22,9 @@ public class MainMenu : MonoBehaviour
     [SerializeField] GameObject RealMenu, FakeMenu;
     private int ResolutionIndex = 0;
 
+    [SerializeField] GameObject Mint, Special;
+    [SerializeField] Toggle DvdTitleToggle, MintArknightsToggle;
+
     private Color TitleStartColor, TitleEndColor;
     private bool FlipX = true;
 
@@ -29,6 +33,15 @@ public class MainMenu : MonoBehaviour
     private static bool firstTimeBootup = true;
     private void Awake()
     {
+        DvdTitleToggle.isOn = SaveDataManager.UseDVDTittleSettings;
+        DvdTitleToggle.onValueChanged.AddListener((v) => SaveDataManager.SetDdTitleSettings(v, Title.gameObject));
+        MintArknightsToggle.isOn = SaveDataManager.HasMintInTitle;
+        MintArknightsToggle.onValueChanged.AddListener((v) => SaveDataManager.SetMintInTitle(v, Mint));
+
+        Mint.SetActive(SaveDataManager.HasMintInTitle);
+        Special.SetActive(SaveDataManager.IsResearchUnlocked);
+        Title.GetComponent<DVDLogo>().enabled = SaveDataManager.UseDVDTittleSettings;
+
         BGM = GetComponent<AudioSource>();
         if (SaveDataManager.IsResearchUnlocked)
         {
@@ -74,7 +87,7 @@ public class MainMenu : MonoBehaviour
     IEnumerator GardenFadeIn()
     {
         yield return new WaitForSeconds(20.5f);
-        Title.GetComponent<DVDLogo>().enabled = true; // Enable DVDLogo script
+        //Title.GetComponent<DVDLogo>().enabled = DvdTitleToggle.isOn; // Enable DVDLogo script
     }
 
     IEnumerator TitleColorPulse()
@@ -210,7 +223,8 @@ public class MainMenu : MonoBehaviour
 
         yield return StartCoroutine(OverlayFadeIn());
 
-        SceneManager.LoadSceneAsync("Level_Selection");
+        SceneManager.LoadSceneAsync(CharacterPrefabsStorage.LevelSelectionKey);
+        // Addressables.LoadSceneAsync(CharacterPrefabsStorage.LevelSelectionKey, LoadSceneMode.Single, true);
     }
 
     IEnumerator Squish()

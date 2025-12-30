@@ -8,6 +8,9 @@ using static PlayerManager;
 [CreateAssetMenu(fileName = "CharacterPrefabsStorage", menuName = "ScriptableObjects/CharacterPrefabsStorage")]
 public class CharacterPrefabsStorage : ScriptableObject
 {
+	public static string LevelSelectionKey = "Level_Selection";
+    public AssetReference LevelSelectionScene;
+
 	public AssetReference[] PlayerAssetReferences;
 	public AssetReference[] EnemyAssetReferences;
 	public AssetReference[] SceneAssetReferences;

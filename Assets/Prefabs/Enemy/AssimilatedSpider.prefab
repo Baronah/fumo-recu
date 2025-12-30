@@ -490,12 +490,12 @@ MonoBehaviour:
   StunTimer: 0
   preferredMoveAnimationPlaySpeed: 1.7
   preferredAttackAnimationSpeed: 0.85
+  IsBeingLevitated: 0
+  LevitationEffect: {fileID: 0}
   reviveDuration: 5
   postReviveDuration: 0
   enemyCode: 11
-  SpotPlayerUponSpawn: 0
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
-  TooltipsPriority: 0
   TooltipsHoldtime: 7
   Description: A spider-like creature that has assimilated into the Originium.
   Skillset: "\u2022 Explodes upon death, dealing true damage in an area around self
@@ -503,10 +503,10 @@ MonoBehaviour:
     Will be instantly defeated when coming into contact with a <color=#CC4000>Originium
     Pollution</color>, causing a stronger explosion and spreading <color=#CC4000>Originium
     Pollution</color> to its nearby tiles."
-  DetectionRange: 185
+  detectionRange: 185
+  b_detectionRange: 0
   DangerRange_RatioOfAttackRange: 1
   MinimumDistanceFromPlayer: 20
-  showTooltips: 0
   gridCellSize: 60
   obstacleLayer:
     serializedVersion: 2
@@ -523,7 +523,7 @@ MonoBehaviour:
   - 2
   - 5
   - 7
-  OverridePositionCheckRadius: 125
+  OverridePositionCheckRadius: 50
   MoveToOverridePositionSpeedMultiplier: 1.25
   MoveToOverridePositionSpeedMultiplierJump: 0.35
   CanDetectThroughWalls: 0

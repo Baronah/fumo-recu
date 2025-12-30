@@ -17,10 +17,16 @@ public class DVDLogo : MonoBehaviour
     private bool isWorldSpace = false;
     private RectTransform canvasRect;
 
+    private Vector2 initialPosition;
+    private Color initColor;
+
     private void Start()
     {
         image = GetComponent<Image>();
         if (!rectTransform) rectTransform = GetComponent<RectTransform>();
+
+        initialPosition = transform.position;
+        initColor = image.color;
 
         // Find the canvas this UI element belongs to
         if (canvas != null)
@@ -67,9 +73,13 @@ public class DVDLogo : MonoBehaviour
         imageSize.y *= rectTransform.localScale.y;
     }
 
+    float waitTime = 0f;
     void Update()
     {
         if (canvasRect == null) return;
+
+        waitTime += Time.deltaTime;
+        if (waitTime < 20.5f) return;
 
         // Move based on canvas render mode
         if (isWorldSpace)
@@ -87,6 +97,12 @@ public class DVDLogo : MonoBehaviour
             rectTransform.anchoredPosition += direction * moveSpeed * Time.deltaTime;
             CheckCollisionsScreenSpace();
         }
+    }
+
+    public void OnDisable()
+    {
+        transform.position = initialPosition;
+        image.color = initColor;
     }
 
     private void CheckCollisionsScreenSpace()

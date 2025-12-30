@@ -1,102 +1,145 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 public class Candleknight : EnemyBase
 {
-    [SerializeField] private float checkInterval = 0.1f;
+    [SerializeField] private GameObject Candle;
+    private List<Candle> CandlesPlaced = new();
+    public short MaxCandles = 3;
+    
+    public bool CanPlaceMoreCandles => CandlesPlaced.Count < MaxCandles;
 
-    Tilemap shroudedZonesTiles;
+    private int RemainingCandles => MaxCandles - CandlesPlaced.Count();
 
-    private Dictionary<Vector3Int, TileBase> hiddenTiles = new Dictionary<Vector3Int, TileBase>();
-    private HashSet<Vector3Int> currentlyHiddenPositions = new HashSet<Vector3Int>();
+    [SerializeField] private float candleDropCooldown = 20f, candleDropExecuteTime = 3f;
+    [SerializeField] private float cooldownTimer = 5f;
+
+    [SerializeField] GameObject CandlesIndicator;
+    [SerializeField] GameObject CandleAmmoPrefab;
+
+    List<Image> CandleImages;
+
+    private bool CanPlaceCandle()
+    {
+        return environmentalTilesStandingOn.Contains(StageManager.EnvironmentType.DARK_ZONE)
+            && IsAlive()
+            && CanPlaceMoreCandles
+            && cooldownTimer >= candleDropCooldown
+            && CanAttack
+            && !IsAttackLocked;
+    }
+
+    public override void EnemyFixedBehaviors()
+    {
+        base.EnemyFixedBehaviors();
+
+        CandlesIndicator.SetActive(IsAlive() && RemainingCandles > 0);
+        if (CandlesIndicator.activeSelf)
+        {
+            for (int i = 0; i < CandleImages.Count; i++)
+            {
+                CandleImages[i].gameObject.SetActive(RemainingCandles >= (i + 1));
+            }
+        }
+
+        cooldownTimer += Time.deltaTime;
+        if (CanPlaceCandle())
+        {
+            StartPlacingCandle();
+        }
+    }
 
     public override void InitializeComponents()
     {
         base.InitializeComponents();
-        var darkzones = FindFirstObjectByType<DarkTile>();
-        if (darkzones)
-        {
-            shroudedZonesTiles = darkzones.GetComponent<Tilemap>();
-            StartCoroutine(RemoveDarkZones());
-        }
+        CandleImages = CandlesIndicator.GetComponentsInChildren<Image>().OrderBy(i => i.transform.position.x).ToList();
     }
 
-    IEnumerator RemoveDarkZones()
+    public override void Move()
     {
-        while (true)
+        if (PlacingCandle) return;
+        base.Move();
+    }
+
+    public override IEnumerator Attack()
+    {
+        if (PlacingCandle) yield break;
+        yield return StartCoroutine(base.Attack());
+    }
+
+    void StartPlacingCandle()
+    {
+        if (!CanPlaceCandle()) return;
+        StartCoroutine(IPlaceCandle());
+    }
+
+    private bool PlacingCandle => animator.GetBool("skill");
+    IEnumerator IPlaceCandle()
+    {
+        if (!CanPlaceCandle()) yield break;
+
+        StopMovement();
+        CancelAttack();
+        animator.SetBool("skill", true);
+        cooldownTimer = 0f;
+        float count = 0f, duration = candleDropExecuteTime - 0.5f;
+        while (count < duration)
         {
-            Vector3Int centerCell = shroudedZonesTiles.WorldToCell(transform.position);
-            HashSet<Vector3Int> newHiddenPositions = new HashSet<Vector3Int>();
-
-            // Calculate which tiles should be hidden
-            int radiusInt = Mathf.CeilToInt(attackRange);
-            for (int x = -radiusInt; x <= radiusInt; x++)
+            count += Time.deltaTime;
+            if (IsFrozen || IsStunned)
             {
-                for (int y = -radiusInt; y <= radiusInt; y++)
-                {
-                    Vector3Int cellPos = centerCell + new Vector3Int(x, y, 0);
-                    Vector3 cellWorldPos = shroudedZonesTiles.GetCellCenterWorld(cellPos);
-
-                    if (Vector3.Distance(transform.position, cellWorldPos) <= attackRange)
-                    {
-                        newHiddenPositions.Add(cellPos);
-                    }
-                }
+                animator.SetBool("skill", false);
+                yield break;
             }
-
-            // Restore tiles that are no longer in range
-            foreach (Vector3Int pos in currentlyHiddenPositions)
-            {
-                if (!newHiddenPositions.Contains(pos))
-                {
-                    if (hiddenTiles.ContainsKey(pos))
-                    {
-                        shroudedZonesTiles.SetTile(pos, hiddenTiles[pos]);
-                        hiddenTiles.Remove(pos);
-                    }
-                }
-            }
-
-            // Hide new tiles
-            foreach (Vector3Int pos in newHiddenPositions)
-            {
-                if (!currentlyHiddenPositions.Contains(pos))
-                {
-                    TileBase tile = shroudedZonesTiles.GetTile(pos);
-                    if (tile != null)
-                    {
-                        hiddenTiles[pos] = tile;
-                        shroudedZonesTiles.SetTile(pos, null);
-                    }
-                }
-            }
-
-            currentlyHiddenPositions = newHiddenPositions;
-
-            yield return new WaitForSeconds(checkInterval);
+            yield return null;
         }
+
+        animator.SetTrigger("skill_end");
+        count = 0;
+        duration = 0.35f;
+        while (count < duration)
+        {
+            count += Time.deltaTime;
+            if (IsFrozen || IsStunned)
+            {
+                animator.SetBool("skill", false);
+                yield break;
+            }
+            yield return null;
+        }
+
+        PlaceCandle();
+
+        yield return new WaitForSeconds(0.15f);
+        animator.SetBool("skill", false);
+    }
+
+    void PlaceCandle()
+    {
+        GameObject o = Instantiate(Candle, transform.position, Quaternion.identity);
+        CandlesPlaced.Add(o.GetComponent<Candle>());
     }
 
     public override void OnDeath()
     {
+        if (!canRevive && RemainingCandles > 0) PlaceCandle();
         base.OnDeath();
-        foreach (var kvp in hiddenTiles)
-        {
-            shroudedZonesTiles.SetTile(kvp.Key, kvp.Value);
-        }
-        hiddenTiles.Clear();
-        currentlyHiddenPositions.Clear();
     }
 
     public override void WriteStats()
     {
         Description = "";
         Skillset =
-            "• Removes shrouded zones within attack range.";
+            $"• Holds {MaxCandles} candles. While in shrouded area, channel for several seconds " +
+            $"and place a candle on the spot when completed. Drops all remaining candles upon death.\n" +
+            "• Candle lightens the area around itself, removing the effect of shrouded zones.\n" +
+            "• Candle can be frozen to temporarily disable its lighting effect throughout the duration.";
         TooltipsDescription =
-            "<color=yellow>Lightens the areas</color> around self, disables the effect of shrouded zones.";
+            $"Holds {MaxCandles} candles. Places a candle on shrouded zone to <color=yellow>lighten its surrounding area</color>. Drops candle upon death.";
 
         base.WriteStats();
     }

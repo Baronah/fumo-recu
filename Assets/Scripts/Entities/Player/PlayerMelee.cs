@@ -251,8 +251,6 @@ public class PlayerMelee : PlayerBase
 
             float invulDuration = DashDuration * 2f;
 
-            SetInvulnerable(invulDuration);
-
             Vector2 dashVelocity = CalculateMovement(movementInputs, GetDashDistance());
             rb2d.velocity = dashVelocity;
 
@@ -279,7 +277,7 @@ public class PlayerMelee : PlayerBase
                             if (!enemy || !enemy.IsAlive() || EnemyHitByDash.Contains(enemy)) continue;
 
                             DealDamage(enemy, atk, 0, 0);
-                            PushEntityFrom(enemy, transform, 3f, 0.1f);
+                            PushEntityFrom(enemy, movementInputs, 5f, DashDuration - dashTime, false);
                             EnemyHitByDash.Add(enemy);
                         }
                     }
@@ -447,23 +445,11 @@ public class PlayerMelee : PlayerBase
         if (CanPull)
         {
             if (Vortex) Vortex.Play();
-            GameObject o = Instantiate(SwirlEffect, transform.position, Quaternion.identity);
-            Destroy(o, 1.5f);
-            
-            var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, PullRadius, true);
-            foreach (EntityBase enemy in enemies)
-            {
-                PullEntityTowards(enemy, transform, 2.2f, 0.1f);
-                enemy.ApplyEffect(Effect.AffectedStat.MSPD, "JUGGERNAUNT_PULL_DEBUFF_MSPD", -40f, 1.25f, true);
-            }
+            ProcessPull();
         }
         else if (CanDoT)
         {
-            var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, DoTRadius, true);
-            foreach (EntityBase enemy in enemies)
-            {
-                DealDamage(enemy, (int)(atk * 0.25f), 0, 0);
-            }
+            ProcessDoT();
         }
 
         float t = 0, d = duration;
@@ -486,27 +472,7 @@ public class PlayerMelee : PlayerBase
 
             if (t >= 1.0f)
             {
-                Heal(mHealth * HealPerSecond_HpPercentage);
-                if (CanPull)
-                {
-                    GameObject o = Instantiate(SwirlEffect, transform.position, Quaternion.identity);
-                    Destroy(o, 1.5f);
-                    var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, PullRadius, true);
-                    foreach (EntityBase enemy in enemies)
-                    {
-                        PullEntityTowards(enemy, transform, 3f, 0.12f);
-                        enemy.ApplyEffect(Effect.AffectedStat.MSPD, "JUGGERNAUNT_PULL_DEBUFF_MSPD", -40f, 1.25f, true);
-                        enemy.ApplyEffect(Effect.AffectedStat.ASPD, "JUGGERNAUNT_PULL_DEBUFF_ASPD", -33f, 1.25f, false);
-                    }
-                }
-                else if (CanDoT)
-                {
-                    var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, DoTRadius, true);
-                    foreach (EntityBase enemy in enemies)
-                    {
-                        DealDamage(enemy, (int)(atk * 0.25f), 0, 0);
-                    }
-                }
+                ProcessJuggernautTick(CanPull, CanDoT);
 
                 t = 0;
             }
@@ -516,7 +482,8 @@ public class PlayerMelee : PlayerBase
 
         if (Vortex && Vortex.isPlaying) Vortex.Stop();
 
-        Heal(mHealth * HealPerSecond_HpPercentage);
+        ProcessJuggernautTick(CanPull, CanDoT);
+
         IsSkillActive = false;
 
         RemoveEffect("JUGGERNAUNT_SKILL_ATK_BUFF");
@@ -529,6 +496,47 @@ public class PlayerMelee : PlayerBase
         }
 
         ReleaseAfterShock();
+    }
+
+    void ProcessJuggernautTick(bool CanPull, bool CanDoT)
+    {
+        Heal(mHealth * HealPerSecond_HpPercentage);
+        if (CanPull)
+        {
+            ProcessPull();
+        }
+        else if (CanDoT)
+        {
+            ProcessDoT();
+        }
+    }
+
+    void ProcessPull()
+    {
+        GameObject o = Instantiate(SwirlEffect, transform.position, Quaternion.identity);
+        Destroy(o, 1.5f);
+        var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, PullRadius, true);
+        foreach (EntityBase enemy in enemies)
+        {
+            PullEntityTowards(enemy, transform, 3f, 0.12f);
+            enemy.ApplyEffect(Effect.AffectedStat.MSPD, "JUGGERNAUNT_PULL_DEBUFF_MSPD", -40f, 1.25f, true);
+            enemy.ApplyEffect(Effect.AffectedStat.ASPD, "JUGGERNAUNT_PULL_DEBUFF_ASPD", -33f, 1.25f, false);
+        }
+    }
+
+    void ProcessDoT()
+    {
+        var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, DoTRadius, true);
+        string Key = "JUGGERNAUT_IGNITE_DOT";
+
+        foreach (EntityBase enemy in enemies)
+        {
+            DealDamage(enemy, (int)(atk * 0.34f), 0, 0);
+            if (enemy.DefDebuffs.ContainsKey(Key))
+                enemy.ApplyEffect(Effect.AffectedStat.DEF, Key, -(15f + enemy.DefDebuffs[Key].Value * 0.85f), 1.5f, true);
+            else
+                enemy.ApplyEffect(Effect.AffectedStat.DEF, Key, -15f, 1.5f, true);
+        }
     }
 
     public override void OnFieldSwapOut(PlayerBase swapInPlayer)
@@ -575,6 +583,7 @@ public class PlayerMelee : PlayerBase
     }
 
     bool healedOnThisDash = false;
+    [SerializeField] Material ColorOverlayMat;
     public override void TakeDamage(DamageInstance damage, EntityBase source, ProjectileScript projectileInfo = null)
     {
         if (IsDashing && Skills.Contains(SkillTree_Manager.SkillName.DASH_FAITH))
@@ -582,7 +591,9 @@ public class PlayerMelee : PlayerBase
             // reflect projectile if catches one
             if (source && projectileInfo != null)
             {
-                projectileInfo.GetComponent<SpriteRenderer>().color = Color.yellow;
+                SpriteRenderer projectileRenderer = projectileInfo.GetComponent<SpriteRenderer>();
+                projectileRenderer.material = ColorOverlayMat;
+                projectileRenderer.color = Color.yellow;
                 CreateProjectileAndShootToward(
                     projectileInfo.gameObject, 
                     projectileInfo.DamageInstance,
@@ -628,7 +639,15 @@ public class PlayerMelee : PlayerBase
                 damageTakenDuringSkill = postDamage;
             }
         }
-        base.TakeDamage(damage, source);
+        
+        if (!IsDashing) base.TakeDamage(damage, source);
+    }
+
+    protected override void MintRevive()
+    {
+        dashCooldownTimer = DashCooldown;
+        skillCooldownTimer = SkillCooldown;
+        base.MintRevive();
     }
 
     IEnumerator CountUpAftershockDmg(float init, float end)

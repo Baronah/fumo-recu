@@ -57,7 +57,7 @@ public class SkillTree_Manager : MonoBehaviour
         DASH_FAITH,
         WINDBLOW_NORTH,
         WINDBLOW_SOUTH,
-        FREEZE_ICEAGE,
+        FREEZE_BLOOM,
         FREEZE_CHARGE,
         FREEZE_SUPERCONDUCT,
         OBSCURE_VISION,
@@ -94,6 +94,7 @@ public class SkillTree_Manager : MonoBehaviour
         HAIR_RIBBON,
         SPIRAL_READ,
         WIND_ANTHEM,
+        FREEZE_HOLD,
     }
 
     public static SkillTree_Manager Instance;
@@ -132,8 +133,7 @@ public class SkillTree_Manager : MonoBehaviour
 
     public void GetPlayerProgress()
     {
-        int allTimeFumo = FumoScript.GetAllTimeFumo();
-        bool techUnlocked = allTimeFumo >= 3;
+        bool techUnlocked = SaveDataManager.IsEligibleForTechUnlock();
 
         TechViewBtn.interactable = techUnlocked;
         Block.SetActive(!techUnlocked);
@@ -513,6 +513,7 @@ public class SkillTree_Manager : MonoBehaviour
 
     private void OnDisable()
     {
+        ClearSelectingSkill();
         Outview.SetSkills();
         
         BGM.Stop();
@@ -705,6 +706,14 @@ public class SkillTree_Manager : MonoBehaviour
 
         exclusions.Clear();
         allSkills.ForEach(s => s.OnSkillClear());
+
+        ClearSelectingSkill();
+
+        OnSelect_Update();
+    }
+
+    public void ClearSelectingSkill()
+    {
         selectingSkill = null;
         SkillHighlight.SetActive(false);
 
@@ -713,8 +722,6 @@ public class SkillTree_Manager : MonoBehaviour
         skillIconImage.sprite = defaultSkillIcon;
 
         SkillViewPanelImg.color = IdleColor;
-
-        OnSelect_Update();
     }
 
     private void OnSceneLoad_GetTechs()

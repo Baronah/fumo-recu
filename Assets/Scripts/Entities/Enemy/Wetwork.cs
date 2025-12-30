@@ -21,6 +21,7 @@ public class Wetwork : EnemyBase
     public override void InitializeComponents()
     {
         base.InitializeComponents();
+        ChargeMaxAtkStack();
         if (!ViewOnlyMode) StartCoroutine(IncreasesAtk());
     }
 
@@ -72,9 +73,8 @@ public class Wetwork : EnemyBase
     public override void WriteStats()
     {
         Description = "An assassin who makes up for their average skills with clever plots. They are adept at hiding in the darkness, sharpening their blades and continually increasing their ATK.";
-        Skillset = "• When not attacking, ATK continuously increases and resets after the next attack.";
-        TooltipsDescription = "An assassin who prefers close-ranged combat. When not attacking, ATK continuously increases " +
-            "and resets after the next attack.";
+        Skillset = "• The first attack deals greatly increased damage. This effect is slowly recharged while not attacking.";
+        TooltipsDescription = "An assassin who prefers close-ranged combat. The first attack made has greatly increased ATK.";
 
         base.WriteStats();
     }

@@ -40,6 +40,8 @@ public class StageManager : MonoBehaviour
     [SerializeField] private Button o_QuitBtn, o_RetryBtn;
     [SerializeField] private Sprite PausedSprite, UnpausedSprite;
 
+    CharacterPrefabsStorage characterPrefabsStorage;
+
     protected string LevelName;
     protected AudioSource BGM;
     public AudioSource StageBGM => BGM;
@@ -77,40 +79,6 @@ public class StageManager : MonoBehaviour
 
     private PlayerManager playerManager;
 
-    private TMP_Text TxtTips;
-    private readonly string[] Tips =
-    {
-        "Obstacles can block the enemy's sight of view.",
-        "Overflowing swap CD will be counted toward charges (up to 2, indicated by the green diamond on top of your swap character). " +
-            "When available, the next swap will consume a charge, but have no CD.",
-        "Buffs are carried across swaps, debuffs are not.",
-        "Swap refreshes all CDs of your character, and gives them a small window of invulnerability.",
-        "Ranged enemies tend to have larger detection range than melee.",
-        "Upgrades are temporary and will be resetted upon stage completion.",
-        "Enemies that spotted you can alert their nearby allies.",
-        "Enemies that are under the effect of crowd-control\ncan not attack nor detect you.",
-        "Long-ranged enemies will try to keep distance in combat.",
-        "When a patrolling enemy is attacked,\nthey and their nearby allies will try to rush toward the direction of the attack.",
-        "Make good use of terrains and map layout to gain advantages in combat!",
-        "Need time to pull off a difficult move? Press 'SLOWKEYREPLACE' to toggle slow-mo!",
-        "'Der Tag neight Sich' (Ranged character's ultimate) can be cancelled by recast, move, attack or use special during channel time.",
-        "Enemies with higher weight are more resistant to push/pull effects.",
-        "Push/pull will also cancel attacks.",
-        "Gates with keyhole symbol can be removed by picking up the key with its corresponding color, while gates with sword symbol requires you to eliminate certain enemies in its area in order to be removed.",
-    };
-
-    private readonly string[] Trolls =
-    {
-        "As a geology researcher, throughout the course of her on-site investigations, Mint has gradually picked up on a few practical tricks for making use of reasonable terrain to dispatch danger. When you're surrounded by a huge crowd of enemies, don't panic, get ready to cast, and find just the right time and place–now! Come on, then, you!",
-        "Everyone likes Mint Arknights.",
-        "Build your Mint Arknights.",
-        "Tsukiyoi refers to the yoizuki in Japanese, the early evening moon of August which is also called the yuzuki.",
-        "ASIAN KUNG-FU GENERATION my beloved.",
-        "Nicho5.",
-        "I never troll.",
-        "Sorry, Amanai. I'm not even angry over you right now. I bear no grudge against anyone. It's just that the world feels so, so wonderful right now. \"Throughout Heaven and Earth, I alone am the honored one\". However, even in the Gojo clan only a scant few know about this. Take the amplified and the reversal, then combine those two different expressions of infinity to create and push out imaginary mass. Imaginary technique... Purple.",
-    };
-
     bool IsStageReady = false,
         IsStageEnd = false,
         IsStageEndOverlayActive = false,
@@ -120,23 +88,14 @@ public class StageManager : MonoBehaviour
     public virtual void Start()
     {
         LevelName = SceneManager.GetActiveScene().name;
-        Title.text = LevelIndex < 1000 
-            ? $"<b><size=120>{LevelName}</size></b>\n{prefabStorage.LevelTitles[LevelIndex]}"
-            : $"<b><size=120>{LevelName}</size></b>\nDeath";
+        Title.text = $"<b><size=120>{LevelName}</size></b>\n{prefabStorage.LevelTitles[LevelIndex]}";
 
         o_QuitBtn.onClick.AddListener(QuitStage);
         o_RetryBtn.onClick.AddListener(RetryStage);
         PauseButton.GetComponent<Button>().onClick.AddListener(TogglePauseStage);
 
-        TxtTips = GameObject.Find("Tips").GetComponent<TMP_Text>();
-
-        int tipCount = PlayerPrefs.GetInt("TipsCounter", 0);
-        bool IsTroll = tipCount >= 7 && Random.Range(0, 100) <= 10;
-        TxtTips.text = "<b>TIPS:</b> " + 
-            (IsTroll ? Trolls[Random.Range(0, Trolls.Length)] : Tips[Random.Range(0, Tips.Length)]);
-        TxtTips.text = TxtTips.text.Replace("SLOWKEYREPLACE", KeybindButton.GetDisplayNameForKey(InputManager.Instance.SlowKey));    
-        PlayerPrefs.SetInt("TipsCounter", tipCount + 1);
-        PlayerPrefs.Save();
+        SetGoal();
+        SetTips();
 
         StartCoroutine(OnStartOverlayFadeout());
 
@@ -166,6 +125,96 @@ public class StageManager : MonoBehaviour
         EnemyTooltipsScript.isAnyTooltipsShowing = false;
         Time.timeScale = 0f;
     }
+
+    void SetGoal()
+    {
+        TMP_Text TxtGoal = GameObject.Find("Goal").GetComponent<TMP_Text>();
+        TxtGoal.text = StageCompleteConditionType switch
+        {
+            StageCompleteCondition.RETRIEVE_FUMO => "Goal: <color=#00ffff>Retrieve the Mint Fumo</color></b>",
+            StageCompleteCondition.PROTECT_FUMO => "Goal: <color=yellow>Protect the Mint Fumo</color></b>",
+            StageCompleteCondition.SURVIVE_FOR_GIVEN_TIME => "Goal: <color=yellow>Survive until time runs out</color></b>",
+            _ => "Goal: <color=red>Eliminate all enemies</color></b>",
+        };
+    }
+
+    #region Loading Screen Tips
+    private TMP_Text TxtTips;
+    private readonly List<string> BaseTips = new()
+    {
+        "Overflowing swap CD will be counted toward charges (up to 2, indicated by the green diamond on top of your swap character). " +
+            "When available, the next swap will consume a charge, but have no CD.",
+        "Swap refreshes all CDs of your character, and gives them a small window of invulnerability.",
+        "Make good use of terrains and map layout to gain advantages in combat!",
+        $"Different characters also have different stats and skills.\nYou can check them anytime by pressing '{AttributeKey}'.",
+        "Gates with keyhole symbol can be removed by picking up the key with its corresponding color, while gates with sword symbol requires you to eliminate certain enemies in its area in order to be removed.",
+        "Obstacles can block the enemy's sight of view,\npreventing them from spotting you.",
+        "Ranged enemies tend to have larger detection range than melee.",
+        "Enemies that spotted you can alert their nearby allies.",
+        "Enemies that are under the effect of crowd-control\ncan not attack nor detect you.",
+        "Long-ranged enemies will try to keep distance in combat.",
+        "When a patrolling enemy is attacked, they and their nearby allies will try to rush toward where the attack came from (represented by the '?' symbol above them).",
+        "Melee attack can be dodged by quickly moving out of the attacker's range.\nFor ranged attack, just dodge their projectiles.",
+        "Enemies who have spotted you have a '!' symbol above them. If it turns red, it means you are inside their attack range.",
+    };
+
+    private readonly List<string> MintLabTips = new()
+    {
+        "Borrowing the right inventions can help a ton,\njust remember to return them to her after completing a stage :)",
+        $"Forgot which inventions you borrored?\nPress '{AttributeKey}' to open view menu, then '{SwapAttribute}' to see them!",
+    };
+
+    private readonly List<string> AdvancedTips = new()
+    {
+        $"Need time to pull off a difficult move? Press '{SlowKey}' to toggle slow-mo!",
+        "'Der Tag neight Sich' (Ranged character's ultimate) can be cancelled by recast, move, attack or use special during channel time.",
+        "'Der Tag neight Sich' (Ranged character's ultimate) projectiles travel for a while before disappearing, great for reaching faraway enemies.",
+        "'Zeropoint Burst' (Ranged character's special) has a delay of 0.1 seconds",
+        "Enemies with higher weight are more resistant to push/pull effects.",
+        "Push/pull will also cancel attacks.",
+        "Buffs are carried across swaps, debuffs are not.",
+    };
+
+    const string SlowKey = "SLOWKEYREPLACE",
+                AttributeKey = "ATTRIBUTEKEY",
+                SwapAttribute = "SKILLVIEWTOGGLE";
+
+    private readonly string[] Trolls =
+    {
+        "Everyone likes Mint Arknights.",
+        "Build your Mint Arknights.",
+        "It's peak arknights",
+        "So I was sitting at home not murdering people...",
+        ":minthype:",
+        "toxic...",
+        "Tsukiyoi refers to the yoizuki in Japanese, the early evening moon of August which is also called the yuzuki.",
+        "ASIAN KUNG-FU GENERATION my beloved.",
+        "Nicho5.",
+        "I never troll.",
+        "wife:\njustnya, iana, typhon, mulberry, pozy if skin, archetto, vendela, ceylon (skin), rushia, warfarin (stab), lin, santalla, ines, mint?, honeyberry?? (but maybe that's mint's wife?), eyja, erota, pallas, goldenglow (skin), swire, ray, astgenne, virtuoso, weedy, monch, reedalt, indigo, amiya(?), dusk, franka, mudrock, coldshot, jessica2, lemuen, blacknight, valarqvin, skadi, aqua, irene, lolcal\n\ndaughters:\nscene, ros, suzu, ifrit, shamare shama, scene, papika, kafka, cement, podenco, vigna, ceobe, amiya, tomimi, iris, lunacub\n\nno wife:\nsora, qiubai, tomimi, paprika, shu (only looks like wife), exu, sussurro (master's wife), mumu, surtr, degen, whisperain (therapist, friend's wife), mr. nothing, rosa, mint?\n\nhusband: degenbrecher?\n\nirl:\nLessing, Ray, Blacknight's Tapir, Ray's Capybara, Ines, Mandragora\n\nupdated: 25/05/24 12:04 GMT",
+        "Sorry, Amanai. I'm not even angry over you right now. I bear no grudge against anyone. It's just that the world feels so, so wonderful right now. \"Throughout Heaven and Earth, I alone am the honored one\". However, even in the Gojo clan only a scant few know about this. Take the amplified and the reversal, then combine those two different expressions of infinity to create and push out imaginary mass. Imaginary technique... Purple.",
+    };
+    void SetTips()
+    {
+        int tipCount = PlayerPrefs.GetInt("TipsCounter", 0);
+        List<string> Tips = new(BaseTips);
+        if (CharacterPrefabsStorage.Skills.Count > 0) Tips.AddRange(MintLabTips);
+        if (tipCount >= 10) Tips.AddRange(AdvancedTips);
+
+        TxtTips = GameObject.Find("Tips").GetComponent<TMP_Text>();
+
+        bool IsTroll = tipCount >= 25 && Random.Range(0, 100) <= 10;
+        TxtTips.text = "<b>TIPS:</b> " +
+            (IsTroll ? Trolls[Random.Range(0, Trolls.Length)] : Tips[Random.Range(0, Tips.Count)]);
+        TxtTips.text = TxtTips.text
+            .Replace(SlowKey, KeybindButton.GetDisplayNameForKey(InputManager.Instance.SlowKey))
+            .Replace(AttributeKey, KeybindButton.GetDisplayNameForKey(InputManager.Instance.ViewInfoKey))
+            .Replace(SwapAttribute, KeybindButton.GetDisplayNameForKey(InputManager.Instance.SwapInfoKey));
+
+        PlayerPrefs.SetInt("TipsCounter", tipCount + 1);
+        PlayerPrefs.Save();
+    }
+    #endregion
 
     private int GetEnemyCount()
     {
@@ -197,6 +246,7 @@ public class StageManager : MonoBehaviour
         Destroy(Overlay);
     }
 
+    #region Time Dilation Upgrade
     [SerializeField] GameObject timeDilation;
     IEnumerator TimeDilationCoroutine()
     {
@@ -271,6 +321,7 @@ public class StageManager : MonoBehaviour
             }
         }
     }
+    #endregion
 
     public virtual void EnableChallengeMode()
     {
@@ -324,6 +375,7 @@ public class StageManager : MonoBehaviour
         }
     }
 
+    #region Prefab Loading
     private IEnumerator LoadRequiredPrefabs()
     {
         // Load all player prefabs
@@ -355,7 +407,9 @@ public class StageManager : MonoBehaviour
         IsStageReady = true;
         LoadingState.text = "<color=green>---Press any key to start---</color>";
     }
+    #endregion
 
+    #region Stage Procession
     IEnumerator TitleFadeOut()
     {
         BGM.Play();
@@ -453,7 +507,7 @@ public class StageManager : MonoBehaviour
     protected virtual void OnStageUpdate() 
     { 
         SearchCnt++;
-        if (SearchCnt >= 5 && RemainingEnemiesGO.activeSelf)
+        if (SearchCnt >= 10 && RemainingEnemiesGO.activeSelf)
         {
             int remainingEnemies = GetEnemyCount();
             RemainingEnemiesTxt.text = $"Enemies: {remainingEnemies}";
@@ -639,7 +693,8 @@ public class StageManager : MonoBehaviour
         IsFirstTimeStageEnter = true;
         Time.timeScale = 1f;
 
-        SceneManager.LoadScene("Level_Selection");
+        SceneManager.LoadSceneAsync(CharacterPrefabsStorage.LevelSelectionKey);
+        // Addressables.LoadSceneAsync(CharacterPrefabsStorage.LevelSelectionKey, LoadSceneMode.Single, true);
     }
 
     public void OnPlayerFumoPickup(PlayerBase player, Collider2D FumoObj)
@@ -745,4 +800,5 @@ public class StageManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(2f);
         FadeInResult();
     }
+    #endregion
 }

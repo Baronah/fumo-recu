@@ -47,18 +47,7 @@ public class FM_08 : StageManager
         if (enemy.attackPattern == EntityBase.AttackPattern.MELEE)
             enemy.detectionRange += 70f;
 
-        if (enemy is Wetwork w)
-        {
-            w.ChargeMaxAtkStack();
-        }
-        else if (enemy is Archer a)
-        {
-            a.ChargeMaxAtkStack();
-        }
-        else if (enemy as Matterllurgist)
-        {
-            enemy.ASPD += 40;
-        }
+       if (enemy as Matterllurgist) enemy.ASPD += 40;
     }
 
     public override void OnPlayerSpawn(PlayerBase player)
@@ -68,7 +57,7 @@ public class FM_08 : StageManager
         player.bDef += 20;
         player.bRes += 10;
         player.bAtk = (short)(player.bAtk * 1.5f);
-        player.ASPD += 35;
+        player.ASPD += 25;
         player.defPen += 10;
         player.resPen += 15;
     }
@@ -149,9 +138,11 @@ public class FM_08 : StageManager
             case 5:
                 foreach (var spawn in EndlessSpawns)
                 {
+                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUM_SPIDER_ALPHA);
                     spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.BLOODBOIL_KNIGHT);
                     spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.BLOODBOIL_KNIGHT);
                     spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUTANT);
+                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.SUDARAM);
                 }
                 break;
             case 6:

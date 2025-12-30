@@ -117,7 +117,7 @@ public class ProjectileScript : MonoBehaviour
 
 		if (displayMsg != string.Empty) ProjectileFirer.DisplayDamage(displayMsg, msgDisplayOffset);
         gameObject.SetActive(false);
-        Destroy(this.gameObject, 0.1f);
+        Destroy(this.gameObject, 0.5f);
     }
 
     public virtual void HandleHit(GameObject other)
@@ -125,7 +125,7 @@ public class ProjectileScript : MonoBehaviour
         if (!allowingUpdate) return;
 
         EntityBase entity = other.GetComponent<EntityBase>();
-        if (entity == null) return;
+        if (entity == null || !entity.CanBeHitByProjectiles) return;
 
         if (
             (projectileType == ProjectileType.HOMING_TO_SPECIFIC_TARGET && entity == ProjectileDestination) ||

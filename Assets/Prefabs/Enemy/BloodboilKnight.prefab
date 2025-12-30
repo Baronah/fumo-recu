@@ -331,6 +331,7 @@ MonoBehaviour:
   canRevive: 0
   isInvisible: 0
   InvulnerableTimer: 0
+  CanBeHitByProjectiles: 1
   damageType: 0
   attackPattern: 0
   ProjectilePrefab: {fileID: 0}
@@ -374,10 +375,10 @@ MonoBehaviour:
   cornerAvoidanceDistance: 300
   pathSmoothingLookahead: 2
   WaitTimes: []
-  OverridePositionCheckRadius: 120
   MoveToOverridePositionSpeedMultiplier: 1.5
   MoveToOverridePositionSpeedMultiplierJump: 0.35
   CanDetectThroughWalls: 0
+  IsInsignificant: 0
   SkillEffect: {fileID: 9121667887855823670}
   atkAddPerEnemyKilled: 0.125
   aspdAddPerEnemyKilled: 10

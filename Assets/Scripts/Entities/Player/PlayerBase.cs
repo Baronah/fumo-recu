@@ -398,10 +398,11 @@ public class PlayerBase : EntityBase
         playerManager.OnPlayerDeath();
     }
 
-    void MintRevive()
+    protected virtual void MintRevive()
     {
         Heal((int)(mHealth * 0.52f), healThroughDead: true);
-        playerManager.MintBlessing = false;
+
+        playerManager.MintBlessingRevival();
         SetInvulnerable(1.52f);
 
         Instantiate(RockEffect, transform.position, Quaternion.identity);

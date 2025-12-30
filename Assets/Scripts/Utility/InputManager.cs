@@ -17,7 +17,6 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    [SerializeField] private MovementScheme currentScheme = MovementScheme.ArrowKeys;
 
     // Key properties - these will automatically get updated values from PlayerPrefs
     public KeyCode AttackKey => KeyCodeConverter.ParseFromPlayerPrefs("AttackKey", KeyCode.Z);
@@ -32,24 +31,18 @@ public class InputManager : MonoBehaviour
     // Input scheme enumeration
     public enum MovementScheme
     {
-        ArrowKeys,
-        WASD
+        ArrowKeys = 0,
+        WASD = 1
     }
 
     public MovementScheme CurrentScheme
     {
         get => GetCurrentScheme();
-        set => currentScheme = value;
     }
 
     public MovementScheme GetCurrentScheme()
     {
-        if (PlayerPrefs.HasKey("MovementScheme"))
-        {
-            currentScheme = (MovementScheme)PlayerPrefs.GetInt("MovementScheme");
-        }
-
-        return currentScheme;
+        return PlayerPrefs.GetInt("MovementScheme", 0) == 0 ? MovementScheme.ArrowKeys : MovementScheme.WASD;
     }
 
     public enum KeyAction
@@ -68,7 +61,7 @@ public class InputManager : MonoBehaviour
     public Vector2 GetMovementInput()
     {
         Vector2 input = Vector2.zero;
-        switch (currentScheme)
+        switch (CurrentScheme)
         {
             case MovementScheme.ArrowKeys:
                 input.x = GetArrowHorizontal();
@@ -117,7 +110,6 @@ public class InputManager : MonoBehaviour
     // Method to change control scheme
     public void SetMovementScheme(MovementScheme scheme)
     {
-        currentScheme = scheme;
         // Save to PlayerPrefs for persistence
         PlayerPrefs.SetInt("MovementScheme", (int)scheme);
         PlayerPrefs.Save();

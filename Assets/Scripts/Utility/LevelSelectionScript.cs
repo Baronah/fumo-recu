@@ -16,7 +16,6 @@ using static StageManager;
 
 public class LevelSelectionScript : MonoBehaviour
 {
-    [SerializeField] private CharacterPrefabsStorage prefabStorage;
     [SerializeField] private GameObject LevelPrefabTemplate, LevelsPoint, Overlay, LevelSelectionConfirm, Nav, LevelEnemyView, EnemyViewPrefab, EnemyViewContent;
     [SerializeField] private CharacterPrefabsStorage characterPrefabsStorage;
     [SerializeField] private Transform[] Containers;
@@ -225,7 +224,7 @@ public class LevelSelectionScript : MonoBehaviour
 
         selectedIndex = index;
         selectedKey = runtimeKey;
-        SelectedLvlName.text = GetSceneName(selectedIndex) + ": " + prefabStorage.LevelTitles[selectedIndex];
+        SelectedLvlName.text = GetSceneName(selectedIndex) + ": " + characterPrefabsStorage.LevelTitles[selectedIndex];
         SelectedLvlDescription.text = GetLevelDescription(selectedIndex);
 
         if (!IsMapCleared[selectedIndex]) CMToggleImg.sprite = LockedSprite;
@@ -723,7 +722,7 @@ public class LevelSelectionScript : MonoBehaviour
 
             if (uniqueIndices.Add((int)code)) // only process unique ones
             {
-                var reference = prefabStorage.EnemyAssetReferences[(int)code];
+                var reference = characterPrefabsStorage.EnemyAssetReferences[(int)code];
                 var handle = DataHandler.Instance.LoadAddressable<GameObject>(reference);
                 yield return handle;
                 CharacterPrefabsStorage.EnemyPrefabs[(int)code] = handle.Result;

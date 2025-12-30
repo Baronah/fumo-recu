@@ -47,14 +47,14 @@ public class CasterProjectileScript : ProjectileScript
                     break;
 
                 case EnvironmentType.HEAT_PUMP_VENT:
-                    value = 1f;
+                    value = 1.5f;
                     if (ragingTerrain) value *= 2;
 
                     ProjectileFirer.PushEntityFrom(target, ProjectileFirer.GetAttackPosition(), value, 0.1f);
                     break;
 
                 case EnvironmentType.DARK_ZONE:
-                    value = 2f;
+                    value = 1.25f;
                     if (ragingTerrain) value *= 2;
 
                     target.ApplyEffect(Effect.AffectedStat.ARNG, "DARK_ZONE_CASTER_HIT_DEBUFF", -100f, value, true);

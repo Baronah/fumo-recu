@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class PlayerRanged : PlayerBase
 {
     [SerializeField] GameObject ProjectileSkill_2, ProjectileSkill_3, ProjectileSkill_4;
-    [SerializeField] private GameObject AttackRangeIndicator, Warning, SkillEffect, FreezeEffect, JuggEffect;
+    [SerializeField] private GameObject AttackRangeIndicator, Warning, EffectsParent, SkillEffect, FreezeEffect, FreezeRing, FreezeMaintRing, JuggEffect;
 
     [SerializeField] private Transform SkillPosition;
     [SerializeField] private float SkillCooldown = 30f;
@@ -66,7 +66,8 @@ public class PlayerRanged : PlayerBase
 
         bool alive = IsAlive();
         bool SkillActive = IsSkillActive && alive, FreezeActive = IsFreezeActive && alive;
-        SkillEffect.SetActive(SkillActive || FreezeActive);
+        SkillEffect.SetActive(SkillActive);
+        FreezeEffect.SetActive(FreezeActive);
         SkillBarObj.SetActive(SkillActive);
 
         SkillBarObj.transform.localPosition =
@@ -94,8 +95,8 @@ public class PlayerRanged : PlayerBase
     public override void OnFieldSwapOut(PlayerBase swapInPlayer)
     {
         base.OnFieldSwapOut(swapInPlayer);
-
         SpawnIllusion();
+        if (freezeMaintRing) Destroy(freezeMaintRing);
     }
 
     void SpawnIllusion()
@@ -124,10 +125,10 @@ public class PlayerRanged : PlayerBase
             SkillPosition.localPosition.z
         );
 
-        SkillEffect.transform.localPosition = new Vector3(
-            -SkillEffect.transform.localPosition.x,
-            SkillEffect.transform.localPosition.y,
-            SkillEffect.transform.localPosition.z
+        EffectsParent.transform.localPosition = new Vector3(
+            -EffectsParent.transform.localPosition.x,
+            EffectsParent.transform.localPosition.y,
+            EffectsParent.transform.localPosition.z
         );
     }
 
@@ -146,8 +147,11 @@ public class PlayerRanged : PlayerBase
             SkillCooldown *= 0.948f;
         }
 
-        if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_ICEAGE))
+        if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_BLOOM))
+        {
             FreezeDurationMin += 1f;
+            FreezeDurationMax += 1f;
+        }
 
         if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_SOUTH))
             FreezeDurationMin = Mathf.Max(FreezeDurationMin, 2f);
@@ -190,7 +194,7 @@ public class PlayerRanged : PlayerBase
 
     public override void UseSkill()
     {
-        if (!CanUseSkill) return;
+        if (!CanUseSkill || IsFreezeActive) return;
 
         base.UseSkill();
         SkillCoroutine = StartCoroutine(CastSkill());
@@ -241,7 +245,7 @@ public class PlayerRanged : PlayerBase
 
     public override void Move()
     {
-        if (IsMovementLocked) return;
+        if (IsMovementLocked || IsFreezeActive) return;
         if (IsSkillActive && InputManager.Instance.GetMovementInput().magnitude > 0) CancelSkill();
 
         base.Move();
@@ -277,7 +281,7 @@ public class PlayerRanged : PlayerBase
 
     public override IEnumerator Attack()
     {
-        if (!CanAttack || IsAttackLocked) yield break;
+        if (!CanAttack || IsAttackLocked || IsFreezeActive) yield break;
         if (IsSkillActive) CancelSkill();
 
         AttackRangeIndicator.SetActive(true);
@@ -323,6 +327,7 @@ public class PlayerRanged : PlayerBase
     }
 
     bool IsFreezeActive = false;
+    GameObject freezeMaintRing = null;
     public IEnumerator CastFreeze()
     {
         if (!IsAlive() || !CanUseFreeze || IsFrozen || IsStunned) yield break;
@@ -338,7 +343,7 @@ public class PlayerRanged : PlayerBase
 
         if (sfxs[1]) sfxs[1].Play();
 
-        Instantiate(FreezeEffect, SkillPosition.position, Quaternion.identity);
+        Instantiate(FreezeRing, SkillPosition.position, Quaternion.identity);
         yield return new WaitForSeconds(FreezeCastDuration - Time.fixedDeltaTime);
 
         Dictionary<EntityBase, float> InitialHitDictionary = new();
@@ -384,6 +389,45 @@ public class PlayerRanged : PlayerBase
         }
 
         StartCoroutine(FreezeLockout(cooldown));
+        
+        if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_HOLD))
+        {
+            float bonusDuration = 0, maxBonus = 5f;
+            freezeMaintRing = null;
+            bool initiatedRing = false;
+
+            var currentHitEnemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), SkillPosition.position, FreezeRange, true);
+            short frameCount = 0;
+            while (bonusDuration < maxBonus && Input.GetKey(InputManager.Instance.SpecialKey))
+            {
+                if (frameCount >= 3)
+                {
+                    currentHitEnemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), SkillPosition.position, FreezeRange, true);
+                    frameCount = 0;
+                }
+
+                if (!freezeMaintRing && !initiatedRing)
+                {
+                    freezeMaintRing = Instantiate(FreezeMaintRing, SkillPosition.position + new Vector3(0, 15, 0), Quaternion.identity, SkillPosition);
+                    initiatedRing = true;
+                }
+
+                foreach (var enemy in currentHitEnemies)
+                {
+                    if (InitialHitDictionary.ContainsKey(enemy)) 
+                        ApplyFreeze(enemy, InitialHitDictionary[enemy]);
+                    else
+                        ApplyFreeze(enemy, FreezeDurationMin);
+                }
+
+                bonusDuration += Time.deltaTime;
+                frameCount++;
+                yield return null;
+            }
+
+            if (freezeMaintRing) Destroy(freezeMaintRing);
+        }
+
         Debut = false;
         IsFreezeActive = false;
 
@@ -391,7 +435,7 @@ public class PlayerRanged : PlayerBase
         yield return null;
 
         Dictionary<EntityBase, float> HitDictionary = new(InitialHitDictionary);
-        if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_ICEAGE))
+        if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_BLOOM))
         {
             while (HitDictionary.Count > 0)
             {
@@ -403,7 +447,7 @@ public class PlayerRanged : PlayerBase
                 foreach (var pair in HitDictionary)
                 {
                     EntityBase InitHitEnemyHit = pair.Key;
-                    Instantiate(FreezeEffect, InitHitEnemyHit.transform.position, Quaternion.identity);
+                    Instantiate(FreezeRing, InitHitEnemyHit.transform.position, Quaternion.identity);
 
                     var nearbyHits = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), InitHitEnemyHit.transform.position, FreezeRange, true)
                                     .Where(s => !InitialHitDictionary.ContainsKey(s) && !HitDictionary.ContainsKey(s));
@@ -776,6 +820,19 @@ public class PlayerRanged : PlayerBase
         JuggEffect.SetActive(false);
     }
 
+    public override void OnDeath()
+    {
+        base.OnDeath();
+        if (!IsAlive() && freezeMaintRing) Destroy(freezeMaintRing);
+    }
+
+    protected override void MintRevive()
+    {
+        freezeCooldownTimer = FreezeCooldown;
+        skillCooldownTimer = SkillCooldown;
+        base.MintRevive();
+    }
+
     public override PlayerTooltipsInfo GetPlayerTooltipsInfo()
     {
         var info = base.GetPlayerTooltipsInfo();
@@ -834,12 +891,18 @@ public class PlayerRanged : PlayerBase
                 $"{SkillCooldown}s cooldown.";
         }
 
-        if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_ICEAGE))
+        if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_BLOOM))
         {
             info.SpecialName = "Zeropoint Burst - Snow Blossom";
             info.SpecialText =
                 $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds, inversely based on distance. Frozen enemies continues to " +
                 $"create an extra freeze ring around their position (trigger once per enemy) ";
+        }
+        else if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_HOLD))
+        {
+            info.SpecialName = "Zeropoint Burst - Focused Suppression";
+            info.SpecialText =
+                $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds, inversely based on distance. The freeze can be maintained by holding the skill's key for up to an additional 5 seconds (can not act while maintaining, release the key to end its effect).";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_CHARGE))
         {

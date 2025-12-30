@@ -15,6 +15,7 @@ public class Archer : EnemyBase
     public override void InitializeComponents()
     {
         base.InitializeComponents();
+        ChargeMaxAtkStack();
         if (!ViewOnlyMode) StartCoroutine(IncreasesAtk());
     }
 
@@ -56,9 +57,8 @@ public class Archer : EnemyBase
     public override void WriteStats()
     {
         Description = "A crossbowman that is adept at hiding in the darkness and assassinating their targets with special bolts.";
-        Skillset = "• When not attacking, ATK continuously increases and resets after the next attack.";
-        TooltipsDescription = "Seasoned archer that can perform long-range shots. When not attacking, ATK continuously increases " +
-            "and resets after the next attack.";
+        Skillset = "• The first attack deals greatly increased damage. This effect is slowly recharged while not attacking.";
+        TooltipsDescription = "Seasoned archer that can perform long-range shots. The first attack made has greatly increased ATK.";
 
         base.WriteStats();
     }

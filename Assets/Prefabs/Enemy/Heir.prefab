@@ -308,6 +308,7 @@ MonoBehaviour:
   canRevive: 0
   isInvisible: 0
   InvulnerableTimer: 0
+  CanBeHitByProjectiles: 1
   damageType: 1
   attackPattern: 0
   ProjectilePrefab: {fileID: 0}
@@ -336,7 +337,7 @@ MonoBehaviour:
   Skillset: "\u2022 MSPD greatly increased upon spotting the player or when injured
     for the first time.\n\u2022 Attacks restore HP proportional to damage dealt."
   detectionRange: 140
-  b_detectionRange: 110
+  b_detectionRange: 140
   DangerRange_RatioOfAttackRange: 1
   MinimumDistanceFromPlayer: 10
   gridCellSize: 60
@@ -352,10 +353,10 @@ MonoBehaviour:
   cornerAvoidanceDistance: 300
   pathSmoothingLookahead: 3
   WaitTimes: []
-  OverridePositionCheckRadius: 50
   MoveToOverridePositionSpeedMultiplier: 1
   MoveToOverridePositionSpeedMultiplierJump: 0
   CanDetectThroughWalls: 0
+  IsInsignificant: 0
   speedMultiplierOnPlayerSpot: 3
 --- !u!82 &7424751633068628821
 AudioSource:
