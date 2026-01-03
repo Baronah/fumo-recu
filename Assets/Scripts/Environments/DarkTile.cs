@@ -64,10 +64,11 @@ public class DarkTile : EnvironmentalTileBase
             activeEffects.Add(entity, effectInstance);
         }
 
+        base.OnEntityEnter(entity);
+
         if (entity is HibernatorKnight h) h.OnShroudedZoneEnter();
         else if (entity is Gloompincer g) g.OnShroudedZoneEnter();
-
-        base.OnEntityEnter(entity);
+        else if (entity is Toy t) t.OnShroudedZoneEnter();
     }
 
     public override void OnEntityStay(EntityBase entity)
@@ -84,7 +85,7 @@ public class DarkTile : EnvironmentalTileBase
 
     void ApplyBlindnessEffect(EntityBase entity)
     {
-        if (entity as Gloompincer || entity as Candle) return;
+        if (entity as Gloompincer || entity as Candle || entity as Toy) return;
 
         float percentage = entity is PlayerBase ? P_VisionReductionPercent : E_VisionReductionPercent;
         float minRange = entity.b_attackRange < 100 ? entity.b_attackRange : 100;
@@ -109,5 +110,6 @@ public class DarkTile : EnvironmentalTileBase
 
         if (entity is HibernatorKnight h) h.OnShroudedZoneExit();
         else if (entity is Gloompincer g) g.OnShroudedZoneExit();
+        else if (entity is Toy t) t.OnShroudedZoneExit(); 
     }
 }

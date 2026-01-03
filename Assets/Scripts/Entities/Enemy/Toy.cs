@@ -3,7 +3,25 @@ using UnityEngine;
 
 public class Toy : EnemyBase
 {
-    public bool IsActive => environmentalTilesStandingOn.Contains(StageManager.EnvironmentType.DARK_ZONE) && IsAlive();
+    [SerializeField] AnimationClip StartAni;
+
+    private bool IsStarted = false;
+    public bool WakenUp = false;
+    public bool IsActive => WakenUp && IsStarted && IsAlive();
+
+    public override void InitializeComponents()
+    {
+        base.InitializeComponents();
+        if (!ViewOnlyMode) StartCoroutine(OnStartCoroutine());
+    }
+
+    IEnumerator OnStartCoroutine()
+    {
+        yield return new WaitForSeconds(StartAni.length);
+        IsStarted = true;
+        if (!environmentalTilesStandingOn.Contains(StageManager.EnvironmentType.DARK_ZONE)) OnShroudedZoneExit();
+        else OnShroudedZoneEnter();
+    }
 
     public override void EnemyFixedBehaviors()
     {
@@ -23,24 +41,25 @@ public class Toy : EnemyBase
         yield return StartCoroutine(base.Attack());
     }
 
+    public override void TakeDamage(DamageInstance damage, EntityBase source, ProjectileScript projectileInfo = null)
+    {
+        if (!IsStarted) return;
+        base.TakeDamage(damage, source, projectileInfo);
+    }
+
     public override IEnumerator OnAttackComplete()
     {
         if (!CanAttack || !SpottedPlayer) yield break;
 
-        float ProjectileBaseSpeed = 600, ProjectileAcceleration = 150;
+        float ProjectileAcceleration = 500;
 
         Vector2 playerDir = (SpottedPlayer.transform.position - AttackPosition.position).normalized;
         Vector3 sourcePosition = AttackPosition.position;
 
-        for (int i = 0; i < 360; i += 36)
+        int projCount = 6;
+        int jump = 180 / projCount;
+        for (int i = -90; i <= 90; i += jump)
         {
-            float Speed = ProjectileBaseSpeed;
-            if (i == 0)
-            {
-                Speed *= 1.5f;
-                ProjectileAcceleration *= 1.33f;
-            }
-
             float angle = i;
             Vector2 rotatedDir = Quaternion.Euler(0, 0, angle) * playerDir;
 
@@ -48,19 +67,30 @@ public class Toy : EnemyBase
 
             CreateProjectileAndShootToward(
                 ProjectilePrefab,
-                new DamageInstance(atk, 0, 0),
+                new DamageInstance(0, atk, 0),
                 sourcePosition,
                 targetPosition,
                 projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
-                travelSpeed: Speed,
+                travelSpeed: ProjectileSpeed,
                 acceleration: ProjectileAcceleration,
                 lifeSpan: 8f,
                 targetType: typeof(PlayerBase));
         }
     }
 
+    protected override Vector2 GetPathfindingTarget()
+    {
+        if (SpottedPlayer
+            && !SpottedPlayer.environmentalTilesStandingOn.Contains(StageManager.EnvironmentType.DARK_ZONE))
+        {
+            return StopVector;
+        }
+        return base.GetPathfindingTarget();
+    }
+
     public void OnShroudedZoneExit()
     {
+        WakenUp = false;
         CancelAttack();
         StopMovement();
         animator.SetBool("sleep", true);
@@ -68,7 +98,29 @@ public class Toy : EnemyBase
 
     public void OnShroudedZoneEnter()
     {
+        StartCoroutine(WakeUp());
+    }
+
+    public override void OnAttackReceive(EntityBase source)
+    {
+        if (!IsActive) return;
+        base.OnAttackReceive(source);
+    }
+
+    IEnumerator WakeUp()
+    {
         animator.SetBool("sleep", false);
+
+        float c = 0, d = 0.5f;
+        while (c < d)
+        {
+            if (!environmentalTilesStandingOn.Contains(StageManager.EnvironmentType.DARK_ZONE) || !IsAlive()) yield break;
+
+            c += Time.deltaTime;
+            yield return null;
+        }
+
+        WakenUp = true;
     }
 
     public override void WriteStats()

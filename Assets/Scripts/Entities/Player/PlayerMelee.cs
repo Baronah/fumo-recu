@@ -92,12 +92,6 @@ public class PlayerMelee : PlayerBase
             DashCooldown *= 0.9f;
             SkillCooldown *= 0.9f;
         }
-
-        if (Skills.Contains(SkillTree_Manager.SkillName.JUST_A_NICE_LOOKING_ROCK))
-        {
-            DashCooldown *= 0.948f;
-            SkillCooldown *= 0.948f;
-        }
     }
 
     public override void OnFieldEnter()

@@ -308,6 +308,18 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1333956751212545712, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_Size.x
       value: 1.8515853
@@ -488,6 +500,7 @@ MonoBehaviour:
   canRevive: 0
   isInvisible: 0
   InvulnerableTimer: 0
+  CanBeHitByProjectiles: 1
   damageType: 0
   attackPattern: 0
   ProjectilePrefab: {fileID: 0}
@@ -496,14 +509,16 @@ MonoBehaviour:
   DamagePopup: {fileID: 7498904281893358320, guid: b09dfacba160b6d47938cf47f8dea3c9, type: 3}
   ccBar: {fileID: 798767698844814004}
   AttackAnimation: {fileID: 7400000, guid: 7d08df8c00c3b8649bf4b5a495e316f0, type: 2}
-  sfxs: []
+  sfxs:
+  - {fileID: -9189185830210501964}
+  - {fileID: 8614333267754396728}
   IsBeingShifted: 0
   FreezeTimer: 0
   StunTimer: 0
   preferredMoveAnimationPlaySpeed: 1.7
   preferredAttackAnimationSpeed: 0.85
   IsBeingLevitated: 0
-  LevitationEffect: {fileID: 0}
+  LevitationEffect: {fileID: 876376389869632544}
   reviveDuration: 5
   postReviveDuration: 0
   enemyCode: 9
@@ -511,10 +526,10 @@ MonoBehaviour:
   TooltipsHoldtime: 6
   Description: A spider-like creature that has been mutated by Originium.
   Skillset: "\u2022 Explodes upon death, dealing true damage in an area around self.\n\u2022
-    Will be instantly defeated when coming into contact with a <color=#CC4000>Originium
+    Will be instantly defeated when coming into contact with an <color=#CC4000>Originium
     Pollution</color>, causing a far stronger explosion."
   detectionRange: 185
-  b_detectionRange: 0
+  b_detectionRange: 185
   DangerRange_RatioOfAttackRange: 1
   MinimumDistanceFromPlayer: 20
   gridCellSize: 60
@@ -533,10 +548,10 @@ MonoBehaviour:
   - 2
   - 5
   - 7
-  OverridePositionCheckRadius: 50
   MoveToOverridePositionSpeedMultiplier: 1.25
   MoveToOverridePositionSpeedMultiplierJump: 0.35
   CanDetectThroughWalls: 0
+  IsInsignificant: 0
   explosionDelay: 1
   explosionAtkScale: 2.5
   explosionRadius: 175
@@ -740,6 +755,11 @@ AudioSource:
 --- !u!1 &798767698844814004 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 773491194806959642, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+  m_PrefabInstance: {fileID: 121092350036407470}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &876376389869632544 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
   m_PrefabInstance: {fileID: 121092350036407470}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &6653486291621747602 stripped

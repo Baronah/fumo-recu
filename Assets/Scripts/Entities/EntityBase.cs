@@ -34,6 +34,9 @@ public class EntityBase : MonoBehaviour
     public short weight = 0;
     public short damageReduction = 0, damageAmplify = 0;
 
+    public float BoundTimer = 0f;
+    public bool IsBound => BoundTimer > 0f;
+
     public int GetMaxHealth() => mHealth;
     public short GetHealthPercentage() => (short)Mathf.Max(1, health * 100 / mHealth);
     public short GetMissinghealthPercentage() => (short)((mHealth - health) * 100 / mHealth);
@@ -271,8 +274,15 @@ public class EntityBase : MonoBehaviour
         CalculateBuffsAndDebuffs();
     }
 
+    [SerializeField] protected bool HasOnStartCoroutine = true;
     IEnumerator OnStartCoroutine()
     {
+        if (!HasOnStartCoroutine)
+        {
+            spriteRenderer.color = InitSpriteColor;
+            yield break;
+        }
+
         Color transparentBlack = new Color(0, 0, 0, 0);
         spriteRenderer.color = transparentBlack;
 
@@ -746,6 +756,7 @@ public class EntityBase : MonoBehaviour
 
         AttackLockout -= Time.deltaTime;
         MovementLockout -= Time.deltaTime;
+        BoundTimer -= Time.deltaTime;
 
         InvulnerableTimer -= Time.deltaTime;
     }
@@ -796,6 +807,8 @@ public class EntityBase : MonoBehaviour
 
     public virtual void HandleAnimationSpeed()
     {
+        if (!animator || !animator.runtimeAnimatorController) return;
+
         float MIN_MSPEED = preferredMoveAnimationPlaySpeed * 0.2f,
                MAX_MSPEED = preferredMoveAnimationPlaySpeed * 2,
                X_MSPD_MULTIPLIER = preferredMoveAnimationPlaySpeed - MIN_MSPEED;

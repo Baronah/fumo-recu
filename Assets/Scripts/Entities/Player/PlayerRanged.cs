@@ -141,12 +141,6 @@ public class PlayerRanged : PlayerBase
             SkillCooldown *= 0.9f;
         }
 
-        if (Skills.Contains(SkillTree_Manager.SkillName.JUST_A_NICE_LOOKING_ROCK))
-        {
-            FreezeCooldown *= 0.948f;
-            SkillCooldown *= 0.948f;
-        }
-
         if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_BLOOM))
         {
             FreezeDurationMin += 1f;

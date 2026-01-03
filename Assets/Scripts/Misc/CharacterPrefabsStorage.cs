@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.ResourceProviders;
@@ -22,6 +23,9 @@ public class CharacterPrefabsStorage : ScriptableObject
 
 	public static void ClearBattleData()
 	{
+		var skillNames = Skills.Select(s => s.Key).ToArray();
+
+        PlayerPrefs.SetString("InventionsUsed", string.Join(" ", skillNames));
 		startingPlayer = PlayerType.MELEE;
 		Skills.Clear();
 	}

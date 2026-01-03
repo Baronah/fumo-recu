@@ -96,13 +96,13 @@ public class EnemyBase : EntityBase
 
     public bool IsInsignificant = false;
 
-    private StageManager StageManager;
+    protected StageManager stageManager;
 
     public override void InitializeComponents()
     {
         if (IsComponentsInitialized) return;
 
-        StageManager = FindObjectOfType<StageManager>(true);
+        stageManager = FindObjectOfType<StageManager>(true);
 
         base.InitializeComponents();
         PathfindCnt = (short)UnityEngine.Random.Range(0, PathfindCntThreshold);
@@ -181,17 +181,26 @@ public class EnemyBase : EntityBase
         }
     }
 
+    protected Vector3 StopVector = new Vector3(Mathf.Epsilon, Mathf.Epsilon, 0);
     private void UpdatePathfinding()
     {
         PathfindCnt++;
 
-        if (IsFrozen || IsStunned || !IsAlive() || rb2d.velocity.magnitude <= 0) return;
+        if (IsFrozen || IsStunned || !IsAlive() || rb2d.velocity.magnitude <= 0 || IsBound || MovementLockout > 0) return;
 
         if (PathfindCnt <= PathfindCntThreshold) return;
         PathfindCnt = 0;
 
         Vector2 currentPos = FeetPosition.position;
         Vector2 desiredDestination = GetUniversalDestination();
+        Vector3 toVector3 = new(desiredDestination.x, desiredDestination.y);
+        if (toVector3 == StopVector)
+        {
+            isUsingPathfinding = false;
+            currentPath.Clear();
+            return;
+        }
+
         float distanceToDestination = Vector2.Distance(currentPos, desiredDestination);
 
         // Use pathfinding threshold for all movement types
@@ -220,7 +229,7 @@ public class EnemyBase : EntityBase
                 Vector2 samplePoint = Vector2.Lerp(currentPos, desiredDestination, t);
 
                 // Check for obstacles around this point
-                if (Physics2D.OverlapCircle(samplePoint, 25f, obstacleLayer) != null)
+                if (Physics2D.OverlapCircle(samplePoint, 40f, obstacleLayer) != null)
                 {
                     hasDirectPath = false;
                     break;
@@ -312,9 +321,9 @@ public class EnemyBase : EntityBase
         }
     }
 
-    private Vector2 GetPathfindingTarget()
+    protected virtual Vector2 GetPathfindingTarget()
     {
-        if (!SpottedPlayer) return FeetPosition.position;
+        if (!SpottedPlayer) return StopVector;
 
         var playerInRange = DetectPlayer(attackRange, false);
         bool playerIsFarAway = 
@@ -333,7 +342,7 @@ public class EnemyBase : EntityBase
                 float distanceToPlayer = Vector2.Distance(enemyPos, playerPos);
                 if (distanceToPlayer <= attackRange * DangerRange_RatioOfAttackRange)
                 {
-                    return enemyPos;
+                    return StopVector;
                 }
 
                 return playerPos;
@@ -348,7 +357,7 @@ public class EnemyBase : EntityBase
                 }
                 else if (RecentlyScannedPlayer && playerInRange)
                 {
-                    return enemyPos;
+                    return StopVector;
                 }
                 else
                 {
@@ -450,7 +459,7 @@ public class EnemyBase : EntityBase
     {
         MoveCnt++;
 
-        if (IsFrozen || IsStunned || !IsAlive() || IsMovementLocked) return;
+        if (IsFrozen || IsStunned || !IsAlive() || IsMovementLocked || IsBound) return;
 
         if (!SpottedPlayer
             && MoveToOverridePosition
@@ -480,14 +489,19 @@ public class EnemyBase : EntityBase
         lastPosition = currentPos;
 
         Vector3 destination = GetCurrentDestination();
+        if (destination == StopVector)
+        {
+            StopMovement();
+            return;
+        }
+
         Vector2 direction = destination - (SpottedPlayer && !isUsingPathfinding ? AttackPosition.position : (Vector3)FeetPosition.position); // Changed from transform.position
         float distanceToDestination = direction.magnitude;
 
         // Stop if we're very close to destination
         if (distanceToDestination <= 20f) // Slightly increased
         {
-            rb2d.velocity = Vector2.zero;
-            animator.SetFloat("move", 0);
+            StopMovement();
             return;
         }
 
@@ -536,9 +550,10 @@ public class EnemyBase : EntityBase
         float c = 0, d = 1;
         while (c < d)
         {
+            if (!IsValidForTerrainIgnore) break;
             Physics2D.IgnoreLayerCollision(gameObject.layer, 8, IsValidForTerrainIgnore);
-            c += Time.fixedDeltaTime;
-            yield return new WaitForFixedUpdate();
+            c += Time.deltaTime;
+            yield return null;
         }
         Physics2D.IgnoreLayerCollision(gameObject.layer, 8, false);
     }
@@ -786,7 +801,7 @@ public class EnemyBase : EntityBase
         FumoScript fumoScript = collision.gameObject.GetComponent<FumoScript>();
         if (fumoScript && fumoScript.ObjectiveType == FumoScript.FumoObjectiveType.PROTECT && collision.gameObject.CompareTag("Fumo"))
         {
-            StageManager.OnEnemyFumoPickup(this, collision);
+            stageManager.OnEnemyFumoPickup(this, collision);
         }
     }
 

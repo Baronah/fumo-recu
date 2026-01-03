@@ -18,7 +18,7 @@ public class EnemySpawnpointScript : MonoBehaviour
 
     [SerializeField] public float InitDelay = 0f;
 
-    [SerializeField] public bool spotPlayerUponSpawn = false, immediateSpawn = false, showTooltips;
+    [SerializeField] public bool spotPlayerUponSpawn = false, immediateSpawn = false, isBound = false, showTooltips;
     [SerializeField] protected short InitTooltipsPriority = 0;
     [SerializeField] public List<EnemyCheckpointScript> enemyCheckpoints;
     [SerializeField] protected float InitWaittime;
@@ -150,6 +150,7 @@ public class EnemySpawnpointScript : MonoBehaviour
                     enemy.ForceSpotPlayer();
                 }
 
+                if (isBound) enemy.BoundTimer = 9999f;
                 if (extraWaittime > 0) StartCoroutine(enemy.StartMovementLockout(extraWaittime));
 
                 SpawnEnemies.Add(enemy);

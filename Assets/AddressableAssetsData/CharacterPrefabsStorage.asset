@@ -99,6 +99,10 @@ MonoBehaviour:
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  - m_AssetGUID: 33c74213a5efef54c91ccccd986cd4df
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
   SceneAssetReferences:
   - m_AssetGUID: e7097122e24de2c428e004b11709a5ac
     m_SubObjectName: 
@@ -148,6 +152,10 @@ MonoBehaviour:
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 1
+  - m_AssetGUID: 98efc80de1d633246ac76bc700274480
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
   LevelTitles:
   - To You. The Departing
   - Hold me tight
@@ -157,8 +165,9 @@ MonoBehaviour:
   - Crimson Dusk
   - Art Class
   - Loop & Loop
-  - Light
+  - '"Light"'
   - Prisoner in a Frame
-  - Midnight & Daydream
+  - After Dark
+  - A Starry Night, the City of Light
   - Paint it White
   - Well then, See You again Tomorrow

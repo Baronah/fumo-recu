@@ -160,15 +160,6 @@ public class PlayerBase : EntityBase
                     ASPD -= 40;
                     break;
 
-                case SkillTree_Manager.SkillName.JUST_A_NICE_LOOKING_ROCK:
-                    mHealth = (int)(mHealth * 1.052f);
-                    bAtk = (short)(bAtk * 1.052f);
-                    bDef += 5;
-                    bRes += 5;
-                    ASPD += 5;
-                    b_moveSpeed += b_moveSpeed * 0.052f;
-                    break;
-
                 case SkillTree_Manager.SkillName.HAIR_RIBBON:
                     PlayerType playerType = GetPlayerType();
 
@@ -234,7 +225,7 @@ public class PlayerBase : EntityBase
 
     public override void Move()
     {
-        if (IsMovementLocked) return;
+        if (IsMovementLocked || IsBound) return;
 
         Vector2 movementInputs = InputManager.Instance.GetMovementInput();
         rb2d.velocity = CalculateMovement(movementInputs);

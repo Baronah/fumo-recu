@@ -572,6 +572,7 @@ MonoBehaviour:
   StunTimer: 0
   preferredMoveAnimationPlaySpeed: 0.7
   preferredAttackAnimationSpeed: 0.65
+  HasOnStartCoroutine: 1
   IsBeingLevitated: 0
   LevitationEffect: {fileID: 6940265448572212697}
   reviveDuration: 5
@@ -581,10 +582,10 @@ MonoBehaviour:
   TooltipsHoldtime: 6
   Description: 
   Skillset: "\u2022 Holds 3 candles. While in shrouded area, channel for several
-    seconds and place a candle on the spot when completed. Drops all remaining candles
-    upon death.\n\u2022 Candle lightens the area around itself, removing the effect
-    of shrouded zones.\n\u2022 Candle can be frozen to temporarily disable its lighting
-    effect throughout the duration."
+    seconds and place a candle on the spot when completed.\n\u2022 Candle lightens
+    the area around itself, removing the effect of shrouded zones.\n\u2022 Candle
+    can be frozen to temporarily disable its lighting effect throughout the duration.\n\u2022
+    Drops all remaining candles upon death."
   detectionRange: 420
   b_detectionRange: 420
   DangerRange_RatioOfAttackRange: 0.9

@@ -39,11 +39,11 @@ public class EnvironmentalTileBase : MonoBehaviour
         entitiesWithin.Add(entity);
         if (entity is PlayerBase pb)
         {
-            if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_B))
+            if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_STUDY))
             {
                 pb.ApplyEffect(Effect.AffectedStat.ATK, "GEOGOLIST_ATK_BUFF", 50f, 9999f, true);
             }
-            else if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_C))
+            else if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_EXPLORE))
             {
                 pb.ApplyEffect(Effect.AffectedStat.MSPD, "GEOGOLIST_MSPD_BUFF", 50f, 9999f, true);
             }
@@ -57,11 +57,11 @@ public class EnvironmentalTileBase : MonoBehaviour
 
         if (entity is PlayerBase pb)
         {
-            if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_B))
+            if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_STUDY))
             {
                 pb.ApplyEffect(Effect.AffectedStat.ATK, "GEOGOLIST_ATK_BUFF", 50f, 9999f, true);
             }
-            else if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_C))
+            else if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_EXPLORE))
             {
                 pb.ApplyEffect(Effect.AffectedStat.MSPD, "GEOGOLIST_MSPD_BUFF", 50f, 9999f, true);
             }
@@ -74,11 +74,11 @@ public class EnvironmentalTileBase : MonoBehaviour
         entitiesWithin.Remove(entity);
         if (entity is PlayerBase pb)
         {
-            if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_B))
+            if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_STUDY))
             {
                 pb.RemoveEffect("GEOGOLIST_ATK_BUFF");
             }
-            else if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_C))
+            else if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_EXPLORE))
             {
                 pb.RemoveEffect("GEOGOLIST_MSPD_BUFF");
             }

@@ -33,9 +33,18 @@ public class Candleknight : EnemyBase
             && !IsAttackLocked;
     }
 
-    public override void EnemyFixedBehaviors()
+    public override void FixedUpdate()
     {
-        base.EnemyFixedBehaviors();
+        base.FixedUpdate();
+        ShowCandles();
+    }
+
+    short ShowCandlesCnt = 0;
+    void ShowCandles()
+    {
+        ShowCandlesCnt++;
+        if (ShowCandlesCnt < 5) return;
+        ShowCandlesCnt = 0;
 
         CandlesIndicator.SetActive(IsAlive() && RemainingCandles > 0);
         if (CandlesIndicator.activeSelf)
@@ -45,6 +54,11 @@ public class Candleknight : EnemyBase
                 CandleImages[i].gameObject.SetActive(RemainingCandles >= (i + 1));
             }
         }
+    }
+
+    public override void EnemyFixedBehaviors()
+    {
+        base.EnemyFixedBehaviors();
 
         cooldownTimer += Time.deltaTime;
         if (CanPlaceCandle())
@@ -121,6 +135,7 @@ public class Candleknight : EnemyBase
     void PlaceCandle()
     {
         GameObject o = Instantiate(Candle, transform.position, Quaternion.identity);
+        stageManager.OnEnemySpawn(o.GetComponent<EnemyBase>());
         CandlesPlaced.Add(o.GetComponent<Candle>());
     }
 
@@ -134,10 +149,11 @@ public class Candleknight : EnemyBase
     {
         Description = "";
         Skillset =
-            $"• Holds {MaxCandles} candles. While in shrouded area, channel for several seconds " +
-            $"and place a candle on the spot when completed. Drops all remaining candles upon death.\n" +
+            $"• Holds {MaxCandles} candles. While in shrouded area, stops moving to channel for several seconds " +
+            $"and places a candle on the spot when completed.\n" +
             "• Candle lightens the area around itself, removing the effect of shrouded zones.\n" +
-            "• Candle can be frozen to temporarily disable its lighting effect throughout the duration.";
+            "• Candle can be frozen to temporarily disable its lighting effect throughout the duration.\n" +
+            "• Drops all remaining candles upon death.";
         TooltipsDescription =
             $"Holds {MaxCandles} candles. Places a candle on shrouded zone to <color=yellow>lighten its surrounding area</color>. Drops candle upon death.";
 
