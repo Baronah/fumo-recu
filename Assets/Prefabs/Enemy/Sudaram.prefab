@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 548385871610167463}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.2, y: 1, z: 0}
+  m_LocalPosition: {x: 2.6, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5044,6 +5044,7 @@ MonoBehaviour:
   weight: 3
   damageReduction: 0
   damageAmplify: 0
+  BoundTimer: 0
   IsFreezeImmune: 0
   IsStunImmune: 0
   IsPhysicalImmune: 0
@@ -5068,6 +5069,7 @@ MonoBehaviour:
   StunTimer: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 1
+  HasOnStartCoroutine: 1
   IsBeingLevitated: 0
   LevitationEffect: {fileID: 3991348675042547751}
   reviveDuration: 5

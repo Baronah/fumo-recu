@@ -13,19 +13,18 @@ namespace DamageCalculation
                 {
                     float maxiumDamageThreshold = 80f;
                     float targetMissingHealth = target.GetMissinghealthPercentage();
-                    targetMissingHealth = targetMissingHealth >= maxiumDamageThreshold ? 100 : targetMissingHealth;
 
-                    float damageMultiply = Mathf.Lerp(1.0f, 1.4f, targetMissingHealth / 100f);
+                    float damageMultiply = Mathf.Lerp(1.0f, 1.5f, targetMissingHealth / maxiumDamageThreshold);
 
                     instance.Multiply(damageMultiply);
                 }
                 else if (playerBase.Skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_SCOPE))
                 {
-                    float maxDistance = Mathf.Max(350, attacker.attackRange * 1.5f);
+                    float maxDistance = Mathf.Min(Mathf.Max(350, attacker.attackRange * 1.2f), 1000);
                     float distance = Vector3.Distance(attacker.transform.position, target.transform.position);
                     if (distance <= 100) distance = 0;
 
-                    float damageMultiply = Mathf.Lerp(1.0f, 1.4f, distance * 1.0f / maxDistance);
+                    float damageMultiply = Mathf.Lerp(1.0f, 1.5f, distance * 1.0f / maxDistance);
                     instance.Multiply(damageMultiply);
                 }
             }

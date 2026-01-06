@@ -324,6 +324,7 @@ MonoBehaviour:
   weight: 1
   damageReduction: 0
   damageAmplify: 0
+  BoundTimer: 0
   IsFreezeImmune: 0
   IsStunImmune: 0
   IsPhysicalImmune: 0
@@ -346,6 +347,7 @@ MonoBehaviour:
   StunTimer: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 1
+  HasOnStartCoroutine: 1
   IsBeingLevitated: 0
   LevitationEffect: {fileID: 3776788205384234200}
   reviveDuration: 5

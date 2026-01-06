@@ -95,6 +95,10 @@ public class SkillTree_Manager : MonoBehaviour
         SPIRAL_READ,
         WIND_ANTHEM,
         FREEZE_HOLD,
+        ACCELERATION,
+        ABSOLUTISM,
+        STATIS,
+        HEAT_DEATH,
     }
 
     public static SkillTree_Manager Instance;
@@ -147,8 +151,7 @@ public class SkillTree_Manager : MonoBehaviour
 
         PlayerMaxSkills = 0;
         if (IsSensesUnlocked) PlayerMaxSkills += 2;
-        if (IsTechUnlocked) PlayerMaxSkills += 1;
-        if (IsSpecsUnlocked) PlayerMaxSkills += 1;
+        if (IsTechUnlocked) PlayerMaxSkills += 2;
 
         SENSES_BLOCK.SetActive(!IsSensesUnlocked);
         TECHS_PRECEDE_BLOCK.SetActive(!IsSensesUnlocked);
@@ -165,8 +168,8 @@ public class SkillTree_Manager : MonoBehaviour
 
         FumoCnt.text = "x " + fumo;
         SensesUnlockTxt.text = $"Spend       x{FUMO_COST_SENSE} to unlock this branch \n(+2 slots).";
-        TechsUnlockTxt.text = $"Spend       x{FUMO_COST_TECHS} to unlock this branch \n(+1 slot).";
-        SpecsUnlockTxt.text = $"Spend         x{FUMO_COST_SPECS} to unlock this branch\n(+1 slot).";
+        TechsUnlockTxt.text = $"Spend       x{FUMO_COST_TECHS} to unlock this branch \n(+2 slot).";
+        SpecsUnlockTxt.text = $"Spend         x{FUMO_COST_SPECS} to unlock this branch.";
 
         int maxSkill = Mathf.Min(PlayerMaxSkills, MaxSkillCount);
         for (int i = 0; i < maxSkill; i++)

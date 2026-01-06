@@ -12,6 +12,7 @@ public class SaveDataManager
         && PlayerPrefs.GetInt("SensesUnlocked", 0) != 0;
     public static bool UseDVDTittleSettings => PlayerPrefs.GetInt("DVDTitle", 1) != 0;
     public static bool HasMintInTitle => PlayerPrefs.GetInt("MintInTitle", 1) != 0;
+    public static bool EnableHitStop => PlayerPrefs.GetInt("EnableHitStop", 1) != 0;
     public static void SetDdTitleSettings(bool v, GameObject Title)
     {
         PlayerPrefs.SetInt("DVDTitle", v ? 1 : 0);
@@ -22,6 +23,11 @@ public class SaveDataManager
     {
         PlayerPrefs.SetInt("MintInTitle", v ? 1 : 0);
         Mint.SetActive(v);
+    }
+
+    public static void ToggleHitStop(bool v)
+    {
+        PlayerPrefs.SetInt("EnableHitStop", v ? 1 : 0);
     }
 
     public static bool IsEligibleForTechUnlock()

@@ -320,6 +320,7 @@ public class EntityBase : MonoBehaviour
         
         HandleSpriteFlipping();
         HandleAnimationSpeed();
+        ProcessSkillTree();
     }
 
     // use negative values for debuffs
@@ -434,20 +435,23 @@ public class EntityBase : MonoBehaviour
         if (IsComponentsInitialized) CalculateBuffsAndDebuffs();
     }
 
-    public void RemoveEffect(string Key)
+    public void RemoveEffect(params string[] Keys)
     {
-        if (AtkBuffs.ContainsKey(Key)) AtkBuffs.Remove(Key);
-        if (AtkDebuffs.ContainsKey(Key)) AtkDebuffs.Remove(Key);
-        if (DefBuffs.ContainsKey(Key)) DefBuffs.Remove(Key);
-        if (DefDebuffs.ContainsKey(Key)) DefDebuffs.Remove(Key);
-        if (ResBuffs.ContainsKey(Key)) ResBuffs.Remove(Key);
-        if (ResDebuffs.ContainsKey(Key)) ResDebuffs.Remove(Key);
-        if (MspdBuffs.ContainsKey(Key)) MspdBuffs.Remove(Key);
-        if (MspdDebuffs.ContainsKey(Key)) MspdDebuffs.Remove(Key);
-        if (AspdBuffs.ContainsKey(Key)) AspdBuffs.Remove(Key);
-        if (AspdDebuffs.ContainsKey(Key)) AspdDebuffs.Remove(Key);
-        if (ArngBuffs.ContainsKey(Key)) ArngBuffs.Remove(Key);
-        if (ArngDebuffs.ContainsKey(Key)) ArngDebuffs.Remove(Key);
+        foreach (var Key in Keys)
+        {
+            if (AtkBuffs.ContainsKey(Key)) AtkBuffs.Remove(Key);
+            if (AtkDebuffs.ContainsKey(Key)) AtkDebuffs.Remove(Key);
+            if (DefBuffs.ContainsKey(Key)) DefBuffs.Remove(Key);
+            if (DefDebuffs.ContainsKey(Key)) DefDebuffs.Remove(Key);
+            if (ResBuffs.ContainsKey(Key)) ResBuffs.Remove(Key);
+            if (ResDebuffs.ContainsKey(Key)) ResDebuffs.Remove(Key);
+            if (MspdBuffs.ContainsKey(Key)) MspdBuffs.Remove(Key);
+            if (MspdDebuffs.ContainsKey(Key)) MspdDebuffs.Remove(Key);
+            if (AspdBuffs.ContainsKey(Key)) AspdBuffs.Remove(Key);
+            if (AspdDebuffs.ContainsKey(Key)) AspdDebuffs.Remove(Key);
+            if (ArngBuffs.ContainsKey(Key)) ArngBuffs.Remove(Key);
+            if (ArngDebuffs.ContainsKey(Key)) ArngDebuffs.Remove(Key);
+        }
         CalculateBuffsAndDebuffs();
     }
 
@@ -953,7 +957,8 @@ public class EntityBase : MonoBehaviour
     {
         if (damage.TotalDamage <= 0) return;
         health -= damage.TotalDamage;
-        if (health < 0) health = 0;
+        if (enteredStatis && health <= 0) health = 1; 
+        else if (health < 0) health = 0;
         healthBar.SetHealth(health);
 
         if (health <= 0)
@@ -1008,6 +1013,124 @@ public class EntityBase : MonoBehaviour
     {
         // base example
         if (rb2d.velocity.magnitude != 0) animator.SetBool("attack", false);
+    }
+
+    protected virtual void ProcessSkillTree()
+    {
+        ProcessAccelaration();
+        ProcessGravity();
+        ProcessStatis();
+    }
+
+    private float GravityTimerCount = 0f;
+    private readonly float PullTick = 0.15f;
+    private readonly float BaseRange = 150f;
+    private float GrowthRange = 80f;
+    protected virtual void ProcessGravity()
+    {
+        if (!CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.GRAVITY) || weight <= 0) return;
+        GravityTimerCount += Time.fixedDeltaTime;
+        if (GravityTimerCount < PullTick) return;
+
+        GravityTimerCount = 0f;
+
+        float baseForce = 1.2f, searchRange = BaseRange + GrowthRange * (weight - 1);
+        var hits = SearchForEntitiesAroundCertainPoint(typeof(EntityBase), transform.position, searchRange, true)
+            .Where(e => e.weight < weight);
+        foreach (var hit in hits)
+        { 
+            float force = baseForce * (hit.weight - weight);
+            PullEntityTowards(hit, transform.position, baseForce, 0.075f, true, false);
+        }
+    }
+
+    private Vector3 prevDirection = Vector3.zero;
+    private readonly float minDirection = 0.15f;
+    private bool prevSpriteFlipX = false;
+    private float AcceTimerCount = 0f;
+    protected float AccelerationBuffPerSec = 25f, AccelerationBuffMax = 200f;
+    private readonly float AcceTick = 0.25f;
+    protected virtual void ProcessAccelaration()
+    {
+        if (!CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.ACCELERATION)) return;
+        AcceTimerCount += Time.fixedDeltaTime;
+        if (AcceTimerCount < AcceTick) return;
+
+        AcceTimerCount = 0f;
+        Vector3 direction = rb2d.velocity.normalized;
+        Vector3 compareDirection = new (Mathf.Abs(direction.x - prevDirection.x), Mathf.Abs(direction.y - prevDirection.y));
+        string effectKey = "ACCELERATION_BUFF";
+        float AccelerationBuffPerTick = AccelerationBuffPerSec * AcceTick;
+
+        if (compareDirection.x <= minDirection && compareDirection.y <= minDirection && direction != Vector3.zero && prevSpriteFlipX == spriteRenderer.flipX)
+        {
+            if (MspdBuffs.ContainsKey(effectKey))
+            {
+                ApplyEffect(
+                    AffectedStat.MSPD,
+                    effectKey,
+                    Mathf.Min(AccelerationBuffMax, MspdBuffs[effectKey].Value + AccelerationBuffPerTick),
+                    9999f,
+                    true);
+            }
+            else
+            {
+                ApplyEffect(
+                    AffectedStat.MSPD,
+                    effectKey,
+                    AccelerationBuffPerTick,
+                    9999f,
+                    true);
+            }
+        }
+        else
+        {
+            float currentBuff = !MspdBuffs.ContainsKey(effectKey) ? 0 : MspdBuffs[effectKey].Value;
+            if (currentBuff > 0) 
+                ApplyEffect(
+                    AffectedStat.MSPD,
+                    "ACCELERATE_DIR_CHANGE_PUNISH",
+                    Mathf.Lerp(0, 90f, currentBuff / AccelerationBuffMax) * -1,
+                    1.5f,
+                    true,
+                    EffectPersistType.DECAY);
+
+            RemoveEffect(effectKey);
+        }
+
+        prevDirection = direction;
+        prevSpriteFlipX = spriteRenderer.flipX;
+    }
+
+    protected float AtkBuffPercentage = 50f, RegenBuffPercentage = 0.04f;
+    protected float StatisRequiredTimer = 2.5f;
+    private float StatisTimer = 0f;
+    private bool enteredStatis = false;
+    protected virtual void ProcessStatis()
+    {
+        if (!CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.STATIS)) return;
+
+        string keyAtk = "STATIS_BUFF_ATK";
+        if (rb2d.velocity == Vector2.zero && PrevPosition == transform.position)
+        {
+            StatisTimer += Time.fixedDeltaTime;
+            if (StatisTimer >= StatisRequiredTimer && !enteredStatis)
+            {
+                enteredStatis = true;
+                hpRegenPercentage += RegenBuffPercentage;
+                ApplyEffect(AffectedStat.ATK, keyAtk, AtkBuffPercentage, 9999f, true);
+            }
+        }
+        else
+        {
+            if (enteredStatis)
+            {
+                hpRegenPercentage -= RegenBuffPercentage;
+                RemoveEffect(keyAtk);
+            }
+            enteredStatis = false;
+            StatisTimer = 0f;
+        }
     }
 
     public virtual void StopMovement()
@@ -1311,34 +1434,39 @@ public class EntityBase : MonoBehaviour
         canRevive = false;
     }
 
-    public void PullEntityTowards(EntityBase targetEntity, Transform targetPosition, float pullForce, float duration, bool hasReferencePosition = true)
-        => StartCoroutine(ApplyForceCoroutine(targetEntity, targetPosition.position, pullForce, duration, true, hasReferencePosition));
+    public void PullEntityTowards(EntityBase targetEntity, Transform targetPosition, float pullForce, float duration, bool hasReferencePosition = true, bool cancelAction = true)
+        => StartCoroutine(ApplyForceCoroutine(targetEntity, targetPosition.position, pullForce, duration, true, hasReferencePosition, cancelAction));
 
-    public void PushEntityFrom(EntityBase targetEntity, Transform sourcePosition, float pushForce, float duration, bool hasReferencePosition = true)
-        => StartCoroutine(ApplyForceCoroutine(targetEntity, sourcePosition.position, pushForce, duration, false, hasReferencePosition));
+    public void PushEntityFrom(EntityBase targetEntity, Transform sourcePosition, float pushForce, float duration, bool hasReferencePosition = true, bool cancelAction = true)
+        => StartCoroutine(ApplyForceCoroutine(targetEntity, sourcePosition.position, pushForce, duration, false, hasReferencePosition, cancelAction));
 
-    public void PullEntityTowards(EntityBase targetEntity, Vector3 targetPosition, float pullForce, float duration, bool hasReferencePosition = true)
-    => StartCoroutine(ApplyForceCoroutine(targetEntity, targetPosition, pullForce, duration, true, hasReferencePosition));
+    public void PullEntityTowards(EntityBase targetEntity, Vector3 targetPosition, float pullForce, float duration, bool hasReferencePosition = true, bool cancelAction = true)
+    => StartCoroutine(ApplyForceCoroutine(targetEntity, targetPosition, pullForce, duration, true, hasReferencePosition, cancelAction));
 
-    public void PushEntityFrom(EntityBase targetEntity, Vector3 sourcePosition, float pushForce, float duration, bool hasReferencePosition = true)
-        => StartCoroutine(ApplyForceCoroutine(targetEntity, sourcePosition, pushForce, duration, false, hasReferencePosition));
+    public void PushEntityFrom(EntityBase targetEntity, Vector3 sourcePosition, float pushForce, float duration, bool hasReferencePosition = true, bool cancelAction = true)
+        => StartCoroutine(ApplyForceCoroutine(targetEntity, sourcePosition, pushForce, duration, false, hasReferencePosition, cancelAction));
 
-    private IEnumerator ApplyForceCoroutine(EntityBase targetEntity, Vector3 referencePosition, float force, float duration, bool isPull, bool hasReferencePosition = true)
+    private IEnumerator ApplyForceCoroutine(EntityBase targetEntity, Vector3 referencePosition, float force, float duration, bool isPull, bool hasReferencePosition = true, bool cancelAction = true)
     {
         if (targetEntity == null || targetEntity.rb2d == null || !targetEntity.IsAlive() || targetEntity.IsBeingLevitated) yield break;
 
         float ForceValue = force * duration / 0.03f;
         float ForceValueAfterWeight = ForceValue - targetEntity.weight;
-        if (ForceValueAfterWeight <= 0.5f) yield break;
+        if (cancelAction && ForceValueAfterWeight <= 0.5f) yield break;
+
+        if (targetEntity is EnemyBase e) e.StopObstacleIgnore();
 
         float multiplier = ForceValueAfterWeight / ForceValue;
         force *= multiplier;
 
-        targetEntity.StopMovement();
-        targetEntity.CancelAttack();
+        if (cancelAction)
+        {
+            targetEntity.StopMovement();
+            targetEntity.CancelAttack();
+            StartCoroutine(targetEntity.StartMovementLockout(duration + 0.1f));
+        }
         targetEntity.IsBeingShifted = true;
 
-        StartCoroutine(targetEntity.StartMovementLockout(duration + 0.1f));
         float elapsedTime = 0f;
         float initialDistance = Vector3.Distance(targetEntity.transform.position, referencePosition);
         float minDistanceForPull = 20f;
@@ -1352,7 +1480,8 @@ public class EntityBase : MonoBehaviour
 
         while (elapsedTime < duration)
         {
-            if (!targetEntity.IsAlive())
+            if (!targetEntity || !targetEntity.rb2d) yield break;
+            else if (!targetEntity.IsAlive())
             {
                 targetEntity.rb2d.velocity = Vector2.zero;
                 yield break;
@@ -1386,18 +1515,19 @@ public class EntityBase : MonoBehaviour
             }
             else directionVector = referencePosition;
 
+            ForceMode2D mode =ForceMode2D.Force;
             if (isPull)
             {
                 float progress = 1f - (currentDistance / initialDistance);
                 float easedForce = force * (1f - Mathf.Pow(1f - progress, 3f));
                 float finalForce = Mathf.Max(0.3f * force, easedForce);
-                targetEntity.rb2d.AddForce(directionVector * finalForce, ForceMode2D.Force);
+                targetEntity.rb2d.AddForce(directionVector * finalForce, mode);
             }
             else
             {
                 float timeProgress = elapsedTime / duration;
                 float decayedForce = force * (1f - timeProgress * 0.5f);
-                targetEntity.rb2d.AddForce(directionVector * decayedForce, ForceMode2D.Force);
+                targetEntity.rb2d.AddForce(directionVector * decayedForce, mode);
             }
 
             targetEntity.IsBeingShifted = true;
@@ -1407,7 +1537,7 @@ public class EntityBase : MonoBehaviour
         }
 
         // Ensure entity stops at the end
-        targetEntity.rb2d.velocity = Vector2.zero;
+        if (targetEntity.rb2d) targetEntity.rb2d.velocity = Vector2.zero;
         targetEntity.IsBeingShifted = false;
     }
 
@@ -1513,24 +1643,35 @@ public class EntityBase : MonoBehaviour
 
     public static List<EntityBase> Base_SearchForEntitiesAroundCertainPoint(Type type, Vector2 pos, float r, bool catchInvisibles = false, short take = -1)
     {
-        Collider2D[] collider2Ds = Physics2D.OverlapCircleAll(pos, r);
         List<EntityBase> entityBases = new List<EntityBase>();
 
-        foreach (Collider2D collider in collider2Ds)
+        if (r >= 9999f)
         {
-            EntityBase entity = collider.GetComponent<EntityBase>();
-            if (!entity 
-                || !entity.IsComponentsInitialized
-                    || !entity.IsAlive() 
-                        || (entity.isInvisible && !catchInvisibles) 
-                            || entityBases.Contains(entity)
-                                || (type != null && !type.IsAssignableFrom(entity.GetType()))) 
-                continue;
-            
-            PlayerBase pb = entity as PlayerBase;
-            if (pb && !pb.SettleSwappedInPlayer) continue;
+            entityBases = EntityManager.Entities
+                .Where(entity => 
+                    entity && entity.IsComponentsInitialized && entity.IsAlive() && (!entity.isInvisible || catchInvisibles) 
+                    && (type != null && type.IsAssignableFrom(entity.GetType())))
+                .ToList();
+        }
+        else
+        {
+            Collider2D[] collider2Ds = Physics2D.OverlapCircleAll(pos, r);
+            foreach (Collider2D collider in collider2Ds)
+            {
+                EntityBase entity = collider.GetComponent<EntityBase>();
+                if (!entity
+                    || !entity.IsComponentsInitialized
+                        || !entity.IsAlive()
+                            || (entity.isInvisible && !catchInvisibles)
+                                || entityBases.Contains(entity)
+                                    || (type != null && !type.IsAssignableFrom(entity.GetType())))
+                    continue;
 
-            entityBases.Add(entity);
+                PlayerBase pb = entity as PlayerBase;
+                if (pb && !pb.SettleSwappedInPlayer) continue;
+
+                entityBases.Add(entity);
+            }
         }
 
         if (entityBases.Count == 1 || entityBases.Count <= take) return entityBases;

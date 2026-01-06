@@ -156,8 +156,10 @@ public class ShroudedAssassin : EnemyBase
             dashScaleInt *= 0.6f;
         }
 
-        float duration = dashScaleDuration * 4 + dashScaleInt * 4;
-        if (shape == IllusionSpawnShape.FIREWORK) duration /= 2;
+        if (shape == IllusionSpawnShape.FIREWORK)
+        {
+            dashScaleDuration /= 2;
+        }
 
         IsFreezeImmune = IsStunImmune = true;
         IsDashing = true;
@@ -248,7 +250,7 @@ public class ShroudedAssassin : EnemyBase
                 break;
                 
             case IllusionSpawnShape.TRIANGLE:
-                if (playerPos.y < transform.position.y)
+                if (playerPos.y > transform.position.y)
                 {
                     // starts as top
                     if (Mathf.Abs(playerPos.x - transform.position.x) < range / 4)
@@ -290,9 +292,11 @@ public class ShroudedAssassin : EnemyBase
                 }
 
                 o3 = Instantiate(shadowClonePrefab, selfPos, Quaternion.identity);
+                o4 = Instantiate(shadowClonePrefab, new(o3.transform.position.x, o2.transform.position.y), Quaternion.identity);
                 IllusionsTransforms.Add(o1);
                 IllusionsTransforms.Add(o2);
                 IllusionsTransforms.Add(o3);
+                IllusionsTransforms.Add(o4);
                 break;
 
             case IllusionSpawnShape.FIREWORK:

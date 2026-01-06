@@ -144,7 +144,6 @@ public class PlayerRanged : PlayerBase
         if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_BLOOM))
         {
             FreezeDurationMin += 1f;
-            FreezeDurationMax += 1f;
         }
 
         if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_SOUTH))
@@ -386,7 +385,7 @@ public class PlayerRanged : PlayerBase
         
         if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_HOLD))
         {
-            float bonusDuration = 0, maxBonus = 5f;
+            float bonusDuration = 0, maxBonus = 6f;
             freezeMaintRing = null;
             bool initiatedRing = false;
 
@@ -426,57 +425,8 @@ public class PlayerRanged : PlayerBase
         IsFreezeActive = false;
 
         animator.SetTrigger("skill_end");
-        yield return null;
-
-        Dictionary<EntityBase, float> HitDictionary = new(InitialHitDictionary);
         if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_BLOOM))
-        {
-            while (HitDictionary.Count > 0)
-            {
-                yield return new WaitForSeconds(0.1f);
-                if (sfxs[1]) sfxs[1].Play();
-                yield return new WaitForSeconds(0.1f);
-
-                Dictionary<EntityBase, float> HitThisRound = new();
-                foreach (var pair in HitDictionary)
-                {
-                    EntityBase InitHitEnemyHit = pair.Key;
-                    Instantiate(FreezeRing, InitHitEnemyHit.transform.position, Quaternion.identity);
-
-                    var nearbyHits = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), InitHitEnemyHit.transform.position, FreezeRange, true)
-                                    .Where(s => !InitialHitDictionary.ContainsKey(s) && !HitDictionary.ContainsKey(s));
-
-                    foreach (EntityBase nearby in nearbyHits)
-                    {
-                        EnemyBase enemy = nearby as EnemyBase;
-                        float distance = Vector3.Distance(InitHitEnemyHit.transform.position, enemy.transform.position);
-                        float freezeDuration = distance >= FreezeRange * 0.8f
-                            ?
-                            FreezeDurationMin
-                            :
-                            Mathf.Lerp(FreezeDurationMin, pair.Value, MinDistanceForFreezeDuration * 1.0f / distance);
-                        ApplyFreeze(enemy, freezeDuration);
-                        HitThisRound.Add(nearby, freezeDuration);
-                        InitialHitDictionary.Add(nearby, freezeDuration);
-
-                        if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_NORTH))
-                        {
-                            float pushDuration = distance >= FreezeRange * 0.8f
-                                ?
-                                0.1f
-                                :
-                                Mathf.Lerp(0.12f, 0.23f, MinDistanceForFreezeDuration * 1.0f / distance);
-
-                            PushEntityFrom(enemy, InitHitEnemyHit.transform, 1.5f, pushDuration);
-                        }
-                        else if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_SOUTH))
-                            PullEntityTowards(enemy, InitHitEnemyHit.transform, 2f, 0.25f);
-                    }
-                }
-
-                HitDictionary = new(HitThisRound);
-            }
-        }
+            playerManager.ChainFreeze(InitialHitDictionary, FreezeRange, FreezeDurationMin, FreezeDurationMax, MinDistanceForFreezeDuration);
     }
 
     public float GetSkillFiringInterval()

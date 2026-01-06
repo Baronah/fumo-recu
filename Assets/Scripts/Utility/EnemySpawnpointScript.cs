@@ -219,7 +219,6 @@ public class EnemySpawnpointScript : MonoBehaviour
         }
     }
 
-
     private bool IsInsignificant => SpawnEnemies.Any(e => e.IsInsignificant);
     public virtual int GetEnemiesCount()
     {

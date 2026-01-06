@@ -56,9 +56,9 @@ public class Toy : EnemyBase
         Vector2 playerDir = (SpottedPlayer.transform.position - AttackPosition.position).normalized;
         Vector3 sourcePosition = AttackPosition.position;
 
-        int projCount = 6;
+        int projCount = 4;
         int jump = 180 / projCount;
-        for (int i = -90; i <= 90; i += jump)
+        for (int i = -45; i <= 45; i += jump)
         {
             float angle = i;
             Vector2 rotatedDir = Quaternion.Euler(0, 0, angle) * playerDir;

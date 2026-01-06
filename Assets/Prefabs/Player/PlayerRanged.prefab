@@ -1105,7 +1105,7 @@ MonoBehaviour:
   Name: Player Ranged
   Icon: {fileID: 21300000, guid: 15ee98af90e40a74fb6b25aadaab346a, type: 3}
   mHealth: 140
-  bAtk: 45
+  bAtk: 50
   bDef: 0
   bRes: 20
   defPen: 0
@@ -1114,7 +1114,7 @@ MonoBehaviour:
   resIgn: 0
   lifeSteal: 0
   b_moveSpeed: 125
-  b_attackRange: 420
+  b_attackRange: 440
   b_attackWindupTime: 0.95
   b_attackInterval: 1.8
   MIN_PHYSICAL_DMG: 0.05
@@ -1133,6 +1133,7 @@ MonoBehaviour:
   weight: 0
   damageReduction: 0
   damageAmplify: 0
+  BoundTimer: 0
   IsFreezeImmune: 0
   IsStunImmune: 0
   IsPhysicalImmune: 0
@@ -1155,6 +1156,7 @@ MonoBehaviour:
   StunTimer: 0
   preferredMoveAnimationPlaySpeed: 0.85
   preferredAttackAnimationSpeed: 0.9
+  HasOnStartCoroutine: 1
   IsBeingLevitated: 0
   LevitationEffect: {fileID: 0}
   reviveDuration: 5
@@ -1162,7 +1164,7 @@ MonoBehaviour:
   SettleSwappedInPlayer: 0
   ObstacleLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   AttackSprite: {fileID: 21300000, guid: 1146632b55a73c34fa3b2bf1794f10ec, type: 3}
   SkillSprite: {fileID: 21300000, guid: 425d049a62ac11f4bbb9a798b005c93f, type: 3}
   SpecialSprite: {fileID: 21300000, guid: 0da9d9817e86b52448dcab10e8b6f47f, type: 3}
@@ -1199,7 +1201,7 @@ MonoBehaviour:
   Skill_DamageMulitplier: 0.25
   Skill_AtkInterval: 0.15
   SkillBarObj: {fileID: 4703740534645977381}
-  FreezeRange: 420
+  FreezeRange: 450
   FreezeDurationMin: 0.5
   FreezeDurationMax: 4
   MinDistanceForFreezeDuration: 100

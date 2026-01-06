@@ -23,7 +23,7 @@ public class MainMenu : MonoBehaviour
     private int ResolutionIndex = 0;
 
     [SerializeField] GameObject Mint, Special;
-    [SerializeField] Toggle DvdTitleToggle, MintArknightsToggle;
+    [SerializeField] Toggle DvdTitleToggle, MintArknightsToggle, HitstopToggle;
 
     private Color TitleStartColor, TitleEndColor;
     private bool FlipX = true;
@@ -37,6 +37,9 @@ public class MainMenu : MonoBehaviour
         DvdTitleToggle.onValueChanged.AddListener((v) => SaveDataManager.SetDdTitleSettings(v, Title.gameObject));
         MintArknightsToggle.isOn = SaveDataManager.HasMintInTitle;
         MintArknightsToggle.onValueChanged.AddListener((v) => SaveDataManager.SetMintInTitle(v, Mint));
+
+        HitstopToggle.isOn = SaveDataManager.EnableHitStop;
+        HitstopToggle.onValueChanged.AddListener((v) => SaveDataManager.ToggleHitStop(v));
 
         Mint.SetActive(SaveDataManager.HasMintInTitle);
         Special.SetActive(SaveDataManager.IsResearchUnlocked);

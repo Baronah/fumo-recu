@@ -550,6 +550,7 @@ MonoBehaviour:
   weight: 3
   damageReduction: 0
   damageAmplify: 0
+  BoundTimer: 0
   IsFreezeImmune: 0
   IsStunImmune: 0
   IsPhysicalImmune: 0
@@ -581,11 +582,11 @@ MonoBehaviour:
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
   TooltipsHoldtime: 6
   Description: 
-  Skillset: "\u2022 Holds 3 candles. While in shrouded area, channel for several
-    seconds and place a candle on the spot when completed.\n\u2022 Candle lightens
-    the area around itself, removing the effect of shrouded zones.\n\u2022 Candle
-    can be frozen to temporarily disable its lighting effect throughout the duration.\n\u2022
-    Drops all remaining candles upon death."
+  Skillset: "\u2022 Holds 3 candles. While in shrouded area, stops moving to channel
+    for several seconds and places a candle on the spot when completed.\n\u2022 Candle
+    lightens the area around itself, removing the effect of shrouded zones.\n\u2022
+    Candle can be frozen to temporarily disable its lighting effect throughout the
+    duration.\n\u2022 Drops all remaining candles upon death."
   detectionRange: 420
   b_detectionRange: 420
   DangerRange_RatioOfAttackRange: 0.9

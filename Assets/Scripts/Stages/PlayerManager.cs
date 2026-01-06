@@ -75,6 +75,7 @@ public class PlayerManager : MonoBehaviour
 
     public StageManager stageManager;
 
+    private bool EnableHitStop = true;
     private void Awake()
     {
         SkillView_Overlay.SetActive(false);
@@ -83,6 +84,8 @@ public class PlayerManager : MonoBehaviour
 
         GetPlayerStartType();
         UpdateKeybindTexts();
+
+        EnableHitStop = SaveDataManager.EnableHitStop;
     }
 
     public void UpdateKeybindTexts()
@@ -415,11 +418,23 @@ public class PlayerManager : MonoBehaviour
         if (strength >= 0.8f) hit_02_sfx.Play();
         else hit_01_sfx.Play();
 
-        mainCamera.StartCoroutine(mainCamera.Shake(strength));
+        if (EnableHitStop) mainCamera.StartCoroutine(mainCamera.Shake(strength));
     }
 
     public void OnPlayerDeath()
     {
+        if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.HEAT_DEATH))
+        {
+            var enemies = EntityManager.Enemies;
+            foreach (var enemy in enemies)
+            {
+                if (!enemy || !enemy.IsAlive()) continue;
+                enemy.TakeDamage(new(0, 0, 200), null);
+            }
+
+            stageManager.CheckWinWithHeathDeath();
+        }
+
         IsPlayerAlive = false;
         StopAllCoroutines();
 
@@ -555,6 +570,85 @@ public class PlayerManager : MonoBehaviour
             skillIcon.sprite = skillDataSet.skillIcon;
             txts[0].text = skillDataSet.nameInString;
             txts[1].text = skillDataSet.skillDescription;
+        }
+    }
+
+    [SerializeField] private AudioSource FreezeSfx;
+    [SerializeField] private GameObject FreezeRing, FreezeRingMark;
+    public void ChainFreeze(Dictionary<EntityBase, float> InitialHitDictionary, float FreezeRange, float FreezeDurationMin, float FreezeDurationMax, float MinDistanceForFreezeDuration)
+        => StartCoroutine(UnleashFreezeMarks(InitialHitDictionary, FreezeRange, FreezeDurationMin, FreezeDurationMax, MinDistanceForFreezeDuration));
+
+    private IEnumerator UnleashFreezeMarks(Dictionary<EntityBase, float> InitialHitDictionary, float FreezeRange, float FreezeDurationMin, float FreezeDurationMax, float MinDistanceForFreezeDuration)
+    {
+        if (!CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.FREEZE_BLOOM)) yield break;
+
+        Dictionary<EntityBase, float> HitDictionary = new Dictionary<EntityBase, float>(InitialHitDictionary);
+        Dictionary<EntityBase, GameObject> Marks = new();
+        while (HitDictionary.Count > 0)
+        {
+            foreach (var enemy in HitDictionary.Keys)
+            {
+                if (Marks.ContainsKey(enemy)) continue;
+                GameObject mark = Instantiate(FreezeRingMark, enemy.transform.position + new Vector3(0, 80), Quaternion.identity, enemy.transform);
+                Marks.Add(enemy, mark);
+            }
+
+            yield return new WaitForSeconds(2f);
+            if (FreezeSfx) FreezeSfx.Play();
+            yield return new WaitForSeconds(0.1f);
+
+            Dictionary<EntityBase, float> HitThisRound = new();
+            foreach (var pair in HitDictionary)
+            {
+                EntityBase SourceEntity = pair.Key;
+                if (!SourceEntity) continue;
+
+                if (Marks.ContainsKey(SourceEntity) && Marks[SourceEntity])
+                {
+                    Destroy(Marks[SourceEntity]);
+                    Marks.Remove(SourceEntity);
+                }
+                Instantiate(FreezeRing, SourceEntity.transform.position, Quaternion.identity);
+
+                List<EntityBase> nearbyHits =
+                    EntityBase.Base_SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), SourceEntity.transform.position, FreezeRange, true).ToList();
+
+                foreach (EntityBase nearby in nearbyHits)
+                {
+                    EnemyBase enemy = nearby as EnemyBase;
+                    float distance = Vector3.Distance(SourceEntity.transform.position, enemy.transform.position);
+                    float freezeDuration = distance >= FreezeRange * 0.8f
+                        ?
+                        FreezeDurationMin
+                        :
+                        Mathf.Lerp(FreezeDurationMin, pair.Value, MinDistanceForFreezeDuration * 1.0f / distance);
+                    enemy.ApplyFreeze(enemy, freezeDuration);
+
+                    if (nearby != SourceEntity)
+                    {
+                        if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.WINDBLOW_NORTH))
+                        {
+                            float pushDuration = distance >= FreezeRange * 0.8f
+                                ?
+                                0.1f
+                                :
+                                Mathf.Lerp(0.12f, 0.23f, MinDistanceForFreezeDuration * 1.0f / distance);
+
+                            enemy.PushEntityFrom(enemy, SourceEntity.transform, 1.5f, pushDuration);
+                        }
+                        else if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.WINDBLOW_SOUTH))
+                            enemy.PullEntityTowards(enemy, SourceEntity.transform, 2f, 0.25f);
+                    }
+
+                    if (!HitThisRound.ContainsKey(enemy) && !InitialHitDictionary.ContainsKey(enemy))
+                    {
+                        HitThisRound.Add(nearby, freezeDuration);
+                        InitialHitDictionary.Add(nearby, freezeDuration);
+                    }
+                }
+            }
+
+            HitDictionary = new(HitThisRound.Where(h => h.Key));
         }
     }
 

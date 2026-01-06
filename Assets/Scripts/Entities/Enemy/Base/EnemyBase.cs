@@ -545,6 +545,11 @@ public class EnemyBase : EntityBase
         *********************/
     }
 
+    public void StopObstacleIgnore()
+    {
+        Physics2D.IgnoreLayerCollision(gameObject.layer, 8, false);
+    }
+
     IEnumerator TemporarilyDisableHitbox()
     {
         float c = 0, d = 1;

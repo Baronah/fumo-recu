@@ -5,7 +5,6 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using static SkillTree_Manager.SkillName;
-using static UnityEditor.Progress;
 
 public class SkillTree_Intro : MonoBehaviour
 {
@@ -66,6 +65,7 @@ Don't tell anyone else about it, okay?</color>";
         }
 
         int currentHour = DateTime.Now.TimeOfDay.Hours;
+
         string greeting = "";
 
         bool isLate = false;
@@ -74,11 +74,11 @@ Don't tell anyone else about it, okay?</color>";
         {
             greeting = "Good morning!";
         }
-        else if (currentHour <= 17)
+        else if (currentHour > 11 && currentHour <= 17)
         {
             greeting = "Good afternoon!";
         }
-        else if (currentHour <= 23)
+        else if (currentHour > 17 && currentHour <= 23)
         {
             greeting = "Good evening!";
         }
@@ -152,6 +152,7 @@ Don't tell anyone else about it, okay?</color>";
                     FREEZE_SUPERCONDUCT => "Ah, the modified defroster. I still don't know what to call it...",
                     SPIRAL_FIELD_EXPERT => "The samples you brought back were really amazing! To think we could fuse environment energy into our own projectiles like this, I really learnt a lot...",
                     WIND_ANTHEM => "It seems like you already got used to using my arts and equipments. I won't be surprised if you manage to surpass me someday, hehe.",
+                    SPIRAL_READ => "As much as I'd like to improve my attention span, the current me can still work on stuff if I'm determined to!",
                     SPIRAL_PHANTOM => "That clone technique looked really cool!",
                     BEYOND_NIGHT => "If possible, let's gaze the stars again some day!",
                     _ => string.Empty,

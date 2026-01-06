@@ -367,6 +367,7 @@ MonoBehaviour:
   weight: 5
   damageReduction: 0
   damageAmplify: 0
+  BoundTimer: 0
   IsFreezeImmune: 0
   IsStunImmune: 0
   IsPhysicalImmune: 0
@@ -374,6 +375,7 @@ MonoBehaviour:
   canRevive: 1
   isInvisible: 0
   InvulnerableTimer: 0
+  CanBeHitByProjectiles: 1
   damageType: 0
   attackPattern: 0
   ProjectilePrefab: {fileID: 0}
@@ -390,6 +392,7 @@ MonoBehaviour:
   StunTimer: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 0.9
+  HasOnStartCoroutine: 1
   IsBeingLevitated: 0
   LevitationEffect: {fileID: 8347005171171750296}
   reviveDuration: 10
@@ -435,10 +438,10 @@ MonoBehaviour:
   - 2
   - 5
   - 7
-  OverridePositionCheckRadius: 50
   MoveToOverridePositionSpeedMultiplier: 1.25
   MoveToOverridePositionSpeedMultiplierJump: 0.35
   CanDetectThroughWalls: 0
+  IsInsignificant: 0
   shadowClonePrefab: {fileID: 6227222074570190167, guid: aaa7e34ade2686643ad8b54869a8f08b, type: 3}
   feudBond: {fileID: 8026367807147734761, guid: 4d80df3aa8c3d4149a2671152919af1e, type: 3}
   dashCooldown: 16

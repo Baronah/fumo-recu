@@ -3,8 +3,7 @@ using UnityEngine;
 public class FM_11 : StageManager
 {
     [SerializeField] private GameObject[] CM_ActivateGroup;
-    [SerializeField] private GameObject CM_Hibernator_Spawns_ToModify;
-    [SerializeField] private float CM_Hibernator_Spawns_Delay = 15f;
+    [SerializeField] private float CM_Hiber_WakeAtkBuffAdd = 0.25f, CM_Hiber_WakeMspdBuffAdd = 0.35f, CM_Hiber_SleepCountTimeAdd = 5f;
 
     public override void EnableChallengeMode()
     {
@@ -14,12 +13,6 @@ public class FM_11 : StageManager
             foreach (var item in CM_ActivateGroup)
             {
                 item.SetActive(true);
-            }
-
-            EnemySpawnpointScript[] enemySpawnpointScripts = CM_Hibernator_Spawns_ToModify.GetComponentsInChildren<EnemySpawnpointScript>();
-            foreach (var item in enemySpawnpointScripts)
-            {
-                item.InitDelay += CM_Hibernator_Spawns_Delay;
             }
         }
         else
@@ -37,6 +30,13 @@ public class FM_11 : StageManager
         if (enemy is Sudaram s)
         {
             s.originiumPollutionBonusASPD = 100;
+        }
+        else if (CharacterPrefabsStorage.EnableChallengeMode && enemy is HibernatorKnight h)
+        {
+            h.SleepCountTime += CM_Hiber_SleepCountTimeAdd;
+            h.Wake_AtkBuff += CM_Hiber_WakeAtkBuffAdd;
+            h.Wake_MspdBuff += CM_Hiber_WakeMspdBuffAdd;
+            h.Wake_Buff_Duration += 1f;
         }
     }
 }

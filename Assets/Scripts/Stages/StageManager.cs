@@ -50,7 +50,7 @@ public class StageManager : MonoBehaviour
 
     [SerializeField] protected float ChallengeModeStatsModifier = 1.2f;
 
-    [SerializeField] protected float timeScaleSlow = 0.4f;
+    protected float timeScaleSlow = 0.4f;
     protected bool isSlowing = false;
 
     protected bool IsEnemyAlive => EntityManager.Enemies.Any(e => e && e.IsAlive()) || enemySpawnpoints.Any(e => !e.IsSpawnpointSpawned);
@@ -102,6 +102,8 @@ public class StageManager : MonoBehaviour
         mainCamera = GetComponentInChildren<CameraMovement>(true);
         BGM = GetComponent<AudioSource>();
         BGM.volume = PlayerPrefs.GetFloat("BGM", 1f);
+
+        timeScaleSlow = Mathf.Clamp(PlayerPrefs.GetFloat("TimeScaleSlow", 0.4f), 0.1f, 0.9f);
 
         var sfxs = FindObjectsOfType<AudioSource>(true).Where(a => a != BGM);
         float sfxValue = PlayerPrefs.GetFloat("SFX", 1f);
@@ -354,6 +356,19 @@ public class StageManager : MonoBehaviour
                     enemy.ASPD += 30;
                     enemy.mHealth = (int)(enemy.mHealth * 0.6f);
                     break;
+                case SkillName.ABSOLUTISM:
+                    if (enemy.attackPattern == EntityBase.AttackPattern.MELEE)
+                    {
+                        enemy.mHealth *= 2;
+                        enemy.b_moveSpeed *= 1.35f;
+                        enemy.weight += 2;
+                    }
+                    else if (enemy.attackPattern == EntityBase.AttackPattern.RANGED)
+                    {
+                        enemy.b_attackRange = enemy.detectionRange = 15000f;
+                        enemy.ASPD += 50;
+                    }
+                    break;
             }
         }
     }
@@ -370,6 +385,22 @@ public class StageManager : MonoBehaviour
                     break;
                 case SkillName.OBSCURE_VISION:
                     player.b_attackRange *= 0.8f;
+                    break;
+                case SkillName.ABSOLUTISM:
+                    if (player.attackPattern == EntityBase.AttackPattern.MELEE)
+                    {
+                        player.mHealth *= 2;
+                        player.b_moveSpeed *= 1.35f;
+                        player.weight += 2;
+                    }
+                    else if (player.attackPattern == EntityBase.AttackPattern.RANGED)
+                    {
+                        player.b_attackRange = 15000f;
+                        player.ASPD += 50;
+                    }
+                    break;
+                case SkillName.HEAT_DEATH:
+                    player.mHealth = (int)(player.mHealth * 0.55f);
                     break;
             }
         }
@@ -520,6 +551,7 @@ public class StageManager : MonoBehaviour
         while (IsStageStarted)
         {
             yield return new WaitForSeconds(2f);
+            if (IsStageEnd) yield break;
 
             if (!playerManager.IsPlayerAlive)
             {
@@ -539,6 +571,15 @@ public class StageManager : MonoBehaviour
         }
     }
 
+    public void CheckWinWithHeathDeath()
+    {
+        if (GetEnemyCount() > 0 || FindObjectsOfType<EnemyBase>().Any(e => e && e.IsAlive())) return;
+
+        IsStageStarted = false;
+        OnStageEnd(ResultType.HEATH_DEATH);
+        FadeInResult();
+    }
+
     public enum ResultType
     {
         ENEMIES_DEFEATED,
@@ -547,14 +588,23 @@ public class StageManager : MonoBehaviour
         FUMO_PROTECTED,
         FUMO_LOST,
         PLAYER_SURVIVED,
+        HEATH_DEATH,
     }
     public virtual void OnStageEnd(ResultType resultType)
     {
         PauseButton.gameObject.SetActive(false);
         IsStageEnd = true;
         FindObjectsOfType<EnemySpawnpointScript>().ToList().ForEach(e => e.enabled = false);
-        
-        IsResultVitory = resultType == ResultType.ENEMIES_DEFEATED || resultType == ResultType.FUMO_RETRIEVED || resultType == ResultType.FUMO_PROTECTED || resultType == ResultType.PLAYER_SURVIVED;
+
+        ResultType[] VictoryConds = {
+            ResultType.ENEMIES_DEFEATED,
+            ResultType.FUMO_RETRIEVED,
+            ResultType.FUMO_PROTECTED,
+            ResultType.PLAYER_SURVIVED,
+            ResultType.HEATH_DEATH
+        };
+
+        IsResultVitory = VictoryConds.Contains(resultType);
 
         TMP_Text text = pauseOverlay.GetComponentInChildren<TMP_Text>();
         text.text = resultType switch
@@ -571,6 +621,7 @@ public class StageManager : MonoBehaviour
                     CharacterPrefabsStorage.EnableChallengeMode
                     ? "<color=#ff3b3b>Challenge Completed!</color>"
                     : "<color=green>Stage Completed!</color>",
+            ResultType.HEATH_DEATH => "<color=yellow>Wtf</color>",
             ResultType.FUMO_PROTECTED => 
                 CharacterPrefabsStorage.EnableChallengeMode
                     ? "<color=#ff3b3b>Challenge Completed!</color>"
@@ -579,10 +630,10 @@ public class StageManager : MonoBehaviour
             ResultType.FUMO_LOST => "<color=red>Fumo Stolen!</color>",
         };
 
-        if (IsResultVitory) ProceedAsVictory(text);
+        if (IsResultVitory) ProceedAsVictory(text, resultType);
     }
 
-    void ProceedAsVictory(TMP_Text text)
+    void ProceedAsVictory(TMP_Text text, ResultType resultType)
     {
         bool StageClearedCMFirsttime = false;
         foreach (var item in enemySpawnpoints)
@@ -613,7 +664,11 @@ public class StageManager : MonoBehaviour
 
         PlayerPrefs.SetString("CompletedLevels", string.Join(' ', CompletedLevels.ToArray()));
 
-        if (StageClearedNMFirsttime)
+        if (resultType == ResultType.HEATH_DEATH)
+        {
+            text.text += "\nLet's not do that again...";
+        }
+        else if (StageClearedNMFirsttime)
         {
             text.text += "\n<size=36>+1 Mint fumo\nChallenge Mode has been unlocked!</size>";
             AddFumo();
