@@ -18,7 +18,7 @@ public class EnemySpawnpointScript : MonoBehaviour
 
     [SerializeField] public float InitDelay = 0f;
 
-    [SerializeField] public bool spotPlayerUponSpawn = false, immediateSpawn = false, isBound = false, showTooltips;
+    [SerializeField] public bool spotPlayerUponSpawn = false, immediateSpawn = false, isBound = false, showTooltips, isInsignificant = false;
     [SerializeField] protected short InitTooltipsPriority = 0;
     [SerializeField] public List<EnemyCheckpointScript> enemyCheckpoints;
     [SerializeField] protected float InitWaittime;
@@ -219,16 +219,19 @@ public class EnemySpawnpointScript : MonoBehaviour
         }
     }
 
-    private bool IsInsignificant => SpawnEnemies.Any(e => e.IsInsignificant);
-    public virtual int GetEnemiesCount()
+    private bool IsNotAccountForCounter() { return isInsignificant || SpawnEnemies.Any(e => e.IsInsignificant); }
+
+    public virtual int GetEnemiesCount(bool countInfiniteSpawns = false) 
     {
         if (!this.gameObject) return 0;
 
         if (!stageManager) stageManager = FindObjectOfType<StageManager>(true);
         SpawnPositions ??= transform.Find("Spawnposition").GetComponentsInChildren<Transform>();
 
-        if (!doSpawnEnemy || RepeatedSpawn || SpawnPositions == null 
-            || IsInsignificant) return 0;
+        if (!doSpawnEnemy || SpawnPositions == null || IsNotAccountForCounter()) return 0;
+        
+        if (RepeatedSpawn) return countInfiniteSpawns ? 1 : 0;
+
         if (Spawned) return SpawnEnemies.Count(e => e.IsAlive());
         return SpawnPositions.Length * Quantity;
     }

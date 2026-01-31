@@ -105,9 +105,9 @@ public class EndlessEnemySpawn : EnemySpawnpointScript
         }
     }
 
-    public override int GetEnemiesCount()
+    public override int GetEnemiesCount(bool countRepeatedSpawn = false)
     {
-        return 0;
+        return countRepeatedSpawn ? 1 : 0;
     }
 }
 

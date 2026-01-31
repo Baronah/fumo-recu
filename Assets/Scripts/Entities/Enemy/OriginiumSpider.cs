@@ -52,9 +52,10 @@ public class OriginiumSpider : EnemyBase
         RectTransform innerRect = ExplosionRangeIndicator_Inner.GetComponent<RectTransform>();
         while (c < explosionDelay)
         {
+            float size = Mathf.Lerp(0, targetRadius, c * 1.0f / explosionDelay);
             innerRect.sizeDelta = new Vector2(
-                Mathf.Lerp(0, targetRadius, c * 1.0f / explosionDelay),
-                Mathf.Lerp(0, targetRadius, c * 1.0f / explosionDelay)
+                size,
+                size
             );
 
             if (c >= explosionDelay - 0.05f && !spawnedEffect)

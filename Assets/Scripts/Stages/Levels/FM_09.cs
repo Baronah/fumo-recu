@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class FM_09 : StageManager
 {
@@ -10,13 +12,35 @@ public class FM_09 : StageManager
 
     public override void Update()
     {
-        if (spawnMoreEnemies && IsStageStarted && shroudedAssassin != null && !assassinReviveTriggered && !shroudedAssassin.canRevive)
+        if (IsStageStarted && shroudedAssassin != null && !assassinReviveTriggered && shroudedAssassin.WarppedShroudedTriggered)
         {
+            OnAssassinSkillTrigger();
             assassinReviveTriggered = true;
-            activateGameObject.SetActive(true);
         }
 
         base.Update();
+    }
+
+    [SerializeField] Tilemap bg1, bg2;
+    void OnAssassinSkillTrigger()
+    {
+        if (spawnMoreEnemies) activateGameObject.SetActive(true);
+        StartCoroutine(TilemapDarkens());
+    }
+
+    [SerializeField] Color darkenColor;
+    IEnumerator TilemapDarkens()
+    {
+        float c = 0, d = 5;
+        while (c < d)
+        {
+            bg1.color = Color.Lerp(bg1.color, darkenColor, c * 1.0f / d);
+            bg2.color = Color.Lerp(bg2.color, darkenColor, c * 1.0f / d);
+            c += Time.deltaTime;
+            yield return null;
+        }
+
+        bg1.color = bg2.color = darkenColor;
     }
 
     public override void EnableChallengeMode()
@@ -37,17 +61,15 @@ public class FM_09 : StageManager
 
         enemy.detectionRange = 5000f;
 
-        if (CharacterPrefabsStorage.EnableChallengeMode && enemy is ShroudedAssassin assassin)
+        if (enemy is ShroudedAssassin a)
         {
-            shroudedAssassin = assassin;
-            assassin.MaxMspdBuff += 0.2f;
-            assassin.MaxAtkBuff += 0.2f;
+            shroudedAssassin = a;
         }
 
         if (enemy as Sudaram)
         {
             enemy.bAtk = (short)(enemy.bAtk * 0.6f);
-            enemy.mHealth = 150;
+            enemy.mHealth = 120;
             enemy.bDef = enemy.bRes = 5;
         }
     }

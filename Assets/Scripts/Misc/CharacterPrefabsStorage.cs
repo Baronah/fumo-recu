@@ -26,6 +26,7 @@ public class CharacterPrefabsStorage : ScriptableObject
 		var skillNames = Skills.Select(s => s.Key).ToArray();
 
         PlayerPrefs.SetString("InventionsUsed", string.Join(" ", skillNames));
+		PlayerPrefs.Save();
 		startingPlayer = PlayerType.MELEE;
 		Skills.Clear();
 	}

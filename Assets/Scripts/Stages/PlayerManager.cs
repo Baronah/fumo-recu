@@ -99,9 +99,13 @@ public class PlayerManager : MonoBehaviour
         txtSlowKey.text = KeybindButton.GetDisplayNameForKey(InputManager.Instance.SlowKey);
         txtMapKey.text = KeybindButton.GetDisplayNameForKey(InputManager.Instance.ViewMapKey);
 
+        string moveKeys = InputManager.Instance.CurrentScheme == InputManager.MovementScheme.ArrowKeys
+            ? "Up/down arrows"
+            : "W/S";
+
         txtMapOffInstruction.text = 
             $"Use your movement keys to move the camera." +
-            $"\nUse [Ctrl] + [your move up/down keys] to zoom In/Out." +
+            $"\nUse [Ctrl] + [{moveKeys}] to zoom In/Out." +
             $"\nPress '{KeybindButton.GetDisplayNameForKey(InputManager.Instance.ViewMapKey)}' again to close this.";
 
         txtSkillViewOffInstruction.text =
@@ -551,15 +555,17 @@ public class PlayerManager : MonoBehaviour
         int techCount = CharacterPrefabsStorage.Skills.Count;
         bool hasTech = techCount > 0;
 
-        EmptyTechViewsText.text = hasTech
-            ?
-            "RESEARCHES:"
-            :
-            "";
+        EmptyTechViewsText.text = hasTech ? "FINDINGS:" : "Look like you didn't bring any finding :(";
         
         for (int i = 0; i < TechViews.Length; i++)
         {
             GameObject techView = TechViews[i];
+            if (!hasTech)
+            {
+                techView.SetActive(false);
+                continue;
+            }
+
             bool hasTechThisLoop = (i + 1) <= techCount;
             if (!hasTechThisLoop) continue;
             

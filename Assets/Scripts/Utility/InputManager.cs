@@ -75,6 +75,36 @@ public class InputManager : MonoBehaviour
         return input.normalized;
     }
 
+    public float GetMovementVertical()
+    {
+        float input = 0;
+        switch (CurrentScheme)
+        {
+            case MovementScheme.ArrowKeys:
+                input = GetArrowVertical();
+                break;
+            case MovementScheme.WASD:
+                input = GetWASDVertical();
+                break;
+        }
+        return input;
+    }
+
+    public float GetMovementHorizontal()
+    {
+        float input = 0;
+        switch (CurrentScheme)
+        {
+            case MovementScheme.ArrowKeys:
+                input = GetArrowHorizontal();
+                break;
+            case MovementScheme.WASD:
+                input = GetWASDHorizontal();
+                break;
+        }
+        return input;
+    }
+
     private float GetArrowHorizontal()
     {
         float horizontal = 0f;

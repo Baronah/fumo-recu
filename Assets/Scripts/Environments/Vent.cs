@@ -5,6 +5,7 @@ using static OneDirectionalPassage;
 
 public class Vent : EnvironmentalTileBase
 {
+    ParticleSystem ps;
     public float Strength = 1.0f, Duration = 0.2f;
 
     public TargetDirection EmitDirection;
@@ -17,6 +18,9 @@ public class Vent : EnvironmentalTileBase
 
     public override void OnStageStart()
     {
+        ps = GetComponentInChildren<ParticleSystem>();
+        ps.Stop();
+
         if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.TERRAIN))
         {
             Strength *= 2f;
@@ -49,7 +53,11 @@ public class Vent : EnvironmentalTileBase
                 OnEntityStay(entity);
             }
 
-            yield return new WaitForSeconds(Interval);
+            ps.Play();
+            yield return new WaitForSeconds(Duration);
+            ps.Stop();
+
+            yield return new WaitForSeconds(Interval - Duration);
         }
     }
 

@@ -325,7 +325,7 @@ public class EnemyBase : EntityBase
     {
         if (!SpottedPlayer) return StopVector;
 
-        var playerInRange = DetectPlayer(attackRange, false);
+        var playerInRange = DetectPlayer(attackPattern == AttackPattern.MELEE ? attackRange * DangerRange_RatioOfAttackRange : attackRange, false);
         bool playerIsFarAway = 
             playerInRange == null 
             ||
@@ -342,6 +342,7 @@ public class EnemyBase : EntityBase
                 float distanceToPlayer = Vector2.Distance(enemyPos, playerPos);
                 if (distanceToPlayer <= attackRange * DangerRange_RatioOfAttackRange)
                 {
+                    if (!RecentlyScannedPlayer) FaceToward(playerPos);
                     return StopVector;
                 }
 
@@ -693,7 +694,7 @@ public class EnemyBase : EntityBase
                     var checkObstacle = Physics2D.Raycast(
                         transform.position,
                         (RecentlyScannedPlayer.Feetposition - FeetPosition.position).normalized,
-                        distance - 50f,
+                        distance - 30f,
                         obstacleLayer);
 
                     if (checkObstacle.collider != null && !colliders.Contains(checkObstacle.collider))

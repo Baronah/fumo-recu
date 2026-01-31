@@ -1,6 +1,4 @@
 using Cinemachine;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MapZoomoutController : MonoBehaviour
@@ -32,16 +30,14 @@ public class MapZoomoutController : MonoBehaviour
 
     void MoveCamera()
     {
-        float horizontal = Input.GetAxisRaw("Horizontal"), 
-            vertical = Input.GetAxisRaw("Vertical");
-
-        Vector3 direction = new Vector3(horizontal, vertical, 0).normalized;
+        Vector2 movement = InputManager.Instance.GetMovementInput();
+        Vector3 direction = movement.normalized;
         transform.position += direction * GetPerferredSpeed * Time.unscaledDeltaTime;
     }
 
     void ZoomCamera()
     {
-        float Vertical = Input.GetAxisRaw("Vertical");
+        float Vertical = InputManager.Instance.GetMovementVertical();
 
         vcam.m_Lens.OrthographicSize = Mathf.Clamp(vcam.m_Lens.OrthographicSize + Vertical * -1 * ZoomStep, MinSize, InitSize);
     }

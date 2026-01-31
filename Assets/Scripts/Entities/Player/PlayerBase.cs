@@ -153,7 +153,7 @@ public class PlayerBase : EntityBase
 
                 case SkillTree_Manager.SkillName.EQUIPMENT_PROVISIONS:
                     mHealth += (int)(mHealth * 0.2f);
-                    hpRegenPercentage += 0.005f;
+                    hpRegenPercentage += 0.01f;
                     break;
 
                 case SkillTree_Manager.SkillName.HEAVY_HITTER:
@@ -176,6 +176,10 @@ public class PlayerBase : EntityBase
                             b_moveSpeed += b_moveSpeed * 0.12f;
                         }
                     }
+                    break;
+
+                case SkillTree_Manager.SkillName.CERTAIN_FATES:
+                    weight++;
                     break;
             }
         }

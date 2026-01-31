@@ -10,7 +10,7 @@ public class SkillTree_Intro : MonoBehaviour
 {
     [SerializeField] GameObject Overlay;
     [SerializeField] TMP_Text introText, insideGuideText;
-    [SerializeField] GameObject CookiePlate, ExtraCookies;
+    [SerializeField] GameObject CookiePlate, ExtraCookies, HerNote, ExtraStuff;
 
     private int CookiesCount => CookiePlate.transform.childCount;
 
@@ -18,8 +18,11 @@ public class SkillTree_Intro : MonoBehaviour
 
     private void Awake()
     {
-        UpdateInsideText();
+        HerNote.SetActive(PlayerPrefs.HasKey("InventionsUsed"));
+        if (HerNote.activeSelf) UpdateHerNoteText();
+
         PlayerPrefs.SetInt("CookiesEaten", 0);
+        ExtraStuff.SetActive(SaveDataManager.AllResearchesUnlocked);
     }
 
     private void OnEnable()
@@ -36,34 +39,8 @@ public class SkillTree_Intro : MonoBehaviour
         StartCoroutine(Intro());
     }
 
-    void UpdateInsideText()
+    void UpdateHerNoteText()
     {
-        if (!PlayerPrefs.HasKey("InventionsUsed"))
-        {
-            insideGuideText.text =
-@"<color=white>A private place filled with books, crafts, ideas, theories, and a bunch of everything else. 
-Each is a mystery awaiting to be figured out.
-
-She comes here whenever new idea sparks,
-I come here whenever new idea sparks,
-To implement. To experiment. To verify. Or simply, to write it down.
-
-She also uses this place to store valuable items to her, such as samples for experiment, books, novel-looking ores, or just thing she really likes.
-
-In short, it's a little of everything!
-Welcome to Mint's research.
-
-Feel free to look around, and if there's something that you need here, you may bring it along.
-Though, remember to return them when you're finished. 
-
-You are welcomed to this place anytime!</color>
-
-<color=#b1b1b1>Oh, and also, this is her secret base. 
-She loves it here more than anywhere. 
-Don't tell anyone else about it, okay?</color>";
-            return;
-        }
-
         int currentHour = DateTime.Now.TimeOfDay.Hours;
 
         string greeting = "";
@@ -95,7 +72,7 @@ Don't tell anyone else about it, okay?</color>";
         }
 
         string cont_1 = "\nIf you're reading it, it means I'm not at this place ATM." +
-            "\nReally sorry, even though you took time to drop by :( Maybe next time then...";
+            "\nReally sorry, even though you took time to drop by...            Maybe next time then...\n";
 
         int cookiesEaten = PlayerPrefs.GetInt("CookiesEaten", 0);
         if (cookiesEaten > 0)
@@ -109,6 +86,8 @@ Don't tell anyone else about it, okay?</color>";
             cont_1 += cookieTxt;
             ExtraCookies.SetActive(ateAllCookies);
         }
+
+        cont_1 += "\n\nAs usual, just pick whichever you need. I'm always hyped to see what amazing things you can do with them!";
 
         List<string> UsedSkillsTxt = PlayerPrefs.GetString("InventionsUsed", "").Split(" ").ToList();
         List<SkillTree_Manager.SkillName> UsedSkills = new();
@@ -128,28 +107,30 @@ Don't tell anyone else about it, okay?</color>";
         }
         UsedSkills.OrderBy(s => s);
 
-        string skillContent = "";
+        string skillContent = string.Empty;
         if (UsedSkills.Count > 0)
         {
-            cont_1 += "\n\nAs usual, just pick whichever you need. I'm always hyped to see what amazing things you can do with them!\n\nOh, and, about your last exploration:";
+            cont_1 += "\n\nOh, and, about your last exploration:";
 
             foreach (var Skill in UsedSkills)
             {
                 string itemDes = Skill switch
                 {
-                    GEOGOLIST_OBSERVE => "Nature is beautiful. Isn't it?",
-                    GEOGOLIST_STUDY => "Nature is powerful. Isn't it?",
-                    GEOGOLIST_EXPLORE => "Nature is exciting. Isn't it?",
-                    BUBBLE_ARTS => "That bubble-making staff is really awesome, right? Aroma said that if the soap inside ever runs out, just bring it to her for refill.",
+                    GEOGOLIST_OBSERVE => "Seems like you've taken a liking in geology. Nature is beautiful. Isn't it?",
+                    GEOGOLIST_STUDY => "Seems like you've taken a liking in geology. Nature is powerful. Isn't it?",
+                    GEOGOLIST_EXPLORE => "Seems like you've taken a liking in geology. Nature is exciting. Isn't it?",
+                    BUBBLE_ARTS => "That bubble-making staff was really awesome, right? Aroma said that if the soap inside ever runs out, just bring it to her for refill.",
                     JUST_A_NICE_LOOKING_ROCK => "I'm happy you liked that rock as much as I do. Speaking of which, I found another one on my ways back the other day, and so many more pretty-looking stones just like it! But, well... that was before I realized I'd gotten separated from the others...",
                     ATTENTION_DEVICE => "Did the attention device work out? I never really try it, but I'll need it soon.",
                     ATTENTION_BOOK => "I'm surprised you could use my book. Did it bite you? I left some bandages on the table just in case...",
-                    DASH_LETHAL => "\"Compress the air pressure, and release it at once...\", wasn't it? How did it feel?",
-                    DASH_FAITH => "\"Compress the air pressure, and hold it around...\", wasn't it? Did it catch your opponents by surprise?",
+                    DASH_LETHAL => "That technique - \"Compress the air pressure, and release it at once...\", wasn't it? How did it feel?",
+                    DASH_FAITH => "That technique - \"Compress the air pressure, and hold it around...\", wasn't it? Did it catch your opponents by surprise?",
                     DASH_AFTERIMAGES => "I wish I could participate in more research projects. My instructor and teammates always take such good care of me. They're worried my illness could get worse if I push myself too hard, so they don't let me join them on the surveys... I must get better so I can go back and focus on my research.",
                     BLACKFLASH => "That flashy technique you showed me was awesome. It is not easy to pull off at all, isn't it?",
                     WINDBLOW_NORTH or WINDBLOW_SOUTH => "My wind arts is pretty fun to play with, right?",
-                    FREEZE_SUPERCONDUCT => "Ah, the modified defroster. I still don't know what to call it...",
+                    FREEZE_SUPERCONDUCT => "Speaking of the modified defroster. I still haven't come up a name for it...",
+                    FREEZE_CHARGE => "That charged ice blast was really powerful! Just be careful not to overuse it, okay?",
+                    FREEZE_HOLD => "The technique that makes the freeze goes on forever... I wonder if we can make ice creams that would never melt with it...",
                     SPIRAL_FIELD_EXPERT => "The samples you brought back were really amazing! To think we could fuse environment energy into our own projectiles like this, I really learnt a lot...",
                     WIND_ANTHEM => "It seems like you already got used to using my arts and equipments. I won't be surprised if you manage to surpass me someday, hehe.",
                     SPIRAL_READ => "As much as I'd like to improve my attention span, the current me can still work on stuff if I'm determined to!",
@@ -162,6 +143,9 @@ Don't tell anyone else about it, okay?</color>";
 
                 skillContent += $"\n\n{itemDes}";
             }
+
+            if (skillContent == string.Empty)
+                skillContent = " I hope my inventions helped!";
         }
 
         insideGuideText.text = greeting + cont_1 + skillContent 
@@ -185,7 +169,7 @@ Don't tell anyone else about it, okay?</color>";
             ("Each is a mystery awaiting to be figured out.", TEXT_APPEAR_TYPE.FADE_IN, 1f, 4f));
         yield return new WaitForSeconds(0.1f);
         yield return StartCoroutine(FadeInText
-            ("For example,\na first prototype of an <color=yellow>\"Attention-holding device\"</color>.", 
+            ("For example,\na first prototype of an <color=yellow>\"Attention-holding device\"</color>.",
             TEXT_APPEAR_TYPE.FADE_IN, 1f, 6f));
         yield return new WaitForSeconds(0.2f);
         yield return StartCoroutine(FadeInText
@@ -199,11 +183,8 @@ Don't tell anyone else about it, okay?</color>";
             ("<color=#f800ff>I</color>, well, doubt that it will.", TEXT_APPEAR_TYPE.FADE_IN, 0.4f, 3f));
         yield return new WaitForSeconds(0.1f);
         yield return StartCoroutine(FadeInText
-            ("How about <color=yellow>you</color>?", TEXT_APPEAR_TYPE.FADE_IN, 0.4f, 3f));
-        yield return new WaitForSeconds(0.1f);
-        yield return StartCoroutine(FadeInText
-            ("How exactly, will <color=yellow>we</color> find an answer to it?", TEXT_APPEAR_TYPE.FADE_IN, 0.4f, 4f));
-        yield return new WaitForSeconds(1.5f);
+            ("What do <color=yellow>you</color> think?", TEXT_APPEAR_TYPE.FADE_IN, 0.4f, 3f));
+        yield return new WaitForSeconds(2f);
         yield return StartCoroutine(FadeInText
             ("Welcome to <color=#00FFD5>Mint</color>'s research!", TEXT_APPEAR_TYPE.FADE_IN, 2f, 3f));
         yield return new WaitForSeconds(0.2f);

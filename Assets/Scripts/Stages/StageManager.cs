@@ -218,13 +218,13 @@ public class StageManager : MonoBehaviour
     }
     #endregion
 
-    private int GetEnemyCount()
+    private int GetEnemyCount(bool countInfiniteSpawns = false)
     {
         int count = 0;
         foreach (var enemy in enemySpawnpoints)
         {
             if (!enemy) continue;
-            count += enemy.GetEnemiesCount();
+            count += enemy.GetEnemiesCount(countInfiniteSpawns);
         }
 
         return count;
@@ -344,9 +344,6 @@ public class StageManager : MonoBehaviour
             SkillName skill = skillData.Key;
             switch (skill)
             {
-                case SkillName.GRAVITY:
-                    for (int i = 1; i <= enemy.weight; ++i) enemy.b_moveSpeed *= 0.9f;
-                    break;
                 case SkillName.OBSCURE_VISION:
                     enemy.b_attackRange *= 0.8f;
                     enemy.detectionRange *= 0.8f;
@@ -380,9 +377,6 @@ public class StageManager : MonoBehaviour
             SkillName skill = skillData.Key;
             switch (skill)
             {
-                case SkillName.GRAVITY:
-                    for (int i = 1; i <= player.weight; ++i) player.b_moveSpeed *= 0.9f;
-                    break;
                 case SkillName.OBSCURE_VISION:
                     player.b_attackRange *= 0.8f;
                     break;
@@ -573,7 +567,7 @@ public class StageManager : MonoBehaviour
 
     public void CheckWinWithHeathDeath()
     {
-        if (GetEnemyCount() > 0 || FindObjectsOfType<EnemyBase>().Any(e => e && e.IsAlive())) return;
+        if (GetEnemyCount(countInfiniteSpawns: true) > 0 || FindObjectsOfType<EnemyBase>().Any(e => e && e.IsAlive())) return;
 
         IsStageStarted = false;
         OnStageEnd(ResultType.HEATH_DEATH);

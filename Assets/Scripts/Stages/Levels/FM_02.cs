@@ -8,6 +8,12 @@ public class FM_02 : StageManager
     {
         base.OnEnemySpawn(enemy);
 
+        if (enemy as BloodboilKnight)
+        {
+            enemy.detectionRange = 1000f;
+            enemy.CanDetectThroughWalls = true;
+        }
+
         if (CharacterPrefabsStorage.EnableChallengeMode)
         {
             enemy.b_moveSpeed *= MSPD_Multiplier;

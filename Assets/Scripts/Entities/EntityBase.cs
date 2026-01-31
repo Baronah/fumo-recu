@@ -34,6 +34,8 @@ public class EntityBase : MonoBehaviour
     public short weight = 0;
     public short damageReduction = 0, damageAmplify = 0;
 
+    public bool IsShiftImmune = false;
+
     public float BoundTimer = 0f;
     public bool IsBound => BoundTimer > 0f;
 
@@ -45,6 +47,7 @@ public class EntityBase : MonoBehaviour
 
     public float InvulnerableTimer = 0f;
     public bool isInvulnerable => InvulnerableTimer > 0f;
+
     public void SetInvulnerable(float duration, bool stack = false)
     {
         if (stack)
@@ -114,7 +117,7 @@ public class EntityBase : MonoBehaviour
 
     public AudioSource[] sfxs;
 
-    private GameObject ShadowSprite;
+    protected GameObject ShadowSprite;
 
     public SpriteRenderer GetSpriteRenderer() => spriteRenderer;
 
@@ -1042,6 +1045,22 @@ public class EntityBase : MonoBehaviour
             float force = baseForce * (hit.weight - weight);
             PullEntityTowards(hit, transform.position, baseForce, 0.075f, true, false);
         }
+
+        ApplyEffect(AffectedStat.MSPD, "GRAVITY_WEIGHT_PENALTY",
+            Mathf.Min(50f, GetMultiplicativeValue(100f, 0.1f, weight)) * -1f,
+            PullTick,
+            true);
+    }
+
+    public static float GetMultiplicativeValue(float BaseValue, float Jump, short Step)
+    {
+        float originalBaseValue = BaseValue;
+        for (short i = 0; i < Step; i++)
+        {
+            BaseValue *= (1.0f - Jump);
+        }
+
+        return originalBaseValue - BaseValue;
     }
 
     private Vector3 prevDirection = Vector3.zero;
@@ -1103,7 +1122,7 @@ public class EntityBase : MonoBehaviour
     }
 
     protected float AtkBuffPercentage = 50f, RegenBuffPercentage = 0.04f;
-    protected float StatisRequiredTimer = 2.5f;
+    protected float StatisRequiredTimer = 4f;
     private float StatisTimer = 0f;
     private bool enteredStatis = false;
     protected virtual void ProcessStatis()
@@ -1448,13 +1467,15 @@ public class EntityBase : MonoBehaviour
 
     private IEnumerator ApplyForceCoroutine(EntityBase targetEntity, Vector3 referencePosition, float force, float duration, bool isPull, bool hasReferencePosition = true, bool cancelAction = true)
     {
-        if (targetEntity == null || targetEntity.rb2d == null || !targetEntity.IsAlive() || targetEntity.IsBeingLevitated) yield break;
+        if (targetEntity == null || targetEntity.rb2d == null || !targetEntity.IsAlive() || targetEntity.IsBeingLevitated || targetEntity.IsShiftImmune) yield break;
 
         float ForceValue = force * duration / 0.03f;
         float ForceValueAfterWeight = ForceValue - targetEntity.weight;
         if (cancelAction && ForceValueAfterWeight <= 0.5f) yield break;
 
         if (targetEntity is EnemyBase e) e.StopObstacleIgnore();
+
+        bool ShiftDoesDamage = this is PlayerBase b && targetEntity != this && b.Skills.Contains(SkillTree_Manager.SkillName.CERTAIN_FATES);
 
         float multiplier = ForceValueAfterWeight / ForceValue;
         force *= multiplier;
@@ -1528,6 +1549,14 @@ public class EntityBase : MonoBehaviour
                 float timeProgress = elapsedTime / duration;
                 float decayedForce = force * (1f - timeProgress * 0.5f);
                 targetEntity.rb2d.AddForce(directionVector * decayedForce, mode);
+            }
+
+            if (ShiftDoesDamage)
+            {
+                float damage = ForceValueAfterWeight * 0.75f;
+                if (isPull) damage *= 0.65f;
+
+                DealDamage(targetEntity, new DamageInstance(0, (int)damage, 0));
             }
 
             targetEntity.IsBeingShifted = true;

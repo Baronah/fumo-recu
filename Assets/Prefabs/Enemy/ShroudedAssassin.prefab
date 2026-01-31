@@ -216,7 +216,7 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: 891465061a7769644a434373f64bb1b6, type: 3}
     - target: {fileID: 5250980034755208933, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_Color.a
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6772246562461740860, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_LocalScale.x
@@ -272,11 +272,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8775152862550477468, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_Value
-      value: 500
+      value: 700
       objectReference: {fileID: 0}
     - target: {fileID: 8775152862550477468, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_MaxValue
-      value: 500
+      value: 700
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7523077825662678453, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
@@ -298,6 +298,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 712479229275404704, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6015849564817278638}
+    - targetCorrespondingSourceObject: {fileID: 712479229275404704, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4391531761923889205}
+    - targetCorrespondingSourceObject: {fileID: 712479229275404704, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4276608119510497328}
   m_SourcePrefab: {fileID: 100100000, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
 --- !u!4 &2570123632696497706 stripped
 Transform:
@@ -338,10 +344,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Shrouded Assassin
   Icon: {fileID: 21300000, guid: 768971f047b2b80438ed90c5c9bd1639, type: 3}
-  mHealth: 500
-  bAtk: 75
-  bDef: 60
-  bRes: 30
+  mHealth: 700
+  bAtk: 70
+  bDef: 35
+  bRes: 15
   defPen: 0
   defIgn: 10
   resPen: 0
@@ -353,10 +359,10 @@ MonoBehaviour:
   b_attackInterval: 3
   MIN_PHYSICAL_DMG: 0.05
   MIN_MAGICAL_DMG: 0.1
-  health: 500
-  atk: 75
-  def: 60
-  res: 30
+  health: 700
+  atk: 70
+  def: 35
+  res: 15
   ASPD: 100
   moveSpeed: 120
   attackRange: 100
@@ -367,6 +373,7 @@ MonoBehaviour:
   weight: 5
   damageReduction: 0
   damageAmplify: 0
+  IsShiftImmune: 0
   BoundTimer: 0
   IsFreezeImmune: 0
   IsStunImmune: 0
@@ -387,6 +394,7 @@ MonoBehaviour:
   sfxs:
   - {fileID: 1763570007023390080}
   - {fileID: 6015849564817278638}
+  - {fileID: 4276608119510497328}
   IsBeingShifted: 0
   FreezeTimer: 0
   StunTimer: 0
@@ -403,21 +411,24 @@ MonoBehaviour:
   Description: Assassin who has abandoned his name and covered his face. Behind that
     pall is a burning fanaticism and a destined fate.
   Skillset: "\u2022 [Feud Bonding] Receiving damage from the player unit builds up
-    \"Feud\" on them (stacks up to a limit). Self takes reduced damage from the attacker
-    based on how much \"Feud\" they have built up. Gains increased ATK and MSPD when
-    the target has their \"Feud\" maxed out.\n\n<b><color=red>FIRST PHASE</color></b>\n\n\u2022
-    [Pack Up] Stops moving, becomes immune to freeze and stun, then charges up and
-    quickly dash toward your position, dealing physical damage if comes into contact
-    with. Receving damage shortens the cool-down of the next use.\n\n\u2022 [Held
-    Breath] When HP reaches 0, enters a revival state and rapidly builds up \"Feud\"
-    on the presenting player and slows them throughout the duration. Enters the second
-    phase afterward.\n\n<b><color=red>SECOND PHASE</color></b>\n\n\u2022 DEF and
-    RES are reduced.\n\n\u2022 [Overflowing Hatred] \"Feud\" is now gradually builds
-    up overtime.\n\n\u2022 [Toward Death] Stops moving, becomes immune to freeze
-    and stun, then creates multiple illusion of self. After a short delay, dashes
-    toward these illusions in quick succession and damages the player if comes into
-    contact with. Dash speed increases as HP decreases. Receving damage shortens
-    the cool-down of the next use."
+    \"Feud\" on them (has a limit). Self takes reduced damage from the attacker based
+    on how much \"Feud\" they have built up, up to 100%. Gains greatly increased
+    ATK and MSPD when the target has their \"Feud\" maxed out.\n\n<b><color=red>FIRST
+    PHASE</color></b>\n\n\u2022 [Pack Up] Stops moving, becomes immune to freeze
+    and stun, then charges up and quickly dash toward your position, dealing physical
+    damage if comes into contact with. Receving damage shortens the cool-down of
+    the next use.\n\n\u2022 [Held Breath] When HP reaches 0, enters a revival state
+    and rapidly builds up \"Feud\" on the presenting player throughout the duration.
+    Enters the second phase afterward.\n\n<b><color=red>SECOND PHASE</color></b>\n\n\u2022
+    DEF and RES are reduced.\n\n\u2022 [Overflowing Hatred] \"Feud\" is now gradually
+    builds up overtime, and 'slows' the player at max stacks.\n\n\u2022 [Toward Death]
+    Stops moving, becomes immune to freeze and stun, then creates multiple illusion
+    of self. After a short delay, dashes toward these illusions in quick succession
+    and damages the player if comes into contact with. Dash speed increases as HP
+    decreases. Receving damage shortens the cool-down of the next use.\n\n\u2022
+    [Wrapped Shroud] When HP falls below 50% for the first time: Stops attacking,
+    becomes invisible and invulnerable. Periodically reappears to cast [Toward Death],
+    disables 'Invisibility' during the process and resumes them after finished."
   detectionRange: 30
   b_detectionRange: 30
   DangerRange_RatioOfAttackRange: 0.75
@@ -449,10 +460,12 @@ MonoBehaviour:
   dashInterval: 0.15
   dashDistance: 1000
   dashAtkScale: 1
+  WrappedShroudHpTriggerThreshold: 0.5
   MaxFeudLevel: 20
   MaxDamageReduction: 1
-  MaxAtkBuff: 0.3
+  MaxAtkBuff: 0.4
   MaxMspdBuff: 0.3
+  WarppedShroudedTriggered: 0
   trailPrefab: {fileID: 6209281345805936895, guid: 3c0261128b277894cac6bd5c079ad2f8, type: 3}
 --- !u!82 &1763570007023390080
 AudioSource:
@@ -561,6 +574,114 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 4d429149d01ebd04798355ecff724ebd, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!225 &4391531761923889205
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8624973382944784566}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!82 &4276608119510497328
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8624973382944784566}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: deabf3414fec33740a469e7029e1e414, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1

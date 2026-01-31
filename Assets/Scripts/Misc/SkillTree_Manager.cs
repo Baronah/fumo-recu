@@ -99,6 +99,7 @@ public class SkillTree_Manager : MonoBehaviour
         ABSOLUTISM,
         STATIS,
         HEAT_DEATH,
+        CERTAIN_FATES,
     }
 
     public static SkillTree_Manager Instance;
@@ -781,5 +782,6 @@ public class SkillTree_Manager : MonoBehaviour
         Outview.SetSkills();
 
         gameObject.SetActive(false);
+        OnSelect_Update();
     }
 }

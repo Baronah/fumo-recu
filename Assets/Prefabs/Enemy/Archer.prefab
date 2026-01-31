@@ -5093,12 +5093,12 @@ MonoBehaviour:
   MIN_PHYSICAL_DMG: 0.05
   MIN_MAGICAL_DMG: 0.1
   health: 100
-  atk: 33
+  atk: 35
   def: 0
   res: 0
   ASPD: 100
   moveSpeed: 120
-  attackRange: 370
+  attackRange: 380
   attackWindupTime: 0.48
   attackInterval: 3
   hpRegenFlat: 0
@@ -5106,6 +5106,8 @@ MonoBehaviour:
   weight: 0
   damageReduction: 0
   damageAmplify: 0
+  IsShiftImmune: 0
+  BoundTimer: 0
   IsFreezeImmune: 0
   IsStunImmune: 0
   IsPhysicalImmune: 0
@@ -5139,10 +5141,10 @@ MonoBehaviour:
   TooltipsHoldtime: 6
   Description: A crossbowman that is adept at hiding in the darkness and assassinating
     their targets with special bolts.
-  Skillset: "\u2022 When not attacking, ATK continuously increases and resets after
-    the next attack."
+  Skillset: "\u2022 The first attack deals greatly increased damage. This effect
+    is slowly recharged while not attacking."
   detectionRange: 420
-  b_detectionRange: 400
+  b_detectionRange: 420
   DangerRange_RatioOfAttackRange: 0.9
   MinimumDistanceFromPlayer: 20
   gridCellSize: 60

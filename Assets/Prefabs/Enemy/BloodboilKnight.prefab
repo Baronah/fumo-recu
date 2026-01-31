@@ -324,6 +324,7 @@ MonoBehaviour:
   weight: 1
   damageReduction: 0
   damageAmplify: 0
+  IsShiftImmune: 0
   BoundTimer: 0
   IsFreezeImmune: 0
   IsStunImmune: 0
