@@ -355,7 +355,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -2, y: 0}
+  m_SizeDelta: {x: -5, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &35304760
 MonoBehaviour:
@@ -1729,7 +1729,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 1}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
@@ -4320,8 +4320,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1700489465}
   m_HandleRect: {fileID: 1700489464}
   m_Direction: 2
-  m_Value: 0.8149318
-  m_Size: 0.78410673
+  m_Value: 1
+  m_Size: 0.7841068
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -5599,7 +5599,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 1}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -9820,7 +9820,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 1}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
@@ -11750,9 +11750,10 @@ MonoBehaviour:
   skillType: 2
   skillName: 56
   skillNameText: '''Statis'''
-  skillDescription: 'All units that haven''t moved for more than 2.5 seconds enters
-    ''statis'': gains +50% ATK, regenerates 4% HP per second and HP can not fall
-    below 1. Any movement made breaks this state.'
+  skillDescription: 'All units that haven''t moved for more than 5 seconds enters
+    ''statis'': Has -50% ATK, but regenerates 4% HP per second and HP can not fall
+    below 1. Any movement made breaks this state.\n\n<i>If ''Attention-holding Device''
+    is selected, required time on you is reduced to 3 seconds.</i>'
   favorText: 
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 
@@ -14996,7 +14997,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 1}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -15745,7 +15746,7 @@ GameObject:
   - component: {fileID: 827975935}
   - component: {fileID: 827975936}
   m_Layer: 5
-  m_Name: THEORIE
+  m_Name: THEORIA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19925,7 +19926,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 1}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
@@ -21063,9 +21064,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 5.2596, y: 22.44748}
-  m_SizeDelta: {x: 385.5, y: 561.82}
-  m_Pivot: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: -187.49043, y: 0}
+  m_SizeDelta: {x: 384.5, y: 561.82}
+  m_Pivot: {x: 0, y: 1}
 --- !u!114 &1018723976
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21942,7 +21943,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 1}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
@@ -22641,7 +22642,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 1}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
@@ -23866,13 +23867,14 @@ MonoBehaviour:
   skillType: 2
   skillName: 44
   skillNameText: '''Raging Terrains'''
-  skillDescription: Environmental effects have +100% effectiveness.
+  skillDescription: Environmental effects have +100% effectiveness.\n\n<i>If any
+    'Geogolist' is selected, effect becomes +200% instead.</i>
   favorText: "As a geology researcher, throughout the course of her on-site investigations,
     Mint has gradually picked up on a few practical tricks for making use of reasonable
     terrain to dispatch danger. When you're surrounded by a huge crowd of enemies,
     don't panic, get ready to cast, and find just the right time and place\u2013now!
     Come on, then, you!"
-  skillDescriptionInShort: 
+  skillDescriptionInShort: Environmental effects have +100% effectiveness.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1087317480
@@ -24366,7 +24368,9 @@ MonoBehaviour:
   skillDescription: Your units have -45% max HP. Upon death, they deal 200 true damage
     to all presenting enemies. If all enemies are defeated this way, the battle concludes
     in your victory.
-  favorText: Don't worry, it's just a game.
+  favorText: '''Heat is not a substance, but a dynamical form of mechanical effect,
+    we perceive that there must be an equivalence between mechanical work and heat,
+    as between cause and effect.'''
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
@@ -24874,8 +24878,7 @@ MonoBehaviour:
   SelectedLvlName: {fileID: 1560593613}
   SelectedLvlDescription: {fileID: 751680392}
   Descriptions:
-  - The eastern skies glow. The wound is still open.\nBut I will still go forth.\nWhat
-    awaits me? Who will I meet?\n\nHello?
+  - Everything must lead to a new world.
   - "Ever since you left,\\nI\u2019ve been standing here,\\nholding our memories
     in my heart,\\nliving as though searching for something."
   - Though some confilicts are unavoidable, it's best to not pick up unnecessary
@@ -24959,7 +24962,7 @@ MonoBehaviour:
   Map_SSs:
   - {fileID: 21300000, guid: 879b42d773b0d424ea3de5d3cc0f9f3c, type: 3}
   - {fileID: 21300000, guid: 9967d918409eb3745bf886a799467fa2, type: 3}
-  - {fileID: 21300000, guid: 632a77c5043d6514996731920cab5124, type: 3}
+  - {fileID: 21300000, guid: 9e4c79ea50b19f54da6d5e0053134ee8, type: 3}
   - {fileID: 21300000, guid: d077169654b4e6c4a8ef963e67068f30, type: 3}
   - {fileID: 21300000, guid: 2db3e185310fe304dba671a8682fc3b2, type: 3}
   - {fileID: 21300000, guid: 10f449d4de8490642914c3520bcb7690, type: 3}
@@ -25517,7 +25520,7 @@ MonoBehaviour:
   m_HorizontalScrollbarVisibility: 2
   m_VerticalScrollbarVisibility: 2
   m_HorizontalScrollbarSpacing: -3
-  m_VerticalScrollbarSpacing: -3
+  m_VerticalScrollbarSpacing: 0
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -25753,7 +25756,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 1}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -26933,7 +26936,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: There is no AFK guide for this...
+  m_text: '"Creativity takes courage"'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
   m_sharedMaterial: {fileID: 2147374, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
@@ -28252,7 +28255,8 @@ MonoBehaviour:
   skillNameText: '''Hyper Acceleration'''
   skillDescription: All units gain increased MSPD when continuously moving toward
     a direction, up to +200% MSPD. Changing direction will remove the buff and inflicts
-    a decaying 'Slow' based on the previous acceleration.
+    a decaying 'Slow' based on the previous acceleration.\n\n<i>If any 'Arts Unit'
+    is selected, you accelerate 50% faster.</i>
   favorText: 
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 
@@ -30642,7 +30646,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 590, y: 0}
+  m_AnchoredPosition: {x: 820, y: 0}
   m_SizeDelta: {x: 95, y: 95}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1341870172
@@ -33120,7 +33124,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 1}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
@@ -35153,7 +35157,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 1}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
@@ -36005,7 +36009,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 1}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -36125,7 +36129,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 820, y: 0}
+  m_AnchoredPosition: {x: 590, y: 0}
   m_SizeDelta: {x: 95, y: 95}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1581416828
@@ -36143,11 +36147,11 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 0
   skillName: 58
-  skillNameText: Fate of some Sorts
+  skillNameText: Certain Fate
   skillDescription: Weight level +1. Enemies that are being shifted by self will
     also take magical damage proportional to distance travel.
   favorText: A massive pachinko ball. Legend says when the stars align, a single
-    strike from this thing can completely alter one's fate.
+    strike from this thing can completely alter one's fate, for the better or worse.
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
@@ -36830,7 +36834,7 @@ GameObject:
   - component: {fileID: 1605621095}
   - component: {fileID: 1605621094}
   m_Layer: 5
-  m_Name: Gnaw
+  m_Name: Famine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -36870,11 +36874,13 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 2
   skillName: 43
-  skillNameText: '''Hunger'''
-  skillDescription: All enemies have their ATK and ASPD increased by 50% and 30,
-    respectively, but -40% max HP.
+  skillNameText: '''Famine'''
+  skillDescription: All units have their ATK and ASPD increased by 50% and 30, respectively,
+    and restores HP by to 30% damage dealt, but have -50% max HP.\n\n<i>If 'Equipment
+    - Provision' is selected, you become unaffected.</i>
   favorText: 
-  skillDescriptionInShort: 
+  skillDescriptionInShort: Units have increased ATK, ASPD and life-steal, but reduced
+    max HP.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1605621095
@@ -37475,6 +37481,7 @@ MonoBehaviour:
   - '"There''s cookies on the table"'
   - Sorry there is no AFK guide for this...
   - Like, the Mint from arknights
+  - '"Creativity takes courage"'
   TickOverlay: {fileID: 8183961381051493274, guid: 724266122bb48054eb03beb36103efe6, type: 3}
   skillIconImage: {fileID: 954102871}
   skillNameText: {fileID: 1290484416}
@@ -37866,7 +37873,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 1}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
@@ -38594,7 +38601,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 1}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
@@ -39185,8 +39192,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1941348663}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.1759383}
-  m_AnchorMax: {x: 1, y: 0.96004504}
+  m_AnchorMin: {x: 0, y: 0.21589321}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -39887,7 +39894,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -476.94406, y: 0.000030517578}
+  m_AnchoredPosition: {x: -476.944, y: 0.000030517578}
   m_SizeDelta: {x: 350, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1725194112
@@ -40922,7 +40929,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 1}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -41764,7 +41771,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 1}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -42545,6 +42552,81 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1836088403}
   m_CullTransparentMesh: 1
+--- !u!1 &1836748489
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1836748490}
+  - component: {fileID: 1836748492}
+  - component: {fileID: 1836748491}
+  m_Layer: 5
+  m_Name: Minthide
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1836748490
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1836748489}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: -1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 1915454184}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -246.20001, y: 546.1}
+  m_SizeDelta: {x: 65, y: 65}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1836748491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1836748489}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.103773475, g: 1, b: 0.9379016, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: c6a3289892228ff4c9f6bf1ab99a1b8f, type: 3}
+  m_Type: 3
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 0
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1836748492
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1836748489}
+  m_CullTransparentMesh: 1
 --- !u!1 &1839822479
 GameObject:
   m_ObjectHideFlags: 0
@@ -42605,7 +42687,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 1}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
@@ -43346,7 +43428,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 1}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
@@ -44031,6 +44113,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1836748490}
   - {fileID: 1104256681}
   - {fileID: 1055346395}
   m_Father: {fileID: 1630383641}
@@ -44558,7 +44641,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 1}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}

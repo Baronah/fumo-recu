@@ -16,9 +16,19 @@ public class DarkTile : EnvironmentalTileBase
     [SerializeField] private float P_VisionReductionPercent = 0.4f;
     [SerializeField] private float E_VisionReductionPercent = 0.5f;
 
-    private void Start()
+    public override void OnStageStart()
     {
         tilemap = GetComponent<Tilemap>();
+        if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.TERRAIN))
+        {
+            bool hasGeologist = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.GEOGOLIST_OBSERVE)
+                || CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.GEOGOLIST_EXPLORE)
+                || CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.GEOGOLIST_STUDY);
+            float multiplier = hasGeologist ? 1.75f : 1.5f;
+            P_VisionReductionPercent *= multiplier;
+            E_VisionReductionPercent *= multiplier;
+        }
+        base.OnStageStart();
     }
 
     private Dictionary<Vector3Int, TileBase> originalTiles = new Dictionary<Vector3Int, TileBase>();
@@ -88,6 +98,7 @@ public class DarkTile : EnvironmentalTileBase
         if (entity as Gloompincer || entity as Candle || entity as Toy) return;
 
         float percentage = entity is PlayerBase ? P_VisionReductionPercent : E_VisionReductionPercent;
+
         float minRange = entity.b_attackRange < 100 ? entity.b_attackRange : 100;
 
         if (entity.b_attackRange * percentage < minRange)

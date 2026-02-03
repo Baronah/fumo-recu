@@ -273,6 +273,16 @@ public class EntityBase : MonoBehaviour
             EntityManager.OnEntitySpawn(this.gameObject);
         }
 
+        if (this as PlayerBase)
+        {
+            if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.WINGED_STEPS_A)
+            || CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.WINGED_STEPS_B))
+                AccelerationBuffPerSec *= 1.5f;
+
+            if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.ATTENTION_DEVICE))
+                StatisRequiredTimer = 3f;
+        }
+
         StartCoroutine(OnStartCoroutine());
         CalculateBuffsAndDebuffs();
     }
@@ -1121,15 +1131,15 @@ public class EntityBase : MonoBehaviour
         prevSpriteFlipX = spriteRenderer.flipX;
     }
 
-    protected float AtkBuffPercentage = 50f, RegenBuffPercentage = 0.04f;
-    protected float StatisRequiredTimer = 4f;
+    protected float AtkDebuffPercentage = 50f, RegenBuffPercentage = 0.04f;
+    protected float StatisRequiredTimer = 5f;
     private float StatisTimer = 0f;
     private bool enteredStatis = false;
     protected virtual void ProcessStatis()
     {
         if (!CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.STATIS)) return;
 
-        string keyAtk = "STATIS_BUFF_ATK";
+        string keyAtk = "STATIS_DEBUFF_ATK";
         if (rb2d.velocity == Vector2.zero && PrevPosition == transform.position)
         {
             StatisTimer += Time.fixedDeltaTime;
@@ -1137,7 +1147,7 @@ public class EntityBase : MonoBehaviour
             {
                 enteredStatis = true;
                 hpRegenPercentage += RegenBuffPercentage;
-                ApplyEffect(AffectedStat.ATK, keyAtk, AtkBuffPercentage, 9999f, true);
+                ApplyEffect(AffectedStat.ATK, keyAtk, AtkDebuffPercentage * -1f, 9999f, true);
             }
         }
         else
@@ -1465,6 +1475,7 @@ public class EntityBase : MonoBehaviour
     public void PushEntityFrom(EntityBase targetEntity, Vector3 sourcePosition, float pushForce, float duration, bool hasReferencePosition = true, bool cancelAction = true)
         => StartCoroutine(ApplyForceCoroutine(targetEntity, sourcePosition, pushForce, duration, false, hasReferencePosition, cancelAction));
 
+    private List<EntityBase> currentlyShiftedEntities = new();
     private IEnumerator ApplyForceCoroutine(EntityBase targetEntity, Vector3 referencePosition, float force, float duration, bool isPull, bool hasReferencePosition = true, bool cancelAction = true)
     {
         if (targetEntity == null || targetEntity.rb2d == null || !targetEntity.IsAlive() || targetEntity.IsBeingLevitated || targetEntity.IsShiftImmune) yield break;
@@ -1487,6 +1498,7 @@ public class EntityBase : MonoBehaviour
             StartCoroutine(targetEntity.StartMovementLockout(duration + 0.1f));
         }
         targetEntity.IsBeingShifted = true;
+        currentlyShiftedEntities.Add(targetEntity);
 
         float elapsedTime = 0f;
         float initialDistance = Vector3.Distance(targetEntity.transform.position, referencePosition);
@@ -1568,14 +1580,17 @@ public class EntityBase : MonoBehaviour
         // Ensure entity stops at the end
         if (targetEntity.rb2d) targetEntity.rb2d.velocity = Vector2.zero;
         targetEntity.IsBeingShifted = false;
+        currentlyShiftedEntities.Remove(targetEntity);
     }
 
-    public void StopForceEffects(EntityBase targetEntity)
+    private void OnDestroy()
     {
-        if (targetEntity != null && targetEntity.rb2d != null)
+        foreach (var entity in currentlyShiftedEntities)
         {
-            targetEntity.rb2d.velocity = Vector2.zero;
-            StopAllCoroutines(); // Note: This stops ALL coroutines, consider a more targeted approach
+            if (!entity) continue; 
+            
+            entity.IsBeingShifted = false;
+            if (entity.rb2d) entity.rb2d.velocity = Vector2.zero;
         }
     }
 

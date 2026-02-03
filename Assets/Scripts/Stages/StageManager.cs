@@ -351,6 +351,7 @@ public class StageManager : MonoBehaviour
                 case SkillName.HUNGER:
                     enemy.bAtk = (short)(enemy.bAtk * 1.5f);
                     enemy.ASPD += 30;
+                    enemy.lifeSteal += 0.3f;
                     enemy.mHealth = (int)(enemy.mHealth * 0.6f);
                     break;
                 case SkillName.ABSOLUTISM:
@@ -379,6 +380,15 @@ public class StageManager : MonoBehaviour
             {
                 case SkillName.OBSCURE_VISION:
                     player.b_attackRange *= 0.8f;
+                    break;
+                case SkillName.HUNGER:
+                    if (!CharacterPrefabsStorage.Skills.ContainsKey(SkillName.EQUIPMENT_PROVISIONS))
+                    {
+                        player.bAtk = (short)(player.bAtk * 1.5f);
+                        player.ASPD += 30;
+                        player.lifeSteal += 0.3f;
+                        player.mHealth = (int)(player.mHealth * 0.6f);
+                    }
                     break;
                 case SkillName.ABSOLUTISM:
                     if (player.attackPattern == EntityBase.AttackPattern.MELEE)

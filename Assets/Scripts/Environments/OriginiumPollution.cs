@@ -18,7 +18,12 @@ public class OriginiumPollution : EnvironmentalTileBase
     {
         if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.TERRAIN))
         {
-            TrueDamagePerTick *= 2f;
+            bool hasGeologist = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.GEOGOLIST_OBSERVE)
+                || CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.GEOGOLIST_EXPLORE)
+                || CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.GEOGOLIST_STUDY);
+            float multiplier = hasGeologist ? 3f : 2f;
+
+            TrueDamagePerTick *= multiplier;
         }
         base.OnStageStart();
         StartCoroutine(Pulse());

@@ -72,7 +72,7 @@ public class SkillTree_Intro : MonoBehaviour
         }
 
         string cont_1 = "\nIf you're reading it, it means I'm not at this place ATM." +
-            "\nReally sorry, even though you took time to drop by...            Maybe next time then...\n";
+            "\nReally sorry, even though you took time to drop by... Maybe next time then...";
 
         int cookiesEaten = PlayerPrefs.GetInt("CookiesEaten", 0);
         if (cookiesEaten > 0)

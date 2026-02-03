@@ -12,7 +12,11 @@ public class FM_09 : StageManager
 
     public override void Update()
     {
-        if (IsStageStarted && shroudedAssassin != null && !assassinReviveTriggered && shroudedAssassin.WarppedShroudedTriggered)
+        if (IsStageStarted && shroudedAssassin != null 
+            && 
+            !assassinReviveTriggered 
+            && (!shroudedAssassin.IsAlive() || shroudedAssassin.WarppedShroudedTriggered)
+            )
         {
             OnAssassinSkillTrigger();
             assassinReviveTriggered = true;
