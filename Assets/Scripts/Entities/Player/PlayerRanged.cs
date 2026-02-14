@@ -137,8 +137,8 @@ public class PlayerRanged : PlayerBase
         base.GetSkillTreeEffects();
         if (Skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_RADIO))
         {
-            FreezeCooldown *= 0.9f;
-            SkillCooldown *= 0.9f;
+            FreezeCooldown *= 0.85f;
+            SkillCooldown *= 0.85f;
         }
 
         if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_BLOOM))
@@ -317,6 +317,11 @@ public class PlayerRanged : PlayerBase
         target = null;
 
         atk = (short)currentAtk;
+
+        if (Skills.Contains(SkillTree_Manager.SkillName.WINGED_STEPS_A))
+        {
+            ApplyEffect(Effect.AffectedStat.MSPD, "WINGED_STEPS_A_MSPD_BUFF", 30f, 2f, true, EffectPersistType.DECAY);
+        }
     }
 
     bool IsFreezeActive = false;

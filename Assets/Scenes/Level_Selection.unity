@@ -2412,8 +2412,8 @@ MonoBehaviour:
   skillType: 0
   skillName: 1
   skillNameText: Arts Unit - Winged Steps
-  skillDescription: MSPD +25%.
-  favorText: 
+  skillDescription: ASPD +20, landing an attack grants 30% decaying MSPD over 2 seconds.
+  favorText: Sometimes I like to imagine...
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 0200000003000000
   Overlay: {fileID: 0}
@@ -4446,6 +4446,7 @@ RectTransform:
   m_Children:
   - {fileID: 161036917}
   - {fileID: 1553408580}
+  - {fileID: 1007480272}
   m_Father: {fileID: 1378875489}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -5738,8 +5739,9 @@ MonoBehaviour:
   skillType: 0
   skillName: 50
   skillNameText: Hair Ribbon
-  skillDescription: Your starting character gains +25% ATK. If the character is melee,
-    gains additional +15 RES. If the character is ranged, gains additional +12% MSPD.
+  skillDescription: Your starting character gains +30% ATK. If the character is melee,
+    gains additional +20% max HP. If the character is ranged, gains additional +15%
+    MSPD.
   favorText: Just a regular pair of hair ribbons she made, nothing special about
     it, but if you insist...
   skillDescriptionInShort: Starting character gains increased ATK. If the character
@@ -9648,6 +9650,140 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 508634076}
   m_CullTransparentMesh: 1
+--- !u!1 &508674543
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 508674544}
+  - component: {fileID: 508674546}
+  - component: {fileID: 508674545}
+  m_Layer: 5
+  m_Name: OR (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &508674544
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 508674543}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1462973337}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 180, y: 0}
+  m_SizeDelta: {x: 200, y: 88.3759}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &508674545
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 508674543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: or
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 5e61686ba236ff04b8632d6a26736acd, type: 2}
+  m_sharedMaterial: {fileID: 2509212030381675100, guid: 5e61686ba236ff04b8632d6a26736acd, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4292467161
+  m_fontColor: {r: 0.8490566, g: 0.8490566, b: 0.8490566, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 36
+  m_fontSizeBase: 36
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 3
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 256
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_enableWordWrapping: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 1
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &508674546
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 508674543}
+  m_CullTransparentMesh: 1
 --- !u!1 &511543056
 GameObject:
   m_ObjectHideFlags: 0
@@ -11755,7 +11891,9 @@ MonoBehaviour:
     below 1. Any movement made breaks this state.\n\n<i>If ''Attention-holding Device''
     is selected, required time on you is reduced to 3 seconds.</i>'
   favorText: 
-  skillDescriptionInShort: 
+  skillDescriptionInShort: 'All units that haven''t moved for a while enters ''statis'':
+    Has reduced ATK, but regenerates HP and HP can not fall below 1. Any movement
+    made breaks this state.'
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &653876650
@@ -20625,6 +20763,149 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1004913701}
   m_CullTransparentMesh: 1
+--- !u!1 &1007480271
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1007480272}
+  - component: {fileID: 1007480276}
+  - component: {fileID: 1007480275}
+  - component: {fileID: 1007480274}
+  - component: {fileID: 1007480273}
+  m_Layer: 5
+  m_Name: WingedStep_C
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1007480272
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1007480271}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 267005468}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 270, y: 0}
+  m_SizeDelta: {x: 95, y: 95}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1007480273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1007480271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f62c434b7aa76144b66a3c1597b44b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnSelectSFX: {fileID: 0}
+  skillType: 0
+  skillName: 3
+  skillNameText: Arts Unit - Flows of Ideas
+  skillDescription: Special and ultimate skill's cooldowns -15%.
+  favorText: An idea becomes loose, a sentence to be engraved. There's meaning to
+    it, but only partly...
+  skillDescriptionInShort: 
+  mutuallyExclusiveSkills: 0100000002000000
+  Overlay: {fileID: 0}
+--- !u!114 &1007480274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1007480271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 1007480275}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &1007480275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1007480271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 174110524dff5154fb126f4fa3e5aac4, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1007480276
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1007480271}
+  m_CullTransparentMesh: 1
 --- !u!1 &1008286481
 GameObject:
   m_ObjectHideFlags: 0
@@ -26496,7 +26777,7 @@ MonoBehaviour:
   skillName: 38
   skillNameText: Rush Hour
   skillDescription: After using the special ability, gains <color=#00ffe1>+100% MSPD</color>
-    for 1.5 seconds.
+    for 2 seconds.
   favorText: When the light turns green, run.
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 
@@ -28258,7 +28539,9 @@ MonoBehaviour:
     a decaying 'Slow' based on the previous acceleration.\n\n<i>If any 'Arts Unit'
     is selected, you accelerate 50% faster.</i>
   favorText: 
-  skillDescriptionInShort: 
+  skillDescriptionInShort: All units gain increased MSPD when continuously moving
+    toward a direction, up to +200% MSPD. Changing direction will remove the buff
+    and inflicts a decaying 'Slow' based on the previous acceleration.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1274865714
@@ -30095,8 +30378,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0.14153375}
-  m_SizeDelta: {x: 100, y: 4}
+  m_AnchoredPosition: {x: 90, y: 0.14153375}
+  m_SizeDelta: {x: 280, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1317520035
 MonoBehaviour:
@@ -33803,6 +34086,7 @@ RectTransform:
   m_Children:
   - {fileID: 1317520034}
   - {fileID: 1727762475}
+  - {fileID: 508674544}
   m_Father: {fileID: 1378875489}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -35505,8 +35789,9 @@ MonoBehaviour:
   skillType: 0
   skillName: 2
   skillNameText: Arts Unit - Wind Beneath Blade
-  skillDescription: ASPD +30.
-  favorText: 
+  skillDescription: MSPD +10%, gains +0.7 ASPD for every 1% bonus MSPD.
+  favorText: With a knife-sharp heart, I shave off these long and thin, meaningless
+    days...
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 0100000003000000
   Overlay: {fileID: 0}
@@ -39734,7 +40019,7 @@ MonoBehaviour:
   skillType: 0
   skillName: 32
   skillNameText: '''Fumo Recu'' - Wind''s Whisper'
-  skillDescription: Gains <color=#00ffe1>+20% MSPD</color> every second you are within
+  skillDescription: Gains <color=#00ffe1>+25% MSPD</color> every second you are within
     800 radius around the Mint Fumo. Stacks up to +100% MSPD.
   favorText: She looks quiet and proper at first glance, but in truth she bursts
     with a curious spirit and a lively step.
@@ -39945,7 +40230,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -0.000034064054}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 200, y: 88.3759}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1727762476
@@ -40638,7 +40923,8 @@ MonoBehaviour:
   skillType: 0
   skillName: 9
   skillNameText: Equipment - Radio
-  skillDescription: Swap cool-down -15%, special and skill cool-downs -10%.
+  skillDescription: Swap cool-down -15%, every available swap further reduces the
+    cool-down by 20%.
   favorText: '"Mmmm... Whuh? What? Yes, I''m listening!"'
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 07000000080000000a000000

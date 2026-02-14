@@ -76,6 +76,7 @@ public class PlayerManager : MonoBehaviour
     public StageManager stageManager;
 
     private bool EnableHitStop = true;
+    private bool RadioActive = false; 
     private void Awake()
     {
         SkillView_Overlay.SetActive(false);
@@ -86,6 +87,7 @@ public class PlayerManager : MonoBehaviour
         UpdateKeybindTexts();
 
         EnableHitStop = SaveDataManager.EnableHitStop;
+        RadioActive = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.EQUIPMENT_RADIO);
     }
 
     public void UpdateKeybindTexts()
@@ -153,13 +155,23 @@ public class PlayerManager : MonoBehaviour
 
         for (int i = 0; i < SwapStacksImg.Length; ++i)
         {
-            SwapStacksImg[i].sprite = CanSwapPlayer && SwapStacks >= (i + 1) ? SwapStackAvailable : SwapStackUnavailable;
+            Image image = SwapStacksImg[i];
+            bool countForCharge = CanSwapPlayer && SwapStacks >= i;
+            float amount;
+            if (!countForCharge) amount = 0;
+            else if (SwapStacks > i) amount = 1;
+            else amount = SwapOverflowTimer / SwapCooldown;
+
+            image.fillAmount = amount;
+            image.sprite = countForCharge && image.fillAmount >= 1 ? SwapStackAvailable : SwapStackUnavailable;
         }
 
-        swapCooldownTimer += Time.deltaTime;
-        if (CanSwapPlayer)
+        float add = Time.deltaTime;
+        swapCooldownTimer += add;
+        if (CanSwapPlayer && SwapStacks < SwapMaxStacks)
         {
-            SwapOverflowTimer += Time.deltaTime;
+            if (RadioActive) add += add * 0.2f * (SwapStacks + 1);
+            SwapOverflowTimer += add;
             if (SwapOverflowTimer >= SwapCooldown)
             {
                 SwapOverflowTimer = 0;
@@ -205,9 +217,10 @@ public class PlayerManager : MonoBehaviour
         if (IsStageStarted)
         {
             if (SwapStacks > 0) SwapStacks--;
-            else swapCooldownTimer = 0f;
-
-            SwapOverflowTimer = 0f;
+            else
+            {
+                SwapOverflowTimer = swapCooldownTimer = 0f;
+            }
         }
 
         ResetAllCooldown();

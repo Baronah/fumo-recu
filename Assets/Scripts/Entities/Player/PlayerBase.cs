@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -74,6 +75,7 @@ public class PlayerBase : EntityBase
     {
         base.FixedUpdate();
         AttentionBuff();
+        WindBladeBuff();
 
         WindanthemBar.SetActive(IsAlive() && AspdBuffs.ContainsKey(WindAnthemKey) && AspdBuffs[WindAnthemKey].IsInEffect);
         if (WindanthemBar.activeSelf)
@@ -87,22 +89,34 @@ public class PlayerBase : EntityBase
         WindanthemMaxEffect.SetActive(IsAlive() && IsWindAnthemMaxed);
     }
 
+    float w_countUp = 0;
+    void WindBladeBuff()
+    {
+        w_countUp += Time.fixedDeltaTime;
+        if (w_countUp < 0.2f) return;
+        w_countUp = 0;
+
+        if (!Skills.Contains(SkillTree_Manager.SkillName.WINGED_STEPS_B)) return;
+        float amount = MspdBuffs.Where(m => m.Value != null && m.Value.IsPercentage && m.Value.IsInEffect).Sum(m => m.Value.Value);
+        if (amount > 0) ApplyEffect(Effect.AffectedStat.ASPD, "WIND_BLADE_BUFF", amount * 0.7f, 0.2f, false);
+    }
+
     float countUp = 0;
     void AttentionBuff()
     {
         countUp += Time.fixedDeltaTime;
-        if (countUp < 0.4f) return;
+        if (countUp < 0.2f) return;
         countUp = 0;
 
         if (health > mHealth * 0.8f && Skills.Contains(SkillTree_Manager.SkillName.ATTENTION_BOOK))
         {
-            ApplyEffect(Effect.AffectedStat.ATK, "ATTENTION_BUFF", 25, 0.5f, true);
-            ApplyEffect(Effect.AffectedStat.ASPD, "ATTENTION_BUFF", 30, 0.5f, true);
+            ApplyEffect(Effect.AffectedStat.ATK, "ATTENTION_BUFF", 25, 0.25f, true);
+            ApplyEffect(Effect.AffectedStat.ASPD, "ATTENTION_BUFF", 30, 0.25f, true);
         }
-        else if (health <= mHealth * 0.5f && Skills.Contains(SkillTree_Manager.SkillName.ATTENTION_DEVICE))
+        else if (health <= mHealth * 0.6f && Skills.Contains(SkillTree_Manager.SkillName.ATTENTION_DEVICE))
         {
-            ApplyEffect(Effect.AffectedStat.DEF, "ATTENTION_BUFF", 35, 0.5f, false);
-            ApplyEffect(Effect.AffectedStat.RES, "ATTENTION_BUFF", 25, 0.5f, false);
+            ApplyEffect(Effect.AffectedStat.DEF, "ATTENTION_BUFF", 35, 0.25f, false);
+            ApplyEffect(Effect.AffectedStat.RES, "ATTENTION_BUFF", 25, 0.25f, false);
         }
     }
 
@@ -136,11 +150,11 @@ public class PlayerBase : EntityBase
             switch (key)
             {
                 case SkillTree_Manager.SkillName.WINGED_STEPS_A:
-                    b_moveSpeed += b_moveSpeed * 0.25f;
+                    ASPD += 20;
                     break;
 
                 case SkillTree_Manager.SkillName.WINGED_STEPS_B:
-                    ASPD += 30;
+                    b_moveSpeed += b_moveSpeed * 0.1f;
                     break;
 
                 case SkillTree_Manager.SkillName.EQUIPMENT_BLADE:
@@ -165,15 +179,15 @@ public class PlayerBase : EntityBase
 
                     if (CharacterPrefabsStorage.startingPlayer == playerType)
                     {
-                        bAtk = (short)(bAtk * 1.25f);
+                        bAtk = (short)(bAtk * 1.3f);
 
                         if (playerType == PlayerType.MELEE)
                         {
-                            bRes += 15;
+                            mHealth += (int)(mHealth * 0.2f);
                         }
                         else if (playerType == PlayerType.RANGED)
                         {
-                            b_moveSpeed += b_moveSpeed * 0.12f;
+                            b_moveSpeed += b_moveSpeed * 0.15f;
                         }
                     }
                     break;
@@ -218,7 +232,7 @@ public class PlayerBase : EntityBase
     {
         if (Skills.Contains(SkillTree_Manager.SkillName.SPECIAL_MSPD))
         {
-            ApplyEffect(Effect.AffectedStat.MSPD, "SPECIAL_MSPD_BUFF", 100, 1.5f, true, EffectPersistType.PERSIST);
+            ApplyEffect(Effect.AffectedStat.MSPD, "SPECIAL_MSPD_BUFF", 100, 2f, true, EffectPersistType.PERSIST);
         }
     }
 
@@ -377,7 +391,7 @@ public class PlayerBase : EntityBase
             if (Skills.Contains(SkillTree_Manager.SkillName.VICTORY_ATK))
                 ApplyEffect(Effect.AffectedStat.ASPD, "VICTORY_ASPD_BUFF", 100, 5, false, EffectPersistType.DECAY);
             else if (Skills.Contains(SkillTree_Manager.SkillName.VICTORY_MSPD))
-                ApplyEffect(Effect.AffectedStat.MSPD, "VICTORY_MSPD_BUFF", 50, 5, true, EffectPersistType.DECAY);
+                ApplyEffect(Effect.AffectedStat.MSPD, "VICTORY_MSPD_BUFF", 60, 5, true, EffectPersistType.DECAY);
         }
     }
 

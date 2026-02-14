@@ -87,10 +87,10 @@ public class PlayerMelee : PlayerBase
     public override void GetSkillTreeEffects()
     {
         base.GetSkillTreeEffects();
-        if (Skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_RADIO))
+        if (Skills.Contains(SkillTree_Manager.SkillName.WINGED_STEPS_C))
         {
-            DashCooldown *= 0.9f;
-            SkillCooldown *= 0.9f;
+            DashCooldown *= 0.85f;
+            SkillCooldown *= 0.85f;
         }
     }
 
@@ -352,10 +352,16 @@ public class PlayerMelee : PlayerBase
         var targets = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), AttackPosition.position, attackRange)
                     .Where(t => t && t.IsAlive());
 
-        if (sfxs[0] && targets.Count() > 0) sfxs[0].Play();
-        if (Skills.Contains(SkillTree_Manager.SkillName.WIND_ANTHEM) && targets.Count() > 0)
+        bool hasTargets = targets.Count() > 0;
+
+        if (hasTargets)
         {
-            ReduceSpecialCooldown(IsWindAnthemMaxed ? 1.5f : 0.75f);
+            if (sfxs[0]) sfxs[0].Play();
+            if (Skills.Contains(SkillTree_Manager.SkillName.WINGED_STEPS_A))
+            {
+                ApplyEffect(Effect.AffectedStat.MSPD, "WINGED_STEPS_A_MSPD_BUFF", 30f, 2f, true, EffectPersistType.DECAY);
+            }
+            if (Skills.Contains(SkillTree_Manager.SkillName.WIND_ANTHEM)) ReduceSpecialCooldown(IsWindAnthemMaxed ? 1.5f : 0.75f);
         }
 
         float atk = this.atk;

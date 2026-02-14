@@ -83,14 +83,15 @@ public class FumoScript : MonoBehaviour
             }
             else if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.MINT_WINDRUSH))
             {
+                float Base = 25f;
                 Key = "FUMO_SKILL_WINDRUSH";
                 if (player.MspdBuffs.ContainsKey(Key))
                 {
-                    float BuffValue = Mathf.Min(player.MspdBuffs[Key].Value + 10, 100);
+                    float BuffValue = Mathf.Min(player.MspdBuffs[Key].Value + Base / 2, 100);
                     player.ApplyEffect(Effect.AffectedStat.MSPD, Key, BuffValue, 0.6f, true);
                 }
                 else
-                    player.ApplyEffect(Effect.AffectedStat.MSPD, Key, 20, 0.6f, true);
+                    player.ApplyEffect(Effect.AffectedStat.MSPD, Key, Base, 0.6f, true);
             }
         }
     }
