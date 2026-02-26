@@ -155,6 +155,8 @@ MonoBehaviour:
   weight: 0
   damageReduction: 0
   damageAmplify: 0
+  IsShiftImmune: 0
+  BoundTimer: 0
   IsFreezeImmune: 0
   IsStunImmune: 0
   IsPhysicalImmune: 0
@@ -162,6 +164,7 @@ MonoBehaviour:
   canRevive: 0
   isInvisible: 0
   InvulnerableTimer: 0
+  CanBeHitByProjectiles: 1
   damageType: 0
   attackPattern: 0
   ProjectilePrefab: {fileID: 0}
@@ -176,20 +179,20 @@ MonoBehaviour:
   StunTimer: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 1
+  HasOnStartCoroutine: 1
   IsBeingLevitated: 0
+  LevitationEffect: {fileID: 0}
   reviveDuration: 5
   postReviveDuration: 0
   enemyCode: 0
-  SpotPlayerUponSpawn: 0
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
-  TooltipsPriority: 0
   TooltipsHoldtime: 6
   Description: Enemy lore or description
   Skillset: Enemy skillset
-  DetectionRange: 30
+  detectionRange: 30
+  b_detectionRange: 0
   DangerRange_RatioOfAttackRange: 0.75
   MinimumDistanceFromPlayer: 20
-  showTooltips: 0
   gridCellSize: 35
   obstacleLayer:
     serializedVersion: 2
@@ -206,10 +209,10 @@ MonoBehaviour:
   - 2
   - 5
   - 7
-  OverridePositionCheckRadius: 100
   MoveToOverridePositionSpeedMultiplier: 1.25
   MoveToOverridePositionSpeedMultiplierJump: 0.35
   CanDetectThroughWalls: 0
+  IsInsignificant: 0
 --- !u!61 &6332891816829384026
 BoxCollider2D:
   m_ObjectHideFlags: 0

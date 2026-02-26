@@ -219,7 +219,7 @@ public class EnemySpawnpointScript : MonoBehaviour
         }
     }
 
-    private bool IsNotAccountForCounter() { return isInsignificant || SpawnEnemies.Any(e => e.IsInsignificant); }
+    private bool IsNotAccountForCounter() { return isInsignificant || (Spawned && SpawnEnemies.All(e => e.IsInsignificant)); }
 
     public virtual int GetEnemiesCount(bool countInfiniteSpawns = false) 
     {
@@ -232,7 +232,7 @@ public class EnemySpawnpointScript : MonoBehaviour
         
         if (RepeatedSpawn) return countInfiniteSpawns ? 1 : 0;
 
-        if (Spawned) return SpawnEnemies.Count(e => e.IsAlive());
+        if (Spawned) return SpawnEnemies.Count(e => e.IsAlive() && !e.IsInsignificant);
         return SpawnPositions.Length * Quantity;
     }
 }

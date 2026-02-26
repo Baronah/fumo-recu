@@ -367,6 +367,17 @@ public class StageManager : MonoBehaviour
                         enemy.ASPD += 50;
                     }
                     break;
+                case SkillName.HIBERNATE:
+                    float duration = 20f;
+                    enemy.mHealth *= 2;
+                    enemy.ApplyFreeze(enemy, duration);
+
+                    if (!enemy.IsFreezeImmune)
+                    {
+                        enemy.ApplyEffect(Effect.AffectedStat.DEF, "DREAM_DEF_BUFF", 100f, duration, true);
+                        enemy.ApplyEffect(Effect.AffectedStat.RES, "DREAM_RES_BUFF", 40f, duration, false);
+                    }
+                    break;
             }
         }
     }

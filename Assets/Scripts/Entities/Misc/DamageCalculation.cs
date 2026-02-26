@@ -18,7 +18,8 @@ namespace DamageCalculation
 
                     instance.Multiply(damageMultiply);
                 }
-                else if (playerBase.Skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_SCOPE))
+                
+                if (playerBase.Skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_SCOPE))
                 {
                     float maxDistance = Mathf.Min(Mathf.Max(350, attacker.attackRange * 1.2f), 1000);
                     float distance = Vector3.Distance(attacker.transform.position, target.transform.position);

@@ -30,6 +30,7 @@ public class FM_11 : StageManager
         if (enemy is Sudaram s)
         {
             s.originiumPollutionBonusASPD = 100;
+            s.originiumPollutionDamageMultiplier = 0f;
         }
         else if (CharacterPrefabsStorage.EnableChallengeMode && enemy is HibernatorKnight h)
         {

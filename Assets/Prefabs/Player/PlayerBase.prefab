@@ -408,6 +408,8 @@ MonoBehaviour:
   weight: 0
   damageReduction: 0
   damageAmplify: 0
+  IsShiftImmune: 0
+  BoundTimer: 0
   IsFreezeImmune: 0
   IsStunImmune: 0
   IsPhysicalImmune: 0
@@ -415,6 +417,7 @@ MonoBehaviour:
   canRevive: 0
   isInvisible: 0
   InvulnerableTimer: 0
+  CanBeHitByProjectiles: 1
   damageType: 0
   attackPattern: 0
   ProjectilePrefab: {fileID: 0}
@@ -429,6 +432,7 @@ MonoBehaviour:
   StunTimer: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 1
+  HasOnStartCoroutine: 1
   IsBeingLevitated: 0
   LevitationEffect: {fileID: 0}
   reviveDuration: 5
@@ -449,12 +453,14 @@ MonoBehaviour:
   HH_Fill_Material: {fileID: 2100000, guid: 25baa0b986f248947843c72757292d02, type: 2}
   HH_Effect_fill: {fileID: 5488420796603703274}
   RockEffect: {fileID: 5523869800612596793, guid: 652a37322c30aae499a7cd8b40f7c35d, type: 3}
+  VowEffect: {fileID: 0}
   WindanthemBar: {fileID: 5220816087514864014}
   WindanthemMaxEffect: {fileID: 9181697832607536883}
   Skills: 
   WindAnthemAspdBuffAmount: 12
   WindAnthemAspdBuffDuration: 15
   WindAnthemAspdBuffCap: 72
+  RockPickEffect: {fileID: 0}
   heavyHitterMaxTimer: 10
 --- !u!114 &8499964098267969337
 MonoBehaviour:

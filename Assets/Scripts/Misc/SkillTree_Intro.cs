@@ -105,7 +105,7 @@ public class SkillTree_Intro : MonoBehaviour
 
             UsedSkills.Add(Skill);
         }
-        UsedSkills.OrderBy(s => s);
+        UsedSkills = UsedSkills.OrderBy(s => s).ToList();
 
         string skillContent = string.Empty;
         if (UsedSkills.Count > 0)
@@ -120,7 +120,7 @@ public class SkillTree_Intro : MonoBehaviour
                     GEOGOLIST_STUDY => "Seems like you've taken a liking in geology. Nature is powerful. Isn't it?",
                     GEOGOLIST_EXPLORE => "Seems like you've taken a liking in geology. Nature is exciting. Isn't it?",
                     BUBBLE_ARTS => "That bubble-making staff was really awesome, right? Aroma said that if the soap inside ever runs out, just bring it to her for refill.",
-                    JUST_A_NICE_LOOKING_ROCK => "I'm happy you liked that rock as much as I do. Speaking of which, I found another one on my ways back the other day, and so many more pretty-looking stones just like it! But, well... that was before I realized I'd gotten separated from the others...",
+                    AMULET => "I'm happy you liked that rock as much as I do. Speaking of which, I found another one on my ways back the other day, and so many more pretty-looking stones just like it! But, well... that was before I realized I'd gotten separated from the others...",
                     ATTENTION_DEVICE => "Did the attention device work out? I never really try it, but I'll need it soon.",
                     ATTENTION_BOOK => "I'm surprised you could use my book. Did it bite you? I left some bandages on the table just in case...",
                     DASH_LETHAL => "That technique - \"Compress the air pressure, and release it at once...\", wasn't it? How did it feel?",

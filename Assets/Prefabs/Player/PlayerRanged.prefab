@@ -1133,6 +1133,7 @@ MonoBehaviour:
   weight: 0
   damageReduction: 0
   damageAmplify: 0
+  IsShiftImmune: 0
   BoundTimer: 0
   IsFreezeImmune: 0
   IsStunImmune: 0
@@ -1177,12 +1178,14 @@ MonoBehaviour:
   HH_Fill_Material: {fileID: 2100000, guid: 25baa0b986f248947843c72757292d02, type: 2}
   HH_Effect_fill: {fileID: 3165126570593974053}
   RockEffect: {fileID: 5523869800612596793, guid: 652a37322c30aae499a7cd8b40f7c35d, type: 3}
+  VowEffect: {fileID: 527307714247096227, guid: d8aafdc348fa5d34ebc17a73b75453e6, type: 3}
   WindanthemBar: {fileID: 3436828054658134337}
   WindanthemMaxEffect: {fileID: 1778343450262027836}
   Skills: 
   WindAnthemAspdBuffAmount: 12
   WindAnthemAspdBuffDuration: 15
   WindAnthemAspdBuffCap: 72
+  RockPickEffect: {fileID: 2065466168563246693, guid: e5f5c8d983ad1e441a274419c9f3738f, type: 3}
   heavyHitterMaxTimer: 10
   ProjectileSkill_2: {fileID: 823679449479629327, guid: f623b44ff3216784da0e64470a2e59de, type: 3}
   ProjectileSkill_3: {fileID: 7531047425192547471, guid: 36af0100b9ffca845ab2dcd317ad8830, type: 3}
@@ -1200,14 +1203,27 @@ MonoBehaviour:
   SkillDuration: 5
   Skill_DamageMulitplier: 0.25
   Skill_AtkInterval: 0.15
+  Skill_ProjLifeSpan: 1.8
   SkillBarObj: {fileID: 4703740534645977381}
   FreezeRange: 450
-  FreezeDurationMin: 0.5
+  FreezeDurationMin: 1
   FreezeDurationMax: 4
   MinDistanceForFreezeDuration: 100
   FreezeCooldown: 10.5
   FreezeCastDuration: 0.1
   IllusionPrefab: {fileID: 4804969973133499271, guid: 09bcf3452a6a99f4a94ce939d3a3fc57, type: 3}
+  PhantomAtkInherit: 0.5
+  SP_SkillMaxRefund: 0.9
+  SP_MinWinForRefundMax: 0.25
+  MaxRefund: 0.8
+  MinWindowForMaxRefund: 0.5
+  FreezeChargeCDRefund: 0.15
+  FreezeConductDebuff: 50
+  FreezeHoldMax: 6
+  lockInDamageFalloff: 0.01
+  lockInDamageMulMin: 0.2
+  MaxExtraFlowers: 3
+  FlowerMaxDuration: 1.5
 --- !u!82 &770774110143472001
 AudioSource:
   m_ObjectHideFlags: 0

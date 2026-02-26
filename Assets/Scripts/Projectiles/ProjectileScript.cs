@@ -20,10 +20,12 @@ public class ProjectileScript : MonoBehaviour
 	public float TravelSpeed = 25f;
     public float Acceleration = 0f;
 
-    Vector3 targetDirection;
+    protected Vector3 targetDirection;
     protected Collider2D Target = null;
-	private Rigidbody2D rb2d;
+	protected Rigidbody2D rb2d;
     protected bool allowingUpdate = false;
+
+    protected EntityBase excludedTarget = null;
 
     private void Start()
     {
@@ -38,12 +40,12 @@ public class ProjectileScript : MonoBehaviour
 
 	public ProjectileType projectileType;
 
-	public void ShootTowards(EntityBase enemy, ProjectileType projectileType)
+	public void ShootTowards(EntityBase enemy, ProjectileType projectileType, bool useAbsoluteDirection = false)
 	{
-		ShootTowards(enemy.transform.position, enemy, projectileType, ProjectileLifespan);
+		ShootTowards(enemy.transform.position, enemy, projectileType, ProjectileLifespan, useAbsoluteDirection);
     }
 
-    public virtual void ShootTowards(Vector3 targetPosition, EntityBase enemy, ProjectileType projectileType, float ProjectileLifespan)
+    public virtual void ShootTowards(Vector3 targetPosition, EntityBase enemy, ProjectileType projectileType, float ProjectileLifespan, bool useAbsoluteDirection = false)
     {
         this.projectileType = projectileType;
 
@@ -54,9 +56,9 @@ public class ProjectileScript : MonoBehaviour
         }
 
         ProjectileTargetedTypes.Add(enemy.GetType());
-        targetDirection = (targetPosition - transform.position).normalized;
+        targetDirection = useAbsoluteDirection ? targetPosition : (targetPosition - transform.position).normalized;
 
-        Destroy(gameObject, ProjectileLifespan); 
+        Lifespan = ProjectileLifespan;
 
         float desiredZRotation = Mathf.Atan2(targetDirection.y, targetDirection.x) * Mathf.Rad2Deg - 90;
 
@@ -65,14 +67,14 @@ public class ProjectileScript : MonoBehaviour
         allowingUpdate = true;
     }
 
-    public virtual void ShootTowards(Vector3 targetPosition, ProjectileType projectileType, float ProjectileLifespan, params Type[] enemy)
+    public virtual void ShootTowards(Vector3 targetPosition, ProjectileType projectileType, float ProjectileLifespan, bool useAbsoluteDirection = false, params Type[] enemy)
     {
         this.projectileType = projectileType;
 
         ProjectileTargetedTypes.AddRange(enemy);
-        targetDirection = (targetPosition - transform.position).normalized;
+        targetDirection = useAbsoluteDirection ? targetPosition : (targetPosition - transform.position).normalized;
 
-        Destroy(gameObject, ProjectileLifespan);
+        Lifespan = ProjectileLifespan;
 
         float desiredZRotation = Mathf.Atan2(targetDirection.y, targetDirection.x) * Mathf.Rad2Deg - 90;
 
@@ -81,9 +83,19 @@ public class ProjectileScript : MonoBehaviour
         allowingUpdate = true;
     }
 
+    protected float Lifespan = 3f;
     private void FixedUpdate()
 	{
 		if (!allowingUpdate) return;
+
+        Lifespan -= Time.fixedDeltaTime;
+        if (Lifespan <= 0f)
+        {
+            allowingUpdate = false;
+            gameObject.SetActive(false);
+            Destroy(this.gameObject, 0.1f);
+            return;
+        }
 
         float angle = Mathf.Atan2(rb2d.velocity.y, rb2d.velocity.x) * Mathf.Rad2Deg - 90f;
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
@@ -103,11 +115,7 @@ public class ProjectileScript : MonoBehaviour
 
 	public virtual void OnHitEvent(EntityBase target)
 	{
-		if (!target)
-		{
-            Destroy(this.gameObject);
-			return;
-        }
+		if (!target || target == excludedTarget) return;
 
 		if (doesDamage)
 		{

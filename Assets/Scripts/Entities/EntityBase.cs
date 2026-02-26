@@ -110,8 +110,10 @@ public class EntityBase : MonoBehaviour
     protected Transform AttackPosition;
     protected SpriteRenderer spriteRenderer;
     protected Animator animator;
+
     protected Rigidbody2D rb2d;
-    
+    public Rigidbody2D GetRigidbody2D => rb2d;
+
     protected Collider2D[] colliders;
     public Collider2D[] selfColliders => colliders;
 
@@ -324,7 +326,7 @@ public class EntityBase : MonoBehaviour
     {
         if (!IsAlive() && !TriggeredOnDeath && !canRevive) OnDeath();
 
-        Regen();
+        RegenCount();
         UpdateCooldowns();
         UpdateEffectDurations();
 
@@ -745,18 +747,28 @@ public class EntityBase : MonoBehaviour
     }
 
     private float regenTimer = 0;
-    public void Regen()
+    public void RegenCount()
     {
         regenTimer += Time.deltaTime;
         if (regenTimer < 1.0f) return;
         regenTimer = 0;
-        
+
+        Regen();
+    }
+
+    protected virtual void Regen()
+    {
         if (!IsAlive()) return;
 
-        float regenAmount = Mathf.Ceil(hpRegenFlat + mHealth * hpRegenPercentage);
+        float regenAmount = GetRegenAmount();
         if (regenAmount <= 0) return;
 
         Heal(regenAmount, this, false, true);
+    }
+
+    protected virtual float GetRegenAmount()
+    {
+        return Mathf.Ceil(hpRegenFlat + mHealth * hpRegenPercentage);
     }
 
     public virtual void UpdateCooldowns()
@@ -1168,12 +1180,15 @@ public class EntityBase : MonoBehaviour
         animator.SetFloat("move", 0);
     }
 
-    public virtual void ApplyFreeze(EntityBase target, float duration)
+    public virtual void ApplyFreeze(EntityBase target, float duration) 
+        => StartCoroutine(ApplyFreezeCoroutine(target, duration));
+
+    IEnumerator ApplyFreezeCoroutine(EntityBase target, float duration)
     {
-        if (target.IsFreezeImmune || !target.IsAlive()) return;
+        yield return new WaitUntil(() => target.IsComponentsInitialized);
 
+        if (target.IsFreezeImmune || !target.IsAlive()) yield break;
         target.FreezeTimer = Mathf.Max(target.FreezeTimer, duration);
-
         target.OnFreezeEnter();
     }
 
@@ -1191,8 +1206,13 @@ public class EntityBase : MonoBehaviour
     }
 
     public virtual void ApplyStun(EntityBase target, float duration)
+        => StartCoroutine(ApplyStunCoroutine(target, duration));
+
+    IEnumerator ApplyStunCoroutine(EntityBase target, float duration)
     {
-        if (target.IsStunImmune || !target.IsAlive()) return;
+        yield return new WaitUntil(() => target.IsComponentsInitialized);
+
+        if (target.IsStunImmune || !target.IsAlive()) yield break;
 
         target.animator.speed = 0f;
         target.StunTimer = Mathf.Max(target.StunTimer, duration);
@@ -1206,7 +1226,7 @@ public class EntityBase : MonoBehaviour
     public virtual void ApplyLevitate(EntityBase target, float duration)
     {
         ApplyStun(target, duration);
-        if (target.IsStunned) target.StartCoroutine(target.Levitate(duration));
+        target.StartCoroutine(target.Levitate(duration));
     }
 
     public bool IsBeingLevitated = false;
@@ -1214,6 +1234,9 @@ public class EntityBase : MonoBehaviour
     IEnumerator Levitate(float duration)
     {
         if (IsBeingLevitated) yield break;
+
+        yield return null; // ensure this runs after stun is applied
+        if (!IsStunned) yield break;
 
         LevitationEffect.color = new Color(1, 1, 1, 0.3f);
         IsBeingLevitated = true;
@@ -1656,7 +1679,7 @@ public class EntityBase : MonoBehaviour
         projectileScript.DamageInstance = damageInstance;
         projectileScript.TravelSpeed = travelSpeed;
         projectileScript.Acceleration = acceleration;
-        projectileScript.ShootTowards(preferPosition, projectileType, lifeSpan, targetType);
+        projectileScript.ShootTowards(preferPosition, projectileType, lifeSpan, false, targetType);
     }
 
     public virtual List<EntityBase> SearchForEntitiesAroundSelf(Type type = null, bool catchInvisibles = false, short take = -1)

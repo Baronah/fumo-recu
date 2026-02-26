@@ -272,7 +272,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Bloodthirsty Heir
   Icon: {fileID: 21300000, guid: 34023941c46cc37408c4b83eb4cd8ec0, type: 3}
-  mHealth: 50
+  mHealth: 65
   bAtk: 10
   bDef: 0
   bRes: 30

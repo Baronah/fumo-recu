@@ -5,6 +5,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using static PlayerManager;
 
 public class PlayerMelee : PlayerBase
 {
@@ -12,9 +13,14 @@ public class PlayerMelee : PlayerBase
     [SerializeField] private float DashSpeed = 3500f;
     [SerializeField] private float DashDuration = 0.5f;
     [SerializeField] private float DashCooldown = 6f;
+    [SerializeField] private float Up_DashDamageScale = 1.0f;
+    [SerializeField] private float Up_DashDeflectHealPercentage = 0.2f;
+    [SerializeField] private float Up_DashAfterImagePersistTime = 3f;
+
+    [SerializeField] private float BL_AtkScale = 2.5f, BL_AtkBuff = 100f, BL_BuffDur = 5f;
 
     [SerializeField] private GameObject SkillEffect, SkillEffect_2, AftershockEffect, AftershockEffect_2, BlackflashEffect, SwirlEffect, CounterEffect;
-    [SerializeField] private float SkillCooldown = 30f;
+    [SerializeField] private float UtlCooldown = 30f;
     [SerializeField] private float SkillDuration = 7f;
     [SerializeField] private float BurstHeal_HpPercentage = 0.35f;
     [SerializeField] private float HealPerSecond_HpPercentage = 0.05f;
@@ -29,7 +35,12 @@ public class PlayerMelee : PlayerBase
 
     [SerializeField] float PullRadius = 400, DoTRadius = 220f, AoERadius = 250f;
 
-    [SerializeField] float AfterShockDamageConversionRatio = 0.75f;
+    [SerializeField] float RimDoTAtkScale = 0.34f,
+                           RimDefShredValue = 15f,
+                           PullDebuffValue = 33f,
+                           AfterShockDamageConversionRatio = 0.75f,
+                           AfterShockExplodeSlowTime = 1f, 
+                           TransferBonusDuration = 2f;
     [SerializeField] TMP_Text AftershockDmgCounter;
 
     [SerializeField] AudioSource Ambient, Vortex, Shock, Counter;
@@ -53,7 +64,7 @@ public class PlayerMelee : PlayerBase
         SkillEffectColor = SkillEffect.GetComponent<SpriteRenderer>().color;
 
         dashCooldownTimer = DashCooldown;
-        skillCooldownTimer = SkillCooldown;
+        ultCooldownTimer = UtlCooldown;
 
         base.InitializeComponents();
     }
@@ -90,7 +101,7 @@ public class PlayerMelee : PlayerBase
         if (Skills.Contains(SkillTree_Manager.SkillName.WINGED_STEPS_C))
         {
             DashCooldown *= 0.85f;
-            SkillCooldown *= 0.85f;
+            UtlCooldown *= 0.85f;
         }
     }
 
@@ -106,7 +117,6 @@ public class PlayerMelee : PlayerBase
         if (Skills.Contains(SkillTree_Manager.SkillName.BEYOND_NIGHT))
         {
             SpeedBoost += 0.25f;
-            AtkBoost = -1f;
         }
     }
 
@@ -120,15 +130,76 @@ public class PlayerMelee : PlayerBase
         }
         else if (Input.GetKeyDown(InputManager.Instance.SkillKey))
         {
+            if (canVow && playerManager.MeleeSealSkill == PlayerManager.SkillType.NONE)
+            {
+                MakeVow(SkillType.ULTIMATE);
+            }
+
             UseSkill();
         }
         else if (Input.GetKeyDown(InputManager.Instance.SpecialKey))
         {
+            if (canVow && playerManager.MeleeSealSkill == PlayerManager.SkillType.NONE)
+            {
+                MakeVow(SkillType.SPECIAL);
+            }
+
             UseSpecial();
         }
         else
         {
             Move();
+        }
+    }
+
+    protected override void GetVow()
+    {
+        var skill = playerManager.GetVowSkill(this);
+        if (skill == SkillType.NONE) return;
+        
+        if (skill == SkillType.SPECIAL)
+        {
+            DashCooldown *= 0.6f;
+            DashDuration *= 1.5f;
+            DashSpeed *= 1.2f;
+
+            ApplyEffect(Effect.AffectedStat.ATK, "VOW_ATK_BUFF", 10f, 9999f, true, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.DEF, "VOW_DEF_BUFF", 5f, 9999f, false, EffectPersistType.PERSIST, false);
+
+            Up_DashDamageScale += 1f;
+            Up_DashDeflectHealPercentage += 0.2f;
+            Up_DashAfterImagePersistTime = DashCooldown - 0.1f;
+
+            BL_AtkScale += 0.5f;
+            BL_AtkBuff += 50f;
+            BL_BuffDur += 1f;
+        }
+        else
+        {
+            UtlCooldown *= 0.7f;
+            SkillDuration += 2;
+            BurstHeal_HpPercentage += 0.1f;
+            HealPerSecond_HpPercentage += 0.02f;
+            AtkBoost += 0.2f;
+            ResBoost += 10;
+            SpeedBoost += 0.15f;
+
+            ApplyEffect(Effect.AffectedStat.MSPD, "VOW_MSPD_BUFF", 10f, 9999f, true, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.ASPD, "VOW_ASPD_BUFF", 5f, 9999f, false, EffectPersistType.PERSIST, false);
+
+            PullRadius += 100f;
+            DoTRadius += 100f;
+            AoERadius += 50f;
+
+            RimDoTAtkScale += 0.125f;
+            RimDefShredValue += 5f;
+
+            PullDebuffValue += 17f;
+
+            AfterShockDamageConversionRatio += 0.25f;
+            AfterShockExplodeSlowTime += 0.5f;
+
+            TransferBonusDuration += 2f;
         }
     }
 
@@ -147,39 +218,58 @@ public class PlayerMelee : PlayerBase
         CanUseDash = true;
     }
 
-    void ReduceSpecialCooldown(float amount)
+    protected override void ReduceSpecialCooldown(float amount, CooldownReductionType reductionType = CooldownReductionType.FLAT)
     {
         if (dashCooldownTimer >= DashCooldown) return;
-        dashCooldownTimer += amount;
+
+        float reductionAmount = reductionType switch
+        {
+            CooldownReductionType.FLAT => amount,
+            CooldownReductionType.PERCENTAGE_FULL => DashCooldown * amount,
+            CooldownReductionType.PERCENTAGE_CURRENT => (DashCooldown - dashCooldownTimer) * amount,
+            _ => amount,
+        };
+
+        dashCooldownTimer += reductionAmount;
         if (dashCooldownTimer > DashCooldown) dashCooldownTimer = DashCooldown;
         StartCoroutine(playerManager.SpecialCooldown(DashCooldown, dashCooldownTimer));
     }
 
-    float skillCooldownTimer = 0;
+    float ultCooldownTimer = 0;
     IEnumerator SkillLockout()
     {
-        skillCooldownTimer = 0;
+        ultCooldownTimer = 0;
         CanUseSkill = false;
-        StartCoroutine(playerManager.SkillCooldown(SkillCooldown, skillCooldownTimer));
-        while (skillCooldownTimer < SkillCooldown)
+        StartCoroutine(playerManager.SkillCooldown(UtlCooldown, ultCooldownTimer));
+        while (ultCooldownTimer < UtlCooldown)
         {
-            skillCooldownTimer += Time.deltaTime;
+            ultCooldownTimer += Time.deltaTime;
             yield return null;
         }
         CanUseSkill = true;
     }
 
-    void ReduceSkillCooldown(float amount)
+    protected override void ReduceUltimateCooldown(float amount, CooldownReductionType reductionType = CooldownReductionType.FLAT)
     {
-        if (skillCooldownTimer >= SkillCooldown) return;
-        skillCooldownTimer += amount;
-        if (skillCooldownTimer > SkillCooldown) skillCooldownTimer = SkillCooldown;
-        StartCoroutine(playerManager.SkillCooldown(SkillCooldown, skillCooldownTimer));
+        if (ultCooldownTimer >= UtlCooldown) return;
+
+        float reductionAmount = reductionType switch
+        { 
+            CooldownReductionType.FLAT => amount,
+            CooldownReductionType.PERCENTAGE_FULL => UtlCooldown * amount,
+            CooldownReductionType.PERCENTAGE_CURRENT => (UtlCooldown - ultCooldownTimer) * amount,
+            _ => amount,
+        };
+
+        ultCooldownTimer += reductionAmount;
+
+        if (ultCooldownTimer > UtlCooldown) ultCooldownTimer = UtlCooldown;
+        StartCoroutine(playerManager.SkillCooldown(UtlCooldown, ultCooldownTimer));
     }
 
     public override void UseSpecial()
     {
-        if (IsDashing) return;
+        if (IsDashing || playerManager.MeleeSealSkill == SkillType.SPECIAL) return;
 
         if (CanUseDash && !DashAfterImages)
         {
@@ -209,7 +299,7 @@ public class PlayerMelee : PlayerBase
     {
         if (!CanUseDash || DashAfterImages) yield break;
 
-        if (Skills.Contains(SkillTree_Manager.SkillName.WIND_ANTHEM)) ReduceSkillCooldown(IsWindAnthemMaxed ? 6f : 4f);
+        if (Skills.Contains(SkillTree_Manager.SkillName.WIND_ANTHEM)) ReduceUltimateCooldown(IsWindAnthemMaxed ? 6f : 4f);
         StartCoroutine(DashLockout());
         IsDashing = true;
         Debut = false;
@@ -219,6 +309,7 @@ public class PlayerMelee : PlayerBase
         {
             GameObject o = Instantiate(AfterimagePrefabs, transform.position, Quaternion.identity);
             DashAfterImages = o.GetComponent<PlayerMeleeAfterimage>();
+            DashAfterImages.SetPersist(Up_DashAfterImagePersistTime);
             DashAfterImages.GetComponentInChildren<SpriteRenderer>().flipX = spriteRenderer.flipX;
         }
 
@@ -270,7 +361,7 @@ public class PlayerMelee : PlayerBase
                         {
                             if (!enemy || !enemy.IsAlive() || EnemyHitByDash.Contains(enemy)) continue;
 
-                            DealDamage(enemy, atk, 0, 0);
+                            DealDamage(enemy, (int)(atk * Up_DashDamageScale), 0, 0);
                             PushEntityFrom(enemy, movementInputs, 5f, DashDuration - dashTime, false);
                             EnemyHitByDash.Add(enemy);
                         }
@@ -375,8 +466,8 @@ public class PlayerMelee : PlayerBase
             if (IsDashing && Skills.Contains(SkillTree_Manager.SkillName.BLACKFLASH))
             {
                 defPen += 50;
-                ApplyEffect(Effect.AffectedStat.ATK, "BLACKFLASH_ATK_BUFF", 100, 5, true, EffectPersistType.DECAY);
-                DealDamage(target, (int)(atk * 2.5f), 0, 0);
+                ApplyEffect(Effect.AffectedStat.ATK, "BLACKFLASH_ATK_BUFF", BL_AtkBuff, BL_BuffDur, true, EffectPersistType.DECAY);
+                DealDamage(target, (int)(atk * BL_AtkScale), 0, 0);
                 defPen -= 50;
                 DisplayDamage("<color=black><size=60>BLACKFLASH!</size></color>", new(0, 50));
             }
@@ -389,7 +480,7 @@ public class PlayerMelee : PlayerBase
 
     public override void UseSkill()
     {
-        if (!CanUseSkill || IsSkillActive) return;
+        if (!CanUseSkill || IsSkillActive || playerManager.MeleeSealSkill == SkillType.ULTIMATE) return;
 
         base.UseSkill();
         StartCoroutine(ActivateSkill(SkillDuration));
@@ -519,8 +610,8 @@ public class PlayerMelee : PlayerBase
         foreach (EntityBase enemy in enemies)
         {
             PullEntityTowards(enemy, transform, 3f, 0.12f);
-            enemy.ApplyEffect(Effect.AffectedStat.MSPD, "JUGGERNAUNT_PULL_DEBUFF_MSPD", -40f, 1.25f, true);
-            enemy.ApplyEffect(Effect.AffectedStat.ASPD, "JUGGERNAUNT_PULL_DEBUFF_ASPD", -33f, 1.25f, false);
+            enemy.ApplyEffect(Effect.AffectedStat.MSPD, "JUGGERNAUNT_PULL_DEBUFF_MSPD", -PullDebuffValue, 1.25f, true);
+            enemy.ApplyEffect(Effect.AffectedStat.ASPD, "JUGGERNAUNT_PULL_DEBUFF_ASPD", -PullDebuffValue, 1.25f, false);
         }
     }
 
@@ -531,11 +622,11 @@ public class PlayerMelee : PlayerBase
 
         foreach (EntityBase enemy in enemies)
         {
-            DealDamage(enemy, (int)(atk * 0.34f), 0, 0);
+            DealDamage(enemy, (int)(atk * RimDoTAtkScale), 0, 0);
             if (enemy.DefDebuffs.ContainsKey(Key))
-                enemy.ApplyEffect(Effect.AffectedStat.DEF, Key, -(15f + enemy.DefDebuffs[Key].Value * 0.85f), 1.5f, true);
+                enemy.ApplyEffect(Effect.AffectedStat.DEF, Key, -(RimDefShredValue + enemy.DefDebuffs[Key].Value * (100f - RimDefShredValue) / 100f), 2f, true);
             else
-                enemy.ApplyEffect(Effect.AffectedStat.DEF, Key, -15f, 1.5f, true);
+                enemy.ApplyEffect(Effect.AffectedStat.DEF, Key, -RimDefShredValue, 2f, true);
         }
     }
 
@@ -545,8 +636,10 @@ public class PlayerMelee : PlayerBase
         if (swapInPlayer && Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_SHINDOUKAKU)
             && IsSkillActive)
         {
+            float transferDuration = SkillDuration - juggernauntCurrentDuration + TransferBonusDuration;
+
             PlayerRanged ranged = swapInPlayer.GetComponent<PlayerRanged>();
-            ranged.SetJuggernauntInherit(SkillDuration - juggernauntCurrentDuration,
+            ranged.SetJuggernauntInherit(transferDuration,
                 BurstHeal_HpPercentage, 
                 HealPerSecond_HpPercentage,
                 DefBoost,
@@ -575,7 +668,7 @@ public class PlayerMelee : PlayerBase
             foreach (EntityBase enemy in enemies)
             {
                 DealDamage(enemy, (int)(damageTakenDuringSkill), 0, 0);
-                enemy.ApplyEffect(Effect.AffectedStat.MSPD, "AFTERSHOCK_MSPD_DEBUFF", -99f, 1f, true, EffectPersistType.DECAY);
+                enemy.ApplyEffect(Effect.AffectedStat.MSPD, "AFTERSHOCK_MSPD_DEBUFF", -99f, AfterShockExplodeSlowTime, true, EffectPersistType.DECAY);
             }
             defPen -= 50;
         }
@@ -619,7 +712,7 @@ public class PlayerMelee : PlayerBase
             if (Counter && !Counter.isPlaying) Counter.Play();
             if (!healedOnThisDash)
             {
-                Heal(mHealth * 0.2f);
+                Heal(mHealth * Up_DashDeflectHealPercentage);
                 healedOnThisDash = true;
             }
         }
@@ -646,7 +739,7 @@ public class PlayerMelee : PlayerBase
     protected override void MintRevive()
     {
         dashCooldownTimer = DashCooldown;
-        skillCooldownTimer = SkillCooldown;
+        ultCooldownTimer = UtlCooldown;
         base.MintRevive();
     }
 
@@ -774,7 +867,7 @@ public class PlayerMelee : PlayerBase
                 $"regenerate {HealPerSecond_HpPercentage * 100}% max HP every second. ";
         }
 
-        info.SkillText += $"{SkillCooldown}s cooldown.";
+        info.SkillText += $"{UtlCooldown}s cooldown.";
 
         return info;
     }

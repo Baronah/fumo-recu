@@ -418,11 +418,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8775152862550477468, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_Value
-      value: 90
+      value: 130
       objectReference: {fileID: 0}
     - target: {fileID: 8775152862550477468, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_MaxValue
-      value: 90
+      value: 130
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7523077825662678453, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
@@ -464,9 +464,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Caustic Originium Spider
   Icon: {fileID: 21300000, guid: dd91be91695bbe0408ec4f0c45657f3c, type: 3}
-  mHealth: 90
+  mHealth: 130
   bAtk: 18
-  bDef: 15
+  bDef: 25
   bRes: 10
   defPen: 0
   defIgn: 0
@@ -479,9 +479,9 @@ MonoBehaviour:
   b_attackInterval: 2
   MIN_PHYSICAL_DMG: 0.05
   MIN_MAGICAL_DMG: 0.1
-  health: 90
+  health: 130
   atk: 18
-  def: 15
+  def: 25
   res: 10
   ASPD: 100
   moveSpeed: 200
@@ -493,6 +493,8 @@ MonoBehaviour:
   weight: 0
   damageReduction: 0
   damageAmplify: 0
+  IsShiftImmune: 0
+  BoundTimer: 0
   IsFreezeImmune: 0
   IsStunImmune: 0
   IsPhysicalImmune: 0
@@ -517,6 +519,7 @@ MonoBehaviour:
   StunTimer: 0
   preferredMoveAnimationPlaySpeed: 1.7
   preferredAttackAnimationSpeed: 0.85
+  HasOnStartCoroutine: 1
   IsBeingLevitated: 0
   LevitationEffect: {fileID: 876376389869632544}
   reviveDuration: 5

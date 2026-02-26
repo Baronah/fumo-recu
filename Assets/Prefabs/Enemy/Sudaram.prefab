@@ -4964,11 +4964,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8775152862550477468, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_Value
-      value: 250
+      value: 260
       objectReference: {fileID: 0}
     - target: {fileID: 8775152862550477468, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_MaxValue
-      value: 250
+      value: 260
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7523077825662678453, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
@@ -5015,9 +5015,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Sudaram
   Icon: {fileID: 21300000, guid: 8f99a019b0d6d6944968ca76a1e585fa, type: 3}
-  mHealth: 250
-  bAtk: 52
-  bDef: 35
+  mHealth: 260
+  bAtk: 55
+  bDef: 40
   bRes: 50
   defPen: 0
   defIgn: 5
@@ -5030,9 +5030,9 @@ MonoBehaviour:
   b_attackInterval: 3
   MIN_PHYSICAL_DMG: 0.05
   MIN_MAGICAL_DMG: 0.1
-  health: 250
-  atk: 52
-  def: 35
+  health: 260
+  atk: 55
+  def: 40
   res: 50
   ASPD: 100
   moveSpeed: 150

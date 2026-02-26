@@ -147,7 +147,9 @@ public class Candleknight : EnemyBase
 
     public override void WriteStats()
     {
-        Description = "";
+        Description = "A knight of the Nova Knightclub. " +
+            "With the Candle Knight as its figurehead, " +
+            "this Knightclub with a beautiful name recruits elegant knights proficient in using Arts from far and wide.";
         Skillset =
             $"• Holds {MaxCandles} candles. While in shrouded area, stops moving to channel for several seconds " +
             $"and places a candle on the spot when completed.\n" +

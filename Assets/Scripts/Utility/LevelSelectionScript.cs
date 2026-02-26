@@ -220,6 +220,8 @@ public class LevelSelectionScript : MonoBehaviour
     {
         if (isViewingMap) return;
 
+        LevelDescriptionScrollbar.verticalNormalizedPosition = 1;
+
         sfxs[1].Play();
 
         selectedIndex = index;
@@ -449,8 +451,11 @@ public class LevelSelectionScript : MonoBehaviour
             Rating_HP.text = EnemyPattern.text = EnemyName.text = "N/A";
     }
 
+    [SerializeField] ScrollRect LevelDescriptionScrollbar, EnemyInfoScrollbar; 
     public IEnumerator GetEnemyInformation(EnemyCode enemyCode, Vector3 position)
     {
+        EnemyInfoScrollbar.verticalNormalizedPosition = 1;
+
         sfxs[1].Play();
 
         SelectedBorder.transform.localPosition = position;
@@ -668,7 +673,6 @@ public class LevelSelectionScript : MonoBehaviour
         else
             Rating_CALV.text = "Hi";
 
-
         EnemyDescription.text = 
             $"<color=#b1b1b1><i>{enemy.Description}</i></color>\n\n" +
             $"<color=#E5E5E5>{enemy.Skillset}</color>";
@@ -798,7 +802,7 @@ public class LevelSelectionScript : MonoBehaviour
 
     public void Quit()
     {
-        CharacterPrefabsStorage.ClearBattleData();
+        CharacterPrefabsStorage.ClearPrebattleData();
         SceneManager.LoadScene("MainMenu");
     }
 }

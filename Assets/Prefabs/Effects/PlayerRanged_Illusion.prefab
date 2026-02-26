@@ -549,9 +549,11 @@ MonoBehaviour:
   attackInterval: 0
   hpRegenFlat: 0
   hpRegenPercentage: 0
-  weight: 1000
+  weight: 0
   damageReduction: 0
   damageAmplify: 0
+  IsShiftImmune: 1
+  BoundTimer: 0
   IsFreezeImmune: 1
   IsStunImmune: 1
   IsPhysicalImmune: 1
@@ -559,6 +561,7 @@ MonoBehaviour:
   canRevive: 0
   isInvisible: 0
   InvulnerableTimer: 999
+  CanBeHitByProjectiles: 1
   damageType: 1
   attackPattern: 1
   ProjectilePrefab: {fileID: 1707831507938423826, guid: f80dd11dc4cc0ba4ab073dc632da03aa, type: 3}
@@ -573,6 +576,7 @@ MonoBehaviour:
   StunTimer: 0
   preferredMoveAnimationPlaySpeed: 0.85
   preferredAttackAnimationSpeed: 0.9
+  HasOnStartCoroutine: 1
   IsBeingLevitated: 0
   LevitationEffect: {fileID: 0}
   reviveDuration: 5

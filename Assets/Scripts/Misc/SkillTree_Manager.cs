@@ -29,6 +29,8 @@ public class SkillTree_Manager : MonoBehaviour
     LevelSelectionScript LevelSelectionScript;
 
     SkillTree_Outview Outview;
+    [SerializeField] ScrollRect skillViewScroll;
+    [SerializeField] Image skillViewScrollbarImg;
 
     private short PlayerMaxSkills = 0;
 
@@ -86,7 +88,7 @@ public class SkillTree_Manager : MonoBehaviour
         BREAK_THE_ICE,
         HUNGER,
         TERRAIN,
-        JUST_A_NICE_LOOKING_ROCK,
+        AMULET,
         BEYOND_NIGHT,
         SPIRAL_FIELD_EXPERT,
         TIME_DILATION,
@@ -100,6 +102,9 @@ public class SkillTree_Manager : MonoBehaviour
         STATIS,
         HEAT_DEATH,
         CERTAIN_FATES,
+        HIBERNATE,
+        THREADS,
+        A_NICE_LOOKING_ROCK,
     }
 
     public static SkillTree_Manager Instance;
@@ -670,12 +675,14 @@ public class SkillTree_Manager : MonoBehaviour
     {
         if (!selectingSkill || IsIntroPlaying) return;
 
+        skillViewScroll.verticalNormalizedPosition = 1f;
+
         SkillHighlight.transform.position = skill.transform.position;
         SkillHighlight.SetActive(true);
 
         skill.SetMutuallyExclusive();
 
-        SkillViewPanelImg.color = skill.skillType switch
+        SkillViewPanelImg.color = skillViewScrollbarImg.color = skill.skillType switch
         {
             SkillType.SENSES => SensesSkillViewPanelColor,
             SkillType.TECHS => TechsSkillViewPanelColor,

@@ -568,10 +568,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Sentinel
   Icon: {fileID: 21300000, guid: 63b7c277af77fcc4a8a98b2095f3740b, type: 3}
-  mHealth: 100
+  mHealth: 130
   bAtk: 0
-  bDef: 0
-  bRes: 25
+  bDef: 10
+  bRes: 30
   defPen: 0
   defIgn: 0
   resPen: 0
@@ -585,7 +585,7 @@ MonoBehaviour:
   MIN_MAGICAL_DMG: 0.1
   health: 100
   atk: 0
-  def: 0
+  def: 10
   res: 25
   ASPD: 100
   moveSpeed: 120

@@ -209,11 +209,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8775152862550477468, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_Value
-      value: 100
+      value: 110
       objectReference: {fileID: 0}
     - target: {fileID: 8775152862550477468, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_MaxValue
-      value: 100
+      value: 110
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7523077825662678453, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
@@ -459,10 +459,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Gloompincer
   Icon: {fileID: 21300000, guid: 03f453c16c285f045b4ea1f2b45e4156, type: 3}
-  mHealth: 100
-  bAtk: 25
-  bDef: 40
-  bRes: 10
+  mHealth: 110
+  bAtk: 32
+  bDef: 45
+  bRes: 20
   defPen: 0
   defIgn: 0
   resPen: 0
@@ -474,10 +474,10 @@ MonoBehaviour:
   b_attackInterval: 1.6
   MIN_PHYSICAL_DMG: 0.05
   MIN_MAGICAL_DMG: 0.1
-  health: 100
-  atk: 25
-  def: 40
-  res: 10
+  health: 110
+  atk: 32
+  def: 45
+  res: 20
   ASPD: 100
   moveSpeed: 185
   attackRange: 70

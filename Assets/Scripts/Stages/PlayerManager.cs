@@ -63,7 +63,8 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private GameObject[] Disables;
 
     List<Image> CDs => new() { AttackCD, SkillCD, SpecialCD, SwapCD };
-    
+    enum CDSlot { ATTACK, SKILL, SPECIAL, SWAP }
+
     Coroutine AttackCooldownCoroutine, SkillCooldownCoroutine, SpecialCooldownCoroutine;
 
     private bool IsStageStarted = false;
@@ -204,10 +205,33 @@ public class PlayerManager : MonoBehaviour
             SwapCooldown *= 0.85f;
         }
 
-        if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.JUST_A_NICE_LOOKING_ROCK))
+        if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.AMULET))
         {
             MintBlessing = true;
         }
+    }
+
+    public enum SkillType { NONE, SPECIAL, ULTIMATE }
+    public SkillType RangedSealSkill = SkillType.NONE, MeleeSealSkill = SkillType.NONE;
+
+    public SkillType GetVowSkill(PlayerBase player)
+    {
+        var playerType = player.GetPlayerType();
+        var sealedSkill = playerType == PlayerType.MELEE ? MeleeSealSkill : RangedSealSkill;
+        if (sealedSkill == SkillType.NONE) return SkillType.NONE;
+
+        return sealedSkill == SkillType.SPECIAL ? SkillType.ULTIMATE : SkillType.SPECIAL;
+    }
+
+    public void SetSealSkill(PlayerBase player, SkillType skillType)
+    {
+        var playerType = player.GetPlayerType();
+
+        if (playerType == PlayerType.MELEE) MeleeSealSkill = skillType;
+        else RangedSealSkill = skillType;
+
+        ResetAllCooldown();
+        AssignPlayerSkillSprites(player);
     }
 
     Coroutine SwapCoroutine;
@@ -222,8 +246,6 @@ public class PlayerManager : MonoBehaviour
                 SwapOverflowTimer = swapCooldownTimer = 0f;
             }
         }
-
-        ResetAllCooldown();
 
         PlayerType swapToPlayertype;
         if (IsStageStarted)
@@ -280,6 +302,8 @@ public class PlayerManager : MonoBehaviour
         AttackSprite.sprite = AttackCD.sprite = player.AttackSprite;
         SkillSprite.sprite = SkillCD.sprite = player.SkillSprite;
         SpecialSprite.sprite = SpecialCD.sprite = player.SpecialSprite;
+
+        ResetAllCooldown();
     }
 
     public void Register(PlayerBase player)
@@ -320,6 +344,8 @@ public class PlayerManager : MonoBehaviour
         Destroy(player.gameObject);
         player = newPlayer; 
         virtualCamera.Follow = player.transform;
+
+        ResetAllCooldown();
     }
 
     public IEnumerator AttackCooldown(float duration, float init = 0)
@@ -393,16 +419,43 @@ public class PlayerManager : MonoBehaviour
         if (isCooldownForSwap) SwapCoroutine = null; 
     }
 
+    bool IsSkillSealed(SkillType skillType)
+    {
+        if (!player) return false;
+
+        PlayerType playerType = player.GetPlayerType();
+        return (playerType == PlayerType.MELEE && 
+                ((skillType == SkillType.SPECIAL && MeleeSealSkill == SkillType.SPECIAL) || 
+                 (skillType == SkillType.ULTIMATE && MeleeSealSkill == SkillType.ULTIMATE)))
+            ||
+               (playerType == PlayerType.RANGED &&
+                ((skillType == SkillType.SPECIAL && RangedSealSkill == SkillType.SPECIAL) ||
+                 (skillType == SkillType.ULTIMATE && RangedSealSkill == SkillType.ULTIMATE)));
+    }
+
     public void ResetAllCooldown()
     {
         if (AttackCooldownCoroutine != null) StopCoroutine(AttackCooldownCoroutine);
         if (SkillCooldownCoroutine != null) StopCoroutine(SkillCooldownCoroutine);
         if (SpecialCooldownCoroutine != null) StopCoroutine(SpecialCooldownCoroutine);
+
+        short cnt = 0;
         CDs.ForEach(cd =>
         {
-            cd.fillAmount = 0;
+            float fillAmount = 0;
+            string text = "";
+
+            if (cnt == (short)CDSlot.SKILL && IsSkillSealed(SkillType.ULTIMATE)
+             || (cnt == (short)CDSlot.SPECIAL && IsSkillSealed(SkillType.SPECIAL)))
+            {
+                fillAmount = 1;
+                text = $"<size=48><b><color=red>X</color></b></size>";
+            }
+
+            cd.fillAmount = fillAmount;
             TMP_Text Count = cd.GetComponentInChildren<TMP_Text>();
-            Count.text = "";
+            Count.text = text;
+            cnt++;
         });
     }
 
@@ -627,7 +680,9 @@ public class PlayerManager : MonoBehaviour
                     Destroy(Marks[SourceEntity]);
                     Marks.Remove(SourceEntity);
                 }
-                Instantiate(FreezeRing, SourceEntity.transform.position, Quaternion.identity);
+
+                GameObject o = Instantiate(FreezeRing, SourceEntity.transform.position, Quaternion.identity);
+                o.GetComponent<PlayerRangedFreezeObj>().TargetScale *= FreezeRange / 450f;
 
                 List<EntityBase> nearbyHits =
                     EntityBase.Base_SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), SourceEntity.transform.position, FreezeRange, true).ToList();
@@ -734,10 +789,10 @@ public class PlayerTooltipsInfo
     {
         get
         {
-            if (moveSpeed <= 60f) return "VERY SLOW";
-            if (moveSpeed <= 100f) return "SLOW";
-            if (moveSpeed <= 160f) return "NORMAL";
-            if (moveSpeed <= 240f) return "FAST";
+            if (moveSpeed <= 80f) return "VERY SLOW";
+            if (moveSpeed <= 130f) return "SLOW";
+            if (moveSpeed <= 190f) return "NORMAL";
+            if (moveSpeed <= 270f) return "FAST";
             return "VERY FAST";
         }
     }

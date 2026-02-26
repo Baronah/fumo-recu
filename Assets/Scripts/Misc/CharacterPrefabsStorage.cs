@@ -27,9 +27,14 @@ public class CharacterPrefabsStorage : ScriptableObject
 
         PlayerPrefs.SetString("InventionsUsed", string.Join(" ", skillNames));
 		PlayerPrefs.Save();
-		startingPlayer = PlayerType.MELEE;
-		Skills.Clear();
+		ClearPrebattleData();
 	}
+
+	public static void ClearPrebattleData()
+	{
+        startingPlayer = PlayerType.MELEE;
+        Skills.Clear();
+    }
 
     public static Dictionary<int, GameObject> PlayerPrefabs = new();
 	public static Dictionary<int, GameObject> EnemyPrefabs = new();

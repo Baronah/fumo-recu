@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PlayerRangedFreezeObj : MonoBehaviour
 {
-    [SerializeField] Vector3 TargetScale = new Vector3(300f, 300f);
+    [SerializeField] public Vector3 TargetScale = new Vector3(300f, 300f);
 
     private void Start()
     {

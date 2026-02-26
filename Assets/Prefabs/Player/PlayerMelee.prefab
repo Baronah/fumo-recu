@@ -5831,6 +5831,8 @@ MonoBehaviour:
   weight: 0
   damageReduction: 0
   damageAmplify: 0
+  IsShiftImmune: 0
+  BoundTimer: 0
   IsFreezeImmune: 0
   IsStunImmune: 0
   IsPhysicalImmune: 0
@@ -5853,6 +5855,7 @@ MonoBehaviour:
   StunTimer: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 1
+  HasOnStartCoroutine: 1
   IsBeingLevitated: 0
   LevitationEffect: {fileID: 0}
   reviveDuration: 5
@@ -5873,18 +5876,26 @@ MonoBehaviour:
   HH_Fill_Material: {fileID: 2100000, guid: 25baa0b986f248947843c72757292d02, type: 2}
   HH_Effect_fill: {fileID: 4047708612106510638}
   RockEffect: {fileID: 5523869800612596793, guid: 652a37322c30aae499a7cd8b40f7c35d, type: 3}
+  VowEffect: {fileID: 527307714247096227, guid: d8aafdc348fa5d34ebc17a73b75453e6, type: 3}
   WindanthemBar: {fileID: 4355685324907358026}
   WindanthemMaxEffect: {fileID: 823421663847655479}
   Skills: 
   WindAnthemAspdBuffAmount: 12
   WindAnthemAspdBuffDuration: 15
   WindAnthemAspdBuffCap: 72
+  RockPickEffect: {fileID: 2065466168563246693, guid: e5f5c8d983ad1e441a274419c9f3738f, type: 3}
   heavyHitterMaxTimer: 10
   IllusionPrefab: {fileID: 7614525393990378507, guid: c6fa58abea2ebf043a4612afde7194bd, type: 3}
   AfterimagePrefabs: {fileID: 8715830305643004679, guid: 25e5cb859428c344dbe7ba0856015cef, type: 3}
   DashSpeed: 1700
   DashDuration: 0.08
   DashCooldown: 6
+  Up_DashDamageScale: 1
+  Up_DashDeflectHealPercentage: 0.2
+  Up_DashAfterImagePersistTime: 3
+  BL_AtkScale: 2.5
+  BL_AtkBuff: 100
+  BL_BuffDur: 5
   SkillEffect: {fileID: 1110703362071332137}
   SkillEffect_2: {fileID: 4218488995937585401}
   AftershockEffect: {fileID: 7915140861198282874, guid: ed16ab40d3c00f0438da5bf3fa90034c, type: 3}
@@ -5892,7 +5903,7 @@ MonoBehaviour:
   BlackflashEffect: {fileID: 6582330483075894888}
   SwirlEffect: {fileID: 7141990798670083619, guid: 1a5d0cc29c526614e9f3363663886317, type: 3}
   CounterEffect: {fileID: 5414369864337981152, guid: ff3e5737c2923044f8045e43352fd9b9, type: 3}
-  SkillCooldown: 27
+  UtlCooldown: 30
   SkillDuration: 7
   BurstHeal_HpPercentage: 0.3
   HealPerSecond_HpPercentage: 0.05
@@ -5904,7 +5915,12 @@ MonoBehaviour:
   PullRadius: 400
   DoTRadius: 220
   AoERadius: 300
+  RimDoTAtkScale: 0.34
+  RimDefShredValue: 15
+  PullDebuffValue: 33
   AfterShockDamageConversionRatio: 0.75
+  AfterShockExplodeSlowTime: 1
+  TransferBonusDuration: 2
   AftershockDmgCounter: {fileID: 7148168932227406490}
   Ambient: {fileID: -5044359066298894490}
   Vortex: {fileID: -3648005880966443597}

@@ -5,17 +5,18 @@ using UnityEngine.UI;
 
 public class PlayerMeleeAfterimage : MonoBehaviour
 {
-    [SerializeField] private float PersistTime = 3.0f;
+    private float PersistTime = 3.0f;
     Slider DurationSlider;
 
-    void Start()
+    public void SetPersist(float time)
     {
-        DurationSlider = GetComponentInChildren<Slider>();
+        PersistTime = time;
         StartCoroutine(Persist());
     }
 
     IEnumerator Persist()
     {
+        DurationSlider = GetComponentInChildren<Slider>();
         DurationSlider.value = DurationSlider.maxValue = PersistTime;
         float c = PersistTime;
         while (c > 0)

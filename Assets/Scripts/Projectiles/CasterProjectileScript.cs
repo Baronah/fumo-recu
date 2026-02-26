@@ -9,22 +9,25 @@ public class CasterProjectileScript : ProjectileScript
 
     private List<EnvironmentType> contactedEnvironmentType = new();
 
-    public override void ShootTowards(Vector3 targetPosition, ProjectileType projectileType, float ProjectileLifespan, params Type[] enemy)
+    public override void ShootTowards(Vector3 targetPosition, ProjectileType projectileType, float ProjectileLifespan, bool useAbsoluteDirection = false, params Type[] enemy)
     {
         PlayerRanged player = ProjectileFirer.GetComponent<PlayerRanged>();
         fieldExpertEnabled = player && player.Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_FIELD_EXPERT);
-        base.ShootTowards(targetPosition, projectileType, ProjectileLifespan, enemy);
+        base.ShootTowards(targetPosition, projectileType, ProjectileLifespan, useAbsoluteDirection, enemy);
     }
 
-    public override void ShootTowards(Vector3 targetPosition, EntityBase enemy, ProjectileType projectileType, float ProjectileLifespan)
+    public override void ShootTowards(Vector3 targetPosition, EntityBase enemy, ProjectileType projectileType, float ProjectileLifespan, bool useAbsoluteDirection = false)
     {
         PlayerRanged player = ProjectileFirer.GetComponent<PlayerRanged>();
         fieldExpertEnabled = player && player.Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_FIELD_EXPERT);
-        base.ShootTowards(targetPosition, enemy, projectileType, ProjectileLifespan);
+        base.ShootTowards(targetPosition, enemy, projectileType, ProjectileLifespan, useAbsoluteDirection);
     }
 
+    short bounceCount = 0;
     public override void OnHitEvent(EntityBase target)
     {
+        if (!target || target == excludedTarget) return;
+
         if (ProjectileFirer)
         {
             bool ragingTerrain = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.TERRAIN);
@@ -65,7 +68,47 @@ public class CasterProjectileScript : ProjectileScript
             }
         }
 
-        base.OnHitEvent(target);
+        bool resetOnHit = false;
+        if (fieldExpertEnabled && bounceCount < 5)
+        {
+            resetOnHit = true;
+            Bounce(target);
+        }
+
+        if (doesDamage)
+        {
+            ProjectileFirer.DealDamage(target, DamageInstance.PhysicalDamage, DamageInstance.MagicalDamage, DamageInstance.TrueDamage, true, this);
+            if (!resetOnHit) allowingUpdate = false;
+        }
+
+        if (displayMsg != string.Empty) ProjectileFirer.DisplayDamage(displayMsg, msgDisplayOffset);
+
+        if (!resetOnHit)
+        {
+            gameObject.SetActive(false);
+            Destroy(this.gameObject, 0.5f);
+        }
+    }
+
+    void Bounce(EntityBase initTarget)
+    {
+        bounceCount++;
+
+        Collider2D col = initTarget.selfColliders[0];
+
+        Vector2 contact = col.ClosestPoint(rb2d.position);
+        Vector2 normal = (rb2d.position - contact).normalized;
+        if (normal.magnitude < 0.1f)
+        {
+            normal = -rb2d.velocity.normalized;
+        }
+
+        Vector2 reflected = Vector2.Reflect(rb2d.velocity, normal).normalized;
+
+        excludedTarget = initTarget;
+        Acceleration = 0;
+
+        ShootTowards(reflected, ProjectileType.CATCH_FIRST_TARGET_OF_TYPE, Mathf.Max(Lifespan, 5f), true, initTarget.GetType());
     }
 
     public override void HandleHit(GameObject other)

@@ -6,6 +6,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using static PlayerManager;
 
 public class PlayerRanged : PlayerBase
 {
@@ -17,6 +18,7 @@ public class PlayerRanged : PlayerBase
     [SerializeField] private float SkillDuration = 7f;
     [SerializeField] private float Skill_DamageMulitplier = 0.25f;
     [SerializeField] private float Skill_AtkInterval = 0.25f;
+    [SerializeField] private float Skill_ProjLifeSpan = 1.8f;
     [SerializeField] private GameObject SkillBarObj;
     private Slider SkillBar;
 
@@ -99,6 +101,7 @@ public class PlayerRanged : PlayerBase
         if (freezeMaintRing) Destroy(freezeMaintRing);
     }
 
+    [SerializeField] float PhantomAtkInherit = 0.5f;
     void SpawnIllusion()
     {
         if (!Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_SHADOW) || !IsSkillActive) return;
@@ -108,7 +111,7 @@ public class PlayerRanged : PlayerBase
         PlayerCasterIllusion playerCasterIllusion = o.GetComponent<PlayerCasterIllusion>();
         playerCasterIllusion.InitializeComponents();
         playerCasterIllusion.SetInherit(
-            ATK: (short)(atk * 0.5f),
+            ATK: (short)(atk * PhantomAtkInherit),
             maxDuration: SkillDuration,
             duration: skillCurrentDuration,
             Skill_DamageMulitplier,
@@ -143,11 +146,8 @@ public class PlayerRanged : PlayerBase
 
         if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_BLOOM))
         {
-            FreezeDurationMin += 1f;
+            FreezeDurationMin += 0.5f;
         }
-
-        if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_SOUTH))
-            FreezeDurationMin = Mathf.Max(FreezeDurationMin, 2f);
 
         if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_MORE))
             Skill_DamageMulitplier *= 0.75f;
@@ -174,20 +174,76 @@ public class PlayerRanged : PlayerBase
         }
         else if (Input.GetKeyDown(InputManager.Instance.SkillKey))
         {
+            if (canVow && playerManager.RangedSealSkill == PlayerManager.SkillType.NONE)
+            {
+                MakeVow(PlayerManager.SkillType.ULTIMATE);
+            }
+
             if (SkillCoroutine == null) UseSkill();
             else CancelSkill();
         }
         else if (Input.GetKeyDown(InputManager.Instance.SpecialKey))
         {
+            if (canVow && playerManager.RangedSealSkill == PlayerManager.SkillType.NONE)
+            {
+                MakeVow(PlayerManager.SkillType.SPECIAL);
+            }
             UseSpecial();
         }
         else 
             Move();
     }
 
+    protected override void GetVow()
+    {
+        var skill = playerManager.GetVowSkill(this);
+        if (skill == SkillType.NONE) return;
+
+        if (skill == SkillType.SPECIAL)
+        {
+            FreezeCooldown *= 0.8f;
+            FreezeDurationMax *= 1.4f;
+            FreezeDurationMin += 0.5f;
+            FreezeRange += 150f;
+            MinDistanceForFreezeDuration += 75f;
+
+            ApplyEffect(Effect.AffectedStat.ATK, "VOW_ATK_BUFF", 10f, 9999f, true, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.ASPD, "VOW_ASPD_BUFF", 5f, 9999f, false, EffectPersistType.PERSIST, false);
+
+            FreezeChargeCDRefund += 0.05f;
+            FreezeConductDebuff += 25f;
+            FreezeHoldMax += 1f;
+        }
+        else
+        {
+            SkillCooldown *= 0.67f;
+            SkillDuration += 1;
+            Skill_AtkInterval *= 0.8f;
+            Skill_DamageMulitplier *= 1.2f;
+            Skill_ProjLifeSpan += 0.5f;
+
+            ApplyEffect(Effect.AffectedStat.MSPD, "VOW_MSPD_BUFF", 10f, 9999f, true, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.RES, "VOW_RES_BUFF", 10f, 9999f, false, EffectPersistType.PERSIST, false);
+
+            SP_SkillMaxRefund = 1f;
+            SP_MinWinForRefundMax += 0.1f;
+
+            MaxRefund = 0.9f;
+            MinWindowForMaxRefund += 0.5f;
+
+            MaxExtraFlowers++;
+            FlowerMaxDuration += 1f;
+
+            lockInDamageFalloff -= 0.003f;
+            lockInDamageMulMin += 0.1f;
+
+            PhantomAtkInherit += 0.2f;
+        }
+    }
+
     public override void UseSkill()
     {
-        if (!CanUseSkill || IsFreezeActive) return;
+        if (!CanUseSkill || IsFreezeActive || playerManager.RangedSealSkill == PlayerManager.SkillType.ULTIMATE) return;
 
         base.UseSkill();
         SkillCoroutine = StartCoroutine(CastSkill());
@@ -207,29 +263,66 @@ public class PlayerRanged : PlayerBase
         IsSkillActive = false;
     }
 
+    [SerializeField] float 
+                            SP_SkillMaxRefund = 0.9f, 
+                            SP_MinWinForRefundMax = 0.25f,
+                            MaxRefund = 0.8f, 
+                            MinWindowForMaxRefund = 0.5f;
     void RefundSkill()
     {
-        float refundPercentage,
-              spMaxRefund = 0.85f, minWinForSpMax = 0.25f, 
-              maxRefund = 0.8f, minWindowForMaxRefund = 0.5f;
+        float refundPercentage;
         
         float currentDuration = skillCurrentDuration;
-        if (currentDuration < minWinForSpMax) refundPercentage = spMaxRefund;
-        else if (currentDuration <= minWindowForMaxRefund) refundPercentage = maxRefund;
+        if (currentDuration < SP_MinWinForRefundMax) refundPercentage = SP_SkillMaxRefund;
+        else if (currentDuration <= MinWindowForMaxRefund) refundPercentage = MaxRefund;
         else
         {
-            refundPercentage = Mathf.Lerp(maxRefund, 0f, currentDuration * 1.0f / SkillDuration);
+            refundPercentage = Mathf.Lerp(MaxRefund, 0f, currentDuration * 1.0f / SkillDuration);
         }
 
         float refundTime = SkillCooldown * refundPercentage;
-        skillCooldownTimer += refundTime;
+        ReduceUltimateCooldown(refundTime);
+    }
 
+    protected override void ReduceSpecialCooldown(float amount, CooldownReductionType reductionType = CooldownReductionType.FLAT)
+    {
+        if (freezeCooldownTimer >= FreezeCooldown) return;
+
+        float reductionAmount = reductionType switch
+        {
+            CooldownReductionType.FLAT => amount,
+            CooldownReductionType.PERCENTAGE_FULL => FreezeCooldown * amount,
+            CooldownReductionType.PERCENTAGE_CURRENT => (FreezeCooldown - freezeCooldownTimer) * amount,
+            _ => amount,
+        };
+
+        freezeCooldownTimer += reductionAmount;
+
+        if (freezeCooldownTimer > FreezeCooldown) freezeCooldownTimer = FreezeCooldown;
+        StartCoroutine(playerManager.SpecialCooldown(FreezeCooldown, freezeCooldownTimer));
+    }
+
+    protected override void ReduceUltimateCooldown(float amount, CooldownReductionType reductionType = CooldownReductionType.FLAT)
+    {
+        if (skillCooldownTimer >= SkillCooldown) return;
+
+        float reductionAmount = reductionType switch
+        {
+            CooldownReductionType.FLAT => amount,
+            CooldownReductionType.PERCENTAGE_FULL => SkillCooldown * amount,
+            CooldownReductionType.PERCENTAGE_CURRENT => (SkillCooldown - skillCooldownTimer) * amount,
+            _ => amount,
+        };
+
+        skillCooldownTimer += reductionAmount;
+
+        if (skillCooldownTimer > SkillCooldown) skillCooldownTimer = SkillCooldown;
         StartCoroutine(playerManager.SkillCooldown(SkillCooldown, skillCooldownTimer));
     }
 
     public override void UseSpecial()
     {
-        if (!CanUseFreeze) return; 
+        if (!CanUseFreeze || playerManager.RangedSealSkill == PlayerManager.SkillType.SPECIAL) return; 
         if (IsSkillActive) CancelSkill();
 
         base.UseSpecial();
@@ -326,6 +419,9 @@ public class PlayerRanged : PlayerBase
 
     bool IsFreezeActive = false;
     GameObject freezeMaintRing = null;
+    [SerializeField] float FreezeChargeCDRefund = 0.15f, 
+                           FreezeConductDebuff = 50f,
+                           FreezeHoldMax = 6f;
     public IEnumerator CastFreeze()
     {
         if (!IsAlive() || !CanUseFreeze || IsFrozen || IsStunned) yield break;
@@ -335,13 +431,18 @@ public class PlayerRanged : PlayerBase
 
         StartCoroutine(StartMovementLockout(FreezeCastDuration));
         StartCoroutine(StartAttackLockout(FreezeCastDuration));
-        
+
+        float cooldown = Debut ? 0 : FreezeCooldown;
+        StartCoroutine(FreezeLockout(cooldown));
+
         animator.SetBool("attack", false);
         animator.SetTrigger("skill");
 
         if (sfxs[1]) sfxs[1].Play();
 
-        Instantiate(FreezeRing, SkillPosition.position, Quaternion.identity);
+        GameObject o = Instantiate(FreezeRing, SkillPosition.position, Quaternion.identity);
+        o.GetComponent<PlayerRangedFreezeObj>().TargetScale *= GetFreezeRingScale();
+
         yield return new WaitForSeconds(FreezeCastDuration - Time.fixedDeltaTime);
 
         Dictionary<EntityBase, float> InitialHitDictionary = new();
@@ -360,8 +461,9 @@ public class PlayerRanged : PlayerBase
 
             if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_SUPERCONDUCT))
             {
-                enemy.ApplyEffect(Effect.AffectedStat.DEF, "FREEZE_SUPERCONDUCT_DEF_DEBUFF", -50, freezeDuration, true);
-                enemy.ApplyEffect(Effect.AffectedStat.RES, "FREEZE_SUPERCONDUCT_RES_DEBUFF", -50, freezeDuration, true);
+                float debuffDuration = freezeDuration + 2f;
+                enemy.ApplyEffect(Effect.AffectedStat.DEF, "FREEZE_SUPERCONDUCT_DEF_DEBUFF", -FreezeConductDebuff, debuffDuration, true);
+                enemy.ApplyEffect(Effect.AffectedStat.RES, "FREEZE_SUPERCONDUCT_RES_DEBUFF", -FreezeConductDebuff, debuffDuration, true);
             }
 
             if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_NORTH))
@@ -380,17 +482,14 @@ public class PlayerRanged : PlayerBase
             InitialHitDictionary.Add(e, freezeDuration);
         }
 
-        float cooldown = Debut ? 0 : FreezeCooldown;
         if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_CHARGE))
         {
-            for (int i = 1; i <= hitEnemies.Count; i++) cooldown *= 0.85f;
+            for (int i = 1; i <= hitEnemies.Count; i++) ReduceSpecialCooldown(FreezeChargeCDRefund, CooldownReductionType.PERCENTAGE_CURRENT);
         }
 
-        StartCoroutine(FreezeLockout(cooldown));
-        
         if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_HOLD))
         {
-            float bonusDuration = 0, maxBonus = 6f;
+            float bonusDuration = 0, maxBonus = FreezeHoldMax;
             freezeMaintRing = null;
             bool initiatedRing = false;
 
@@ -407,6 +506,8 @@ public class PlayerRanged : PlayerBase
                 if (!freezeMaintRing && !initiatedRing)
                 {
                     freezeMaintRing = Instantiate(FreezeMaintRing, SkillPosition.position + new Vector3(0, 15, 0), Quaternion.identity, SkillPosition);
+                    freezeMaintRing.transform.localScale *= GetFreezeRingScale();
+
                     initiatedRing = true;
                 }
 
@@ -434,6 +535,11 @@ public class PlayerRanged : PlayerBase
             playerManager.ChainFreeze(InitialHitDictionary, FreezeRange, FreezeDurationMin, FreezeDurationMax, MinDistanceForFreezeDuration);
     }
 
+    float GetFreezeRingScale()
+    {
+        return FreezeRange / 450f;
+    }
+
     public float GetSkillFiringInterval()
     {
         float ASPD_Dif = ASPD - 100;
@@ -441,6 +547,7 @@ public class PlayerRanged : PlayerBase
         return Skill_AtkInterval * ScaleFactor;
     }
 
+    [SerializeField] private float lockInDamageFalloff = 0.01f, lockInDamageMulMin = 0.2f;
     public IEnumerator CastSkill()
     {
         if (!IsAlive()) yield break;
@@ -477,7 +584,6 @@ public class PlayerRanged : PlayerBase
                 intervalCounter = 0;
                 if (sfxs[2]) sfxs[2].Play();
 
-                float lifeSpan = 1.5f;
                 float speed = ProjectileSpeed * 0.25f;
                 for (int i = 0; i < 360; i += 30)
                 {
@@ -501,7 +607,7 @@ public class PlayerRanged : PlayerBase
                             projectileType: ProjectileScript.ProjectileType.HOMING_TO_SPECIFIC_TARGET
                             );
 
-                        if (lockInTargetDamageMul > 0.2f) lockInTargetDamageMul -= 0.01f;
+                        if (lockInTargetDamageMul > lockInDamageMulMin) lockInTargetDamageMul -= lockInDamageFalloff;
                     }
                     else
                     {
@@ -513,7 +619,7 @@ public class PlayerRanged : PlayerBase
                             projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
                             travelSpeed: speed,
                             acceleration: speed,
-                            lifeSpan: lifeSpan,
+                            lifeSpan: Skill_ProjLifeSpan,
                             targetType: typeof(EnemyBase));
                     }
 
@@ -536,7 +642,7 @@ public class PlayerRanged : PlayerBase
                             projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
                             travelSpeed: speed,
                             acceleration: speed,
-                            lifeSpan: lifeSpan,
+                            lifeSpan: Skill_ProjLifeSpan,
                             targetType: typeof(EnemyBase));
                     }
                 }
@@ -561,7 +667,7 @@ public class PlayerRanged : PlayerBase
                         projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
                         travelSpeed: speed * 2,
                         acceleration: speed * 2,
-                        lifeSpan: lifeSpan * 0.6f,
+                        lifeSpan: Skill_ProjLifeSpan * 0.6f,
                         targetType: typeof(EnemyBase));
 
                     angle *= -1;
@@ -580,7 +686,7 @@ public class PlayerRanged : PlayerBase
                         projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
                         travelSpeed: speed * 2,
                         acceleration: speed * 2,
-                        lifeSpan: lifeSpan * 0.6f,
+                        lifeSpan: Skill_ProjLifeSpan * 0.6f,
                         targetType: typeof(EnemyBase));
 
                     angle += 180;
@@ -599,7 +705,7 @@ public class PlayerRanged : PlayerBase
                         projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
                         travelSpeed: speed * 2,
                         acceleration: speed * 2,
-                        lifeSpan: lifeSpan * 0.6f,
+                        lifeSpan: Skill_ProjLifeSpan * 0.6f,
                         targetType: typeof(EnemyBase));
 
                     angle *= -1;
@@ -618,7 +724,7 @@ public class PlayerRanged : PlayerBase
                         projectileType: ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
                         travelSpeed: speed * 2,
                         acceleration: speed * 2,
-                        lifeSpan: lifeSpan * 0.6f,
+                        lifeSpan: Skill_ProjLifeSpan * 0.6f,
                         targetType: typeof(EnemyBase));
 
                     yellowBulletAngle += 12;
@@ -639,13 +745,15 @@ public class PlayerRanged : PlayerBase
     }
 
     short flowerCount = 0;
+    [SerializeField] short MaxExtraFlowers = 3;
+    [SerializeField] float FlowerMaxDuration = 1.5f;
     public override void DealDamage(EntityBase target, int pDmg, int mDmg, int tDmg, bool allowWhenDisabled = false, ProjectileScript projectileScript = null)
     {
         base.DealDamage(target, pDmg, mDmg, tDmg, allowWhenDisabled);
         if (IsSkillActive 
             && Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_PHANTOM) 
             && !target.IsAlive()
-            && flowerCount <= 3)
+            && flowerCount < MaxExtraFlowers)
         {
             StartCoroutine(CreateExtraFlowers(target.transform.position, SkillDuration - skillCurrentDuration));
             flowerCount++;
@@ -658,7 +766,7 @@ public class PlayerRanged : PlayerBase
 
         float intervalCounter = Skill_AtkInterval;
         float count = 0;
-        duration = Mathf.Clamp(duration, 0.5f, 1.5f);
+        duration = Mathf.Clamp(duration, 0.5f, FlowerMaxDuration);
 
         GameObject E_SkillEffect = Instantiate(SkillEffect, position, Quaternion.identity);
         E_SkillEffect.GetComponent<SpriteRenderer>().color = Color.green;
@@ -676,7 +784,7 @@ public class PlayerRanged : PlayerBase
                 intervalCounter = 0;
                 if (sfxs[2]) sfxs[2].Play();
 
-                float lifeSpan = 1.5f;
+                float lifeSpan = Skill_ProjLifeSpan;
                 float speed = ProjectileSpeed * 0.25f;
                 for (int i = 0; i < 360; i += 30)
                 {
@@ -725,7 +833,7 @@ public class PlayerRanged : PlayerBase
         this.ResBoost = ResBoost;
         this.AtkBoost = AtkBoost;
         this.SpeedBoost = SpeedBoost;
-        StartCoroutine(ActivateJuggernaunt(duration + 2));
+        StartCoroutine(ActivateJuggernaunt(duration));
     }
 
     float juggernauntCurrentDuration = 0;

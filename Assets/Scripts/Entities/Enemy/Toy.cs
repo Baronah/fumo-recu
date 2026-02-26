@@ -12,8 +12,11 @@ public class Toy : EnemyBase
     public override void InitializeComponents()
     {
         base.InitializeComponents();
+        defaultInsignificance = IsInsignificant;
         if (!ViewOnlyMode) StartCoroutine(OnStartCoroutine());
     }
+
+    bool defaultInsignificance;
 
     IEnumerator OnStartCoroutine()
     {
@@ -43,7 +46,7 @@ public class Toy : EnemyBase
 
     public override void TakeDamage(DamageInstance damage, EntityBase source, ProjectileScript projectileInfo = null)
     {
-        if (!IsStarted) return;
+        if (!IsStarted || !IsActive) return;
         base.TakeDamage(damage, source, projectileInfo);
     }
 
@@ -91,6 +94,12 @@ public class Toy : EnemyBase
     public void OnShroudedZoneExit()
     {
         WakenUp = false;
+        IsInsignificant = true;
+        CanBeHitByProjectiles = false;
+        isInvisible = true;
+
+        healthBar.gameObject.SetActive(false);
+
         CancelAttack();
         StopMovement();
         animator.SetBool("sleep", true);
@@ -121,14 +130,22 @@ public class Toy : EnemyBase
         }
 
         WakenUp = true;
+        IsInsignificant = defaultInsignificance;
+        CanBeHitByProjectiles = true;
+        isInvisible = false;
+
+        healthBar.gameObject.SetActive(true);
     }
 
     public override void WriteStats()
     {
-        Description = "";
+        Description = "Automata built for the sake of art, amusement, and simulation have been described since antiquity, " +
+            "these kind of wind-up toys were very popular. It gets more lively the harder you wind it up, " +
+            "or when it thinks no one else is watching...";
         Skillset =
-            "• Unable to act.\n" +
-            "• Comes into life when inside shrouded areas.";
+            "• Normally does not act, can not be attacked and does not count toward battle progress.\n" +
+            "• Comes into life when inside shrouded areas, performs long-ranged magical attack that lauches several projectiles.\n" +
+            "• Will not chase the player if they are outside shrouded zones.";
         TooltipsDescription =
             "<color=yellow>Comes into life</color> while inside shrouded areas, performs long-ranged magical attacks.";
 

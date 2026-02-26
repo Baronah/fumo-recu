@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ScaleUpAndDisappear : MonoBehaviour
 {
-    [SerializeField] private Vector3 MaxScale = new Vector3(200f, 200f, 200f);
+    [SerializeField] public Vector3 MaxScale = new Vector3(200f, 200f, 200f);
     [SerializeField] private float Duration = 1f;
 
     // Start is called before the first frame update
