@@ -20,7 +20,7 @@ public class PlayerMelee : PlayerBase
     [SerializeField] private float BL_AtkScale = 2.5f, BL_AtkBuff = 100f, BL_BuffDur = 5f;
 
     [SerializeField] private GameObject SkillEffect, SkillEffect_2, AftershockEffect, AftershockEffect_2, BlackflashEffect, SwirlEffect, CounterEffect;
-    [SerializeField] private float UtlCooldown = 30f;
+    [SerializeField] private float UltCooldown = 30f;
     [SerializeField] private float SkillDuration = 7f;
     [SerializeField] private float BurstHeal_HpPercentage = 0.35f;
     [SerializeField] private float HealPerSecond_HpPercentage = 0.05f;
@@ -64,7 +64,7 @@ public class PlayerMelee : PlayerBase
         SkillEffectColor = SkillEffect.GetComponent<SpriteRenderer>().color;
 
         dashCooldownTimer = DashCooldown;
-        ultCooldownTimer = UtlCooldown;
+        ultCooldownTimer = UltCooldown;
 
         base.InitializeComponents();
     }
@@ -101,7 +101,12 @@ public class PlayerMelee : PlayerBase
         if (Skills.Contains(SkillTree_Manager.SkillName.WINGED_STEPS_C))
         {
             DashCooldown *= 0.85f;
-            UtlCooldown *= 0.85f;
+            UltCooldown *= 0.85f;
+        }
+
+        if (Skills.Contains(SkillTree_Manager.SkillName.HAIR_RIBBON) && CharacterPrefabsStorage.startingPlayer == PlayerManager.PlayerType.MELEE)
+        {
+            DashCooldown *= 0.9f;
         }
     }
 
@@ -130,7 +135,7 @@ public class PlayerMelee : PlayerBase
         }
         else if (Input.GetKeyDown(InputManager.Instance.SkillKey))
         {
-            if (canVow && playerManager.MeleeSealSkill == PlayerManager.SkillType.NONE)
+            if (Skills.Contains(SkillTree_Manager.SkillName.THREADS) && !playerManager.hasVowed)
             {
                 MakeVow(SkillType.ULTIMATE);
             }
@@ -139,7 +144,7 @@ public class PlayerMelee : PlayerBase
         }
         else if (Input.GetKeyDown(InputManager.Instance.SpecialKey))
         {
-            if (canVow && playerManager.MeleeSealSkill == PlayerManager.SkillType.NONE)
+            if (Skills.Contains(SkillTree_Manager.SkillName.THREADS) && !playerManager.hasVowed)
             {
                 MakeVow(SkillType.SPECIAL);
             }
@@ -159,24 +164,23 @@ public class PlayerMelee : PlayerBase
         
         if (skill == SkillType.SPECIAL)
         {
-            DashCooldown *= 0.6f;
+            DashCooldown *= 0.55f;
             DashDuration *= 1.5f;
-            DashSpeed *= 1.2f;
 
-            ApplyEffect(Effect.AffectedStat.ATK, "VOW_ATK_BUFF", 10f, 9999f, true, EffectPersistType.PERSIST, false);
-            ApplyEffect(Effect.AffectedStat.DEF, "VOW_DEF_BUFF", 5f, 9999f, false, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.ATK, "VOW_ATK_BUFF", 15f, 9999f, true, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.MSPD, "VOW_MSPD_BUFF", 20f, 9999f, true, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.DEF, "VOW_DEF_BUFF", 10f, 9999f, false, EffectPersistType.PERSIST, false);
 
             Up_DashDamageScale += 1f;
             Up_DashDeflectHealPercentage += 0.2f;
             Up_DashAfterImagePersistTime = DashCooldown - 0.1f;
 
-            BL_AtkScale += 0.5f;
             BL_AtkBuff += 50f;
             BL_BuffDur += 1f;
         }
         else
         {
-            UtlCooldown *= 0.7f;
+            UltCooldown *= 0.7f;
             SkillDuration += 2;
             BurstHeal_HpPercentage += 0.1f;
             HealPerSecond_HpPercentage += 0.02f;
@@ -184,8 +188,9 @@ public class PlayerMelee : PlayerBase
             ResBoost += 10;
             SpeedBoost += 0.15f;
 
-            ApplyEffect(Effect.AffectedStat.MSPD, "VOW_MSPD_BUFF", 10f, 9999f, true, EffectPersistType.PERSIST, false);
-            ApplyEffect(Effect.AffectedStat.ASPD, "VOW_ASPD_BUFF", 5f, 9999f, false, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.DEF, "VOW_DEF_BUFF", 10f, 9999f, true, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.RES, "VOW_RES_BUFF", 10f, 9999f, true, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.ASPD, "VOW_ASPD_BUFF", 15f, 9999f, false, EffectPersistType.PERSIST, false);
 
             PullRadius += 100f;
             DoTRadius += 100f;
@@ -240,8 +245,8 @@ public class PlayerMelee : PlayerBase
     {
         ultCooldownTimer = 0;
         CanUseSkill = false;
-        StartCoroutine(playerManager.SkillCooldown(UtlCooldown, ultCooldownTimer));
-        while (ultCooldownTimer < UtlCooldown)
+        StartCoroutine(playerManager.SkillCooldown(UltCooldown, ultCooldownTimer));
+        while (ultCooldownTimer < UltCooldown)
         {
             ultCooldownTimer += Time.deltaTime;
             yield return null;
@@ -251,20 +256,20 @@ public class PlayerMelee : PlayerBase
 
     protected override void ReduceUltimateCooldown(float amount, CooldownReductionType reductionType = CooldownReductionType.FLAT)
     {
-        if (ultCooldownTimer >= UtlCooldown) return;
+        if (ultCooldownTimer >= UltCooldown) return;
 
         float reductionAmount = reductionType switch
         { 
             CooldownReductionType.FLAT => amount,
-            CooldownReductionType.PERCENTAGE_FULL => UtlCooldown * amount,
-            CooldownReductionType.PERCENTAGE_CURRENT => (UtlCooldown - ultCooldownTimer) * amount,
+            CooldownReductionType.PERCENTAGE_FULL => UltCooldown * amount,
+            CooldownReductionType.PERCENTAGE_CURRENT => (UltCooldown - ultCooldownTimer) * amount,
             _ => amount,
         };
 
         ultCooldownTimer += reductionAmount;
 
-        if (ultCooldownTimer > UtlCooldown) ultCooldownTimer = UtlCooldown;
-        StartCoroutine(playerManager.SkillCooldown(UtlCooldown, ultCooldownTimer));
+        if (ultCooldownTimer > UltCooldown) ultCooldownTimer = UltCooldown;
+        StartCoroutine(playerManager.SkillCooldown(UltCooldown, ultCooldownTimer));
     }
 
     public override void UseSpecial()
@@ -739,7 +744,7 @@ public class PlayerMelee : PlayerBase
     protected override void MintRevive()
     {
         dashCooldownTimer = DashCooldown;
-        ultCooldownTimer = UtlCooldown;
+        ultCooldownTimer = UltCooldown;
         base.MintRevive();
     }
 
@@ -867,7 +872,7 @@ public class PlayerMelee : PlayerBase
                 $"regenerate {HealPerSecond_HpPercentage * 100}% max HP every second. ";
         }
 
-        info.SkillText += $"{UtlCooldown}s cooldown.";
+        info.SkillText += $"{UltCooldown}s cooldown.";
 
         return info;
     }

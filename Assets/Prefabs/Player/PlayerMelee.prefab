@@ -5883,6 +5883,7 @@ MonoBehaviour:
   WindAnthemAspdBuffAmount: 12
   WindAnthemAspdBuffDuration: 15
   WindAnthemAspdBuffCap: 72
+  AllowVow: {fileID: 8793346564079435933}
   RockPickEffect: {fileID: 2065466168563246693, guid: e5f5c8d983ad1e441a274419c9f3738f, type: 3}
   heavyHitterMaxTimer: 10
   IllusionPrefab: {fileID: 7614525393990378507, guid: c6fa58abea2ebf043a4612afde7194bd, type: 3}
@@ -6506,5 +6507,10 @@ AudioSource:
 --- !u!1 &8729259124278131605 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 946352713013429585, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
+  m_PrefabInstance: {fileID: 8360528276066401988}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8793346564079435933 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1012938520392679001, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
   m_PrefabInstance: {fileID: 8360528276066401988}
   m_PrefabAsset: {fileID: 0}

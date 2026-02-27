@@ -69,7 +69,7 @@ public class SkillTree_Manager : MonoBehaviour
         JUGGERNAUNT_PULL,
         JUGGERNAUNT_AFTERSHOCK,
         VICTORY_ATK,
-        VICTORY_MSPD,
+        VICTORY_REFRESH,
         SPIRAL_MORE,
         SPIRAL_TRAVEL,
         SPIRAL_SHADOW,

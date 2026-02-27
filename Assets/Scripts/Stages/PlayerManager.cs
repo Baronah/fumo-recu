@@ -214,6 +214,8 @@ public class PlayerManager : MonoBehaviour
     public enum SkillType { NONE, SPECIAL, ULTIMATE }
     public SkillType RangedSealSkill = SkillType.NONE, MeleeSealSkill = SkillType.NONE;
 
+    public bool hasVowed => RangedSealSkill != SkillType.NONE || MeleeSealSkill != SkillType.NONE;
+
     public SkillType GetVowSkill(PlayerBase player)
     {
         var playerType = player.GetPlayerType();
@@ -341,7 +343,11 @@ public class PlayerManager : MonoBehaviour
         }
 
         yield return new WaitForEndOfFrame();
-        Destroy(player.gameObject);
+
+        var outPlayer = player.gameObject;
+        outPlayer.SetActive(false);
+        Destroy(outPlayer, 1f);
+
         player = newPlayer; 
         virtualCamera.Follow = player.transform;
 

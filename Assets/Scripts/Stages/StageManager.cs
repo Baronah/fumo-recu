@@ -252,26 +252,26 @@ public class StageManager : MonoBehaviour
     [SerializeField] GameObject timeDilation;
     IEnumerator TimeDilationCoroutine()
     {
-        Slider timeDilationSlider = timeDilation.GetComponentInChildren<Slider>();
-        Image fillRect = timeDilationSlider.fillRect.GetComponent<Image>();
-        float cycleSwap = 10f, cooldown = 2f;
-        float speedBuff = 60f, speedDebuff = 50f;
+        TimeDilationScript timeDilationScript = timeDilation.GetComponent<TimeDilationScript>();
+
+        Slider timeDilationSlider = timeDilationScript.Slider;
+        Image fillRect = timeDilationScript.Fill, 
+              icon = timeDilationScript.Icon;
 
         while (!IsStageEnd)
         {
-            timeDilationSlider.value = 0f;
-            timeDilationSlider.maxValue = cycleSwap;
-            fillRect.color = Color.cyan;
+            // slow phase
+            timeDilationScript.SetUI_TimeSlow();
 
             // debuff
             EntityManager.Enemies.ForEach(e =>
             {
                 if (!e || !e.IsAlive()) return;
-                e.ApplyEffect(Effect.AffectedStat.MSPD, "TIME_DILATION_MSPD_DEBUFF", -speedDebuff, cycleSwap, true);
-                e.ApplyEffect(Effect.AffectedStat.ASPD, "TIME_DILATION_ASPD_DEBUFF", -speedDebuff, cycleSwap, true);
+                e.ApplyEffect(Effect.AffectedStat.MSPD, "TIME_DILATION_MSPD_DEBUFF", -timeDilationScript.speedDebuff, timeDilationScript.cycleSwap, true);
+                e.ApplyEffect(Effect.AffectedStat.ASPD, "TIME_DILATION_ASPD_DEBUFF", -timeDilationScript.speedDebuff, timeDilationScript.cycleSwap, true);
             });
             float count = 0;
-            while (count < cycleSwap)
+            while (count < timeDilationScript.cycleSwap)
             {
                 count += Time.deltaTime;
                 timeDilationSlider.value = count;
@@ -279,46 +279,42 @@ public class StageManager : MonoBehaviour
                 yield return null;
             }
 
-            timeDilationSlider.maxValue = cooldown;
-            timeDilationSlider.value = timeDilationSlider.maxValue;
-            fillRect.color = new(0.87f, 0.87f, 0.87f);
-            count = 0f;
+            // recover phase
+            timeDilationScript.SetUI_Recover();
+            count = 0;
 
-            while (count < cooldown)
+            while (count < timeDilationScript.cooldown)
             {
                 count += Time.deltaTime;
-                timeDilationSlider.value = cooldown - count;
+                timeDilationSlider.value = timeDilationScript.cooldown - count;
                 yield return null;
             }
 
+            // fast phase
             // buff
-            timeDilationSlider.value = 0f;
-            timeDilationSlider.maxValue = cycleSwap;
-            fillRect.color = Color.yellow;
+            timeDilationScript.SetUI_TimeFast();
             EntityManager.Enemies.ForEach(e =>
             {
                 if (!e || !e.IsAlive()) return;
-                e.ApplyEffect(Effect.AffectedStat.MSPD, "TIME_DILATION_MSPD_BUFF", speedBuff, cycleSwap, true);
-                e.ApplyEffect(Effect.AffectedStat.ASPD, "TIME_DILATION_ASPD_BUFF", speedBuff, cycleSwap, true);
+                e.ApplyEffect(Effect.AffectedStat.MSPD, "TIME_DILATION_MSPD_BUFF", timeDilationScript.speedBuff, timeDilationScript.cycleSwap, true);
+                e.ApplyEffect(Effect.AffectedStat.ASPD, "TIME_DILATION_ASPD_BUFF", timeDilationScript.speedBuff, timeDilationScript.cycleSwap, true);
             });
 
             count = 0f;
-            while (count < cycleSwap)
+            while (count < timeDilationScript.cycleSwap)
             {
                 count += Time.deltaTime;
                 timeDilationSlider.value = count;
                 yield return null;
             }
 
-            timeDilationSlider.maxValue = cooldown;
-            timeDilationSlider.value = timeDilationSlider.maxValue;
-            fillRect.color = new(0.87f, 0.87f, 0.87f);
             count = 0f;
+            timeDilationScript.SetUI_Recover();
 
-            while (count < cooldown)
+            while (count < timeDilationScript.cooldown)
             {
                 count += Time.deltaTime;
-                timeDilationSlider.value = cooldown - count;
+                timeDilationSlider.value = timeDilationScript.cooldown - count;
                 yield return null;
             }
         }
@@ -363,8 +359,8 @@ public class StageManager : MonoBehaviour
                     }
                     else if (enemy.attackPattern == EntityBase.AttackPattern.RANGED)
                     {
+                        enemy.ASPD += enemy.b_attackRange * 0.15f;
                         enemy.b_attackRange = enemy.detectionRange = 15000f;
-                        enemy.ASPD += 50;
                     }
                     break;
                 case SkillName.HIBERNATE:
@@ -410,8 +406,8 @@ public class StageManager : MonoBehaviour
                     }
                     else if (player.attackPattern == EntityBase.AttackPattern.RANGED)
                     {
+                        player.ASPD += player.b_attackRange * 0.15f;
                         player.b_attackRange = 15000f;
-                        player.ASPD += 50;
                     }
                     break;
                 case SkillName.HEAT_DEATH:

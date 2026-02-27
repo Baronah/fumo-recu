@@ -43,6 +43,8 @@ public class PlayerBase : EntityBase
         return playerManager.PlayerStartType;
     }
 
+    public override System.Type GetGenericType() => typeof(PlayerBase);
+
     private void Update()
     {
         GetControlInputs();
@@ -72,6 +74,7 @@ public class PlayerBase : EntityBase
         IsComponentsInitialized = true;
     }
 
+    [SerializeField] GameObject AllowVow;
     public override void FixedUpdate()
     {
         base.FixedUpdate();
@@ -88,6 +91,8 @@ public class PlayerBase : EntityBase
         }
 
         WindanthemMaxEffect.SetActive(IsAlive() && IsWindAnthemMaxed);
+
+        AllowVow.SetActive(canVow && !playerManager.hasVowed);
     }
 
     float w_countUp = 0;
@@ -143,13 +148,16 @@ public class PlayerBase : EntityBase
         GetVow();
         if (Skills.Contains(SkillTree_Manager.SkillName.SWAP_START_ATK))
         {
-            ApplyEffect(Effect.AffectedStat.ATK, "SWAP_START_ATKBUFF", 100f, 5f, true, EffectPersistType.PERSIST);
+            ApplyEffect(Effect.AffectedStat.ATK, "SWAP_START_ATKBUFF", 150f, 5f, true, EffectPersistType.PERSIST);
         }
     }
 
     protected bool canVow = false;
     private List<SkillTree_Manager.SkillName> RockBonusSkill = new()
     {
+        SkillTree_Manager.SkillName.WINGED_STEPS_A,
+        SkillTree_Manager.SkillName.WINGED_STEPS_B,
+        SkillTree_Manager.SkillName.WINGED_STEPS_C,
         SkillTree_Manager.SkillName.SWAP_START_ATK,
         SkillTree_Manager.SkillName.MAJOR_DEBUT,
         SkillTree_Manager.SkillName.BREAK_THE_ICE,
@@ -162,6 +170,8 @@ public class PlayerBase : EntityBase
         SkillTree_Manager.SkillName.EQUIPMENT_BLADE,
         SkillTree_Manager.SkillName.ATTENTION_BOOK,
         SkillTree_Manager.SkillName.ATTENTION_DEVICE,
+        SkillTree_Manager.SkillName.VICTORY_ATK,
+        SkillTree_Manager.SkillName.VICTORY_REFRESH,
     };
 
     [SerializeField] private GameObject RockPickEffect;
@@ -173,12 +183,10 @@ public class PlayerBase : EntityBase
         if (SelectedSkills.Contains(SkillTree_Manager.SkillName.A_NICE_LOOKING_ROCK))
         {
             RockBonusSkill.RemoveAll(s => SelectedSkills.Contains(s));
-            var random = new System.Random();
-            RockBonusSkill = RockBonusSkill.OrderBy(x => random.Next()).ToList();
 
             if (RockBonusSkill.Count > 0)
             {
-                SkillName bonusSkill = RockBonusSkill.First();
+                SkillName bonusSkill = RockBonusSkill[Random.Range(0, RockBonusSkill.Count)];
                 SelectedSkills.Add(bonusSkill);
 
                 GameObject o = Instantiate(RockPickEffect, transform.position + new Vector3(0, 100), Quaternion.identity, transform);
@@ -232,11 +240,11 @@ public class PlayerBase : EntityBase
 
                         if (playerType == PlayerType.MELEE)
                         {
-                            mHealth += (int)(mHealth * 0.2f);
+                            mHealth += (int)(mHealth * 0.15f);
                         }
                         else if (playerType == PlayerType.RANGED)
                         {
-                            b_moveSpeed += b_moveSpeed * 0.15f;
+                            b_moveSpeed += b_moveSpeed * 0.2f;
                         }
                     }
                     break;
@@ -282,7 +290,7 @@ public class PlayerBase : EntityBase
 
     protected void MakeVow(PlayerManager.SkillType skillType)
     {
-        if (!canVow || skillType == SkillType.NONE) return;
+        if (!Skills.Contains(SkillTree_Manager.SkillName.THREADS) || playerManager.hasVowed || skillType == SkillType.NONE) return;
 
         SkillType seal;
 
@@ -505,7 +513,7 @@ public class PlayerBase : EntityBase
                 ApplyEffect(Effect.AffectedStat.ATK, "VICTORY_ATK_BUFF", strength, duration, true, EffectPersistType.DECAY);
                 ApplyEffect(Effect.AffectedStat.MSPD, "VICTORY_MSPD_BUFF", strength, duration, true, EffectPersistType.DECAY);
             }
-            else if (Skills.Contains(SkillTree_Manager.SkillName.VICTORY_MSPD))
+            else if (Skills.Contains(SkillTree_Manager.SkillName.VICTORY_REFRESH))
                 ReduceSpecialCooldown(1f, CooldownReductionType.PERCENTAGE_FULL);
         }
     }

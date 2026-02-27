@@ -7,18 +7,18 @@ public class CasterProjectileScript : ProjectileScript
 {
     private bool fieldExpertEnabled = false;
 
-    private List<EnvironmentType> contactedEnvironmentType = new();
+    private readonly List<EnvironmentType> contactedEnvironmentType = new();
 
     public override void ShootTowards(Vector3 targetPosition, ProjectileType projectileType, float ProjectileLifespan, bool useAbsoluteDirection = false, params Type[] enemy)
     {
-        PlayerRanged player = ProjectileFirer.GetComponent<PlayerRanged>();
+        PlayerRanged player = ProjectileFirer ? ProjectileFirer.GetComponent<PlayerRanged>() : null;
         fieldExpertEnabled = player && player.Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_FIELD_EXPERT);
         base.ShootTowards(targetPosition, projectileType, ProjectileLifespan, useAbsoluteDirection, enemy);
     }
 
     public override void ShootTowards(Vector3 targetPosition, EntityBase enemy, ProjectileType projectileType, float ProjectileLifespan, bool useAbsoluteDirection = false)
     {
-        PlayerRanged player = ProjectileFirer.GetComponent<PlayerRanged>();
+        PlayerRanged player = ProjectileFirer ? ProjectileFirer.GetComponent<PlayerRanged>() : null;
         fieldExpertEnabled = player && player.Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_FIELD_EXPERT);
         base.ShootTowards(targetPosition, enemy, projectileType, ProjectileLifespan, useAbsoluteDirection);
     }
@@ -108,7 +108,7 @@ public class CasterProjectileScript : ProjectileScript
         excludedTarget = initTarget;
         Acceleration = 0;
 
-        ShootTowards(reflected, ProjectileType.CATCH_FIRST_TARGET_OF_TYPE, Mathf.Max(Lifespan, 5f), true, initTarget.GetType());
+        ShootTowards(reflected, ProjectileType.CATCH_FIRST_TARGET_OF_TYPE, Mathf.Max(Lifespan, 5f), true, initTarget.GetGenericType());
     }
 
     public override void HandleHit(GameObject other)

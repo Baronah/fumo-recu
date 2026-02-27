@@ -15,13 +15,6 @@ public class BloodboilKnight : EnemyBase
     public override void InitializeComponents()
     {
         base.InitializeComponents();
-
-        if (ViewOnlyMode) return;
-        short EnemyDeaths = EntityManager.GetEnemyDefeatedCount();
-        for (int i = 0; i < EnemyDeaths && stackCount < maxStackCount; i++)
-        {
-            OnEnemyDeath();
-        }
     }
 
     public override void FixedUpdate()

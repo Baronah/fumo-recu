@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ScaleUpAndDisappear : MonoBehaviour
 {
@@ -15,17 +16,34 @@ public class ScaleUpAndDisappear : MonoBehaviour
 
     IEnumerator c_ScaleUpAndDisappear()
     {
-        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>(); 
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        Image[] images = GetComponentsInChildren<Image>();
 
         Vector3 originalScale = transform.localScale;
         Color originalColor = spriteRenderer.color, 
             transparentColor = new(originalColor.r, originalColor.g, originalColor.b, 0);
+
+        Color[] originalImageColors = new Color[images.Length], transparentImageColors = new Color[images.Length];
+        for (int i = 0; i < images.Length; i++)
+        {
+            originalImageColors[i] = images[i].color;
+            transparentImageColors[i] = new Color(originalImageColors[i].r, originalImageColors[i].g, originalImageColors[i].b, 0);
+        }
+
         float elapsedTime = 0f;
         float duration = Duration;
         while (elapsedTime < duration)
         {
-            transform.localScale = Vector3.Lerp(originalScale, MaxScale, (elapsedTime / duration));
-            spriteRenderer.color = Color.Lerp(originalColor, transparentColor, (elapsedTime / duration));
+            float t = elapsedTime / duration;
+
+            transform.localScale = Vector3.Lerp(originalScale, MaxScale, t);
+            spriteRenderer.color = Color.Lerp(originalColor, transparentColor, t);
+
+            for (int i = 0; i < images.Length; i++)
+            {
+                images[i].color = Color.Lerp(originalImageColors[i], transparentImageColors[i], t);
+            }
+
             elapsedTime += Time.deltaTime;
             yield return null;
         }

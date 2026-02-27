@@ -8,6 +8,8 @@ using UnityEngine.Serialization;
 
 public class EnemyBase : EntityBase
 {
+    public override Type GetGenericType() => typeof(EnemyBase);
+
     public enum EnemyCode
     {
         HOUND,

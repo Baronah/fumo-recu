@@ -138,7 +138,7 @@ public class PlayerRanged : PlayerBase
     public override void GetSkillTreeEffects()
     {
         base.GetSkillTreeEffects();
-        if (Skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_RADIO))
+        if (Skills.Contains(SkillTree_Manager.SkillName.WINGED_STEPS_C))
         {
             FreezeCooldown *= 0.85f;
             SkillCooldown *= 0.85f;
@@ -151,6 +151,11 @@ public class PlayerRanged : PlayerBase
 
         if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_MORE))
             Skill_DamageMulitplier *= 0.75f;
+
+        if (Skills.Contains(SkillTree_Manager.SkillName.HAIR_RIBBON) && CharacterPrefabsStorage.startingPlayer == PlayerManager.PlayerType.RANGED)
+        {
+            SkillCooldown *= 0.9f;
+        }
     }
 
     public override void OnFieldEnter()
@@ -174,7 +179,7 @@ public class PlayerRanged : PlayerBase
         }
         else if (Input.GetKeyDown(InputManager.Instance.SkillKey))
         {
-            if (canVow && playerManager.RangedSealSkill == PlayerManager.SkillType.NONE)
+            if (Skills.Contains(SkillTree_Manager.SkillName.THREADS) && !playerManager.hasVowed)
             {
                 MakeVow(PlayerManager.SkillType.ULTIMATE);
             }
@@ -184,7 +189,7 @@ public class PlayerRanged : PlayerBase
         }
         else if (Input.GetKeyDown(InputManager.Instance.SpecialKey))
         {
-            if (canVow && playerManager.RangedSealSkill == PlayerManager.SkillType.NONE)
+            if (Skills.Contains(SkillTree_Manager.SkillName.THREADS) && !playerManager.hasVowed)
             {
                 MakeVow(PlayerManager.SkillType.SPECIAL);
             }
@@ -207,11 +212,12 @@ public class PlayerRanged : PlayerBase
             FreezeRange += 150f;
             MinDistanceForFreezeDuration += 75f;
 
-            ApplyEffect(Effect.AffectedStat.ATK, "VOW_ATK_BUFF", 10f, 9999f, true, EffectPersistType.PERSIST, false);
-            ApplyEffect(Effect.AffectedStat.ASPD, "VOW_ASPD_BUFF", 5f, 9999f, false, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.ATK, "VOW_ATK_BUFF", 20f, 9999f, true, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.ASPD, "VOW_ASPD_BUFF", 15f, 9999f, false, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.ARNG, "VOW_ARNG_BUFF", 50f, 9999f, false, EffectPersistType.PERSIST, false);
 
-            FreezeChargeCDRefund += 0.05f;
-            FreezeConductDebuff += 25f;
+            FreezeChargeCDRefund += 0.03f;
+            FreezeConductDebuff += 20f;
             FreezeHoldMax += 1f;
         }
         else
@@ -222,10 +228,11 @@ public class PlayerRanged : PlayerBase
             Skill_DamageMulitplier *= 1.2f;
             Skill_ProjLifeSpan += 0.5f;
 
-            ApplyEffect(Effect.AffectedStat.MSPD, "VOW_MSPD_BUFF", 10f, 9999f, true, EffectPersistType.PERSIST, false);
-            ApplyEffect(Effect.AffectedStat.RES, "VOW_RES_BUFF", 10f, 9999f, false, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.MSPD, "VOW_MSPD_BUFF", 20f, 9999f, true, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.RES, "VOW_RES_BUFF", 15f, 9999f, false, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.DEF, "VOW_DEF_BUFF", 10f, 9999f, false, EffectPersistType.PERSIST, false);
 
-            SP_SkillMaxRefund = 1f;
+            SP_SkillMaxRefund = 0.98f;
             SP_MinWinForRefundMax += 0.1f;
 
             MaxRefund = 0.9f;
@@ -421,7 +428,7 @@ public class PlayerRanged : PlayerBase
     GameObject freezeMaintRing = null;
     [SerializeField] float FreezeChargeCDRefund = 0.15f, 
                            FreezeConductDebuff = 50f,
-                           FreezeHoldMax = 6f;
+                           FreezeHoldMax = 5f;
     public IEnumerator CastFreeze()
     {
         if (!IsAlive() || !CanUseFreeze || IsFrozen || IsStunned) yield break;
@@ -819,15 +826,13 @@ public class PlayerRanged : PlayerBase
         }
     }
 
-    private float BurstHeal_HpPercentage = 0.35f;
-    private float HealPerSecond_HpPercentage = 0.05f;
-    private float DefBoost = 0.5f;
-    private float ResBoost = 10;
-    private float AtkBoost = 0.25f;
-    private float SpeedBoost = 0.35f;
+    private float HealPerSecond_HpPercentage;
+    private float DefBoost;
+    private float ResBoost;
+    private float AtkBoost;
+    private float SpeedBoost;
     public void SetJuggernauntInherit(float duration, float BurstHeal_HpPercentage, float HPS_Percentage, float DefBoost, float ResBoost, float AtkBoost, float SpeedBoost)
     {
-        this.BurstHeal_HpPercentage = BurstHeal_HpPercentage;
         this.HealPerSecond_HpPercentage = HPS_Percentage;
         this.DefBoost = DefBoost;
         this.ResBoost = ResBoost;
@@ -837,21 +842,16 @@ public class PlayerRanged : PlayerBase
     }
 
     float juggernauntCurrentDuration = 0;
-    private short atkAdd, defAdd, resAdd, speedAdd;
     protected IEnumerator ActivateJuggernaunt(float duration)
     {
         yield return new WaitUntil(() => IsComponentsInitialized);
         JuggEffect.SetActive(true);
         juggernauntCurrentDuration = 0;
 
-        atkAdd = (short)(bAtk * AtkBoost);
-        atk += atkAdd;
-        defAdd = (short)(bDef * DefBoost);
-        def += defAdd;
-        resAdd = (short)(ResBoost);
-        res += resAdd;
-        speedAdd = (short)(b_moveSpeed * SpeedBoost);
-        moveSpeed += speedAdd;
+        ApplyEffect(Effect.AffectedStat.ATK, "JUGGERNAUNT_SKILL_ATK_BUFF", AtkBoost * 100, 999f, true, EffectPersistType.PERSIST, false);
+        ApplyEffect(Effect.AffectedStat.DEF, "JUGGERNAUNT_SKILL_DEF_BUFF", DefBoost * 100, 999f, true, EffectPersistType.PERSIST, false);
+        ApplyEffect(Effect.AffectedStat.RES, "JUGGERNAUNT_SKILL_RES_BUFF", ResBoost, 999f, false, EffectPersistType.PERSIST, false);
+        ApplyEffect(Effect.AffectedStat.MSPD, "JUGGERNAUNT_SKILL_MSPD_BUFF", SpeedBoost * 100, 999f, true, EffectPersistType.PERSIST, false);
 
         float t = 1.0f, d = duration;
 
@@ -870,10 +870,10 @@ public class PlayerRanged : PlayerBase
         }
 
         Heal(mHealth * HealPerSecond_HpPercentage);
-        atk -= atkAdd;
-        def -= defAdd;
-        res -= resAdd;
-        moveSpeed -= speedAdd;
+        RemoveEffect("JUGGERNAUNT_SKILL_ATK_BUFF");
+        RemoveEffect("JUGGERNAUNT_SKILL_DEF_BUFF");
+        RemoveEffect("JUGGERNAUNT_SKILL_RES_BUFF");
+        RemoveEffect("JUGGERNAUNT_SKILL_MSPD_BUFF");
         JuggEffect.SetActive(false);
     }
 

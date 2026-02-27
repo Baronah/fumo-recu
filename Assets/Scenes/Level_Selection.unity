@@ -2065,7 +2065,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 820, y: -150}
+  m_AnchoredPosition: {x: 1050, y: 0}
   m_SizeDelta: {x: 95, y: 95}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &121560695
@@ -2083,14 +2083,14 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 0
   skillName: 60
-  skillNameText: Threads & knots
-  skillDescription: The first time your special or ultimate skill of a character
-    is cast, forms a vow with it. Once formed, that skill has <color=#ff9717>reduced
-    cool-down</color>, <color=#00ff00>enhanced effects</color> and grants you bonus
-    attributes, <color=#5b7ccf>but the remaining skill can no longer be used</color>.
-  favorText: Pick any color you like, and then let's both tie a little knot on our
-    finger, just like this... Pretty, isn't it? We just made a symbol of promise,
-    so don't forget it! Hehe...
+  skillNameText: Neatly tied knot
+  skillDescription: The first time you cast special or ultimate skill of a character,
+    forms a vow with it. Afterwards, that skill has <color=#ff9717>reduced cool-down</color>,
+    <color=#00ff00>enhanced effects</color> and grants you bonus attributes, <color=#5b7ccf>but
+    the remaining skill can no longer be used</color>.
+  favorText: '"Oh, I have many threads here. Pick any color you like, then, let''s
+    both tie them around our finger, just like this... Cute, isn''t it? We just made
+    a symbol of promise, so don''t forget it! Hehe..."'
   skillDescriptionInShort: Casting a special or ultimate skill for the first time
     forms a vow with it, enhancing its effect but prevents the other skill from being
     used.
@@ -2689,7 +2689,7 @@ MonoBehaviour:
   skillNameText: Arts Unit - Winged Steps
   skillDescription: <color=#ffd61f>ASPD +20</color>, landing an attack grants <color=#00ffbf>30%
     decaying MSPD</color> over 2 seconds.
-  favorText: Sometimes I like to imagine...
+  favorText: '''Sometimes I like to imagine...'''
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 0200000003000000
   Overlay: {fileID: 0}
@@ -3609,7 +3609,8 @@ MonoBehaviour:
   skillType: 0
   skillName: 26
   skillNameText: Victory Rewind - Excitement
-  skillDescription: After defeating an enemy, your special skill cool-down is resetted.
+  skillDescription: After defeating an enemy, your special skill cool-down is fully
+    refunded.
   favorText: ... that's a lot to watch in a sitting so she brought them here to gradually
     finish it all.
   skillDescriptionInShort: Refresh special skill after defeating an enemy.
@@ -6015,12 +6016,14 @@ MonoBehaviour:
   skillName: 50
   skillNameText: Hair Ribbon
   skillDescription: Your starting character gains <color=#ff4545>+30% ATK</color>.
-    If the character is melee, gains additional <color=green>+20% max HP</color>.
-    If the character is ranged, gains additional <color=#00ffbf>+15% MSPD</color>.
+    If the character is melee, <color=#ff9717>special's CD -10%</color> and gains
+    <color=green>+15% max HP</color>. If the character is ranged, <color=#ff9717>ultimate's
+    CD -10%</color> and gains <color=#00ffbf>+20% MSPD</color>.
   favorText: Just a regular pair of hair ribbons she made, nothing special about
     it, but if you insist...
   skillDescriptionInShort: Starting character gains increased ATK. If the character
-    is melee, gains additional HP, while ranged character gains additional MSPD.
+    is melee, reduces special's CD and gains additional HP. If the character is ranged,
+    reduces ultimate's CD and gains additional MSPD.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &306148696
@@ -10581,7 +10584,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 24
-  skillNameText: Juggernaut -  Aftershock
+  skillNameText: Juggernaut - Aftershock
   skillDescription: After 'Juggernaut' ends or upon swapping while 'Juggernaut' is
     active, <color=#b1b1b1>75% damage self has taken</color> during its duration
     will be dealt to all nearby enemies as <color=#ff4545>physical damage</color>
@@ -13396,7 +13399,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1070, y: 0}
+  m_AnchoredPosition: {x: 820, y: -150}
   m_SizeDelta: {x: 95, y: 95}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &713090670
@@ -13417,9 +13420,9 @@ MonoBehaviour:
   skillNameText: Amulet
   skillDescription: The first time HP reaches 0, immediately <color=green>restores
     52% max HP</color>, refreshes all special and skill's CDs and stores a swap charge.
-  favorText: Here, this thing is said to protect you from dangers, I tied a scachet
-    bag to it so it can have a plesant smell. Just wear it around your neck, there...
-    Stay safe out there, okay?
+  favorText: '"Here, this thing is said to protect you from dangers, I tied a scachet
+    bag to it so it can have a plesant smell too. Just wear it around your neck,
+    there... Stay safe out there, okay?"'
   skillDescriptionInShort: The first time HP reaches 0, revives with 52% max HP,
     refreshes all skills and swap CD.
   mutuallyExclusiveSkills: 
@@ -14142,7 +14145,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1070, y: -150}
+  m_AnchoredPosition: {x: 1050, y: -150}
   m_SizeDelta: {x: 95, y: 95}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &744608036
@@ -14161,8 +14164,9 @@ MonoBehaviour:
   skillType: 0
   skillName: 61
   skillNameText: A nice-looking piece of rock
-  skillDescription: Gains a 5.2% buff in HP, ATK and MSPD. Upon entering the field,
-    grants your character a random INVENTIO upgrade. Upgrades granted this way are
+  skillDescription: Gains a 5.2% buff in <color=green>HP</color>, <color=#ff4545>ATK</color>
+    and <color=#00ffbf>MSPD</color>. Upon entering the field, grants your character
+    <color=#ff00ff>a random INVENTIO upgrade</color>. Upgrades granted this way are
     not affected by mutual exclusives, but will not overlap with chosen ones.
   favorText: Even if it is an unassuming piece of ore that is covered in dirt, if
     she gives you a present, please accept it. It must be something she likes a lot
@@ -15736,7 +15740,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 41
-  skillNameText: Juggernaut -  Resonance
+  skillNameText: Juggernaut - Resonance
   skillDescription: Swapping for the first time during the duration of 'Juggernaut'
     <color=yellow>retains its effect</color>, and extends it by <color=yellow>2 seconds</color>.
   favorText: The wheel that weaves eternity and infinity, spins the bond between
@@ -21307,8 +21311,8 @@ MonoBehaviour:
   skillName: 3
   skillNameText: Arts Unit - Flows of Ideas
   skillDescription: Special and ultimate skill's cooldowns <color=#ff9717>-15%</color>.
-  favorText: An idea becomes loose, a sentence to be engraved. There's meaning to
-    it, but only partly...
+  favorText: '''An idea becomes loose, a sentence to be engraved. There''s meaning
+    to it, but only partly...'''
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 0100000002000000
   Overlay: {fileID: 0}
@@ -24711,8 +24715,9 @@ MonoBehaviour:
   skillType: 2
   skillName: 44
   skillNameText: '''Raging Terrains'''
-  skillDescription: Environmental effects have +100% effectiveness.\n\n<i>If any
-    'Geogolist' is selected, effect becomes +200% instead.</i>
+  skillDescription: Environmental effects have <color=yellow>+100% effectiveness</color>.\n\n<i>If
+    any <color=#ff00ff>'Geogolist'</color> upgrade is selected, effect becomes <color=yellow>+200%</color>
+    instead.</i>
   favorText: 
   skillDescriptionInShort: Environmental effects have +100% effectiveness.
   mutuallyExclusiveSkills: 
@@ -25765,8 +25770,8 @@ MonoBehaviour:
   - One 'Candle' is placed beforehand. 'Knight Territory Hibernators' need to stay
     inside shrouded zones for longer to fall asleep, and have increased ATK and MSPD
     upon waking up.
-  - '''Candle''''s illumination range is reduced. ''Sentinent Toys'' HP greatly increases,
-    and become immune to crowd-control effects.'
+  - '''Candle''''s illumination range is reduced. ''Sentinent Toys'' have greatly
+    increased DEF and RES.'
   CompleteCondition: 01000000010000000100000000000000010000000100000000000000010000000300000000000000010000000000000000000000
   Environments:
   - Environments: 
@@ -28480,7 +28485,7 @@ MonoBehaviour:
   skillDescription: During the duration of 'Evasion', enemies coming into contact
     with self takes physical damage equal to <color=#ff4545>100% ATK</color> and
     are <color=#2985FF>pushed</color> alongside with the dash.
-  favorText: At sufficient speed, the air pressure is large enough causes an impact.
+  favorText: At sufficient speed, the air pressure is large enough to cause an impact.
     And if you compress it to minimize the contact surface, just like a wind blade...
     scary, isn't it?
   skillDescriptionInShort: '''Evasion'' damages collided enemies and pushes them
@@ -31933,8 +31938,9 @@ MonoBehaviour:
   skillType: 2
   skillName: 59
   skillNameText: '''Ice Age'''
-  skillDescription: Enemies have +100% max HP. Upon spawning, they are frozen for
-    20 seconds, but have +100% DEF and +40 RES throughout the duration.
+  skillDescription: Enemies have <color=red>+100% max HP</color>. Upon spawning,
+    they are frozen for 20 seconds, but have +100% DEF and +40 RES throughout the
+    duration.
   favorText: 
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 
@@ -36611,8 +36617,8 @@ MonoBehaviour:
   skillNameText: Arts Unit - Wind Beneath Blade
   skillDescription: <color=#00ffbf>MSPD +5%</color>, gains <color=#ffd61f>+0.7 ASPD</color>
     for every <color=#00ffbf>1% bonus MSPD</color>.
-  favorText: With a knife-sharp heart, I shave off these long and thin, meaningless
-    days...
+  favorText: '''With a knife-sharp heart, I shave off these long and thin, meaningless
+    days...'''
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 0100000003000000
   Overlay: {fileID: 0}
@@ -37986,9 +37992,11 @@ MonoBehaviour:
   skillType: 2
   skillName: 43
   skillNameText: '''Famine'''
-  skillDescription: All units have their ATK and ASPD increased by 50% and 30, respectively,
-    and restores HP equal to 30% damage dealt, but have -40% max HP.\n\n<i>If 'Equipment
-    - Provision' is selected, you become unaffected.</i>
+  skillDescription: All units have their <color=#ff4545>ATK</color> and <color=#ffd61f>ASPD</color>
+    increased by <color=#ff4545>50%</color> and <color=#ffd61f>30</color>, respectively,
+    and restores HP equal to <color=green>30% damage dealt</color>, but have <color=#5b7ccf>-40%
+    max HP</color>.\n\n<i>If <color=#ff00ff>'Equipment - Provision'</color> is selected,
+    you become unaffected.</i>
   favorText: 
   skillDescriptionInShort: Units have increased ATK, ASPD and life-steal, but reduced
     max HP.
@@ -43153,7 +43161,7 @@ MonoBehaviour:
   skillNameText: '''Fumo Recu'' - Phalanx'
   skillDescription: Gains <color=yellow>+215% DEF</color> and <color=#00ffff>+25
     RES</color> while you are within 800 radius around the Mint Fumo.
-  favorText: "One, two\u2014whoopsie-daisy."
+  favorText: "\"One, two\u2014whoopsie-daisy.\""
   skillDescriptionInShort: Gains increased DEF and RES while nearby the Mint Fumo
     (marked by green area).
   mutuallyExclusiveSkills: 20000000
@@ -43427,8 +43435,10 @@ MonoBehaviour:
   skillType: 2
   skillName: 48
   skillNameText: '''Subjective Time Dilation'''
-  skillDescription: 'Every 10 seconds, all enemies alter between the two effects:
-    -50% MSPD and ASPD, or +40% MSPD and ASPD.'
+  skillDescription: 'Every <color=#ff9717>10 seconds</color>, all presenting enemies
+    alter between the two effects: <color=#5b7ccf>-50% MSPD and ASPD</color> and
+    <color=#ffd61f>+50% MSPD and ASPD</color>. This process happens indefinitely,
+    but has a 2-second cooldown inbetween.'
   favorText: 
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 
@@ -48289,7 +48299,7 @@ MonoBehaviour:
   skillName: 53
   skillNameText: Zeropoint Burst - Focused Suppression
   skillDescription: '''Zeropoint Burst'' can be <color=yellow>maintained</color>
-    by holding down the cast key for up to <color=#5b7ccf>6 more seconds</color>.
+    by holding down the cast key for up to <color=#5b7ccf>5 more seconds</color>.
     Self can not act while maintaining the skill.'
   favorText: '"Yep! Leave it to me."'
   skillDescriptionInShort: '''Zeropoint Burst'' can be maintained by holding down
@@ -48507,7 +48517,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 23
-  skillNameText: Juggernaut -  Swirling Vortex
+  skillNameText: Juggernaut - Swirling Vortex
   skillDescription: While 'Juggernaut' is active, nearby enemies have <color=#5b7ccf>-33%
     MSPD and ASPD</color>, and are continuously <color=#2985FF>pulled toward self</color>.
   favorText: '"Would you like to see some of my magic?"'

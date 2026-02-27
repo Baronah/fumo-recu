@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayer: 4
   m_SortingOrder: 32767
   m_Sprite: {fileID: 21300000, guid: 77b7f95852b0b2448a7d968dc002d92b, type: 3}
-  m_Color: {r: 0.090196095, g: 0.6864457, b: 0.8392157, a: 1}
+  m_Color: {r: 0.050943315, g: 0.716423, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -97,5 +97,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9298bbd95bd47744684eceb184cf03ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxScale: {x: 100, y: 100, z: 100}
+  MaxScale: {x: 80, y: 80, z: 80}
   Duration: 0.4

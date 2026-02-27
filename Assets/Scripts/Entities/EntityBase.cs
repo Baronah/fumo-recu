@@ -48,6 +48,8 @@ public class EntityBase : MonoBehaviour
     public float InvulnerableTimer = 0f;
     public bool isInvulnerable => InvulnerableTimer > 0f;
 
+    public virtual Type GetGenericType() => typeof(EntityBase);
+
     public void SetInvulnerable(float duration, bool stack = false)
     {
         if (stack)
@@ -336,6 +338,9 @@ public class EntityBase : MonoBehaviour
         HandleSpriteFlipping();
         HandleAnimationSpeed();
         ProcessSkillTree();
+
+        if (!IsStunned && IsBeingLevitated && EndLevitateCoroutine == null)
+            EndLevitateCoroutine = StartCoroutine(EndLevitate());
     }
 
     // use negative values for debuffs
@@ -1026,7 +1031,7 @@ public class EntityBase : MonoBehaviour
 
     public void DisplayDamage(string msg, Vector3 offset)
     {
-        if (!DamagePopup) return;
+        if (!DamagePopup || !gameObject) return;
 
         GameObject popup = Instantiate(DamagePopup, transform.position + offset, Quaternion.identity);
         popup.GetComponent<DamagePopup>().text.text = msg;
@@ -1180,8 +1185,11 @@ public class EntityBase : MonoBehaviour
         animator.SetFloat("move", 0);
     }
 
-    public virtual void ApplyFreeze(EntityBase target, float duration) 
-        => StartCoroutine(ApplyFreezeCoroutine(target, duration));
+    public virtual void ApplyFreeze(EntityBase target, float duration)
+    {
+        if (!gameObject || !gameObject.activeSelf) return;
+        StartCoroutine(ApplyFreezeCoroutine(target, duration));
+    }
 
     IEnumerator ApplyFreezeCoroutine(EntityBase target, float duration)
     {
@@ -1206,7 +1214,10 @@ public class EntityBase : MonoBehaviour
     }
 
     public virtual void ApplyStun(EntityBase target, float duration)
-        => StartCoroutine(ApplyStunCoroutine(target, duration));
+    {
+        if (!gameObject || !gameObject.activeSelf) return;
+        StartCoroutine(ApplyStunCoroutine(target, duration));
+    }
 
     IEnumerator ApplyStunCoroutine(EntityBase target, float duration)
     {
@@ -1231,6 +1242,12 @@ public class EntityBase : MonoBehaviour
 
     public bool IsBeingLevitated = false;
     public SpriteRenderer LevitationEffect;
+    Vector2 spriteInitPos;
+    float LevitationHeight = 2.1f;
+
+    float floatUpDuration = 0.2f;
+    float floatDownDuration = 0.1f;
+
     IEnumerator Levitate(float duration)
     {
         if (IsBeingLevitated) yield break;
@@ -1238,14 +1255,14 @@ public class EntityBase : MonoBehaviour
         yield return null; // ensure this runs after stun is applied
         if (!IsStunned) yield break;
 
+        spriteInitPos = spriteRenderer.transform.localPosition;
         LevitationEffect.color = new Color(1, 1, 1, 0.3f);
         IsBeingLevitated = true;
 
-        float floatUpDuration = Mathf.Min(0.2f, duration * 0.15f);
-        float floatDownDuration = floatUpDuration / 2;
+        float UpDuration = Mathf.Min(0.2f, duration * 0.15f);
+        float DownDuration = floatUpDuration / 2;
 
-        Vector2 initPos = spriteRenderer.transform.localPosition;
-        Vector2 targetPos = initPos + new Vector2(0, 2.1f);
+        Vector2 targetPos = spriteInitPos + new Vector2(0, LevitationHeight);
         
         float c = 0, d = floatUpDuration;
         while (c < d)
@@ -1259,16 +1276,27 @@ public class EntityBase : MonoBehaviour
         
         yield return new WaitForSeconds(duration - floatUpDuration - floatDownDuration);
 
-        c = 0; d = floatDownDuration;
+        EndLevitateCoroutine = StartCoroutine(EndLevitate());
+    }
+
+    Coroutine EndLevitateCoroutine;
+    IEnumerator EndLevitate()
+    {
+        if (!IsBeingLevitated) yield break;
+        
+        float c = 0; 
+        float d = floatDownDuration;
         while (c < d)
         {
-            spriteRenderer.transform.localPosition = Vector2.Lerp(spriteRenderer.transform.localPosition, initPos, c * 1.0f / d);
+            spriteRenderer.transform.localPosition = Vector2.Lerp(spriteRenderer.transform.localPosition, spriteInitPos, c * 1.0f / d);
             c += Time.deltaTime;
             yield return null;
         }
-        spriteRenderer.transform.localPosition = initPos;
+        spriteRenderer.transform.localPosition = spriteInitPos;
         IsBeingLevitated = false;
         LevitationEffect.color = Color.clear;
+
+        EndLevitateCoroutine = null;
     }
 
     public virtual void OnFreezeMaintain()

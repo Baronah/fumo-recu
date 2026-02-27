@@ -72,9 +72,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -1829218833
-  m_SortingLayer: 4
-  m_SortingOrder: 32767
+  m_SortingLayerID: -1883581215
+  m_SortingLayer: 5
+  m_SortingOrder: 100
   m_Sprite: {fileID: 0}
   m_Color: {r: 0, g: 1, b: 0.6077943, a: 1}
   m_FlipX: 0
@@ -113,6 +113,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skillImage:
+  - {fileID: 21300000, guid: 767405592f29a004fb13e9c84fdb0fc2, type: 3}
+  - {fileID: 21300000, guid: b2173e9fd983d9e4191a95c574e46784, type: 3}
+  - {fileID: 21300000, guid: 293703a78d3b8644fae8813e789e107d, type: 3}
   - {fileID: 21300000, guid: 02fe2964f7e18254d8f5d1c84e367be6, type: 3}
   - {fileID: 21300000, guid: 3fc3b64198e1f7c4abb3727da1a1fb27, type: 3}
   - {fileID: 21300000, guid: 368d9eb83c5a843428438fbc3311d5ff, type: 3}
@@ -127,4 +130,6 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 9d2a266a6161e5a4dae0f1f7a272a4e7, type: 3}
   - {fileID: 21300000, guid: dc0d3dd8d5eb4614fa90985185554a7d, type: 3}
   - {fileID: 21300000, guid: 76722bb5ddc70774ebd9a9c73a7a4a83, type: 3}
-  skillNames: 310000003a000000280000003200000025000000230000002a0000002600000007000000080000000a000000090000002100000022000000
+  - {fileID: 21300000, guid: 9d4cdb6aca2de804f96676205acee3ff, type: 3}
+  - {fileID: 21300000, guid: 25b8c5ac8d2697e47b84d68f684a865c, type: 3}
+  skillNames: 010000000200000003000000310000003a000000280000003200000025000000230000002a0000002600000007000000080000000a000000090000002100000022000000190000001a000000

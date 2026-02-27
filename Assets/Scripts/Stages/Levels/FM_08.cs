@@ -48,6 +48,11 @@ public class FM_08 : StageManager
             enemy.detectionRange += 70f;
 
        if (enemy as Matterllurgist) enemy.ASPD += 40;
+
+       if (enemy as Hound || enemy as Wetwork || enemy as Archer || enemy as BloodthirstyHeir)
+            enemy.mHealth += (int)(enemy.mHealth * 0.6f);
+       else
+            enemy.mHealth += (int)(enemy.mHealth * 0.2f);
     }
 
     public override void OnPlayerSpawn(PlayerBase player)
