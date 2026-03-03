@@ -103,7 +103,7 @@ public class SkillTree_Manager : MonoBehaviour
         HEAT_DEATH,
         CERTAIN_FATES,
         HIBERNATE,
-        THREADS,
+        KNOTS,
         A_NICE_LOOKING_ROCK,
     }
 

@@ -562,7 +562,7 @@ public class LevelSelectionScript : MonoBehaviour
             Rating_RES.text = "A";
         else if (enemy.bRes <= 70)
             Rating_RES.text = "A+";
-        else if (enemy.bRes <= 80)
+        else if (enemy.bRes <= 85)
             Rating_RES.text = "S";
         else
             Rating_RES.text = "SS";

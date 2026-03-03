@@ -84,10 +84,6 @@ public class OriginiumPollution : EnvironmentalTileBase
         if (e && e.IsAlive())
         {
             if (e is Sudaram sr) damage = (int)(damage * sr.originiumPollutionDamageMultiplier);
-            else if (e is PlayerBase pb && pb.Skills.Contains(SkillTree_Manager.SkillName.GEOGOLIST_OBSERVE))
-            {
-                damage = (int)(damage * 0.6f);
-            }
 
             e.TakeDamage(new(0, 0, damage), null);
         }

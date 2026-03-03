@@ -458,6 +458,14 @@ public class EnemyBase : EntityBase
         return currentWaypoint;
     }
 
+    public override void OnFreezeExit()
+    {
+        base.OnFreezeExit();
+
+        RemoveEffect("ICEAGE_DEF_BUFF");
+        RemoveEffect("ICEAGE_RES_BUFF");
+    }
+
     public override void Move()
     {
         MoveCnt++;
@@ -766,7 +774,7 @@ public class EnemyBase : EntityBase
 
     public override IEnumerator OnAttackComplete()
     {
-        if (!SpottedPlayer || attackPattern == AttackPattern.NONE || IsStunned || IsFrozen) yield break;
+        if (!SpottedPlayer || !CanFinishAttack) yield break;
         
         if (attackPattern == AttackPattern.RANGED)
         {

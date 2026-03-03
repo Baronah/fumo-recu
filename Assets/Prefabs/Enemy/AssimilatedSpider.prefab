@@ -406,11 +406,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8775152862550477468, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_Value
-      value: 100
+      value: 130
       objectReference: {fileID: 0}
     - target: {fileID: 8775152862550477468, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_MaxValue
-      value: 100
+      value: 130
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7523077825662678453, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
@@ -467,7 +467,7 @@ MonoBehaviour:
   b_attackInterval: 2
   MIN_PHYSICAL_DMG: 0.05
   MIN_MAGICAL_DMG: 0.1
-  health: 100
+  health: 130
   atk: 15
   def: 5
   res: 10

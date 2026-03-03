@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -78,10 +79,17 @@ public class PlayerBase : EntityBase
     public override void FixedUpdate()
     {
         base.FixedUpdate();
-        AttentionBuff();
-        WindBladeBuff();
 
-        WindanthemBar.SetActive(IsAlive() && AspdBuffs.ContainsKey(WindAnthemKey) && AspdBuffs[WindAnthemKey].IsInEffect);
+        bool alive = IsAlive();
+
+        if (alive)
+        {
+            IdeasBuff();
+            AttentionBuff();
+            WindBladeBuff();
+        }
+
+        WindanthemBar.SetActive(alive && AspdBuffs.ContainsKey(WindAnthemKey) && AspdBuffs[WindAnthemKey].IsInEffect);
         if (WindanthemBar.activeSelf)
         {
             WindanthemSlider.maxValue = WindAnthemAspdBuffDuration;
@@ -90,9 +98,9 @@ public class PlayerBase : EntityBase
             WindanthemCounter.text = ((int)(AspdBuffs[WindAnthemKey].Value / WindAnthemAspdBuffAmount)).ToString();
         }
 
-        WindanthemMaxEffect.SetActive(IsAlive() && IsWindAnthemMaxed);
+        WindanthemMaxEffect.SetActive(alive && IsWindAnthemMaxed);
 
-        AllowVow.SetActive(canVow && !playerManager.hasVowed);
+        AllowVow.SetActive(alive && canVow && !playerManager.hasVowed);
     }
 
     float w_countUp = 0;
@@ -111,12 +119,33 @@ public class PlayerBase : EntityBase
         if (amount > 0) ApplyEffect(Effect.AffectedStat.ASPD, "WIND_BLADE_BUFF", amount * 0.7f, 0.2f, false);
     }
 
-    float countUp = 0;
+    float i_countUp = 0;
+    void IdeasBuff()
+    {
+        i_countUp += Time.fixedDeltaTime;
+        if (i_countUp < 1f) return;
+        float interval = i_countUp;
+        i_countUp = 0;
+
+        if (!Skills.Contains(SkillTree_Manager.SkillName.WINGED_STEPS_C)) return;
+        
+        bool isMoving = rb2d.velocity.magnitude > 0.1f;
+        if (isMoving)
+        {
+            ReduceUltimateCooldown(interval * 0.03f, CooldownReductionType.PERCENTAGE_FULL);
+        }
+        else
+        {
+            ReduceSpecialCooldown(interval * 0.05f, CooldownReductionType.PERCENTAGE_FULL);
+        }
+    }
+
+    float a_countUp = 0;
     void AttentionBuff()
     {
-        countUp += Time.fixedDeltaTime;
-        if (countUp < 0.2f) return;
-        countUp = 0;
+        a_countUp += Time.fixedDeltaTime;
+        if (a_countUp < 0.2f) return;
+        a_countUp = 0;
 
         if (health > mHealth * 0.8f && Skills.Contains(SkillTree_Manager.SkillName.ATTENTION_BOOK))
         {
@@ -148,8 +177,42 @@ public class PlayerBase : EntityBase
         GetVow();
         if (Skills.Contains(SkillTree_Manager.SkillName.SWAP_START_ATK))
         {
-            ApplyEffect(Effect.AffectedStat.ATK, "SWAP_START_ATKBUFF", 150f, 5f, true, EffectPersistType.PERSIST);
+            Heal((int)((mHealth - health) * 0.3f));
+            ApplyEffect(Effect.AffectedStat.ATK, "SWAP_START_ATKBUFF", 100f, 5f, true, EffectPersistType.PERSIST);
         }
+    }
+
+    protected bool FireWorkStarted = false;
+    protected IEnumerator FireWork_Special()
+    {
+        FireWorkStarted = true;
+
+        float duration = 5f, c = 0f, intervalCount = 0, interval = 0.5f;
+        while (c < duration)
+        {
+            if (intervalCount >= interval)
+            {
+                ReduceSpecialCooldown(interval * 2f, CooldownReductionType.FLAT);
+                intervalCount = 0;
+            }
+
+            intervalCount += Time.deltaTime;
+            c += Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    protected bool Debut = false;
+    protected virtual IEnumerator SpecialLockout()
+    {
+        if (!Debut && !FireWorkStarted && Skills.Contains(SkillTree_Manager.SkillName.MAJOR_DEBUT))
+            StartCoroutine(FireWork_Special());
+        yield return null;
+    }
+
+    protected virtual IEnumerator UltimateLockout()
+    {
+        yield return null;
     }
 
     protected bool canVow = false;
@@ -255,14 +318,13 @@ public class PlayerBase : EntityBase
             }
         }
 
-        canVow = Skills.Contains(SkillTree_Manager.SkillName.THREADS);
+        canVow = Skills.Contains(SkillTree_Manager.SkillName.KNOTS);
     }
 
     public virtual void OnFieldSwapOut(PlayerBase swapInPlayer)
     {
         swapInPlayer.timerSinceLastAttack = timerSinceLastAttack;
         swapInPlayer.environmentalTilesStandingOn = new(this.environmentalTilesStandingOn);
-        swapInPlayer.SettleSwappedInPlayer = true;
 
         List<Dictionary<string, Effect>> allBuffs = AllBuffs();
         foreach (var dictionary in allBuffs)
@@ -274,6 +336,11 @@ public class PlayerBase : EntityBase
                 swapInPlayer.ApplyEffect(buff.affectedStat, kvp.Key, buff.Value, buff.Duration, buff.IsPercentage, buff.DecayOverDuration ? EffectPersistType.DECAY : EffectPersistType.PERSIST);
             }
         }
+
+        swapInPlayer.enemyDefeatCount = enemyDefeatCount;
+        swapInPlayer.specialCastCount = specialCastCount;
+
+        swapInPlayer.SettleSwappedInPlayer = true;
     }
 
     protected override float GetRegenAmount()
@@ -290,7 +357,7 @@ public class PlayerBase : EntityBase
 
     protected void MakeVow(PlayerManager.SkillType skillType)
     {
-        if (!Skills.Contains(SkillTree_Manager.SkillName.THREADS) || playerManager.hasVowed || skillType == SkillType.NONE) return;
+        if (!Skills.Contains(SkillTree_Manager.SkillName.KNOTS) || playerManager.hasVowed || skillType == SkillType.NONE) return;
 
         SkillType seal;
 
@@ -347,11 +414,14 @@ public class PlayerBase : EntityBase
         else Move();
     }
 
+    short specialCastCount = 0;
     public virtual void UseSpecial()
     {
         if (Skills.Contains(SkillTree_Manager.SkillName.SPECIAL_MSPD))
         {
-            ApplyEffect(Effect.AffectedStat.MSPD, "SPECIAL_MSPD_BUFF", 100, 2f, true, EffectPersistType.PERSIST);
+            float duration = Mathf.Min(3f, 1f + specialCastCount * 0.5f);
+            ApplyEffect(Effect.AffectedStat.MSPD, "SPECIAL_MSPD_BUFF", 100f, duration, true, EffectPersistType.PERSIST);
+            specialCastCount++;
         }
     }
 
@@ -507,29 +577,37 @@ public class PlayerBase : EntityBase
         base.DealDamage(target, pDmg, mDmg, tDmg, allowWhenDisabled);
         if (!target.IsAlive())
         {
-            if (Skills.Contains(SkillTree_Manager.SkillName.VICTORY_ATK))
-            {
-                float strength = 50f, duration = 5f;
-                ApplyEffect(Effect.AffectedStat.ATK, "VICTORY_ATK_BUFF", strength, duration, true, EffectPersistType.DECAY);
-                ApplyEffect(Effect.AffectedStat.MSPD, "VICTORY_MSPD_BUFF", strength, duration, true, EffectPersistType.DECAY);
-            }
-            else if (Skills.Contains(SkillTree_Manager.SkillName.VICTORY_REFRESH))
-                ReduceSpecialCooldown(1f, CooldownReductionType.PERCENTAGE_FULL);
+            OnEnemyDefeat(target);
         }
     }
 
-    protected enum CooldownReductionType
+    int enemyDefeatCount = 0;
+    public virtual void OnEnemyDefeat(EntityBase enemy)
+    {
+        if (Skills.Contains(SkillTree_Manager.SkillName.VICTORY_ATK))
+        {
+            float strength = Mathf.Min(100f, 50f + 5f * enemyDefeatCount), duration = 5f;
+            ApplyEffect(Effect.AffectedStat.ATK, "VICTORY_ATK_BUFF", strength, duration, true, EffectPersistType.DECAY);
+            ApplyEffect(Effect.AffectedStat.MSPD, "VICTORY_MSPD_BUFF", strength, duration, true, EffectPersistType.DECAY);
+        }
+        else if (Skills.Contains(SkillTree_Manager.SkillName.VICTORY_REFRESH))
+            ReduceSpecialCooldown(Mathf.Min(10f, 2f + enemyDefeatCount), CooldownReductionType.FLAT);
+
+        enemyDefeatCount++;
+    }
+
+    public enum CooldownReductionType
     {
         FLAT,
         PERCENTAGE_FULL,
         PERCENTAGE_CURRENT,
     }
 
-    protected virtual void ReduceUltimateCooldown(float amount, CooldownReductionType reductionType = CooldownReductionType.FLAT)
+    public virtual void ReduceUltimateCooldown(float amount, CooldownReductionType reductionType = CooldownReductionType.FLAT)
     {
     }
 
-    protected virtual void ReduceSpecialCooldown(float amount, CooldownReductionType reductionType = CooldownReductionType.FLAT)
+    public virtual void ReduceSpecialCooldown(float amount, CooldownReductionType reductionType = CooldownReductionType.FLAT)
     {
     }
 

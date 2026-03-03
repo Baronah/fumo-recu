@@ -5561,7 +5561,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1457099365488019423, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
       propertyPath: m_Size.x
-      value: 0.17620139
+      value: 0.30397704
       objectReference: {fileID: 0}
     - target: {fileID: 1457099365488019423, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
       propertyPath: m_Size.y
@@ -5569,7 +5569,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1457099365488019423, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
       propertyPath: m_Offset.x
-      value: 0.038100682
+      value: -0.003948763
       objectReference: {fileID: 0}
     - target: {fileID: 1457099365488019423, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
       propertyPath: m_Offset.y
@@ -5751,6 +5751,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4507761904518604716, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1284202634395534892}
+    - targetCorrespondingSourceObject: {fileID: 4507761904518604716, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3463408292165483832}
   m_SourcePrefab: {fileID: 100100000, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}
 --- !u!1 &823421663847655479 stripped
 GameObject:
@@ -5828,7 +5831,7 @@ MonoBehaviour:
   attackInterval: 0
   hpRegenFlat: 0
   hpRegenPercentage: 0
-  weight: 0
+  weight: 1
   damageReduction: 0
   damageAmplify: 0
   IsShiftImmune: 0
@@ -5853,6 +5856,7 @@ MonoBehaviour:
   IsBeingShifted: 0
   FreezeTimer: 0
   StunTimer: 0
+  StatusResistTimer: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 1
   HasOnStartCoroutine: 1
@@ -5894,9 +5898,11 @@ MonoBehaviour:
   Up_DashDamageScale: 1
   Up_DashDeflectHealPercentage: 0.2
   Up_DashAfterImagePersistTime: 3
+  Up_DashSlowPercentage: 40
+  Up_DashSlowDuration: 2.5
   BL_AtkScale: 2.5
   BL_AtkBuff: 100
-  BL_BuffDur: 5
+  BL_BuffDur: 7
   SkillEffect: {fileID: 1110703362071332137}
   SkillEffect_2: {fileID: 4218488995937585401}
   AftershockEffect: {fileID: 7915140861198282874, guid: ed16ab40d3c00f0438da5bf3fa90034c, type: 3}
@@ -5904,7 +5910,7 @@ MonoBehaviour:
   BlackflashEffect: {fileID: 6582330483075894888}
   SwirlEffect: {fileID: 7141990798670083619, guid: 1a5d0cc29c526614e9f3363663886317, type: 3}
   CounterEffect: {fileID: 5414369864337981152, guid: ff3e5737c2923044f8045e43352fd9b9, type: 3}
-  UtlCooldown: 30
+  UltCooldown: 30
   SkillDuration: 7
   BurstHeal_HpPercentage: 0.3
   HealPerSecond_HpPercentage: 0.05
@@ -5922,11 +5928,13 @@ MonoBehaviour:
   AfterShockDamageConversionRatio: 0.75
   AfterShockExplodeSlowTime: 1
   TransferBonusDuration: 2
+  ExtendDurationOfHit: 0.75
   AftershockDmgCounter: {fileID: 7148168932227406490}
   Ambient: {fileID: -5044359066298894490}
   Vortex: {fileID: -3648005880966443597}
   Shock: {fileID: 0}
   Counter: {fileID: 1284202634395534892}
+  DashCollider: {fileID: 3463408292165483832}
   ColorOverlayMat: {fileID: 2100000, guid: 25baa0b986f248947843c72757292d02, type: 2}
 --- !u!82 &6103237625377656988
 AudioSource:
@@ -6504,6 +6512,51 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!61 &3463408292165483832
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5370641212771752296}
+  m_Enabled: 0
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: -0.2130425}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1.3462353, y: 3.5935774}
+  m_EdgeRadius: 0
 --- !u!1 &8729259124278131605 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 946352713013429585, guid: 471a8ca8ee5aa634b8a85b8fac5cd431, type: 3}

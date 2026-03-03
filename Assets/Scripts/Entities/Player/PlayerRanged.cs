@@ -36,8 +36,6 @@ public class PlayerRanged : PlayerBase
     private EntityBase target;
     private float skillCurrentDuration;
 
-    private bool Debut = false;
-
     public override void Start()
     {
         base.Start();
@@ -179,7 +177,7 @@ public class PlayerRanged : PlayerBase
         }
         else if (Input.GetKeyDown(InputManager.Instance.SkillKey))
         {
-            if (Skills.Contains(SkillTree_Manager.SkillName.THREADS) && !playerManager.hasVowed)
+            if (Skills.Contains(SkillTree_Manager.SkillName.KNOTS) && !playerManager.hasVowed)
             {
                 MakeVow(PlayerManager.SkillType.ULTIMATE);
             }
@@ -189,7 +187,7 @@ public class PlayerRanged : PlayerBase
         }
         else if (Input.GetKeyDown(InputManager.Instance.SpecialKey))
         {
-            if (Skills.Contains(SkillTree_Manager.SkillName.THREADS) && !playerManager.hasVowed)
+            if (Skills.Contains(SkillTree_Manager.SkillName.KNOTS) && !playerManager.hasVowed)
             {
                 MakeVow(PlayerManager.SkillType.SPECIAL);
             }
@@ -291,8 +289,9 @@ public class PlayerRanged : PlayerBase
         ReduceUltimateCooldown(refundTime);
     }
 
-    protected override void ReduceSpecialCooldown(float amount, CooldownReductionType reductionType = CooldownReductionType.FLAT)
+    public override void ReduceSpecialCooldown(float amount, CooldownReductionType reductionType = CooldownReductionType.FLAT)
     {
+        if (!IsAlive()) return;
         if (freezeCooldownTimer >= FreezeCooldown) return;
 
         float reductionAmount = reductionType switch
@@ -309,8 +308,9 @@ public class PlayerRanged : PlayerBase
         StartCoroutine(playerManager.SpecialCooldown(FreezeCooldown, freezeCooldownTimer));
     }
 
-    protected override void ReduceUltimateCooldown(float amount, CooldownReductionType reductionType = CooldownReductionType.FLAT)
+    public override void ReduceUltimateCooldown(float amount, CooldownReductionType reductionType = CooldownReductionType.FLAT)
     {
+        if (!IsAlive()) return;
         if (skillCooldownTimer >= SkillCooldown) return;
 
         float reductionAmount = reductionType switch
@@ -345,12 +345,15 @@ public class PlayerRanged : PlayerBase
     }
 
     float skillCooldownTimer = 0f;
-    IEnumerator SkillLockout(float d)
+    protected override IEnumerator UltimateLockout()
     {
+        StartCoroutine(base.UltimateLockout());
+
         CanUseSkill = false;
-        StartCoroutine(playerManager.SkillCooldown(d));
         skillCooldownTimer = 0f;
-        while (skillCooldownTimer < d)
+
+        StartCoroutine(playerManager.SkillCooldown(SkillCooldown, skillCooldownTimer));
+        while (skillCooldownTimer < SkillCooldown)
         {
             skillCooldownTimer += Time.deltaTime;
             yield return null;
@@ -359,12 +362,16 @@ public class PlayerRanged : PlayerBase
     }
 
     float freezeCooldownTimer = 0f;
-    IEnumerator FreezeLockout(float d)
+    protected override IEnumerator SpecialLockout()
     {
+        StartCoroutine(base.SpecialLockout());
+
+        freezeCooldownTimer = Debut ? FreezeCooldown : 0f;
+
         CanUseFreeze = false;
-        StartCoroutine(playerManager.SpecialCooldown(d));
-        freezeCooldownTimer = 0f;
-        while (freezeCooldownTimer < d)
+        StartCoroutine(playerManager.SpecialCooldown(FreezeCooldown, freezeCooldownTimer));
+
+        while (freezeCooldownTimer < FreezeCooldown)
         {
             freezeCooldownTimer += Time.deltaTime;
             yield return null;
@@ -420,7 +427,7 @@ public class PlayerRanged : PlayerBase
 
         if (Skills.Contains(SkillTree_Manager.SkillName.WINGED_STEPS_A))
         {
-            ApplyEffect(Effect.AffectedStat.MSPD, "WINGED_STEPS_A_MSPD_BUFF", 30f, 2f, true, EffectPersistType.DECAY);
+            ApplyEffect(Effect.AffectedStat.MSPD, "WINGED_STEPS_A_MSPD_BUFF", 30f, 2f + GetWindupTime(), true, EffectPersistType.DECAY);
         }
     }
 
@@ -433,14 +440,13 @@ public class PlayerRanged : PlayerBase
     {
         if (!IsAlive() || !CanUseFreeze || IsFrozen || IsStunned) yield break;
 
-        CanUseFreeze = false;
         IsFreezeActive = true;
+
+        StartCoroutine(SpecialLockout());
+        Debut = false;
 
         StartCoroutine(StartMovementLockout(FreezeCastDuration));
         StartCoroutine(StartAttackLockout(FreezeCastDuration));
-
-        float cooldown = Debut ? 0 : FreezeCooldown;
-        StartCoroutine(FreezeLockout(cooldown));
 
         animator.SetBool("attack", false);
         animator.SetTrigger("skill");
@@ -534,7 +540,6 @@ public class PlayerRanged : PlayerBase
             if (freezeMaintRing) Destroy(freezeMaintRing);
         }
 
-        Debut = false;
         IsFreezeActive = false;
 
         animator.SetTrigger("skill_end");
@@ -560,7 +565,7 @@ public class PlayerRanged : PlayerBase
         if (!IsAlive()) yield break;
 
         StartCoroutine(StartMovementLockout(0.15f));
-        StartCoroutine(SkillLockout(SkillCooldown));
+        StartCoroutine(UltimateLockout());
 
         animator.SetTrigger("skill");
         IsSkillActive = true;
@@ -895,85 +900,89 @@ public class PlayerRanged : PlayerBase
         var info = base.GetPlayerTooltipsInfo();
 
         info.AttackText = $"Lauches a projectile toward the nearest enemy within range, " +
-            $"dealing {atk} {damageType.ToString().ToLower()} damage.";
+            $"which deals {atk} {damageType.ToString().ToLower()} damage upon contact.";
+        
+        if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_FIELD_EXPERT))
+        {
+            info.AttackText = $"Lauches a projectile toward the nearest enemy within range, " +
+            $"which deals {atk} {damageType.ToString().ToLower()} damage upon contact and ricochets (up to 5 times). " +
+            $"Projectiles can touch an environmental tile to gain additional effect.";
+        }
 
         if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_MORE))
         {
-            info.SkillName = "Der Tag neigt Sich - Flowering Night";
+            info.SkillName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.SPIRAL_MORE);
             info.SkillText =
                 $"Continuously unleashes multiple waves of projectiles spreading in all direction around self, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action). " +
-                $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD. " +
-                $"{SkillCooldown}s cooldown.";
+                $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD.";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_TRAVEL))
         {
-            info.SkillName = "Der Tag neigt Sich - Ghost Lead";
+            info.SkillName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.SPIRAL_TRAVEL);
             info.SkillText =
                 $"Locks-on to the nearest enemy within range and continuously unleashes waves of projectiles, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action). " +
-                $". Each projectile hits the first enemy it comes into contact with (if there is a locked enemy, all projectiles homing toward them instead), dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD. " +
-                $"{SkillCooldown}s cooldown.";
+                $". Each projectile hits the first enemy it comes into contact with (if there is a locked enemy, all projectiles homing toward them instead), dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD.";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_PHANTOM))
         {
-            info.SkillName = "Der Tag neigt Sich - Phantom Bullets";
+            info.SkillName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.SPIRAL_PHANTOM);
             info.SkillText =
                 $"Continuously unleashes waves of projectiles spreading in all direction around self, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action). " +
                 $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD. " +
-                $"If an enemy is defeated while the skill is active, another waves of projectiles will be created at their position, lasting up to 1.5 seconds (triggers up to 3 times). " +
-                $"{SkillCooldown}s cooldown.";
+                $"If an enemy is defeated while the skill is active, another waves of projectiles will be created at their position, lasting up to {FlowerMaxDuration} seconds (triggers up to {MaxExtraFlowers} times).";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_SHADOW))
         {
-            info.SkillName = "Der Tag neigt Sich - Twilight of Wolumonde";
+            info.SkillName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.SPIRAL_SHADOW);
             info.SkillText =
                 $"Continuously unleashes waves of projectiles spreading in all direction around self, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action). " +
                 $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD. " +
-                $"Cancelling or swapping during the skill leaves behind a phantom that maintains the same effect for the remaining duration." +
-                $"{SkillCooldown}s cooldown.";
+                $"Cancelling or swapping during the skill leaves behind a phantom that maintains the same effect for the remaining duration. The phantom has {PhantomAtkInherit * 100}% of self ATK.";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_READ))
         {
-            info.SkillName = "Der Tag neigt Sich - Widely Read";
+            info.SkillName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.SPIRAL_READ);
             info.SkillText =
-                $"Continuously unleashes waves of projectiles spreading in all direction around self, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action, and refunds upon doing so). " +
-                $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD. " +
-                $"{SkillCooldown}s cooldown.";
+                $"Continuously unleashes waves of projectiles spreading in all direction around self, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action, " +
+                $"and refunds upon doing so, up to {SP_SkillMaxRefund * 100}% CD). " +
+                $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD.";
         }
         else
         {
             info.SkillName = "Der Tag neigt Sich";
             info.SkillText =
                 $"Continuously unleashes waves of projectiles spreading in all direction around self, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action). " +
-                $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD. " +
-                $"{SkillCooldown}s cooldown.";
+                $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD.";
         }
+
+        info.SkillText += $" {Math.Round(SkillCooldown, 1)}s cooldown.";
 
         if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_BLOOM))
         {
-            info.SpecialName = "Zeropoint Burst - Snow Blossom";
+            info.SpecialName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.FREEZE_BLOOM);
             info.SpecialText =
                 $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds, inversely based on distance. Frozen enemies continues to " +
                 $"create an extra freeze ring around their position (trigger once per enemy) ";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_HOLD))
         {
-            info.SpecialName = "Zeropoint Burst - Focused Suppression";
+            info.SpecialName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.FREEZE_HOLD);
             info.SpecialText =
-                $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds, inversely based on distance. The freeze can be maintained by holding the skill's key for up to an additional 5 seconds (can not act while maintaining, release the key to end its effect).";
+                $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds, inversely based on distance. The freeze can be maintained by holding the skill's key for up to an additional {FreezeHoldMax} seconds (can not act while maintaining, release the key to end its effect).";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_CHARGE))
         {
-            info.SpecialName = "Zeropoint Burst - Hypercharge";
+            info.SpecialName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.FREEZE_CHARGE);
             info.SpecialText =
                 $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds, inversely based on distance. Every enemy hit " +
-                $"shortens the cool-down of the next usage by 15%";
+                $"shortens the cool-down of the next usage by {FreezeChargeCDRefund * 100}%";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_SUPERCONDUCT))
         {
-            info.SpecialName = "Zeropoint Burst - Superconduct";
+            info.SpecialName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.FREEZE_SUPERCONDUCT);
             info.SpecialText =
                 $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds, inversely based on distance " +
-                $"and reduce their DEF and RES by 50% for equivalent duration";
+                $"and reduce their DEF and RES by {FreezeConductDebuff}% for equivalent duration";
         }
         else
         {
@@ -991,7 +1000,7 @@ public class PlayerRanged : PlayerBase
             info.SpecialText += " and pulls them towards self";
         }
 
-        info.SpecialText += $". {FreezeCooldown}s cool-down.";
+        info.SpecialText += $". {Math.Round(FreezeCooldown, 1)}s cool-down.";
 
             return info;
     }

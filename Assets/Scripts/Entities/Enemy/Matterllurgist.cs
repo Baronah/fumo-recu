@@ -16,7 +16,7 @@ public class Matterllurgist : EnemyBase
 
     public override IEnumerator OnAttackComplete()
     {
-        if (!CanAttack || !SpottedPlayer) yield break;
+        if (!CanFinishAttack || !SpottedPlayer) yield break;
 
         short ProjectileBaseSpeed = 600, ProjectileAcceleration = 250;
 

@@ -343,7 +343,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3660378, g: 0.3660378, b: 0.3660378, a: 1}
+  m_Color: {r: 0.3132075, g: 0.3132075, b: 0.3132075, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3609,8 +3609,9 @@ MonoBehaviour:
   skillType: 0
   skillName: 26
   skillNameText: Victory Rewind - Excitement
-  skillDescription: After defeating an enemy, your special skill cool-down is fully
-    refunded.
+  skillDescription: After defeating an enemy, your special's current CD is shortened
+    by <color=#ff9717>2 seconds</color>. Every enemy defeated increases the amount
+    by <color=yellow>1 second</color>, stacks up to <color=#5b7ccf>8 times</color>.
   favorText: ... that's a lot to watch in a sitting so she brought them here to gradually
     finish it all.
   skillDescriptionInShort: Refresh special skill after defeating an enemy.
@@ -6784,7 +6785,8 @@ MonoBehaviour:
   skillName: 35
   skillNameText: Mint-colored Firework
   skillDescription: Upon entering the field, your unit immediately casts their special
-    skill once with no cool-down.
+    skill once with no cool-down. In the next 5 seconds, your special skill recharges
+    <color=#ff9717>200% faster</color>.
   favorText: Hey!! Don't light it in here!
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 
@@ -8456,7 +8458,8 @@ MonoBehaviour:
   skillType: 0
   skillName: 4
   skillNameText: Geologist - Observe
-  skillDescription: Takes <color=yellow>-40%</color> environmental damage.
+  skillDescription: Your ultimate skill <color=yellow>charges 40% faster</color>
+    while standing on an environmental tile.
   favorText: She seeks recognition as a scholar far more than as a caster.
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 0500000006000000
@@ -11359,8 +11362,8 @@ MonoBehaviour:
   skillType: 0
   skillName: 37
   skillNameText: Mint-flavored Gum
-  skillDescription: Upon entering the field, your unit gains <color=#ff4545>+150%
-    ATK</color> for 5 seconds.
+  skillDescription: Upon entering the field, restores <color=green>30% missing HP</color>
+    and gains <color=#ff4545>+100% ATK</color> over 5 seconds.
   favorText: She also has sugar-free variety, if you prefer that.
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 
@@ -21310,10 +21313,13 @@ MonoBehaviour:
   skillType: 0
   skillName: 3
   skillNameText: Arts Unit - Flows of Ideas
-  skillDescription: Special and ultimate skill's cooldowns <color=#ff9717>-15%</color>.
+  skillDescription: While standing still, recharges your special skill's CD by <color=#ff9717>5%
+    amount</color> every second. While moving, recharges your ultimate's CD by <color=#ff9717>3%
+    amount</color> every second.
   favorText: '''An idea becomes loose, a sentence to be engraved. There''s meaning
     to it, but only partly...'''
-  skillDescriptionInShort: 
+  skillDescriptionInShort: While standing still, your special recharges faster. While
+    moving, your ultimate recharges faster.
   mutuallyExclusiveSkills: 0100000002000000
   Overlay: {fileID: 0}
 --- !u!114 &1007480274
@@ -22385,7 +22391,7 @@ MonoBehaviour:
   skillName: 55
   skillNameText: '''Absolutism'''
   skillDescription: Melee units have +100% HP, +35% MSPD and +2 weight. Ranged units
-    have +50 ASPD and attack range becomes global.
+    gains ASPD equals to 15% original attack range, then attack range becomes global.
   favorText: 
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 
@@ -24339,7 +24345,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 13
-  skillNameText: Evasion - Breath of the Wind
+  skillNameText: Evasion - Rewinding Breeze
   skillDescription: During the duration of 'Evasion', <color=yellow>reflects all
     incoming attacks</color> toward self to nearby enemies. Reflected projectiles
     instead will be sent back to the attacker. The first successful reflection also
@@ -25435,7 +25441,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1671, y: 783.5217}
+  m_SizeDelta: {x: 1700, y: 1000}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1141736479
 MonoBehaviour:
@@ -25459,7 +25465,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: 9e4c79ea50b19f54da6d5e0053134ee8, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -27343,7 +27349,8 @@ MonoBehaviour:
   skillName: 38
   skillNameText: Clockwork Engine
   skillDescription: After using the special ability, gains <color=#00ffbf>+100% MSPD</color>
-    for 2 seconds.
+    for 1 seconds. Every time this effect is activated, its duration extends by <color=yellow>0.5
+    seconds</color> (maximum duration is 3 seconds).
   favorText: The harder you wind it up, the more lively it becomes. As simple as
     that!
   skillDescriptionInShort: 
@@ -28481,7 +28488,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 12
-  skillNameText: Evasion - Lethal Tempo
+  skillNameText: Evasion - Wind's Elegy
   skillDescription: During the duration of 'Evasion', enemies coming into contact
     with self takes physical damage equal to <color=#ff4545>100% ATK</color> and
     are <color=#2985FF>pushed</color> alongside with the dash.
@@ -36970,9 +36977,9 @@ MonoBehaviour:
   skillType: 1
   skillName: 47
   skillNameText: '''Field Researcher'''
-  skillDescription: 'For ranged player: Self''s projectiles <color=yellow>bounce
-    off</color> upon hitting the target (triggers up to <color=#5b7ccf>5 times</color>).
-    When a projectile comes into contact with an environmental tile, it <color=yellow>carries
+  skillDescription: 'For ranged player: Self''s projectiles <color=yellow>ricochet</color>
+    upon hitting the target (triggers up to <color=#5b7ccf>5 times</color>). When
+    a projectile comes into contact with an environmental tile, it <color=yellow>carries
     the respective effect</color> and apply them upon hitting the target.'
   favorText: She always wanted to participate in more research projects, and if possible,
     prefers to do it by herself. But you can't be in all the places in the world,
@@ -39572,12 +39579,13 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 11
-  skillNameText: Evasion - Gentle Touch
+  skillNameText: Evasion - Gently Weeps
   skillDescription: During the duration of 'Evasion', coming into contact with an
-    enemy <color=#00ffe1>extends</color> its duration and distance.
+    enemy <color=#00ffe1>extends</color> the dash and slows the collided enemies
+    for 3 seconds.
   favorText: '"Please don''t get in our way!"'
   skillDescriptionInShort: '''Evasion'' extends upon coming into contact with an
-    enemy.'
+    enemy and slows them.'
   mutuallyExclusiveSkills: 0c0000000d00000024000000
   Overlay: {fileID: 0}
 --- !u!114 &1669243630
@@ -40855,7 +40863,7 @@ MonoBehaviour:
   skillType: 0
   skillName: 32
   skillNameText: '''Fumo Recu'' - Wind''s Whisper'
-  skillDescription: Gains <color=#00ffbf>+25% MSPD</color> every second you are within
+  skillDescription: Gains <color=#00ffbf>+34% MSPD</color> every second you are within
     800 radius around the Mint Fumo. Stacks up to <color=#00ffbf>+100%</color>.
   favorText: She looks quiet and proper at first glance, but in truth she bursts
     with a curious spirit and a lively step.
@@ -43715,8 +43723,10 @@ MonoBehaviour:
   skillType: 0
   skillName: 25
   skillNameText: Victory Rewind - Spirit
-  skillDescription: After defeating an enemy, gains <color=#ff4545>+50% ATK</color>
-    and <color=#00ffbf>+50% MSPD</color> that decay over 5 seconds.
+  skillDescription: After defeating an enemy, gains +50% <color=#ff4545>ATK</color>
+    and <color=#00ffbf>MSPD</color> that decay over 5 seconds. Every enemy defeated
+    increases the amount by <color=yellow>5%</color>, stacks up to <color=#5b7ccf>10
+    times</color>.
   favorText: Tapes of combat logs given to her by a pharmaceutical company...
   skillDescriptionInShort: Gains a decaying ASPD buff after defeating an enemy.
   mutuallyExclusiveSkills: 1a000000
@@ -45248,7 +45258,9 @@ MonoBehaviour:
   skillNameText: '''Black Flash'''
   skillDescription: Successfully landing an attack while using 'Evasion' increases
     its damage to <color=#ff4545>250%</color> and grants you <color=#ff4545>100%
-    ATK</color> that decays over 5 seconds.
+    ATK</color> that decays over 7 seconds. After the first activation, permanently
+    gains <color=#ff4545>+20% ATK</color> and the damage now also <color=#ff4545>ignores
+    60% DEF</color>.
   favorText: The other day, you accidentally discovered this technique during battle.
     You told her about this, and she noted it down immediately, seemingly very excited.
   skillDescriptionInShort: Successfully landing an attack while using 'Evasion' increases
@@ -47438,7 +47450,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 39
-  skillNameText: Der Tag Neight Sich - Ghost Lead
+  skillNameText: Der Tag Neight Sich - Phantom Dance
   skillDescription: Defeating an enemy during the duration of 'Der Tag Neight Sich'
     <color=yellow>creates another waves of projectiles</color> starting at their
     position. These extra waves can trigger up to <color=#5b7ccf>3 times</color>,
@@ -48297,7 +48309,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 53
-  skillNameText: Zeropoint Burst - Focused Suppression
+  skillNameText: Zeropoint Burst - Deep Breath
   skillDescription: '''Zeropoint Burst'' can be <color=yellow>maintained</color>
     by holding down the cast key for up to <color=#5b7ccf>5 more seconds</color>.
     Self can not act while maintaining the skill.'
@@ -50548,7 +50560,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 28
-  skillNameText: Der Tag Neight Sich - Mystic Oriental Dream
+  skillNameText: Der Tag Neight Sich - Ghost Lead
   skillDescription: '''Der Tag Neight Sich'' <color=#ff00ff>locks-on to</color> the
     nearest enemy within attack range. While the locked target is alive, all bullets
     instead will <color=yellow>home toward them</color>.'

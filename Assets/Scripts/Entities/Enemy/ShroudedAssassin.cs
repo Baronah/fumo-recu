@@ -132,7 +132,7 @@ public class ShroudedAssassin : EnemyBase
 
             AddFeud(source);
         }
-        else damage.SetTotal(1);
+        else if (damage.TotalDamage > 0) damage.SetTotal(1);
 
         if (damage.TotalDamage > 0) dashCooldownTimerCountdown--;
         base.TakeDamage(damage, source);

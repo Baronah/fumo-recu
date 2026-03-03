@@ -116,11 +116,16 @@ public class SkillTree_Intro : MonoBehaviour
             {
                 string itemDes = Skill switch
                 {
+                    EQUIPMENT_RADIO => "Thanks to that radio, we were able to chat to eachother even when you were far away. It was so fun, sadly the battery ran out mid way...",
+                    EQUIPMENT_BLADE => "Hehe... sorry, but I couldn't help imaging you wearing those cat paws during battle. It's cute, right?",
+                    EQUIPMENT_PROVISIONS => "Exploring is fun and all, but don't forget to treat yourself properly. I already made some soup, it's kind of basic, but help yourself!",
                     GEOGOLIST_OBSERVE => "Seems like you've taken a liking in geology. Nature is beautiful. Isn't it?",
                     GEOGOLIST_STUDY => "Seems like you've taken a liking in geology. Nature is powerful. Isn't it?",
                     GEOGOLIST_EXPLORE => "Seems like you've taken a liking in geology. Nature is exciting. Isn't it?",
                     BUBBLE_ARTS => "That bubble-making staff was really awesome, right? Aroma said that if the soap inside ever runs out, just bring it to her for refill.",
-                    AMULET => "I'm happy you liked that rock as much as I do. Speaking of which, I found another one on my ways back the other day, and so many more pretty-looking stones just like it! But, well... that was before I realized I'd gotten separated from the others...",
+                    AMULET => "Did you get hurt somewhere? If anything, there's aid kit on the table, and some medicines on shelf too! Oh, and, make sure you take a good rest before leaving!!",
+                    KNOTS => "These tied knots, let's keep it that way. Yes?",
+                    A_NICE_LOOKING_ROCK => "I'm happy you liked that rock. Speaking of which, I found another one on my ways back the other day, and so many more pretty-looking stones just like it! But, well... that was before I realized I'd gotten separated from the others...",
                     ATTENTION_DEVICE => "Did the attention device work out? I never really try it, but I'll need it soon.",
                     ATTENTION_BOOK => "I'm surprised you could use my book. Did it bite you? I left some bandages on the table just in case...",
                     DASH_LETHAL => "That technique - \"Compress the air pressure, and release it at once...\", wasn't it? How did it feel?",
@@ -129,12 +134,12 @@ public class SkillTree_Intro : MonoBehaviour
                     BLACKFLASH => "That flashy technique you showed me was awesome. It is not easy to pull off at all, isn't it?",
                     WINDBLOW_NORTH or WINDBLOW_SOUTH => "My wind arts is pretty fun to play with, right?",
                     FREEZE_SUPERCONDUCT => "Speaking of the modified defroster. I still haven't come up a name for it...",
-                    FREEZE_CHARGE => "That charged ice blast was really powerful! Just be careful not to overuse it, okay?",
-                    FREEZE_HOLD => "The technique that makes the freeze goes on forever... I wonder if we can make ice creams that would never melt with it...",
+                    FREEZE_HOLD => "The technique that keeps the frozen things goes on forever... I wonder if we can make ice creams that would never melt with it...",
+                    FREEZE_BLOOM => "The technique that makes the freeze spreads... It was so beautiful when you showed it here, but in the end it left everything frozen so the clean-up was pretty messy...",
                     SPIRAL_FIELD_EXPERT => "The samples you brought back were really amazing! To think we could fuse environment energy into our own projectiles like this, I really learnt a lot...",
                     WIND_ANTHEM => "It seems like you already got used to using my arts and equipments. I won't be surprised if you manage to surpass me someday, hehe.",
                     SPIRAL_READ => "As much as I'd like to improve my attention span, the current me can still work on stuff if I'm determined to!",
-                    SPIRAL_PHANTOM => "That clone technique looked really cool!",
+                    SPIRAL_SHADOW => "That clone technique is really cool!",
                     BEYOND_NIGHT => "If possible, let's gaze the stars again some day!",
                     _ => string.Empty,
                 };

@@ -139,6 +139,9 @@ public class EntityBase : MonoBehaviour
 
     public float FreezeTimer = 0f, StunTimer = 0f;
 
+    public float StatusResistTimer = 0f;
+    public bool HasStatusResistant => StatusResistTimer > 0f;
+
     public bool IsFrozen => FreezeTimer > 0f;
     public bool IsStunned => StunTimer > 0f;
 
@@ -215,6 +218,8 @@ public class EntityBase : MonoBehaviour
         !IsStunned &&
         IsAlive();
 
+    public virtual bool CanFinishAttack => CanAttack && attacking;
+
     public bool ViewOnlyMode => FindAnyObjectByType<StageManager>() == null;
 
     public Vector3 GetAttackPosition()
@@ -228,6 +233,7 @@ public class EntityBase : MonoBehaviour
         InitializeComponents();
     }
 
+    RectTransform GravityCircle;
     public virtual void InitializeComponents()
     {
         Transform Sprite = transform.Find("Sprite");
@@ -246,6 +252,16 @@ public class EntityBase : MonoBehaviour
         PrevPosition = transform.position;
 
         environmentalTilesStandingOn ??= new HashSet<EnvironmentType>();
+
+        GravityTimerCount = UnityEngine.Random.Range(0f, PullTick);
+
+        var circleFind = transform.Find("GravityCircle/Radius");
+
+        if (circleFind)
+        {
+            GravityCircle = circleFind.GetComponent<RectTransform>();
+            GravityCircle.gameObject.SetActive(CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.GRAVITY));
+        }
 
         health = mHealth;
         atk = bAtk;
@@ -457,22 +473,83 @@ public class EntityBase : MonoBehaviour
 
     public void RemoveEffect(params string[] Keys)
     {
+        bool hasChanged = false;
         foreach (var Key in Keys)
         {
-            if (AtkBuffs.ContainsKey(Key)) AtkBuffs.Remove(Key);
-            if (AtkDebuffs.ContainsKey(Key)) AtkDebuffs.Remove(Key);
-            if (DefBuffs.ContainsKey(Key)) DefBuffs.Remove(Key);
-            if (DefDebuffs.ContainsKey(Key)) DefDebuffs.Remove(Key);
-            if (ResBuffs.ContainsKey(Key)) ResBuffs.Remove(Key);
-            if (ResDebuffs.ContainsKey(Key)) ResDebuffs.Remove(Key);
-            if (MspdBuffs.ContainsKey(Key)) MspdBuffs.Remove(Key);
-            if (MspdDebuffs.ContainsKey(Key)) MspdDebuffs.Remove(Key);
-            if (AspdBuffs.ContainsKey(Key)) AspdBuffs.Remove(Key);
-            if (AspdDebuffs.ContainsKey(Key)) AspdDebuffs.Remove(Key);
-            if (ArngBuffs.ContainsKey(Key)) ArngBuffs.Remove(Key);
-            if (ArngDebuffs.ContainsKey(Key)) ArngDebuffs.Remove(Key);
+            if (AtkBuffs.ContainsKey(Key))
+            {
+                AtkBuffs.Remove(Key);
+                hasChanged = true;
+            }
+
+            if (AtkDebuffs.ContainsKey(Key))
+            {
+                AtkDebuffs.Remove(Key);
+                hasChanged = true;
+            }
+
+            if (DefBuffs.ContainsKey(Key))
+            {
+                DefBuffs.Remove(Key);
+                hasChanged = true;
+            }
+
+            if (DefDebuffs.ContainsKey(Key))
+            {
+                DefDebuffs.Remove(Key);
+                hasChanged = true;
+            }
+
+            if (ResBuffs.ContainsKey(Key))
+            {
+                ResBuffs.Remove(Key);
+                hasChanged = true;
+            }
+
+            if (ResDebuffs.ContainsKey(Key))
+            {
+                ResDebuffs.Remove(Key);
+                hasChanged = true;
+            }
+
+            if (MspdBuffs.ContainsKey(Key))
+            {
+                MspdBuffs.Remove(Key);
+                hasChanged = true;
+            }
+
+            if (MspdDebuffs.ContainsKey(Key))
+            {
+                MspdDebuffs.Remove(Key);
+                hasChanged = true;
+            }
+
+            if (AspdBuffs.ContainsKey(Key))
+            {
+                AspdBuffs.Remove(Key);
+                hasChanged = true;
+            }
+
+            if (AspdDebuffs.ContainsKey(Key))
+            {
+                AspdDebuffs.Remove(Key);
+                hasChanged = true;
+            }
+
+            if (ArngBuffs.ContainsKey(Key))
+            {
+                ArngBuffs.Remove(Key);
+                hasChanged = true;
+            }
+
+            if (ArngDebuffs.ContainsKey(Key))
+            {
+                ArngDebuffs.Remove(Key);
+                hasChanged = true;
+            }
         }
-        CalculateBuffsAndDebuffs();
+        
+        if (hasChanged) CalculateBuffsAndDebuffs();
     }
 
     public void ClearAllEffects()
@@ -726,6 +803,9 @@ public class EntityBase : MonoBehaviour
             }
         });
 
+        // avoid negative amount and force it to be 0 instead
+        // prevAdd * -1 >= stat means the debuff is greater than or equal to the current stat,
+        // so we set the debuff to be equal to the current stat, effectively making the final stat 0
         if (prevMspdAdd * -1 >= moveSpeed) prevMspdAdd = moveSpeed * -1;
         if (prevAtkAdd * -1 >= atk) prevAtkAdd = atk * -1;
         if (prevDefAdd * -1 >= def) prevDefAdd = def * -1;
@@ -793,6 +873,8 @@ public class EntityBase : MonoBehaviour
         BoundTimer -= Time.deltaTime;
 
         InvulnerableTimer -= Time.deltaTime;
+
+        StatusResistTimer -= Time.deltaTime;
     }
 
     public virtual void HandleSpriteFlipping()
@@ -1031,7 +1113,7 @@ public class EntityBase : MonoBehaviour
 
     public void DisplayDamage(string msg, Vector3 offset)
     {
-        if (!DamagePopup || !gameObject) return;
+        if (!gameObject || !DamagePopup) return;
 
         GameObject popup = Instantiate(DamagePopup, transform.position + offset, Quaternion.identity);
         popup.GetComponent<DamagePopup>().text.text = msg;
@@ -1047,13 +1129,15 @@ public class EntityBase : MonoBehaviour
 
     protected virtual void ProcessSkillTree()
     {
+        if (!IsAlive()) return;
+
         ProcessAccelaration();
         ProcessGravity();
         ProcessStatis();
     }
 
     private float GravityTimerCount = 0f;
-    private readonly float PullTick = 0.15f;
+    private readonly float PullTick = 0.3f;
     private readonly float BaseRange = 150f;
     private float GrowthRange = 80f;
     protected virtual void ProcessGravity()
@@ -1077,6 +1161,9 @@ public class EntityBase : MonoBehaviour
             Mathf.Min(50f, GetMultiplicativeValue(100f, 0.1f, weight)) * -1f,
             PullTick,
             true);
+
+        if (GravityCircle && GravityCircle.gameObject.activeSelf) 
+            GravityCircle.sizeDelta = new Vector2(searchRange * 2.05f, searchRange * 2.05f);
     }
 
     public static float GetMultiplicativeValue(float BaseValue, float Jump, short Step)
@@ -1196,6 +1283,9 @@ public class EntityBase : MonoBehaviour
         yield return new WaitUntil(() => target.IsComponentsInitialized);
 
         if (target.IsFreezeImmune || !target.IsAlive()) yield break;
+
+        if (target.HasStatusResistant) duration /= 2f;
+
         target.FreezeTimer = Mathf.Max(target.FreezeTimer, duration);
         target.OnFreezeEnter();
     }
@@ -1224,14 +1314,22 @@ public class EntityBase : MonoBehaviour
         yield return new WaitUntil(() => target.IsComponentsInitialized);
 
         if (target.IsStunImmune || !target.IsAlive()) yield break;
+        
+        if (target.HasStatusResistant) duration /= 2f;
 
-        target.animator.speed = 0f;
         target.StunTimer = Mathf.Max(target.StunTimer, duration);
-        target.StopMovement();
-        target.CancelAttack();
+        target.OnStunEnter();
+    }
 
-        target.ccBar.SetActive(true);
-        target.ccSlider.value = target.ccSlider.maxValue = target.StunTimer;
+    public virtual void OnStunEnter()
+    {
+        if (IsStunImmune || !IsAlive()) return;
+
+        animator.speed = 0f;
+        StopMovement();
+        CancelAttack();
+        ccBar.SetActive(true);
+        ccSlider.value = ccSlider.maxValue = StunTimer;
     }
 
     public virtual void ApplyLevitate(EntityBase target, float duration)
@@ -1398,6 +1496,7 @@ public class EntityBase : MonoBehaviour
         spriteRenderer.color = new Color(0, 0, 0, 0);
     }
 
+    protected bool attacking = false;
     public virtual IEnumerator Attack()
     {
         if (!CanAttack || IsAttackLocked)
@@ -1406,6 +1505,7 @@ public class EntityBase : MonoBehaviour
             yield break;
         }
 
+        attacking = true;
         animator.SetBool("attack", true);
         LockoutMovementOnAttackCoroutine = StartCoroutine(LockoutMovementsOnAttack());
     }
@@ -1413,6 +1513,7 @@ public class EntityBase : MonoBehaviour
     // Called by the animation event
     public virtual IEnumerator OnAttackComplete()
     {
+        attacking = false;
         yield break;
     }
 
@@ -1455,6 +1556,8 @@ public class EntityBase : MonoBehaviour
     public virtual void CancelAttack()
     {
         if (!IsFrozen && !IsStunned) animator.SetBool("attack", false);
+
+        attacking = false;
 
         if (AttackCoroutine != null)
         {
@@ -1532,8 +1635,11 @@ public class EntityBase : MonoBehaviour
         if (targetEntity == null || targetEntity.rb2d == null || !targetEntity.IsAlive() || targetEntity.IsBeingLevitated || targetEntity.IsShiftImmune) yield break;
 
         float ForceValue = force * duration / 0.03f;
+        
         float ForceValueAfterWeight = ForceValue - targetEntity.weight;
-        if (cancelAction && ForceValueAfterWeight <= 0.5f) yield break;
+        if (!cancelAction) ForceValueAfterWeight = ForceValue;
+
+        if (ForceValueAfterWeight <= 0.5f) yield break;
 
         if (targetEntity is EnemyBase e) e.StopObstacleIgnore();
 

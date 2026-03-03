@@ -370,8 +370,8 @@ public class StageManager : MonoBehaviour
 
                     if (!enemy.IsFreezeImmune)
                     {
-                        enemy.ApplyEffect(Effect.AffectedStat.DEF, "DREAM_DEF_BUFF", 100f, duration, true);
-                        enemy.ApplyEffect(Effect.AffectedStat.RES, "DREAM_RES_BUFF", 40f, duration, false);
+                        enemy.ApplyEffect(Effect.AffectedStat.DEF, "ICEAGE_DEF_BUFF", 70f, duration, false);
+                        enemy.ApplyEffect(Effect.AffectedStat.RES, "ICEAGE_RES_BUFF", 40f, duration, false);
                     }
                     break;
             }

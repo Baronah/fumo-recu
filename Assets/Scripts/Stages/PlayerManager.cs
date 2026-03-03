@@ -77,7 +77,12 @@ public class PlayerManager : MonoBehaviour
     public StageManager stageManager;
 
     private bool EnableHitStop = true;
-    private bool RadioActive = false; 
+    private bool RadioActive = false;
+
+    #region PlayerBattleData
+    public bool FirstBlackFlash = true;
+    #endregion
+
     private void Awake()
     {
         SkillView_Overlay.SetActive(false);

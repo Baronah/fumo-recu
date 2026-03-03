@@ -21,7 +21,12 @@ public class CharacterPrefabsStorage : ScriptableObject
 	public static bool EnableChallengeMode = false;
 	public static Dictionary<SkillTree_Manager.SkillName, SkillDataSet> Skills = new();
 
-	public static void ClearBattleData()
+	public static string GetSkillName(SkillTree_Manager.SkillName skill)
+	{
+		return Skills.ContainsKey(skill) ? Skills[skill].nameInString : string.Empty;
+    }
+
+    public static void ClearBattleData()
 	{
 		var skillNames = Skills.Select(s => s.Key).ToArray();
 

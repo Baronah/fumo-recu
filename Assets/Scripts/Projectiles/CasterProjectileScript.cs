@@ -7,7 +7,7 @@ public class CasterProjectileScript : ProjectileScript
 {
     private bool fieldExpertEnabled = false;
 
-    private readonly List<EnvironmentType> contactedEnvironmentType = new();
+    private HashSet<EnvironmentType> contactedEnvironmentType = new();
 
     public override void ShootTowards(Vector3 targetPosition, ProjectileType projectileType, float ProjectileLifespan, bool useAbsoluteDirection = false, params Type[] enemy)
     {
@@ -30,42 +30,7 @@ public class CasterProjectileScript : ProjectileScript
 
         if (ProjectileFirer)
         {
-            bool ragingTerrain = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.TERRAIN);
-
-            foreach (var contactedEnvironmentType in contactedEnvironmentType)
-            {
-                float value;
-                switch (contactedEnvironmentType)
-                {
-                    case EnvironmentType.ORIGINIUM_TILE:
-                        value = 0.3f;
-                        if (ragingTerrain) value *= 2;
-
-                        DamageInstance.TrueDamage += (int)(Mathf.Max(1, DamageInstance.TotalDamage * value));
-                        break;
-
-                    case EnvironmentType.MEDICAL_TILE:
-                        value = 0.04f;
-                        if (ragingTerrain) value *= 2;
-
-                        ProjectileFirer.Heal(ProjectileFirer.mHealth * value);
-                        break;
-
-                    case EnvironmentType.HEAT_PUMP_VENT:
-                        value = 1.5f;
-                        if (ragingTerrain) value *= 2;
-
-                        ProjectileFirer.PushEntityFrom(target, ProjectileFirer.GetAttackPosition(), value, 0.1f);
-                        break;
-
-                    case EnvironmentType.DARK_ZONE:
-                        value = 1.25f;
-                        if (ragingTerrain) value *= 2;
-
-                        target.ApplyEffect(Effect.AffectedStat.ARNG, "DARK_ZONE_CASTER_HIT_DEBUFF", -100f, value, true);
-                        break;
-                }
-            }
+            ApplyContactedEnvironmentalEffects(target);
         }
 
         bool resetOnHit = false;
@@ -87,6 +52,50 @@ public class CasterProjectileScript : ProjectileScript
         {
             gameObject.SetActive(false);
             Destroy(this.gameObject, 0.5f);
+        }
+    }
+
+    bool appliedDamage = false;
+    void ApplyContactedEnvironmentalEffects(EntityBase target)
+    {
+        bool ragingTerrain = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.TERRAIN);
+
+        foreach (var contactedEnvironmentType in contactedEnvironmentType)
+        {
+            float value;
+            switch (contactedEnvironmentType)
+            {
+                case EnvironmentType.ORIGINIUM_TILE:
+                    if (appliedDamage) break;
+
+                    value = 0.3f;
+                    if (ragingTerrain) value *= 2;
+
+                    DamageInstance.TrueDamage += (int)(Mathf.Max(1, DamageInstance.TotalDamage * value));
+                    appliedDamage = true;
+                    break;
+
+                case EnvironmentType.MEDICAL_TILE:
+                    value = 0.04f;
+                    if (ragingTerrain) value *= 2;
+
+                    ProjectileFirer.Heal(ProjectileFirer.mHealth * value);
+                    break;
+
+                case EnvironmentType.HEAT_PUMP_VENT:
+                    value = 1.5f;
+                    if (ragingTerrain) value *= 2;
+
+                    ProjectileFirer.PushEntityFrom(target, ProjectileFirer.GetAttackPosition(), value, 0.1f);
+                    break;
+
+                case EnvironmentType.DARK_ZONE:
+                    value = 1.25f;
+                    if (ragingTerrain) value *= 2;
+
+                    target.ApplyEffect(Effect.AffectedStat.ARNG, "DARK_ZONE_CASTER_HIT_DEBUFF", -100f, value, true);
+                    break;
+            }
         }
     }
 
@@ -128,6 +137,7 @@ public class CasterProjectileScript : ProjectileScript
     SpriteRenderer spriteRenderer;
     void AddContactedEnvironmental(EnvironmentType environmentType)
     {
+        if (!fieldExpertEnabled) return;
         if (contactedEnvironmentType.Contains(environmentType)) return;
         
         if (!spriteRenderer) spriteRenderer = GetComponent<SpriteRenderer>();
@@ -169,7 +179,12 @@ public class CasterProjectileScript : ProjectileScript
 
         finalTrailColor /= contactedEnvironmentType.Count;
 
-        trail.startColor = finalTrailColor;
+        trail.startColor = new Color(
+            finalTrailColor.r,
+            finalTrailColor.g,
+            finalTrailColor.b,
+            0.7f
+        );
 
         trail.endColor = new Color(
             trail.startColor.r,
