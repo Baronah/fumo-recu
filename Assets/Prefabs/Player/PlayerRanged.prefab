@@ -1167,6 +1167,7 @@ MonoBehaviour:
   IsBeingShifted: 0
   FreezeTimer: 0
   StunTimer: 0
+  StatusResistTimer: 0
   preferredMoveAnimationPlaySpeed: 0.85
   preferredAttackAnimationSpeed: 0.9
   HasOnStartCoroutine: 1
@@ -1225,6 +1226,7 @@ MonoBehaviour:
   FreezeCooldown: 10.5
   FreezeCastDuration: 0.1
   IllusionPrefab: {fileID: 4804969973133499271, guid: 09bcf3452a6a99f4a94ce939d3a3fc57, type: 3}
+  SkillSfx: {fileID: 3379531209446343463}
   PhantomAtkInherit: 0.5
   SP_SkillMaxRefund: 0.9
   SP_MinWinForRefundMax: 0.25
@@ -1535,7 +1537,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 567dc1b9432b1684ba0d7dcee56aecaa, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1

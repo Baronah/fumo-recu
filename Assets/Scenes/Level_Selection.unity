@@ -3844,7 +3844,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4292408718
-  m_fontColor: {r: 0.5582948, g: 0.9622642, b: 0.8487303, a: 1}
+  m_fontColor: {r: 0.6671342, g: 0.98490566, b: 0.895436, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -11363,7 +11363,7 @@ MonoBehaviour:
   skillName: 37
   skillNameText: Mint-flavored Gum
   skillDescription: Upon entering the field, restores <color=green>30% missing HP</color>
-    and gains <color=#ff4545>+100% ATK</color> over 5 seconds.
+    and gains <color=#ff4545>+75% ATK</color> over 5 seconds.
   favorText: She also has sugar-free variety, if you prefer that.
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 

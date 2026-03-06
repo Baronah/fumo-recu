@@ -5,6 +5,7 @@ using static StageManager;
 
 public class CasterProjectileScript : ProjectileScript
 {
+    [SerializeField] private AudioSource bounceSFX, enviSFX;
     private bool fieldExpertEnabled = false;
 
     private HashSet<EnvironmentType> contactedEnvironmentType = new();
@@ -93,7 +94,7 @@ public class CasterProjectileScript : ProjectileScript
                     value = 1.25f;
                     if (ragingTerrain) value *= 2;
 
-                    target.ApplyEffect(Effect.AffectedStat.ARNG, "DARK_ZONE_CASTER_HIT_DEBUFF", -100f, value, true);
+                    target.ApplyEffect(Effect.AffectedStat.ARNG, "DARK_ZONE_CASTER_HIT_DEBUFF", -99f, value, true);
                     break;
             }
         }
@@ -118,6 +119,19 @@ public class CasterProjectileScript : ProjectileScript
         Acceleration = 0;
 
         ShootTowards(reflected, ProjectileType.CATCH_FIRST_TARGET_OF_TYPE, Mathf.Max(Lifespan, 5f), true, initTarget.GetGenericType());
+        if (bounceSFX && b_audioPlayLockout <= 0f)
+        {
+            bounceSFX.Play();
+            b_audioPlayLockout = 0.5f;
+        }
+    }
+
+    private static float b_audioPlayLockout = 0f, e_audioPlayLockout = 0f;
+    protected override void FixedUpdate()
+    {
+        base.FixedUpdate();
+        if (b_audioPlayLockout > 0) b_audioPlayLockout -= Time.fixedUnscaledDeltaTime;
+        if (e_audioPlayLockout > 0) e_audioPlayLockout -= Time.fixedUnscaledDeltaTime;
     }
 
     public override void HandleHit(GameObject other)
@@ -141,7 +155,7 @@ public class CasterProjectileScript : ProjectileScript
         if (contactedEnvironmentType.Contains(environmentType)) return;
         
         if (!spriteRenderer) spriteRenderer = GetComponent<SpriteRenderer>();
-        
+
         contactedEnvironmentType.Add(environmentType);
 
         Color finalColor = Color.black;
@@ -194,5 +208,11 @@ public class CasterProjectileScript : ProjectileScript
         );
 
         trail.enabled = true;
+
+        if (enviSFX && e_audioPlayLockout <= 0f)
+        {
+            enviSFX.Play();
+            e_audioPlayLockout = 0.5f;
+        }
     }
 }

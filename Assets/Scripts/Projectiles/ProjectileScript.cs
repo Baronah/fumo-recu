@@ -8,6 +8,7 @@ using UnityEngine;
 public class ProjectileScript : MonoBehaviour
 {
 	[HideInInspector] public EntityBase ProjectileFirer;
+
 	protected EntityBase ProjectileDestination = null;
 	protected List<Type> ProjectileTargetedTypes = new();
     protected float ProjectileLifespan = 8f;
@@ -84,7 +85,7 @@ public class ProjectileScript : MonoBehaviour
     }
 
     protected float Lifespan = 3f;
-    private void FixedUpdate()
+    protected virtual void FixedUpdate()
 	{
 		if (!allowingUpdate) return;
 

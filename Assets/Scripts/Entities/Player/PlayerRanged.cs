@@ -29,6 +29,8 @@ public class PlayerRanged : PlayerBase
 
     [SerializeField] private GameObject IllusionPrefab;
 
+    [SerializeField] private AudioSource SkillSfx;
+
     private bool CanUseSkill = true, IsSkillActive = false, CanUseFreeze = true;
 
     private RectTransform AttackRangeIndicatorRect;
@@ -210,7 +212,7 @@ public class PlayerRanged : PlayerBase
             FreezeRange += 150f;
             MinDistanceForFreezeDuration += 75f;
 
-            ApplyEffect(Effect.AffectedStat.ATK, "VOW_ATK_BUFF", 20f, 9999f, true, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.ATK, "VOW_ATK_BUFF", 15f, 9999f, true, EffectPersistType.PERSIST, false);
             ApplyEffect(Effect.AffectedStat.ASPD, "VOW_ASPD_BUFF", 15f, 9999f, false, EffectPersistType.PERSIST, false);
             ApplyEffect(Effect.AffectedStat.ARNG, "VOW_ARNG_BUFF", 50f, 9999f, false, EffectPersistType.PERSIST, false);
 
@@ -226,7 +228,7 @@ public class PlayerRanged : PlayerBase
             Skill_DamageMulitplier *= 1.2f;
             Skill_ProjLifeSpan += 0.5f;
 
-            ApplyEffect(Effect.AffectedStat.MSPD, "VOW_MSPD_BUFF", 20f, 9999f, true, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.MSPD, "VOW_MSPD_BUFF", 12f, 9999f, true, EffectPersistType.PERSIST, false);
             ApplyEffect(Effect.AffectedStat.RES, "VOW_RES_BUFF", 15f, 9999f, false, EffectPersistType.PERSIST, false);
             ApplyEffect(Effect.AffectedStat.DEF, "VOW_DEF_BUFF", 10f, 9999f, false, EffectPersistType.PERSIST, false);
 
@@ -261,6 +263,8 @@ public class PlayerRanged : PlayerBase
         if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_SHADOW)) SpawnIllusion();
         else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_READ)) RefundSkill();
 
+        if (SkillSfx && SkillSfx.isPlaying) SkillSfx.Stop();
+        
         StopCoroutine(SkillCoroutine);
         SkillCoroutine = null;
 
@@ -573,6 +577,8 @@ public class PlayerRanged : PlayerBase
         flowerCount = 0;
         float angleOffset = 0;
 
+        if (SkillSfx) SkillSfx.Play();
+
         bool shootAdditionalBullets = Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_MORE),
              homingOnFirstTarget = Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_TRAVEL);
 
@@ -748,6 +754,7 @@ public class PlayerRanged : PlayerBase
             intervalCounter += Time.deltaTime;
         }
 
+        if (SkillSfx && SkillSfx.isPlaying) SkillSfx.Stop();
         animator.SetTrigger("skill_end");
         IsSkillActive = false;
         skillCurrentDuration = SkillDuration;
@@ -759,7 +766,7 @@ public class PlayerRanged : PlayerBase
     short flowerCount = 0;
     [SerializeField] short MaxExtraFlowers = 3;
     [SerializeField] float FlowerMaxDuration = 1.5f;
-    public override void DealDamage(EntityBase target, int pDmg, int mDmg, int tDmg, bool allowWhenDisabled = false, ProjectileScript projectileScript = null)
+    public override void DealDamage(EntityBase target, float pDmg, float mDmg, float tDmg, bool allowWhenDisabled = false, ProjectileScript projectileScript = null)
     {
         base.DealDamage(target, pDmg, mDmg, tDmg, allowWhenDisabled);
         if (IsSkillActive 

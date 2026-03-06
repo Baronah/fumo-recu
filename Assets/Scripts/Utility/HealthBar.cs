@@ -14,19 +14,19 @@ public class HealthBar : MonoBehaviour
         
     }
 
-    public void SetMaxHealth(int mHealth)
+    public void SetMaxHealth(float mHealth)
     {
         slider.maxValue = mHealth;
         slider.value = mHealth;
     }
 
-	public void SetMaxHealth(int mHealth, bool alsoSetHealth)
+	public void SetMaxHealth(float mHealth, bool alsoSetHealth)
 	{
 		slider.maxValue = mHealth;
 	}
 
 	// Update is called once per frame
-	public void SetHealth(int health)
+	public void SetHealth(float health)
     {
         slider.value = health;
     }

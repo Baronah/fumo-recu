@@ -37,11 +37,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 10f81ecc1f290514588706c7f1b3ad80
-    m_Address: Assets/Prefabs/Enemy/RangedEnemyBase Variant.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 889974ae779658e45970e67874721a1c
     m_Address: Assets/Prefabs/Player/PlayerMelee.prefab
     m_ReadOnly: 0

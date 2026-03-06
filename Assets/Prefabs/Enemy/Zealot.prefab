@@ -139,6 +139,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Zealot
       objectReference: {fileID: 0}
+    - target: {fileID: 716587016134730976, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_Color.b
       value: 0
@@ -223,6 +227,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 4ab54bab0b6c58340bfa5dd3c6cd9ca3, type: 3}
+    - target: {fileID: 5250980034755208933, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Color.a
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6772246562461740860, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_LocalScale.x
       value: 25
@@ -435,6 +443,7 @@ MonoBehaviour:
   IsBeingShifted: 0
   FreezeTimer: 0
   StunTimer: 0
+  StatusResistTimer: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 0.9
   HasOnStartCoroutine: 1

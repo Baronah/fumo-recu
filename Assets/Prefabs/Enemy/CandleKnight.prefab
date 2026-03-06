@@ -429,6 +429,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: cc60665d18aae154c94d1fc5e1ba5336, type: 3}
+    - target: {fileID: 5250980034755208933, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_Color.a
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6772246562461740860, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -572,6 +576,7 @@ MonoBehaviour:
   IsBeingShifted: 0
   FreezeTimer: 0
   StunTimer: 0
+  StatusResistTimer: 0
   preferredMoveAnimationPlaySpeed: 0.7
   preferredAttackAnimationSpeed: 0.65
   HasOnStartCoroutine: 1

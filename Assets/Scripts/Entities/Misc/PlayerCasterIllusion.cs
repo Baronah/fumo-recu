@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class PlayerCasterIllusion : EntityBase
 {
+    [SerializeField] private AudioSource Debut;
     [SerializeField] private Transform SkillPosition;
     [SerializeField] private GameObject SkillEffect, SkillBarObj;
     private Slider SkillBar;
@@ -36,6 +37,7 @@ public class PlayerCasterIllusion : EntityBase
         spriteRenderer.flipX = flipX;
         HandleSpriteFlipping();
 
+        if (Debut) Debut.Play();
         StartCoroutine(CastSkill());
     }
 

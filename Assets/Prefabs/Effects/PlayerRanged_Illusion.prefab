@@ -574,6 +574,7 @@ MonoBehaviour:
   IsBeingShifted: 0
   FreezeTimer: 0
   StunTimer: 0
+  StatusResistTimer: 0
   preferredMoveAnimationPlaySpeed: 0.85
   preferredAttackAnimationSpeed: 0.9
   HasOnStartCoroutine: 1
@@ -581,6 +582,7 @@ MonoBehaviour:
   LevitationEffect: {fileID: 0}
   reviveDuration: 5
   postReviveDuration: 0
+  Debut: {fileID: 393571691815884567}
   SkillPosition: {fileID: 3133010215521894544}
   SkillEffect: {fileID: 5073970244535040960}
   SkillBarObj: {fileID: 5301457869692540562}
@@ -882,7 +884,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 6aef769864bb69e448097752f9752c6e, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1

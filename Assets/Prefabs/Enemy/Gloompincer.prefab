@@ -157,7 +157,7 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: d2d58048500b49843892dbf6a096d3e5, type: 3}
     - target: {fileID: 5250980034755208933, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_Color.a
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6332891816829384026, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_Size.y
@@ -512,6 +512,7 @@ MonoBehaviour:
   IsBeingShifted: 0
   FreezeTimer: 0
   StunTimer: 0
+  StatusResistTimer: 0
   preferredMoveAnimationPlaySpeed: 1.2
   preferredAttackAnimationSpeed: 0.85
   HasOnStartCoroutine: 1

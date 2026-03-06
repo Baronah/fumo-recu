@@ -36,6 +36,8 @@ public class PlayerMelee : PlayerBase
     private Slider SkillBar;
 
     [SerializeField] float PullRadius = 400, DoTRadius = 220f, AoERadius = 250f;
+    private float PullRadiusBase, DoTRadiusBase, AoERadiusBase;
+    private Vector3 DoTEffectScaleBase;
 
     [SerializeField] float RimDoTAtkScale = 0.34f,
                            RimDefShredValue = 15f,
@@ -46,7 +48,7 @@ public class PlayerMelee : PlayerBase
                            ExtendDurationOfHit = 0.75f;
     [SerializeField] TMP_Text AftershockDmgCounter;
 
-    [SerializeField] AudioSource Ambient, Vortex, Shock, Counter;
+    [SerializeField] AudioSource Ambient, Vortex, Shock, Counter, FireUp, BlackflashSfx;
     
     private bool IsSkillActive = false, IsDashing = false, CanUseSkill = true, CanUseDash = true;
 
@@ -69,6 +71,11 @@ public class PlayerMelee : PlayerBase
         dashCooldownTimer = DashCooldown;
         ultCooldownTimer = UltCooldown;
 
+        PullRadiusBase = PullRadius;
+        DoTRadiusBase = DoTRadius;
+        AoERadiusBase = AoERadius;
+        DoTEffectScaleBase = SkillEffect_2.transform.localScale;
+
         base.InitializeComponents();
     }
 
@@ -83,7 +90,10 @@ public class PlayerMelee : PlayerBase
             bool skillActive = IsSkillActive && IsAlive();
 
             SkillEffect.SetActive(skillActive);
+            
             SkillEffect_2.SetActive(Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_IGNITE) && skillActive);
+            SkillEffect_2.transform.localScale = DoTEffectScaleBase * (DoTRadius / DoTRadiusBase);
+
             BlackflashEffect.SetActive(IsAlive() && AtkBuffs.ContainsKey("BLACKFLASH_ATK_BUFF") && AtkBuffs["BLACKFLASH_ATK_BUFF"].IsInEffect);
             SkillBarObj.SetActive(skillActive);
             AftershockDmgCounter.gameObject.SetActive(skillActive && Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_AFTERSHOCK) && damageTakenDuringSkill > 0);
@@ -168,7 +178,7 @@ public class PlayerMelee : PlayerBase
             DashDuration *= 1.5f;
 
             ApplyEffect(Effect.AffectedStat.ATK, "VOW_ATK_BUFF", 15f, 9999f, true, EffectPersistType.PERSIST, false);
-            ApplyEffect(Effect.AffectedStat.MSPD, "VOW_MSPD_BUFF", 20f, 9999f, true, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.MSPD, "VOW_MSPD_BUFF", 10f, 9999f, true, EffectPersistType.PERSIST, false);
             ApplyEffect(Effect.AffectedStat.DEF, "VOW_DEF_BUFF", 10f, 9999f, false, EffectPersistType.PERSIST, false);
 
             Up_DashSlowPercentage += 20f;
@@ -480,21 +490,31 @@ public class PlayerMelee : PlayerBase
             if (Skills.Contains(SkillTree_Manager.SkillName.WIND_ANTHEM)) ReduceSpecialCooldown(IsWindAnthemMaxed ? 1.5f : 0.75f);
         }
 
+        bool BlackFlash = IsDashing && Skills.Contains(SkillTree_Manager.SkillName.BLACKFLASH) && hasTargets;
+        bool upgradeBL = BlackFlash && !playerManager.FirstBlackFlash;
+        if (BlackFlash)
+        {
+            if (BlackflashSfx) BlackflashSfx.Play();
+            ApplyEffect(Effect.AffectedStat.ATK, "BLACKFLASH_ATK_BUFF", BL_AtkBuff, BL_BuffDur, true, EffectPersistType.DECAY);
+            DisplayDamage("<color=black><size=60>BLACKFLASH!</size></color>", new(0, 55));
+            if (upgradeBL) defPen += 60;
+        }
+
         float atk = this.atk;
         if (Skills.Contains(SkillTree_Manager.SkillName.HEAVY_HITTER))
         {
             atk *= GetHeavyHitterMultiplier();
         }
 
-        bool BlackFlash = IsDashing && Skills.Contains(SkillTree_Manager.SkillName.BLACKFLASH) && hasTargets;
         foreach (var target in targets)
         {
             if (BlackFlash)
-                ProcessBlackFlash(target);
+                DealDamage(target, (int) (atk * BL_AtkScale), 0, 0);
             else 
                 DealDamage(target, (int) atk);
         }
 
+        if (upgradeBL) defPen -= 60;
         timerSinceLastAttack = 0f;
         yield return null;
 
@@ -508,22 +528,7 @@ public class PlayerMelee : PlayerBase
     void UpgradeBlackflash()
     {
         ApplyEffect(Effect.AffectedStat.ATK, "BLACKFLASH_PERMA_BUFF", 20f, 9999f, true, EffectPersistType.PERSIST);
-        BL_AtkBuff *= 1.2f;
         BL_BuffDur *= 1.2f;
-    }
-
-    void ProcessBlackFlash(EntityBase target)
-    {
-        bool upgraded = !playerManager.FirstBlackFlash;
-        float finalAtk = atk * BL_AtkScale;
-
-        if (upgraded) defPen += 60;
-
-        ApplyEffect(Effect.AffectedStat.ATK, "BLACKFLASH_ATK_BUFF", BL_AtkBuff, BL_BuffDur, true, EffectPersistType.DECAY);
-        DealDamage(target, (int) finalAtk, 0, 0);
-        DisplayDamage("<color=black><size=60>BLACKFLASH!</size></color>", new(0, 55));
-        
-        if (upgraded) defPen -= 60;
     }
 
     public override void UseSkill()
@@ -588,6 +593,7 @@ public class PlayerMelee : PlayerBase
         }
         else if (CanDoT)
         {
+            if (FireUp) FireUp.Play();
             ProcessDoT();
         }
 
@@ -618,6 +624,7 @@ public class PlayerMelee : PlayerBase
         }
 
         if (Vortex && Vortex.isPlaying) Vortex.Stop();
+        if (FireUp && FireUp.isPlaying) FireUp.Stop();
 
         ProcessJuggernautTick(CanPull, CanDoT);
 
@@ -651,6 +658,8 @@ public class PlayerMelee : PlayerBase
     void ProcessPull()
     {
         GameObject o = Instantiate(SwirlEffect, transform.position, Quaternion.identity);
+        o.transform.localScale *= PullRadius / PullRadiusBase;
+        
         Destroy(o, 1.5f);
         var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, PullRadius, true);
         foreach (EntityBase enemy in enemies)
@@ -706,8 +715,14 @@ public class PlayerMelee : PlayerBase
         {
             if (Shock) Shock.Play();
             SkillEffect.GetComponent<SpriteRenderer>().color = SkillEffectColor;
-            Instantiate(AftershockEffect, transform.position, Quaternion.identity);
-            Instantiate(AftershockEffect_2, transform.position, Quaternion.identity);
+
+            float scale = AoERadius / AoERadiusBase;
+
+            GameObject s1 = Instantiate(AftershockEffect, transform.position, Quaternion.identity);
+            s1.transform.localScale *= scale;
+
+            GameObject s2 = Instantiate(AftershockEffect_2, transform.position, Quaternion.identity);
+            s2.transform.localScale *= scale;
 
             defPen += 50;
             var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, AoERadius, true);

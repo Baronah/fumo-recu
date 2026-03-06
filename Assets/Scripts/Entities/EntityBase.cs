@@ -18,13 +18,13 @@ public class EntityBase : MonoBehaviour
     [SerializeField] public string Name;
     [SerializeField] public Sprite Icon;
 
-    [SerializeField] public int mHealth;
+    [SerializeField] public float mHealth;
     [SerializeField] public short bAtk, bDef, bRes;
     [SerializeField] public short defPen, defIgn, resPen, resIgn;
     [SerializeField] public float lifeSteal, b_moveSpeed, b_attackRange, b_attackWindupTime, b_attackInterval;
     public float MIN_PHYSICAL_DMG = 0.05F, MIN_MAGICAL_DMG = 0.1F;
 
-    public int health;
+    public float health;
     public short atk, def, res;
     public float ASPD = 100;
     public float moveSpeed, attackRange, attackWindupTime, attackInterval;
@@ -39,7 +39,7 @@ public class EntityBase : MonoBehaviour
     public float BoundTimer = 0f;
     public bool IsBound => BoundTimer > 0f;
 
-    public int GetMaxHealth() => mHealth;
+    public float GetMaxHealth() => mHealth;
     public short GetHealthPercentage() => (short)Mathf.Max(1, health * 100 / mHealth);
     public short GetMissinghealthPercentage() => (short)((mHealth - health) * 100 / mHealth);
 
@@ -853,7 +853,7 @@ public class EntityBase : MonoBehaviour
 
     protected virtual float GetRegenAmount()
     {
-        return Mathf.Ceil(hpRegenFlat + mHealth * hpRegenPercentage);
+        return hpRegenFlat + mHealth * hpRegenPercentage;
     }
 
     public virtual void UpdateCooldowns()
@@ -950,7 +950,7 @@ public class EntityBase : MonoBehaviour
         yield return null;
     }
 
-    public virtual DamageInstance DamageOutput(EntityBase target, int pDmg, int mDmg, int tDmg)
+    public virtual DamageInstance DamageOutput(EntityBase target, float pDmg, float mDmg, float tDmg)
     {
         DamagePipeline pipeline = new DamagePipeline
         {
@@ -992,7 +992,7 @@ public class EntityBase : MonoBehaviour
         DealDamage(target, damage.PhysicalDamage, damage.MagicalDamage, damage.TrueDamage, projectileInfo);
     }
 
-    public virtual void DealDamage(EntityBase target, int pDmg, int mDmg, int tDmg, bool allowWhenDisabled = false, ProjectileScript projectileInfo = null)
+    public virtual void DealDamage(EntityBase target, float pDmg, float mDmg, float tDmg, bool allowWhenDisabled = false, ProjectileScript projectileInfo = null)
     {
         if ((!allowWhenDisabled && (IsFrozen || IsStunned)) || !target || !target.IsAlive()) return;
 
@@ -1001,7 +1001,8 @@ public class EntityBase : MonoBehaviour
         target.TakeDamage(calcDamage, this, projectileInfo);
 
         if (calcDamage.TotalDamage <= 0) return;
-        if (!target.isInvulnerable) OnSuccessfulAttack(target, calcDamage);
+        
+        OnSuccessfulAttack(target, calcDamage);
     }
 
     public virtual void OnSuccessfulAttack(EntityBase target, DamageInstance damage)
@@ -1045,21 +1046,21 @@ public class EntityBase : MonoBehaviour
         bool hasMoreThanOneDamageType = false;
         if (damage.PhysicalDamage > 0)
         {
-            dmgTxt += $"<color=red>{damage.PhysicalDamage}";
+            dmgTxt += $"<color=red>{Mathf.FloorToInt(damage.PhysicalDamage)}";
             hasMoreThanOneDamageType = true;
         }
 
         if (damage.MagicalDamage > 0)
         {
             if (hasMoreThanOneDamageType) dmgTxt += '\n';
-            dmgTxt += $"<color=#ff00ff>{damage.MagicalDamage}</color>";
+            dmgTxt += $"<color=#ff00ff>{Mathf.FloorToInt(damage.MagicalDamage)}</color>";
             hasMoreThanOneDamageType = true;
         }
 
         if (damage.TrueDamage > 0)
         {
             if (hasMoreThanOneDamageType) dmgTxt += '\n';
-            dmgTxt += $"<color=#b1b1b1>{damage.TrueDamage}</color>";
+            dmgTxt += $"<color=#b1b1b1>{Mathf.FloorToInt(damage.TrueDamage)}</color>";
         }
 
         DisplayDamage(dmgTxt, new(0, 55));
@@ -1084,7 +1085,7 @@ public class EntityBase : MonoBehaviour
         }
     }
 
-    public void SetHealth(int health)
+    public void SetHealth(float health)
     {
         this.health = health;
         if (healthBar) healthBar.SetHealth(health);
@@ -1139,7 +1140,8 @@ public class EntityBase : MonoBehaviour
     private float GravityTimerCount = 0f;
     private readonly float PullTick = 0.3f;
     private readonly float BaseRange = 150f;
-    private float GrowthRange = 80f;
+    private readonly float GrowthRange = 80f;
+    private readonly float PullForce_Base = 0.8f, PullForce_Growth = 0.5f;
     protected virtual void ProcessGravity()
     {
         if (!CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.GRAVITY) || weight <= 0) return;
@@ -1148,13 +1150,13 @@ public class EntityBase : MonoBehaviour
 
         GravityTimerCount = 0f;
 
-        float baseForce = 1.2f, searchRange = BaseRange + GrowthRange * (weight - 1);
+        float searchRange = BaseRange + GrowthRange * (weight - 1);
         var hits = SearchForEntitiesAroundCertainPoint(typeof(EntityBase), transform.position, searchRange, true)
             .Where(e => e.weight < weight);
         foreach (var hit in hits)
         { 
-            float force = baseForce * (hit.weight - weight);
-            PullEntityTowards(hit, transform.position, baseForce, 0.075f, true, false);
+            float force = PullForce_Base + PullForce_Growth * (weight - hit.weight - 1);
+            PullEntityTowards(hit, transform.position, force, 0.09f, true, false);
         }
 
         ApplyEffect(AffectedStat.MSPD, "GRAVITY_WEIGHT_PENALTY",
@@ -1357,8 +1359,8 @@ public class EntityBase : MonoBehaviour
         LevitationEffect.color = new Color(1, 1, 1, 0.3f);
         IsBeingLevitated = true;
 
-        float UpDuration = Mathf.Min(0.2f, duration * 0.15f);
-        float DownDuration = floatUpDuration / 2;
+        floatDownDuration = Mathf.Min(0.2f, duration * 0.15f);
+        floatDownDuration = floatUpDuration / 2;
 
         Vector2 targetPos = spriteInitPos + new Vector2(0, LevitationHeight);
         
@@ -1581,8 +1583,9 @@ public class EntityBase : MonoBehaviour
     public virtual void Heal(float amount, EntityBase target, bool healThroughDead = false, bool displayMsg = true)
     {
         if (amount <= 0 || (!target.IsAlive() && !healThroughDead)) return;
-        if (displayMsg) target.DisplayDamage("<color=green>+" + (int)amount + "</color>", new Vector3(0, 55));
-        target.health += (int)amount;
+        
+        if (displayMsg) target.DisplayDamage("<color=green>+" + Mathf.CeilToInt(amount) + "</color>", new Vector3(0, 55));
+        target.health += amount;
         if (target.health > target.mHealth) target.health = target.mHealth;
         target.healthBar.SetHealth(target.health);
     }

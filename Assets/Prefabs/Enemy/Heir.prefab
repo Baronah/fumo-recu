@@ -75,6 +75,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Heir
       objectReference: {fileID: 0}
+    - target: {fileID: 716587016134730976, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 773491194806959642, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -324,6 +328,7 @@ MonoBehaviour:
   IsBeingShifted: 0
   FreezeTimer: 0
   StunTimer: 0
+  StatusResistTimer: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 2
   HasOnStartCoroutine: 1

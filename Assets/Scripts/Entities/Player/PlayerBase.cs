@@ -177,8 +177,8 @@ public class PlayerBase : EntityBase
         GetVow();
         if (Skills.Contains(SkillTree_Manager.SkillName.SWAP_START_ATK))
         {
-            Heal((int)((mHealth - health) * 0.3f));
-            ApplyEffect(Effect.AffectedStat.ATK, "SWAP_START_ATKBUFF", 100f, 5f, true, EffectPersistType.PERSIST);
+            Heal((mHealth - health) * 0.3f);
+            ApplyEffect(Effect.AffectedStat.ATK, "SWAP_START_ATKBUFF", 75f, 5f, true, EffectPersistType.PERSIST);
         }
     }
 
@@ -289,7 +289,7 @@ public class PlayerBase : EntityBase
                     break;
 
                 case SkillTree_Manager.SkillName.A_NICE_LOOKING_ROCK:
-                    mHealth += (int)(mHealth * 0.052f);
+                    mHealth += (mHealth * 0.052f);
                     bAtk = (short)(bAtk * 1.052f);
                     b_moveSpeed += b_moveSpeed * 0.052f;
                     break;
@@ -521,8 +521,8 @@ public class PlayerBase : EntityBase
             res = res,
             attackPattern = attackPattern,
             damageType = damageType,
-            mHealth = mHealth,
-            health = health,
+            mHealth = Mathf.FloorToInt(mHealth),
+            health = Mathf.FloorToInt(health),
             moveSpeed = moveSpeed,
             SkillName = SkillName,
             SkillText = SkillDes,
@@ -556,7 +556,7 @@ public class PlayerBase : EntityBase
 
 
     readonly HashSet<EntityBase> Levitated = new();
-    public override void DealDamage(EntityBase target, int pDmg, int mDmg, int tDmg, bool allowWhenDisabled = false, ProjectileScript projectileInfo = null)
+    public override void DealDamage(EntityBase target, float pDmg, float mDmg, float tDmg, bool allowWhenDisabled = false, ProjectileScript projectileInfo = null)
     {
         if (Skills.Contains(SkillTree_Manager.SkillName.BUBBLE_ARTS) && !Levitated.Contains(target))
         {
@@ -625,7 +625,7 @@ public class PlayerBase : EntityBase
 
     protected virtual void MintRevive()
     {
-        Heal((int)(mHealth * 0.52f), healThroughDead: true);
+        Heal(mHealth * 0.52f, healThroughDead: true);
 
         playerManager.MintBlessingRevival();
         SetInvulnerable(1.52f);

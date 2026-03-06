@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class DamageInstance
 { 
-    public int PhysicalDamage { get; set; }
+    public float PhysicalDamage { get; set; }
     
-    public int MagicalDamage { get; set; }
+    public float MagicalDamage { get; set; }
     
-    public int TrueDamage { get; set; }
+    public float TrueDamage { get; set; }
 
-    public int TotalDamage => PhysicalDamage + MagicalDamage + TrueDamage;
+    public float TotalDamage => PhysicalDamage + MagicalDamage + TrueDamage;
 
     public DamageInstance()
     {
@@ -19,7 +19,7 @@ public class DamageInstance
         TrueDamage = 0;
     }
 
-    public DamageInstance(int physical, int magical, int trueDamage)
+    public DamageInstance(float physical, float magical, float trueDamage)
     {
         PhysicalDamage = physical;
         MagicalDamage = magical;
@@ -38,26 +38,26 @@ public class DamageInstance
         TrueDamage = Mathf.CeilToInt(TrueDamage * tPercentage);
     }
 
-    public void Set(int physical, int magical, int trueDamage)
+    public void Set(float physical, float magical, float trueDamage)
     {
         PhysicalDamage = physical;
         MagicalDamage = magical;
         TrueDamage = trueDamage;
     }
 
-    public void Set(int amount)
+    public void Set(float amount)
     {
         Set(amount, amount, amount);
     }
 
-    public void SetTotal(int amount)
+    public void SetTotal(float amount)
     {
         if (amount == 1)
         {
             Set(0, 0, 1);
             return;
         }
-        int split = amount / 3;
+        float split = amount / 3;
         Set(split, split, amount - (split * 2));
     }
 }

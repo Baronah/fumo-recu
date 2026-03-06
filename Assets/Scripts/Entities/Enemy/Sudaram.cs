@@ -21,8 +21,8 @@ public class Sudaram : EnemyBase
     public override void FixedUpdate()
     {
         base.FixedUpdate();
-        if (a_audioPlayLockout > 0) a_audioPlayLockout -= Time.unscaledDeltaTime;
-        if (e_audioPlayLockout > 0) e_audioPlayLockout -= Time.unscaledDeltaTime;
+        if (a_audioPlayLockout > 0) a_audioPlayLockout -= Time.fixedUnscaledDeltaTime;
+        if (e_audioPlayLockout > 0) e_audioPlayLockout -= Time.fixedUnscaledDeltaTime;
     }
 
     public override void Move()
