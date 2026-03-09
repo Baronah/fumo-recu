@@ -127,6 +127,24 @@ public class EnemyBase : EntityBase
         if (!ViewOnlyMode && SpotPlayerUponSpawn) ForceSpotPlayer();
 
         IsComponentsInitialized = true;
+
+        if (!ViewOnlyMode && CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.HIBERNATE)) StartCoroutine(Deforst());
+    }
+
+    IEnumerator Deforst()
+    {
+        SetHealth(mHealth * 0.5f);
+
+        yield return null;
+
+        while (IsFrozen)
+        {
+            yield return new WaitForSeconds(1f);
+            Heal(mHealth * 0.02f);
+        }
+
+        RemoveEffect("ICEAGE_DEF_BUFF");
+        RemoveEffect("ICEAGE_RES_BUFF");
     }
 
     public void ForceSpotPlayer() => StartCoroutine(ForceSpotCoroutine());
@@ -456,14 +474,6 @@ public class EnemyBase : EntityBase
         }
 
         return currentWaypoint;
-    }
-
-    public override void OnFreezeExit()
-    {
-        base.OnFreezeExit();
-
-        RemoveEffect("ICEAGE_DEF_BUFF");
-        RemoveEffect("ICEAGE_RES_BUFF");
     }
 
     public override void Move()

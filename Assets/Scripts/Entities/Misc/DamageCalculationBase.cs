@@ -19,6 +19,20 @@ public class DamageInstance
         TrueDamage = 0;
     }
 
+    public DamageInstance(float amount)
+    {
+        PhysicalDamage = amount;
+        MagicalDamage = amount;
+        TrueDamage = amount;
+    }
+
+    public DamageInstance(DamageInstance damageInstance)
+    {   
+        PhysicalDamage = damageInstance.PhysicalDamage;
+        MagicalDamage = damageInstance.MagicalDamage;
+        TrueDamage = damageInstance.TrueDamage;
+    }
+
     public DamageInstance(float physical, float magical, float trueDamage)
     {
         PhysicalDamage = physical;

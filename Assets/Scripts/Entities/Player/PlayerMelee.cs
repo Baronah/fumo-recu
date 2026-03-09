@@ -779,9 +779,13 @@ public class PlayerMelee : PlayerBase
             SpriteRenderer projectileRenderer = projectileInfo.GetComponent<SpriteRenderer>();
             projectileRenderer.material = ColorOverlayMat;
             projectileRenderer.color = Color.yellow;
+            
+            DamageInstance reflectedDamage = new DamageInstance(projectileInfo.DamageInstance);
+            reflectedDamage.PhysicalDamage += atk;
+
             CreateProjectileAndShootToward(
                 projectileInfo.gameObject,
-                projectileInfo.DamageInstance,
+                reflectedDamage,
                 transform.position,
                 source.transform.position,
                 ProjectileScript.ProjectileType.CATCH_FIRST_TARGET_OF_TYPE,
@@ -794,9 +798,13 @@ public class PlayerMelee : PlayerBase
         else
         {
             var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, 150f, true);
+            
+            DamageInstance reflectDamage = new DamageInstance(damage);
+            reflectDamage.PhysicalDamage += atk;
+            
             foreach (EntityBase enemy in enemies)
             {
-                DealDamage(enemy, damage.PhysicalDamage, damage.MagicalDamage, damage.TrueDamage);
+                DealDamage(enemy, reflectDamage);
             }
         }
 

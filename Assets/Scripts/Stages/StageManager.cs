@@ -364,7 +364,7 @@ public class StageManager : MonoBehaviour
                     }
                     break;
                 case SkillName.HIBERNATE:
-                    float duration = 20f;
+                    float duration = 30f;
                     enemy.mHealth *= 2;
                     enemy.ApplyFreeze(enemy, duration);
 

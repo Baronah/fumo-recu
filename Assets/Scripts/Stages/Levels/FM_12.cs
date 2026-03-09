@@ -2,22 +2,42 @@ using UnityEngine;
 
 public class FM_12 : StageManager
 {
-    [SerializeField] private float Candles_RangeReductionRatio = 0.5f;
-    [SerializeField] private float Toys_HPBonus = 0.35f;
-    [SerializeField] private short Toys_DefBonus = 60, Toys_ResBonus = 40;
+    [SerializeField] private GameObject[] CM_ActivateGroup;
+    [SerializeField] private float CM_Hiber_WakeAtkBuffAdd = 0.25f, CM_Hiber_WakeMspdBuffAdd = 0.35f, CM_Hiber_SleepCountTimeAdd = 5f;
+
+    public override void EnableChallengeMode()
+    {
+        base.EnableChallengeMode();
+        if (CharacterPrefabsStorage.EnableChallengeMode)
+        {
+            foreach (var item in CM_ActivateGroup)
+            {
+                item.SetActive(true);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < CM_ActivateGroup.Length; i++)
+            {
+                Destroy(CM_ActivateGroup[i]);
+            }
+        }
+    }
 
     public override void OnEnemySpawn(EnemyBase enemy)
     {
         base.OnEnemySpawn(enemy);
-        if (CharacterPrefabsStorage.EnableChallengeMode)
+        if (enemy is Sudaram s)
         {
-            if (enemy as Candle) enemy.b_attackRange *= (1 - Candles_RangeReductionRatio);
-            else if (enemy as Toy)
-            {
-                enemy.mHealth += (int)(enemy.mHealth * Toys_HPBonus);
-                enemy.bDef += Toys_DefBonus;
-                enemy.bRes += Toys_ResBonus;
-            }
+            s.originiumPollutionBonusASPD = 100;
+            s.originiumPollutionDamageMultiplier = 0f;
+        }
+        else if (CharacterPrefabsStorage.EnableChallengeMode && enemy is HibernatorKnight h)
+        {
+            h.SleepCountTime += CM_Hiber_SleepCountTimeAdd;
+            h.Wake_AtkBuff += CM_Hiber_WakeAtkBuffAdd;
+            h.Wake_MspdBuff += CM_Hiber_WakeMspdBuffAdd;
+            h.Wake_Buff_Duration += 1f;
         }
     }
 }

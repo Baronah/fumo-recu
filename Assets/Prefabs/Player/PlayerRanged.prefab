@@ -1236,9 +1236,9 @@ MonoBehaviour:
   FreezeConductDebuff: 50
   FreezeHoldMax: 6
   lockInDamageFalloff: 0.01
-  lockInDamageMulMin: 0.2
+  lockInDamageMulMin: 0.25
   MaxExtraFlowers: 3
-  FlowerMaxDuration: 1.5
+  FlowerMaxDuration: 2
 --- !u!82 &770774110143472001
 AudioSource:
   m_ObjectHideFlags: 0

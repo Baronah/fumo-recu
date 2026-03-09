@@ -280,7 +280,7 @@ public class PlayerBase : EntityBase
                     break;
 
                 case SkillTree_Manager.SkillName.EQUIPMENT_PROVISIONS:
-                    mHealth += (int)(mHealth * 0.2f);
+                    HealingEffectiveness += 0.25f;
                     break;
 
                 case SkillTree_Manager.SkillName.HEAVY_HITTER:
@@ -570,7 +570,7 @@ public class PlayerBase : EntityBase
             float freezeDuration = target.FreezeTimer;
             target.EndFreeze();
 
-            int bonusDmg = (int)(atk * freezeDuration * 0.25f + target.mHealth * (0.1f + freezeDuration * 0.02f));
+            int bonusDmg = (int)(target.mHealth * 0.1f + Mathf.Min(atk * 0.5f * freezeDuration, bAtk * 4f));
             tDmg += bonusDmg;
         }
 
@@ -591,7 +591,7 @@ public class PlayerBase : EntityBase
             ApplyEffect(Effect.AffectedStat.MSPD, "VICTORY_MSPD_BUFF", strength, duration, true, EffectPersistType.DECAY);
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.VICTORY_REFRESH))
-            ReduceSpecialCooldown(Mathf.Min(10f, 2f + enemyDefeatCount), CooldownReductionType.FLAT);
+            ReduceSpecialCooldown(Mathf.Min(1.0f, 0.3f + 0.07f * enemyDefeatCount), CooldownReductionType.PERCENTAGE_FULL);
 
         enemyDefeatCount++;
     }

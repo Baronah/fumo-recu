@@ -1450,6 +1450,8 @@ public class EntityBase : MonoBehaviour
 
     public virtual void OnDeath()
     {
+        EndFreeze();
+        EndStun();
         LevitationEffect.color = Color.clear;
         ccBar.SetActive(false);
         ShadowSprite.SetActive(false);
@@ -1467,6 +1469,7 @@ public class EntityBase : MonoBehaviour
         StopAllCoroutines();
         StartCoroutine(StartMovementLockout(999));
         StartCoroutine(StartAttackLockout(999));
+        StartCoroutine(EndLevitate());
 
         if (EntityManager)
         {
@@ -1580,10 +1583,13 @@ public class EntityBase : MonoBehaviour
         Heal(amount, this, healThroughDead);
     }
 
+    protected float HealingEffectiveness = 1f;
     public virtual void Heal(float amount, EntityBase target, bool healThroughDead = false, bool displayMsg = true)
     {
         if (amount <= 0 || (!target.IsAlive() && !healThroughDead)) return;
         
+        amount *= HealingEffectiveness;
+
         if (displayMsg) target.DisplayDamage("<color=green>+" + Mathf.CeilToInt(amount) + "</color>", new Vector3(0, 55));
         target.health += amount;
         if (target.health > target.mHealth) target.health = target.mHealth;

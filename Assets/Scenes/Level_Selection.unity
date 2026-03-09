@@ -819,9 +819,10 @@ MonoBehaviour:
   skillType: 2
   skillName: 20
   skillNameText: '''Gravity'''
-  skillDescription: All units have -10% MSPD for every weight level they have. Heavier
-    units continuously pull lighter units toward self, pull radius scales with their
-    weight, pull force on other units is proportional to weight difference.
+  skillDescription: <color=yellow>All units have -10% MSPD for every weight level
+    they have</color>. Heavier units continuously <color=#2985FF>pull lighter units</color>
+    toward self, pull radius scales with their weight, pull force on other units
+    is proportional to weight difference.
   favorText: 
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 
@@ -2687,7 +2688,7 @@ MonoBehaviour:
   skillType: 0
   skillName: 1
   skillNameText: Arts Unit - Winged Steps
-  skillDescription: <color=#ffd61f>ASPD +20</color>, landing an attack grants <color=#00ffbf>30%
+  skillDescription: <color=#ffd61f>ASPD +20</color>, landing an attack grants <color=#00ffbf>40%
     decaying MSPD</color> over 2 seconds.
   favorText: '''Sometimes I like to imagine...'''
   skillDescriptionInShort: 
@@ -3610,8 +3611,8 @@ MonoBehaviour:
   skillName: 26
   skillNameText: Victory Rewind - Excitement
   skillDescription: After defeating an enemy, your special's current CD is shortened
-    by <color=#ff9717>2 seconds</color>. Every enemy defeated increases the amount
-    by <color=yellow>1 second</color>, stacks up to <color=#5b7ccf>8 times</color>.
+    by <color=#ff9717>30%</color>. Every enemy defeated increases the amount by <color=yellow>7%</color>,
+    stacks up to <color=#5b7ccf>10 times</color>.
   favorText: ... that's a lot to watch in a sitting so she brought them here to gradually
     finish it all.
   skillDescriptionInShort: Refresh special skill after defeating an enemy.
@@ -12207,10 +12208,12 @@ MonoBehaviour:
   skillType: 2
   skillName: 56
   skillNameText: '''Statis'''
-  skillDescription: 'All units that haven''t moved for more than 5 seconds enters
-    ''statis'': Has -50% ATK, but regenerates 4% HP per second and HP can not fall
-    below 1. Any movement made breaks this state.\n\n<i>If ''Attention-holding Device''
-    is selected, required time on you is reduced to 3 seconds.</i>'
+  skillDescription: 'All units that haven''t moved for more than <color=#ff9717>5
+    seconds</color> enters ''statis'': Has <color=#5b7ccf>-50% ATK</color>, but <color=green>regenerates
+    4% HP</color> every second and <color=yellow>HP can not fall below 1</color>.
+    Any movement made breaks this state.\n\n<i>If <color=#ff00ff>''Attention-holding
+    Device''</color> is selected, required time on you is reduced to <color=#ff9717>3
+    seconds</color>.</i>'
   favorText: 
   skillDescriptionInShort: 'All units that haven''t moved for a while enters ''statis'':
     Has reduced ATK, but regenerates HP and HP can not fall below 1. Any movement
@@ -13642,8 +13645,8 @@ MonoBehaviour:
   skillType: 0
   skillName: 10
   skillNameText: Equipment - Provisions
-  skillDescription: <color=green>Max HP +20%</color>, recovers 1% max HP plus 2.5%
-    missing HP every second.
+  skillDescription: <color=green>Healing effectiveness +25%</color>, recovers 1%
+    max HP plus 2% missing HP every second.
   favorText: No one can work with an empty stomach!
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 070000000800000009000000
@@ -22390,10 +22393,13 @@ MonoBehaviour:
   skillType: 2
   skillName: 55
   skillNameText: '''Absolutism'''
-  skillDescription: Melee units have +100% HP, +35% MSPD and +2 weight. Ranged units
-    gains ASPD equals to 15% original attack range, then attack range becomes global.
+  skillDescription: Melee units have <color=green>+100% HP</color>, <color=#00ffbf>+35%
+    MSPD</color> and <color=#2985FF>+2 weight levels</color>. Ranged units gains
+    <color=#ffd61f>ASPD equals to 15% original attack range</color>, then attack
+    range <color=#ffd61f>becomes global</color>.
   favorText: 
-  skillDescriptionInShort: 
+  skillDescriptionInShort: Melee units have increased HP, MSPD and weight. Ranged
+    units have their attack range expanded to the entire field.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1033819579
@@ -25217,9 +25223,10 @@ MonoBehaviour:
   skillType: 2
   skillName: 57
   skillNameText: '''Heat Death'''
-  skillDescription: Your units have -45% max HP. Upon death, they deal 200 true damage
-    to all presenting enemies. If all enemies are defeated this way, the battle concludes
-    in your victory.
+  skillDescription: Your units have <color=#5b7ccf>-45% max HP</color>. Upon death,
+    they deal <color=#b1b1b1>200 true damage</color> to all presenting enemies. If
+    all enemies are defeated this way, <color=yellow>the battle concludes in your
+    victory</color>.
   favorText: 
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 
@@ -25745,6 +25752,7 @@ MonoBehaviour:
   - The present. Day and night. And even time. I will run through them all.\n<color=yellow>Your
     units have increased MSPD in this level.</color>\n<color=red>The 'Sudarim' are
     immune to damage from Originium Pollutions.</color>
+  - Next time, set me on fire instead.
   - Even those small fingers, were like light to me.\nHold the time tight when we
     lived together.\nOur life go on.\n<color=yellow>Swap cool-down is halved in this
     level. And your units have greatly increased attributes.</color>
@@ -25768,6 +25776,7 @@ MonoBehaviour:
   - Terrain and enemies will differ in places.
   - More 'Caustic Originium Spiders' will appear. One 'Sudaram' has different starting
     position.
+  - Some 'Originiutants' will be replaced with 'Bloodboil Knightclub Elites'.
   - Enemies will try to steal the Mint Fumo instead.
   - When 'Shrouded Assassin''s [Wrapped Shroud] is triggered, additional enemies
     will appear.
@@ -25778,7 +25787,7 @@ MonoBehaviour:
     upon waking up.
   - '''Candle''''s illumination range is reduced. ''Sentinent Toys'' have greatly
     increased DEF and RES.'
-  CompleteCondition: 01000000010000000100000000000000010000000100000000000000010000000300000000000000010000000000000000000000
+  CompleteCondition: 0100000001000000010000000000000001000000010000000000000001000000000000000300000000000000010000000000000000000000
   Environments:
   - Environments: 
   - Environments: 00000000
@@ -25788,6 +25797,7 @@ MonoBehaviour:
   - Environments: 0000000001000000
   - Environments: 01000000
   - Environments: 000000000100000003000000
+  - Environments: 01000000
   - Environments: 0100000004000000
   - Environments: 0100000004000000
   - Environments: 050000000000000002000000
@@ -25802,6 +25812,7 @@ MonoBehaviour:
   - Enemies: 0100000003000000040000000a00000009000000
   - Enemies: 090000000b0000000c000000
   - Enemies: 090000000100000003000000020000000a0000000c000000
+  - Enemies: 0a000000090000000b0000000c000000
   - Enemies: 000000000700000006000000040000000300000001000000090000000b0000000a000000050000000c000000
   - Enemies: 0d000000
   - Enemies: 01000000020000000c0000000e0000000f000000
@@ -25819,6 +25830,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 10f449d4de8490642914c3520bcb7690, type: 3}
   - {fileID: 21300000, guid: 56b4ab19f2f72814bb6cb77e23c3005f, type: 3}
   - {fileID: 21300000, guid: 9bb05f389aad1764483e534119e7dc4e, type: 3}
+  - {fileID: 21300000, guid: ee4e597e4b4e73744b8ff9edfa5f61a8, type: 3}
   - {fileID: 21300000, guid: d47d60702138880468ef33839a31e69c, type: 3}
   - {fileID: 21300000, guid: 4585c0adc4394134abb842e8db88afda, type: 3}
   - {fileID: 21300000, guid: b1f48597c01544848a2d31d4e901d372, type: 3}
@@ -29109,10 +29121,11 @@ MonoBehaviour:
   skillType: 2
   skillName: 54
   skillNameText: '''Hyper Acceleration'''
-  skillDescription: All units gain increased MSPD when continuously moving toward
-    a direction, up to +200% MSPD. Changing direction will remove the buff and inflicts
-    a decaying 'Slow' based on the previous acceleration.\n\n<i>If any 'Arts Unit'
-    is selected, you accelerate 50% faster.</i>
+  skillDescription: All units gain <color=#00ffbf>increased MSPD</color> when continuously
+    moving toward a direction, up to <color=#00ffbf>+200% MSPD</color>. Changing
+    direction will <color=yellow>remove the MSPD buff</color> and inflicts <color=#5b7ccf>a
+    decaying 'Slow'</color> based on the removed acceleration.\n\n<i>If any <color=#ff00ff>'Arts
+    Unit'</color> is selected, you accelerate <color=yellow>50% faster</color>.</i>
   favorText: 
   skillDescriptionInShort: All units gain increased MSPD when continuously moving
     toward a direction, up to +200% MSPD. Changing direction will remove the buff
@@ -31946,8 +31959,9 @@ MonoBehaviour:
   skillName: 59
   skillNameText: '''Ice Age'''
   skillDescription: Enemies have <color=red>+100% max HP</color>. Upon spawning,
-    they are frozen for 20 seconds, but have +100% DEF and +40 RES throughout the
-    duration.
+    their HP is halved and they are frozen for <color=#ff9717>30 seconds</color>,
+    but have <color=yellow>+70 DEF</color>, <color=#00ffff>+40 RES</color> and <color=green>recovers
+    2% max HP every second</color> throughout the duration.
   favorText: 
   skillDescriptionInShort: 
   mutuallyExclusiveSkills: 
@@ -37558,9 +37572,10 @@ MonoBehaviour:
   skillType: 0
   skillName: 42
   skillNameText: High-performance Defroster
-  skillDescription: Damaging frozen targets instantly ends its effect to deal <color=#b1b1b1>bonus
-    true damage</color> by 10% of their max HP, increasing by the freeze's remaining
-    duration.
+  skillDescription: Damaging frozen targets instantly <color=#5b7ccf>ends its effect</color>
+    to deal bonus true damage equals to <color=#b1b1b1>10% of the target max HP</color>.
+    Damage increases by <color=red>50% ATK</color> for every freeze remaining second
+    (cap at <color=red>400% base ATK</color>).
   favorText: '''Device that can remove any moisture and ice in an instant, especially
     useful on frozen equipments.''\n- Despite that oddly specific use cases, she
     has put it in good uses a decent amount of times.'
@@ -43723,8 +43738,8 @@ MonoBehaviour:
   skillType: 0
   skillName: 25
   skillNameText: Victory Rewind - Spirit
-  skillDescription: After defeating an enemy, gains +50% <color=#ff4545>ATK</color>
-    and <color=#00ffbf>MSPD</color> that decay over 5 seconds. Every enemy defeated
+  skillDescription: After defeating an enemy, gains <color=#ff4545>+50% ATK</color>
+    and <color=#00ffbf>+50% MSPD</color> that decay over 5 seconds. Every enemy defeated
     increases the amount by <color=yellow>5%</color>, stacks up to <color=#5b7ccf>10
     times</color>.
   favorText: Tapes of combat logs given to her by a pharmaceutical company...
@@ -47454,7 +47469,7 @@ MonoBehaviour:
   skillDescription: Defeating an enemy during the duration of 'Der Tag Neight Sich'
     <color=yellow>creates another waves of projectiles</color> starting at their
     position. These extra waves can trigger up to <color=#5b7ccf>3 times</color>,
-    and last up to <color=#5b7ccf>1.5 seconds</color>.
+    and last up to <color=#5b7ccf>2 seconds</color>.
   favorText: I'm just happy to be alive.
   skillDescriptionInShort: When 'Der Tag Neight Sich' defeats an enemy, it creates
     another waves of projectiles starting at their position

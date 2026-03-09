@@ -1,25 +1,31 @@
-using System.Collections.Generic;
-using System.Linq;
-using TMPro;
 using UnityEngine;
 
 public class FM_08 : StageManager
 {
-    [SerializeField] private GameObject laterSpawn;
-    private List<EndlessEnemySpawn> EndlessSpawns;
+    [SerializeField] private GameObject CM_DisableSpawns, CM_EnableSpawns;
 
-    [SerializeField] private TMP_Text timerText, completeCond;
-    [SerializeField] private float targetTimer = 240f;
-    [SerializeField] private float laterSpawnsActivateTimegate = 120f, modifySpawnInterval = 45f;
-    float stageTimer = 0;
-
-    FumoScript fumo;
-
-    public override void Start()
+    public override void OnEnemySpawn(EnemyBase enemy)
     {
-        fumo = FindFirstObjectByType<FumoScript>();
-        EndlessSpawns = new List<EndlessEnemySpawn>(FindObjectsOfType<EndlessEnemySpawn>(true));
-        base.Start();
+        base.OnEnemySpawn(enemy);
+
+        if (enemy is Sudaram s)
+        {
+            s.detectionRange *= 0.6f;
+            s.originiumPollutionBonusASPD += 40f;
+            s.originiumPollutionDamageMultiplier = 0f;
+            s.mHealth *= 0.6f;
+        }
+        else if (enemy as OriginiumSpiderAlpha) enemy.bAtk = (short)(enemy.bAtk * 0.85f);
+        else if (enemy is BloodboilKnight b)
+        {
+            b.bDef += 30;
+            b.bRes += 20;
+            
+            b.maxStackCount *= 2;
+            b.mspdAddPerEnemyKilled /= 2;
+            b.aspdAddPerEnemyKilled /= 2;
+            b.atkAddPerEnemyKilled /= 2;
+        }
     }
 
     public override void EnableChallengeMode()
@@ -27,137 +33,13 @@ public class FM_08 : StageManager
         base.EnableChallengeMode();
         if (CharacterPrefabsStorage.EnableChallengeMode)
         {
-            StageCompleteConditionType = StageCompleteCondition.PROTECT_FUMO;
-            EndlessSpawns.ForEach(s => s.spotPlayerUponSpawn = false);
-            fumo.GetComponent<Collider2D>().enabled = true;
+            Destroy(CM_DisableSpawns);
+            CM_EnableSpawns.SetActive(true);
         }
-
-        completeCond.text = StageCompleteConditionType == StageCompleteCondition.PROTECT_FUMO ?
-            "Goal: <color=yellow>Protect the Fumo</color></b>" 
-            : "Goal: <color=yellow>Survive until time runs out</color></b>";
-
-        float countTimer = targetTimer - stageTimer;
-        timerText.text = $"{Mathf.FloorToInt(countTimer / 60):00}:{Mathf.FloorToInt(countTimer % 60):00}";
-    }
-
-    public override void OnEnemySpawn(EnemyBase enemy)
-    {
-        base.OnEnemySpawn(enemy);
-
-        if (enemy.attackPattern == EntityBase.AttackPattern.MELEE)
-            enemy.detectionRange += 70f;
-
-       if (enemy as Matterllurgist) enemy.ASPD += 40;
-
-       if (enemy as Hound || enemy as Wetwork || enemy as Archer || enemy as BloodthirstyHeir)
-            enemy.mHealth += (int)(enemy.mHealth * 0.6f);
-       else
-            enemy.mHealth += (int)(enemy.mHealth * 0.2f);
-    }
-
-    public override void OnPlayerSpawn(PlayerBase player)
-    {
-        base.OnPlayerSpawn(player);
-        player.mHealth *= 2;
-        player.bDef += 20;
-        player.bRes += 10;
-        player.bAtk = (short)(player.bAtk * 1.5f);
-        player.ASPD += 25;
-        player.defPen += 10;
-        player.resPen += 15;
-    }
-
-    float modifySpawnTimer = 0;
-    public override void Update()
-    {
-        if (stageTimer >= targetTimer) return;
-        base.Update();
-
-        if (!IsStageStarted) return;
-
-        stageTimer += Time.deltaTime;
-
-        float countTimer = targetTimer - stageTimer;
-        timerText.text = $"{Mathf.FloorToInt(countTimer / 60):00}:{Mathf.FloorToInt(countTimer % 60):00}";
-
-        if (fumo && stageTimer >= targetTimer)
+        else
         {
-            stageTimer = targetTimer;
-            OnPlayerFumoProtected(FindFirstObjectByType<FumoScript>());
+            Destroy(CM_EnableSpawns);
+            CM_DisableSpawns.SetActive(true);
         }
-
-        modifySpawnTimer += Time.deltaTime;
-
-        if (stageTimer >= laterSpawnsActivateTimegate && !laterSpawn.activeSelf)
-        {
-            laterSpawn.SetActive(true);
-        }
-
-        if (modifySpawnTimer >= modifySpawnInterval)
-        {
-            ModifySpawnRate();
-        }
-    }
-
-    short modifySpawnCount = 0;
-    void ModifySpawnRate()
-    {
-        modifySpawnTimer = 0;
-        switch (modifySpawnCount)
-        {
-            case 0:
-                foreach (var spawn in EndlessSpawns)
-                {
-                    spawn.enemyPrefabs.Clear();
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.HOUND);
-                }
-                break;
-            case 1:
-            case 2:
-                foreach (var spawn in EndlessSpawns)
-                {
-                    spawn.enemyPrefabs.Clear();
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.HEIR);
-                }
-                break;
-            case 3:
-                foreach (var spawn in EndlessSpawns)
-                {
-                    spawn.enemyPrefabs.Clear();
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUM_SPIDER);
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUM_SPIDER);
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUM_SPIDER);
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUM_SPIDER_ALPHA);
-                }
-                break;
-            case 4:
-                foreach (var spawn in EndlessSpawns)
-                {
-                    spawn.enemyPrefabs.Clear();
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUM_SPIDER);
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUTANT);
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ZEALOT);
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.MATTERLLURGIST);
-                }
-                break;
-            case 5:
-                foreach (var spawn in EndlessSpawns)
-                {
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUM_SPIDER_ALPHA);
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.BLOODBOIL_KNIGHT);
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.BLOODBOIL_KNIGHT);
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUTANT);
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.SUDARAM);
-                }
-                break;
-            case 6:
-                foreach (var spawn in EndlessSpawns)
-                {
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.SUDARAM);
-                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.SUDARAM);
-                }
-                break;
-        }
-        modifySpawnCount++;
     }
 }

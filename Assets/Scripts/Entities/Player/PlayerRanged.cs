@@ -491,10 +491,10 @@ public class PlayerRanged : PlayerBase
                     :
                     Mathf.Lerp(0.12f, 0.23f, MinDistanceForFreezeDuration * 1.0f / distance);
 
-                PushEntityFrom(enemy, AttackPosition.transform, 1.5f, pushDuration);
+                PushEntityFrom(enemy, AttackPosition.transform, 1.8f, pushDuration);
             }
             else if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_SOUTH))
-                PullEntityTowards(enemy, AttackPosition.transform, 2f, 0.25f);
+                PullEntityTowards(enemy, AttackPosition.transform, 2.1f, 0.2f);
 
             InitialHitDictionary.Add(e, freezeDuration);
         }
@@ -771,6 +771,7 @@ public class PlayerRanged : PlayerBase
         base.DealDamage(target, pDmg, mDmg, tDmg, allowWhenDisabled);
         if (IsSkillActive 
             && Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_PHANTOM) 
+            && gameObject.activeSelf
             && !target.IsAlive()
             && flowerCount < MaxExtraFlowers)
         {
@@ -936,7 +937,8 @@ public class PlayerRanged : PlayerBase
             info.SkillText =
                 $"Continuously unleashes waves of projectiles spreading in all direction around self, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action). " +
                 $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD. " +
-                $"If an enemy is defeated while the skill is active, another waves of projectiles will be created at their position, lasting up to {FlowerMaxDuration} seconds (triggers up to {MaxExtraFlowers} times).";
+                $"If an enemy is defeated while the skill is active, another wave of projectiles will be created " +
+                $"at their position, lasting up to {FlowerMaxDuration} seconds (triggers up to {MaxExtraFlowers} times).";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_SHADOW))
         {
@@ -944,7 +946,8 @@ public class PlayerRanged : PlayerBase
             info.SkillText =
                 $"Continuously unleashes waves of projectiles spreading in all direction around self, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action). " +
                 $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD. " +
-                $"Cancelling or swapping during the skill leaves behind a phantom that maintains the same effect for the remaining duration. The phantom has {PhantomAtkInherit * 100}% of self ATK.";
+                $"Cancelling or swapping during the skill leaves behind a phantom that maintains the same effect for the remaining duration. " +
+                $"The phantom has {PhantomAtkInherit * 100}% of self ATK.";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_READ))
         {
@@ -952,14 +955,16 @@ public class PlayerRanged : PlayerBase
             info.SkillText =
                 $"Continuously unleashes waves of projectiles spreading in all direction around self, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action, " +
                 $"and refunds upon doing so, up to {SP_SkillMaxRefund * 100}% CD). " +
-                $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD.";
+                $"Each projectile hits the first enemy it comes into contact with, " +
+                $"dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD.";
         }
         else
         {
             info.SkillName = "Der Tag neigt Sich";
             info.SkillText =
                 $"Continuously unleashes waves of projectiles spreading in all direction around self, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action). " +
-                $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD.";
+                $"Each projectile hits the first enemy it comes into contact with, " +
+                $"dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD.";
         }
 
         info.SkillText += $" {Math.Round(SkillCooldown, 1)}s cooldown.";
@@ -969,13 +974,15 @@ public class PlayerRanged : PlayerBase
             info.SpecialName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.FREEZE_BLOOM);
             info.SpecialText =
                 $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds, inversely based on distance. Frozen enemies continues to " +
-                $"create an extra freeze ring around their position (trigger once per enemy) ";
+                $"create an extra freeze ring around their position (trigger once per enemy)";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_HOLD))
         {
             info.SpecialName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.FREEZE_HOLD);
             info.SpecialText =
-                $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds, inversely based on distance. The freeze can be maintained by holding the skill's key for up to an additional {FreezeHoldMax} seconds (can not act while maintaining, release the key to end its effect).";
+                $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds, " +
+                $"inversely based on distance. The freeze can be maintained by holding the skill's key for up to an additional " +
+                $"{FreezeHoldMax} seconds (can not act while maintaining, release the key to end its effect)";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_CHARGE))
         {

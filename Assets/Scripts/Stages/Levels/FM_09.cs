@@ -1,80 +1,163 @@
-using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using TMPro;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 public class FM_09 : StageManager
 {
-    [SerializeField] private GameObject activateGameObject;
+    [SerializeField] private GameObject laterSpawn;
+    private List<EndlessEnemySpawn> EndlessSpawns;
 
-    bool spawnMoreEnemies = false;
-    ShroudedAssassin shroudedAssassin;
-    bool assassinReviveTriggered = false;
+    [SerializeField] private TMP_Text timerText, completeCond;
+    [SerializeField] private float targetTimer = 240f;
+    [SerializeField] private float laterSpawnsActivateTimegate = 120f, modifySpawnInterval = 45f;
+    float stageTimer = 0;
 
-    public override void Update()
+    FumoScript fumo;
+
+    public override void Start()
     {
-        if (IsStageStarted && shroudedAssassin != null 
-            && 
-            !assassinReviveTriggered 
-            && (!shroudedAssassin.IsAlive() || shroudedAssassin.WarppedShroudedTriggered)
-            )
-        {
-            OnAssassinSkillTrigger();
-            assassinReviveTriggered = true;
-        }
-
-        base.Update();
-    }
-
-    [SerializeField] Tilemap bg1, bg2;
-    void OnAssassinSkillTrigger()
-    {
-        if (spawnMoreEnemies) activateGameObject.SetActive(true);
-        StartCoroutine(TilemapDarkens());
-    }
-
-    [SerializeField] Color darkenColor;
-    IEnumerator TilemapDarkens()
-    {
-        float c = 0, d = 5;
-        while (c < d)
-        {
-            bg1.color = Color.Lerp(bg1.color, darkenColor, c * 1.0f / d);
-            bg2.color = Color.Lerp(bg2.color, darkenColor, c * 1.0f / d);
-            c += Time.deltaTime;
-            yield return null;
-        }
-
-        bg1.color = bg2.color = darkenColor;
+        fumo = FindFirstObjectByType<FumoScript>();
+        EndlessSpawns = new List<EndlessEnemySpawn>(FindObjectsOfType<EndlessEnemySpawn>(true));
+        base.Start();
     }
 
     public override void EnableChallengeMode()
     {
         base.EnableChallengeMode();
-
-        spawnMoreEnemies = CharacterPrefabsStorage.EnableChallengeMode;
-
-        if (!CharacterPrefabsStorage.EnableChallengeMode)
+        if (CharacterPrefabsStorage.EnableChallengeMode)
         {
-            Destroy(activateGameObject);
+            StageCompleteConditionType = StageCompleteCondition.PROTECT_FUMO;
+            EndlessSpawns.ForEach(s => s.spotPlayerUponSpawn = false);
+            fumo.GetComponent<Collider2D>().enabled = true;
         }
+
+        completeCond.text = StageCompleteConditionType == StageCompleteCondition.PROTECT_FUMO ?
+            "Goal: <color=yellow>Protect the Fumo</color></b>" 
+            : "Goal: <color=yellow>Survive until time runs out</color></b>";
+
+        float countTimer = targetTimer - stageTimer;
+        timerText.text = $"{Mathf.FloorToInt(countTimer / 60):00}:{Mathf.FloorToInt(countTimer % 60):00}";
     }
 
     public override void OnEnemySpawn(EnemyBase enemy)
     {
         base.OnEnemySpawn(enemy);
 
-        enemy.detectionRange = 5000f;
+        if (enemy.attackPattern == EntityBase.AttackPattern.MELEE)
+            enemy.detectionRange += 70f;
 
-        if (enemy is ShroudedAssassin a)
+       if (enemy as Matterllurgist) enemy.ASPD += 40;
+
+       if (enemy as Hound || enemy as Wetwork || enemy as Archer || enemy as BloodthirstyHeir)
+            enemy.mHealth += (int)(enemy.mHealth * 0.6f);
+       else
+            enemy.mHealth += (int)(enemy.mHealth * 0.2f);
+    }
+
+    public override void OnPlayerSpawn(PlayerBase player)
+    {
+        base.OnPlayerSpawn(player);
+        player.mHealth *= 2;
+        player.bDef += 20;
+        player.bRes += 10;
+        player.bAtk = (short)(player.bAtk * 1.5f);
+        player.ASPD += 25;
+        player.defPen += 10;
+        player.resPen += 15;
+    }
+
+    float modifySpawnTimer = 0;
+    public override void Update()
+    {
+        if (stageTimer >= targetTimer) return;
+        base.Update();
+
+        if (!IsStageStarted) return;
+
+        stageTimer += Time.deltaTime;
+
+        float countTimer = targetTimer - stageTimer;
+        timerText.text = $"{Mathf.FloorToInt(countTimer / 60):00}:{Mathf.FloorToInt(countTimer % 60):00}";
+
+        if (fumo && stageTimer >= targetTimer)
         {
-            shroudedAssassin = a;
+            stageTimer = targetTimer;
+            OnPlayerFumoProtected(FindFirstObjectByType<FumoScript>());
         }
 
-        if (enemy as Sudaram)
+        modifySpawnTimer += Time.deltaTime;
+
+        if (stageTimer >= laterSpawnsActivateTimegate && !laterSpawn.activeSelf)
         {
-            enemy.bAtk = (short)(enemy.bAtk * 0.6f);
-            enemy.mHealth = 120;
-            enemy.bDef = enemy.bRes = 5;
+            laterSpawn.SetActive(true);
         }
+
+        if (modifySpawnTimer >= modifySpawnInterval)
+        {
+            ModifySpawnRate();
+        }
+    }
+
+    short modifySpawnCount = 0;
+    void ModifySpawnRate()
+    {
+        modifySpawnTimer = 0;
+        switch (modifySpawnCount)
+        {
+            case 0:
+                foreach (var spawn in EndlessSpawns)
+                {
+                    spawn.enemyPrefabs.Clear();
+                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.HOUND);
+                }
+                break;
+            case 1:
+            case 2:
+                foreach (var spawn in EndlessSpawns)
+                {
+                    spawn.enemyPrefabs.Clear();
+                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.HEIR);
+                }
+                break;
+            case 3:
+                foreach (var spawn in EndlessSpawns)
+                {
+                    spawn.enemyPrefabs.Clear();
+                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUM_SPIDER);
+                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUM_SPIDER);
+                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUM_SPIDER);
+                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUM_SPIDER_ALPHA);
+                }
+                break;
+            case 4:
+                foreach (var spawn in EndlessSpawns)
+                {
+                    spawn.enemyPrefabs.Clear();
+                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUM_SPIDER);
+                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUTANT);
+                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ZEALOT);
+                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.MATTERLLURGIST);
+                }
+                break;
+            case 5:
+                foreach (var spawn in EndlessSpawns)
+                {
+                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUM_SPIDER_ALPHA);
+                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.BLOODBOIL_KNIGHT);
+                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.BLOODBOIL_KNIGHT);
+                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.ORIGINIUTANT);
+                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.SUDARAM);
+                }
+                break;
+            case 6:
+                foreach (var spawn in EndlessSpawns)
+                {
+                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.SUDARAM);
+                    spawn.enemyPrefabs.Add(EnemyBase.EnemyCode.SUDARAM);
+                }
+                break;
+        }
+        modifySpawnCount++;
     }
 }

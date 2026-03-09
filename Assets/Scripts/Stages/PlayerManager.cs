@@ -719,10 +719,10 @@ public class PlayerManager : MonoBehaviour
                                 :
                                 Mathf.Lerp(0.12f, 0.23f, MinDistanceForFreezeDuration * 1.0f / distance);
 
-                            enemy.PushEntityFrom(enemy, SourceEntity.transform, 1.5f, pushDuration);
+                            enemy.PushEntityFrom(enemy, SourceEntity.transform, 1.8f, pushDuration);
                         }
                         else if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.WINDBLOW_SOUTH))
-                            enemy.PullEntityTowards(enemy, SourceEntity.transform, 2f, 0.25f);
+                            enemy.PullEntityTowards(enemy, SourceEntity.transform, 2.1f, 0.2f);
                     }
 
                     if (!HitThisRound.ContainsKey(enemy) && !InitialHitDictionary.ContainsKey(enemy))
