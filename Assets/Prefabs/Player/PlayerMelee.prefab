@@ -5911,6 +5911,8 @@ MonoBehaviour:
   FreezeTimer: 0
   StunTimer: 0
   StatusResistTimer: 0
+  PhysicalDodgeChance: 0
+  MagicalDodgeChance: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 1
   HasOnStartCoroutine: 1
@@ -5979,7 +5981,8 @@ MonoBehaviour:
   RimDoTAtkScale: 0.34
   RimDefShredValue: 15
   PullDebuffValue: 33
-  AfterShockDamageConversionRatio: 0.75
+  AfterShockDamageConversionRatio: 0.8
+  AfterShockMhpScale: 0.2
   AfterShockExplodeSlowTime: 1
   TransferBonusDuration: 2
   ExtendDurationOfHit: 0.75

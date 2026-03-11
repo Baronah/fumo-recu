@@ -36,9 +36,9 @@ public class SkillTree_Manager : MonoBehaviour
 
     public enum SkillType
     {
-        SENSES,
-        TECHS,
-        SPECS,
+        INVENTIO,
+        ARS,
+        THEORIA,
     }
 
     public enum SkillName
@@ -684,9 +684,9 @@ public class SkillTree_Manager : MonoBehaviour
 
         SkillViewPanelImg.color = skillViewScrollbarImg.color = skill.skillType switch
         {
-            SkillType.SENSES => SensesSkillViewPanelColor,
-            SkillType.TECHS => TechsSkillViewPanelColor,
-            SkillType.SPECS => SpecsSkillViewPanelColor,
+            SkillType.INVENTIO => SensesSkillViewPanelColor,
+            SkillType.ARS => TechsSkillViewPanelColor,
+            SkillType.THEORIA => SpecsSkillViewPanelColor,
             _ => IdleColor,
         };
 

@@ -247,6 +247,8 @@ MonoBehaviour:
   FreezeTimer: 0
   StunTimer: 0
   StatusResistTimer: 0
+  PhysicalDodgeChance: 0
+  MagicalDodgeChance: 0
   preferredMoveAnimationPlaySpeed: 1.3
   preferredAttackAnimationSpeed: 1.1
   HasOnStartCoroutine: 1

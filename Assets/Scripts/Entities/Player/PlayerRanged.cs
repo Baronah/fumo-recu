@@ -233,10 +233,7 @@ public class PlayerRanged : PlayerBase
             ApplyEffect(Effect.AffectedStat.DEF, "VOW_DEF_BUFF", 10f, 9999f, false, EffectPersistType.PERSIST, false);
 
             SP_SkillMaxRefund = 0.98f;
-            SP_MinWinForRefundMax += 0.1f;
-
             MaxRefund = 0.9f;
-            MinWindowForMaxRefund += 0.5f;
 
             MaxExtraFlowers++;
             FlowerMaxDuration += 1f;
@@ -478,7 +475,7 @@ public class PlayerRanged : PlayerBase
 
             if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_SUPERCONDUCT))
             {
-                float debuffDuration = freezeDuration + 2f;
+                float debuffDuration = enemy.FreezeTimer + 2f;
                 enemy.ApplyEffect(Effect.AffectedStat.DEF, "FREEZE_SUPERCONDUCT_DEF_DEBUFF", -FreezeConductDebuff, debuffDuration, true);
                 enemy.ApplyEffect(Effect.AffectedStat.RES, "FREEZE_SUPERCONDUCT_RES_DEBUFF", -FreezeConductDebuff, debuffDuration, true);
             }

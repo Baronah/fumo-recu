@@ -82,9 +82,10 @@ public class StageManager : MonoBehaviour
     bool IsStageReady = false,
         IsStageEnd = false,
         IsStageEndOverlayActive = false,
-        IsResultVitory = false,
+        IsResultVictory = false,
         StageClearedNMFirsttime = false;
 
+    GameObject TopOverlay;
     public virtual void Start()
     {
         LevelName = SceneManager.GetActiveScene().name;
@@ -98,6 +99,13 @@ public class StageManager : MonoBehaviour
         SetTips();
 
         StartCoroutine(OnStartOverlayFadeout());
+
+        TopOverlay = GameObject.Find("OnTopOverlay");
+        TopOverlay.SetActive(false);
+
+        GameObject TheoryWorld = GameObject.Find("TheoryWorld");
+        TheoryWorld.SetActive(CharacterPrefabsStorage.Skills.Any(s => s.Value.skillType == SkillType.THEORIA));
+        if (!TheoryWorld.activeSelf) Destroy(TheoryWorld);
 
         mainCamera = GetComponentInChildren<CameraMovement>(true);
         BGM = GetComponent<AudioSource>();
@@ -146,7 +154,7 @@ public class StageManager : MonoBehaviour
     {
         "Overflowing swap CD will be counted toward charges (up to 2, indicated by the green diamond on top of your swap character). " +
             "When available, the next swap will consume a charge, but have no CD.",
-        "Swap refreshes all CDs of your character, and gives them a small window of invulnerability.",
+        "Swap refreshes all CDs of your character,\nand gives them a small window of invulnerability.",
         "Make good use of terrains and map layout to gain advantages in combat!",
         $"Different characters also have different stats and skills.\nYou can check them anytime by pressing '{AttributeKey}'.",
         "Gates with keyhole symbol can be removed by picking up the key with its corresponding color, while gates with sword symbol requires you to eliminate certain enemies in its area in order to be removed.",
@@ -164,6 +172,7 @@ public class StageManager : MonoBehaviour
     {
         "Borrowing the right inventions can help a ton,\njust remember to return them to her after completing a stage :)",
         $"Forgot which inventions you borrored?\nPress '{AttributeKey}' to open view menu, then '{SwapAttribute}' to see them!",
+        "Please pay her a visit after this.",
     };
 
     private readonly List<string> AdvancedTips = new()
@@ -185,14 +194,13 @@ public class StageManager : MonoBehaviour
     {
         "Everyone likes Mint Arknights.",
         "Build your Mint Arknights.",
-        "It's peak arknights",
-        "So I was sitting at home not murdering people...",
         ":minthype:",
-        "toxic...",
         "Tsukiyoi refers to the yoizuki in Japanese, the early evening moon of August which is also called the yuzuki.",
         "ASIAN KUNG-FU GENERATION my beloved.",
         "Nicho5.",
         "I never troll.",
+        "noodles.",
+        "Post this sheep at random interval.",
         "wife:\njustnya, iana, typhon, mulberry, pozy if skin, archetto, vendela, ceylon (skin), rushia, warfarin (stab), lin, santalla, ines, mint?, honeyberry?? (but maybe that's mint's wife?), eyja, erota, pallas, goldenglow (skin), swire, ray, astgenne, virtuoso, weedy, monch, reedalt, indigo, amiya(?), dusk, franka, mudrock, coldshot, jessica2, lemuen, blacknight, valarqvin, skadi, aqua, irene, lolcal\n\ndaughters:\nscene, ros, suzu, ifrit, shamare shama, scene, papika, kafka, cement, podenco, vigna, ceobe, amiya, tomimi, iris, lunacub\n\nno wife:\nsora, qiubai, tomimi, paprika, shu (only looks like wife), exu, sussurro (master's wife), mumu, surtr, degen, whisperain (therapist, friend's wife), mr. nothing, rosa, mint?\n\nhusband: degenbrecher?\n\nirl:\nLessing, Ray, Blacknight's Tapir, Ray's Capybara, Ines, Mandragora\n\nupdated: 25/05/24 12:04 GMT",
         "Sorry, Amanai. I'm not even angry over you right now. I bear no grudge against anyone. It's just that the world feels so, so wonderful right now. \"Throughout Heaven and Earth, I alone am the honored one\". However, even in the Gojo clan only a scant few know about this. Take the amplified and the reversal, then combine those two different expressions of infinity to create and push out imaginary mass. Imaginary technique... Purple.",
     };
@@ -232,10 +240,10 @@ public class StageManager : MonoBehaviour
 
     IEnumerator OnStartOverlayFadeout()
     {
-        GameObject Overlay = GameObject.Find("StageOverlayTransition");
-        if (!Overlay) yield break;
+        GameObject StageTransitionOverlay = GameObject.Find("StageOverlayTransition");
+        if (!StageTransitionOverlay) yield break;
 
-        Image image = Overlay.GetComponentInChildren<Image>();
+        Image image = StageTransitionOverlay.GetComponentInChildren<Image>();
         float fadeOutTime = 1f, c = 0, cJump = 0.02f;
         while (c < fadeOutTime)
         {
@@ -245,7 +253,8 @@ public class StageManager : MonoBehaviour
         }
 
         image.color = Color.clear;
-        Destroy(Overlay);
+
+        Destroy(StageTransitionOverlay);
     }
 
     #region Time Dilation Upgrade
@@ -356,6 +365,8 @@ public class StageManager : MonoBehaviour
                         enemy.mHealth *= 2;
                         enemy.b_moveSpeed *= 1.35f;
                         enemy.weight += 2;
+                        enemy.PhysicalDodgeChance += 40;
+                        enemy.MagicalDodgeChance += 40;
                     }
                     else if (enemy.attackPattern == EntityBase.AttackPattern.RANGED)
                     {
@@ -371,7 +382,7 @@ public class StageManager : MonoBehaviour
                     if (!enemy.IsFreezeImmune)
                     {
                         enemy.ApplyEffect(Effect.AffectedStat.DEF, "ICEAGE_DEF_BUFF", 70f, duration, false);
-                        enemy.ApplyEffect(Effect.AffectedStat.RES, "ICEAGE_RES_BUFF", 40f, duration, false);
+                        enemy.ApplyEffect(Effect.AffectedStat.RES, "ICEAGE_RES_BUFF", 25f, duration, false);
                     }
                     break;
             }
@@ -403,6 +414,8 @@ public class StageManager : MonoBehaviour
                         player.mHealth *= 2;
                         player.b_moveSpeed *= 1.35f;
                         player.weight += 2;
+                        player.PhysicalDodgeChance += 40;
+                        player.MagicalDodgeChance += 40;
                     }
                     else if (player.attackPattern == EntityBase.AttackPattern.RANGED)
                     {
@@ -494,15 +507,17 @@ public class StageManager : MonoBehaviour
         }
     }
 
+    bool IsTimeScaleZero => IsStagePaused || mainCamera.TriggerStopHit || playerManager.IsReadingSkillView || mapOverview.activeSelf || IsStageEndOverlayActive;
     public virtual void Update()
     {
         if (!IsStageReady) return;
 
         Time.timeScale = 
-            IsStagePaused || mainCamera.TriggerStopHit || playerManager.IsReadingSkillView || mapOverview.activeSelf || IsStageEndOverlayActive
+            IsTimeScaleZero
             ? 0f 
-            : isSlowing 
-                ? timeScaleSlow : 1f;
+                : isSlowing 
+                ? timeScaleSlow 
+                    : 1f;
 
         if (!PressedAnyKey && !IsStageStarted && Input.anyKeyDown)
         {
@@ -551,10 +566,15 @@ public class StageManager : MonoBehaviour
         SearchCnt++;
         if (SearchCnt >= 10 && RemainingEnemiesGO.activeSelf)
         {
-            int remainingEnemies = GetEnemyCount();
-            RemainingEnemiesTxt.text = $"Enemies: {remainingEnemies}";
+            UpdateEnemyCountUI();
             SearchCnt = 0;
         }
+    }
+
+    void UpdateEnemyCountUI()
+    {
+        int remainingEnemies = GetEnemyCount();
+        RemainingEnemiesTxt.text = $"Enemies: {remainingEnemies}";
     }
 
     protected virtual IEnumerator CheckStageStatus()
@@ -582,13 +602,47 @@ public class StageManager : MonoBehaviour
         }
     }
 
+    Coroutine HDCoroutine = null;
     public void CheckWinWithHeathDeath()
     {
+        HDCoroutine = StartCoroutine(HeatDeathEffect());
+        UpdateEnemyCountUI();
+
         if (GetEnemyCount(countInfiniteSpawns: true) > 0 || FindObjectsOfType<EnemyBase>().Any(e => e && e.IsAlive())) return;
 
         IsStageStarted = false;
         OnStageEnd(ResultType.HEATH_DEATH);
         FadeInResult();
+    }
+
+    IEnumerator HeatDeathEffect()
+    {
+        Image screen = TopOverlay.GetComponentInChildren<Image>();
+        screen.color = Color.clear;
+
+        TopOverlay.SetActive(true);
+        float c = 0, d = 0.5f, cJump = 0.02f;
+        while (c < d)
+        {
+            screen.color = Color.Lerp(Color.clear, Color.white, c * 1.0f / d);
+            c += cJump;
+            yield return new WaitForSecondsRealtime(cJump);
+        }
+
+        screen.color = Color.white;
+        yield return new WaitForSecondsRealtime(1f);
+
+        c = 0;
+        d = 0.5f;
+        while (c < d)
+        {
+            screen.color = Color.Lerp(Color.white, Color.clear, c * 1.0f / d);
+            c += cJump;
+            yield return new WaitForSecondsRealtime(cJump);
+        }
+
+        TopOverlay.SetActive(false);
+        HDCoroutine = null;
     }
 
     public enum ResultType
@@ -615,7 +669,7 @@ public class StageManager : MonoBehaviour
             ResultType.HEATH_DEATH
         };
 
-        IsResultVitory = VictoryConds.Contains(resultType);
+        IsResultVictory = VictoryConds.Contains(resultType);
 
         TMP_Text text = pauseOverlay.GetComponentInChildren<TMP_Text>();
         text.text = resultType switch
@@ -632,7 +686,7 @@ public class StageManager : MonoBehaviour
                     CharacterPrefabsStorage.EnableChallengeMode
                     ? "<color=#ff3b3b>Challenge Completed!</color>"
                     : "<color=green>Stage Completed!</color>",
-            ResultType.HEATH_DEATH => "<color=yellow>Wtf</color>",
+            ResultType.HEATH_DEATH => "<color=yellow>T.E. reached!</color>",
             ResultType.FUMO_PROTECTED => 
                 CharacterPrefabsStorage.EnableChallengeMode
                     ? "<color=#ff3b3b>Challenge Completed!</color>"
@@ -641,7 +695,7 @@ public class StageManager : MonoBehaviour
             ResultType.FUMO_LOST => "<color=red>Fumo Stolen!</color>",
         };
 
-        if (IsResultVitory) ProceedAsVictory(text, resultType);
+        if (IsResultVictory) ProceedAsVictory(text, resultType);
     }
 
     void ProceedAsVictory(TMP_Text text, ResultType resultType)
@@ -677,20 +731,20 @@ public class StageManager : MonoBehaviour
 
         if (resultType == ResultType.HEATH_DEATH)
         {
-            text.text += "\nLet's not do that again...";
+            text.text += "\n<color=#00ffb7><size=36>But, let's not do that again...</size></color>";
         }
         else if (StageClearedNMFirsttime)
         {
             text.text += "\n<size=36>+1 Mint fumo\nChallenge Mode has been unlocked!</size>";
-            AddFumo();
         }
         else if (StageClearedCMFirsttime)
         {
             text.text += "\n<size=36>+1 Mint fumo\nThis is crazy</size>";
-            AddFumo();
         }
         else
             text.text += "\n<size=32><color=#00ffb7>But you already claimed the Fumo...</color></size>";
+
+        if (StageClearedNMFirsttime || StageClearedCMFirsttime) AddFumo();
 
         o_QuitBtn.transform.localPosition = new Vector3(0, o_QuitBtn.transform.localPosition.y);
         o_RetryBtn.gameObject.SetActive(false);
@@ -717,6 +771,7 @@ public class StageManager : MonoBehaviour
         canvasGroup.alpha = 0;
         pauseOverlay.SetActive(true);
 
+        yield return new WaitUntil(() => HDCoroutine == null);
         float c = 0, d = 1.25f, cJump = 0.02f;
         while (c < d)
         {
@@ -754,7 +809,7 @@ public class StageManager : MonoBehaviour
         CharacterPrefabsStorage.PlayerPrefabs.Clear();
         CharacterPrefabsStorage.EnableChallengeMode = false;
 
-        if (IsResultVitory) CharacterPrefabsStorage.ClearBattleData();
+        if (IsResultVictory) CharacterPrefabsStorage.ClearBattleData();
 
         IsFirstTimeStageEnter = true;
         Time.timeScale = 1f;

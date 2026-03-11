@@ -43,7 +43,8 @@ public class PlayerMelee : PlayerBase
                            RimDefShredValue = 15f,
                            PullDebuffValue = 33f,
                            AfterShockDamageConversionRatio = 0.75f,
-                           AfterShockExplodeSlowTime = 1f, 
+                           AfterShockMhpScale = 0.1f,
+                           AfterShockExplodeSlowTime = 1f,  
                            TransferBonusDuration = 2f,
                            ExtendDurationOfHit = 0.75f;
     [SerializeField] TMP_Text AftershockDmgCounter;
@@ -728,7 +729,7 @@ public class PlayerMelee : PlayerBase
             var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, AoERadius, true);
             foreach (EntityBase enemy in enemies)
             {
-                DealDamage(enemy, (int)(damageTakenDuringSkill), 0, 0);
+                DealDamage(enemy, (int)(mHealth * AfterShockMhpScale + damageTakenDuringSkill), 0, 0);
                 enemy.ApplyEffect(Effect.AffectedStat.MSPD, "AFTERSHOCK_MSPD_DEBUFF", -99f, AfterShockExplodeSlowTime, true, EffectPersistType.DECAY);
             }
             defPen -= 50;
@@ -938,7 +939,7 @@ public class PlayerMelee : PlayerBase
                 $"Immediately heals self for {BurstHeal_HpPercentage * 100}% max HP. In the next {SkillDuration} seconds: " +
                 $"ATK +{AtkBoost * 100}%, DEF +{DefBoost * 100}%, RES +{ResBoost}, MSPD +{SpeedBoost * 100}% and " +
                 $"regenerate {HealPerSecond_HpPercentage * 100}% max HP every second. " +
-                $"After skill ends or upon swapping, deal physical damage equals to {AfterShockDamageConversionRatio * 100}% damage taken during the duration to all nearby enemies.";
+                $"After skill ends or upon swapping, deal physical damage equals to {AfterShockMhpScale * 100}% max HP + {AfterShockDamageConversionRatio * 100}% damage taken during the duration to all nearby enemies.";
         }
         else
         {

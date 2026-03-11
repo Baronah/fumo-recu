@@ -1,12 +1,13 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerRangedFreezeMaintainObject : MonoBehaviour
 {
     [SerializeField] float RotateDegree = 30;
     [SerializeField] float PulseTime = 2f;
     [SerializeField] float PulseWait = 0.5f;
-    [SerializeField] float FinalPulse_A = 0.6f;
+    [SerializeField] float FinalPulse_Alpha = 0.6f;
 
     private void Start()
     {
@@ -20,13 +21,17 @@ public class PlayerRangedFreezeMaintainObject : MonoBehaviour
 
     IEnumerator Pulse()
     {
-        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-        Color init = spriteRenderer.color;
-        Color clear = new(init.r, init.g, init.b, FinalPulse_A);
+        SpriteRenderer renderer = GetComponent<SpriteRenderer>();
+        Image image = GetComponent<Image>();
+
+        if (!renderer && !image) yield break;
+
+        Color init = renderer ? renderer.color : image.color;
+        Color clear = new(init.r, init.g, init.b, FinalPulse_Alpha);
 
         bool pulseIn = false;
 
-        float c = 0;
+        float c;
         while (true)
         {
             c = 0;
@@ -34,21 +39,31 @@ public class PlayerRangedFreezeMaintainObject : MonoBehaviour
             {
                 while (c < PulseTime)
                 {
-                    spriteRenderer.color = Color.Lerp(init, clear, c * 1.0f / PulseTime);
+                    Color color = Color.Lerp(init, clear, c * 1.0f / PulseTime);
+                    if (renderer) renderer.color = color;
+                    else image.color = color;
+
                     c += Time.deltaTime;
                     yield return null;
                 }
-                spriteRenderer.color = clear;
+                
+                if (renderer) renderer.color = clear;
+                else image.color = clear;
             }
             else
             {
                 while (c < PulseTime)
                 {
-                    spriteRenderer.color = Color.Lerp(clear, init, c * 1.0f / PulseTime);
+                    Color color = Color.Lerp(clear, init, c * 1.0f / PulseTime);
+                    if (renderer) renderer.color = color;
+                    else image.color = color;
+
                     c += Time.deltaTime;
                     yield return null;
                 }
-                spriteRenderer.color = init;
+
+                if (renderer) renderer.color = init;
+                else image.color = init;
             }
 
             pulseIn = !pulseIn;

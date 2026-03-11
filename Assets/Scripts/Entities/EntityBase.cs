@@ -142,6 +142,8 @@ public class EntityBase : MonoBehaviour
     public float StatusResistTimer = 0f;
     public bool HasStatusResistant => StatusResistTimer > 0f;
 
+    public float PhysicalDodgeChance = 0, MagicalDodgeChance = 0;
+
     public bool IsFrozen => FreezeTimer > 0f;
     public bool IsStunned => StunTimer > 0f;
 
@@ -234,6 +236,7 @@ public class EntityBase : MonoBehaviour
     }
 
     RectTransform GravityCircle;
+    bool absolutism = false;
     public virtual void InitializeComponents()
     {
         Transform Sprite = transform.Find("Sprite");
@@ -293,6 +296,14 @@ public class EntityBase : MonoBehaviour
             EntityManager.OnEntitySpawn(this.gameObject);
         }
 
+        OnInitialize_GetSkillTreeAttributes();
+
+        StartCoroutine(OnStartCoroutine());
+        CalculateBuffsAndDebuffs();
+    }
+
+    protected virtual void OnInitialize_GetSkillTreeAttributes()
+    {
         if (this as PlayerBase)
         {
             if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.WINGED_STEPS_A)
@@ -303,8 +314,7 @@ public class EntityBase : MonoBehaviour
                 StatisRequiredTimer = 3f;
         }
 
-        StartCoroutine(OnStartCoroutine());
-        CalculateBuffsAndDebuffs();
+        absolutism = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.ABSOLUTISM);
     }
 
     [SerializeField] protected bool HasOnStartCoroutine = true;
@@ -961,6 +971,7 @@ public class EntityBase : MonoBehaviour
 
         pipeline.Add(new ModifyRawDamage());
         pipeline.Add(new CalculateDefense());
+        pipeline.Add(new AccountDodges());
         pipeline.Calculate();
 
         return pipeline.instance;
@@ -1039,28 +1050,35 @@ public class EntityBase : MonoBehaviour
 
     public void ShowDamageDealt(DamageInstance damage)
     {
-        if (damage.TotalDamage == 0) return;
+        if (damage.TotalDamage == 0 && !damage.IsDodged) return;
 
         string dmgTxt = string.Empty;
 
-        bool hasMoreThanOneDamageType = false;
-        if (damage.PhysicalDamage > 0)
+        if (damage.IsDodged)
         {
-            dmgTxt += $"<color=red>{Mathf.FloorToInt(damage.PhysicalDamage)}";
-            hasMoreThanOneDamageType = true;
+            dmgTxt = "<size=52><color=#EDED6D>MISS</color></color>";
         }
-
-        if (damage.MagicalDamage > 0)
+        else
         {
-            if (hasMoreThanOneDamageType) dmgTxt += '\n';
-            dmgTxt += $"<color=#ff00ff>{Mathf.FloorToInt(damage.MagicalDamage)}</color>";
-            hasMoreThanOneDamageType = true;
-        }
+            bool hasMoreThanOneDamageType = false;
+            if (damage.PhysicalDamage > 0)
+            {
+                dmgTxt += $"<color=red>{Mathf.FloorToInt(damage.PhysicalDamage)}";
+                hasMoreThanOneDamageType = true;
+            }
 
-        if (damage.TrueDamage > 0)
-        {
-            if (hasMoreThanOneDamageType) dmgTxt += '\n';
-            dmgTxt += $"<color=#b1b1b1>{Mathf.FloorToInt(damage.TrueDamage)}</color>";
+            if (damage.MagicalDamage > 0)
+            {
+                if (hasMoreThanOneDamageType) dmgTxt += '\n';
+                dmgTxt += $"<color=#ff00ff>{Mathf.FloorToInt(damage.MagicalDamage)}</color>";
+                hasMoreThanOneDamageType = true;
+            }
+
+            if (damage.TrueDamage > 0)
+            {
+                if (hasMoreThanOneDamageType) dmgTxt += '\n';
+                dmgTxt += $"<color=#b1b1b1>{Mathf.FloorToInt(damage.TrueDamage)}</color>";
+            }
         }
 
         DisplayDamage(dmgTxt, new(0, 55));
@@ -1803,6 +1821,12 @@ public class EntityBase : MonoBehaviour
         ProjectileScript projectileScript = projectile.GetComponent<ProjectileScript>();
         if (!projectileScript) return;
 
+        if (absolutism)
+        {
+            travelSpeed *= 1.3f;
+            acceleration *= 1.3f;
+        }
+
         projectileScript.ProjectileFirer = this;
         projectileScript.DamageInstance = damageInstance;
         projectileScript.TravelSpeed = travelSpeed;
@@ -1817,6 +1841,12 @@ public class EntityBase : MonoBehaviour
         GameObject projectile = Instantiate(ProjectilePref, spawnPosition, Quaternion.identity);
         ProjectileScript projectileScript = projectile.GetComponent<ProjectileScript>();
         if (!projectileScript) return;
+
+        if (absolutism)
+        {
+            travelSpeed *= 1.3f;
+            acceleration *= 1.3f;
+        }
 
         projectileScript.ProjectileFirer = this;
         projectileScript.DamageInstance = damageInstance;
@@ -1859,7 +1889,9 @@ public class EntityBase : MonoBehaviour
         {
             entityBases = EntityManager.Entities
                 .Where(entity => 
-                    entity && entity.IsComponentsInitialized && entity.IsAlive() && (!entity.isInvisible || catchInvisibles) 
+                    entity && entity.colliders.Any(c => c.enabled) 
+                    && entity.IsComponentsInitialized && entity.IsAlive() 
+                    && (!entity.isInvisible || catchInvisibles) 
                     && (type != null && type.IsAssignableFrom(entity.GetType())))
                 .ToList();
         }

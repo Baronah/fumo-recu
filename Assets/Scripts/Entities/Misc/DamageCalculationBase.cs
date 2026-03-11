@@ -10,6 +10,8 @@ public class DamageInstance
     
     public float TrueDamage { get; set; }
 
+    public bool IsDodged = false;
+
     public float TotalDamage => PhysicalDamage + MagicalDamage + TrueDamage;
 
     public DamageInstance()

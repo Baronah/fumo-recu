@@ -35,6 +35,7 @@ public class LevelSelectionScript : MonoBehaviour
     [SerializeField] private Image MapPreviewImg, MapPreviewImgOverlay;
     [SerializeField] private Sprite[] Map_SSs;
 
+    [SerializeField] private TMP_Text FetchingDataTxt;
     [SerializeField] private Sprite DefaultEnemyIcon;
     [SerializeField] private GameObject EnemyDetail, SelectedBorder;
     [SerializeField] private TMP_Text 
@@ -116,6 +117,12 @@ public class LevelSelectionScript : MonoBehaviour
         UpdateStartingPlayerIcon();
 
         StartCoroutine(OverlayFadeOut());
+
+        if (SaveDataManager.IsResearchUnlocked)
+        {
+            FetchingDataTxt.text = 
+                "<size=36><color=#6DFFD5>Wait a min, I have the info in my book...\nLemme find them for you</color></size>";
+        }
     }
 
     short cnt = 60;

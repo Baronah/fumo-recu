@@ -144,6 +144,10 @@ MonoBehaviour:
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  - m_AssetGUID: a030743e38a074747bed2154188883a1
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
   - m_AssetGUID: a7895f7119506444ea1f9301e70fefe8
     m_SubObjectName: 
     m_SubObjectType: 
@@ -156,23 +160,19 @@ MonoBehaviour:
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  - m_AssetGUID: 98efc80de1d633246ac76bc700274480
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_EditorAssetChanged: 0
   LevelTitles:
   - World World
   - Hold me tight
   - No. 9
   - Marching Band
-  - Slow Down
+  - Rolling Stone
   - Crimson Dusk
   - Art Class
   - Loop & Loop
   - De Arriba
-  - '"Light"'
+  - Light
   - Prisoner in a Frame
   - After Dark
-  - A Starry Night, the City of Light
   - Paint it White
+  - Sleep
   - Well then, See You again Tomorrow

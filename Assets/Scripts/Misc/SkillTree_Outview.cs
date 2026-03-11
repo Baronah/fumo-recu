@@ -92,9 +92,9 @@ public class SkillTree_Outview : MonoBehaviour
     {
         return type switch
         {
-            SkillTree_Manager.SkillType.SENSES => new(0, 1, 0.83f),
-            SkillTree_Manager.SkillType.TECHS => new(0.95f, 0.3f, 1),
-            SkillTree_Manager.SkillType.SPECS => new(0.84f, 0.83f, 0),
+            SkillTree_Manager.SkillType.INVENTIO => new(0, 1, 0.83f),
+            SkillTree_Manager.SkillType.ARS => new(0.95f, 0.3f, 1),
+            SkillTree_Manager.SkillType.THEORIA => new(0.84f, 0.83f, 0),
             _ => Color.white,
         };
     }

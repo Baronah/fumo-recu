@@ -57,4 +57,26 @@ namespace DamageCalculation
             instance.MagicalDamage = instance.MagicalDamage > 0 && magicalDamage <= 0 ? 1 : magicalDamage;
         }
     }
+
+    public class AccountDodges : IDamageStep
+    {
+        public void Process(EntityBase attacker, EntityBase target, DamageInstance instance)
+        {
+            if (target.PhysicalDodgeChance <= 0 && target.MagicalDodgeChance <= 0) return;
+            
+            if (instance.PhysicalDamage > 0 && target.PhysicalDodgeChance > 0)
+            {
+                bool Dodged = Random.Range(0, 100) < target.PhysicalDodgeChance;
+                if (Dodged) instance.PhysicalDamage = 0;
+            }
+
+            if (instance.MagicalDamage > 0 && target.MagicalDodgeChance > 0)
+            {
+                bool Dodged = Random.Range(0, 100) < target.MagicalDodgeChance;
+                if (Dodged) instance.MagicalDamage = 0;
+            }
+
+            instance.IsDodged = instance.TotalDamage == 0;
+        }
+    }
 }

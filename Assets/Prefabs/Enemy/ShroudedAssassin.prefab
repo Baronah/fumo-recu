@@ -134,6 +134,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ShroudedAssassin
       objectReference: {fileID: 0}
+    - target: {fileID: 716587016134730976, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 773491194806959642, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -393,8 +397,8 @@ MonoBehaviour:
   MIN_MAGICAL_DMG: 0.1
   health: 800
   atk: 70
-  def: 35
-  res: 15
+  def: 50
+  res: 20
   ASPD: 100
   moveSpeed: 120
   attackRange: 100
@@ -431,6 +435,8 @@ MonoBehaviour:
   FreezeTimer: 0
   StunTimer: 0
   StatusResistTimer: 0
+  PhysicalDodgeChance: 0
+  MagicalDodgeChance: 0
   preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 0.9
   HasOnStartCoroutine: 1
