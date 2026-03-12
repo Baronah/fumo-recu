@@ -201,6 +201,8 @@ public class StageManager : MonoBehaviour
         "I never troll.",
         "noodles.",
         "Post this sheep at random interval.",
+        "In infinite tries everything is possible.",
+        "Welcome back Jonny",
         "wife:\njustnya, iana, typhon, mulberry, pozy if skin, archetto, vendela, ceylon (skin), rushia, warfarin (stab), lin, santalla, ines, mint?, honeyberry?? (but maybe that's mint's wife?), eyja, erota, pallas, goldenglow (skin), swire, ray, astgenne, virtuoso, weedy, monch, reedalt, indigo, amiya(?), dusk, franka, mudrock, coldshot, jessica2, lemuen, blacknight, valarqvin, skadi, aqua, irene, lolcal\n\ndaughters:\nscene, ros, suzu, ifrit, shamare shama, scene, papika, kafka, cement, podenco, vigna, ceobe, amiya, tomimi, iris, lunacub\n\nno wife:\nsora, qiubai, tomimi, paprika, shu (only looks like wife), exu, sussurro (master's wife), mumu, surtr, degen, whisperain (therapist, friend's wife), mr. nothing, rosa, mint?\n\nhusband: degenbrecher?\n\nirl:\nLessing, Ray, Blacknight's Tapir, Ray's Capybara, Ines, Mandragora\n\nupdated: 25/05/24 12:04 GMT",
         "Sorry, Amanai. I'm not even angry over you right now. I bear no grudge against anyone. It's just that the world feels so, so wonderful right now. \"Throughout Heaven and Earth, I alone am the honored one\". However, even in the Gojo clan only a scant few know about this. Take the amplified and the reversal, then combine those two different expressions of infinity to create and push out imaginary mass. Imaginary technique... Purple.",
     };
@@ -365,8 +367,6 @@ public class StageManager : MonoBehaviour
                         enemy.mHealth *= 2;
                         enemy.b_moveSpeed *= 1.35f;
                         enemy.weight += 2;
-                        enemy.PhysicalDodgeChance += 40;
-                        enemy.MagicalDodgeChance += 40;
                     }
                     else if (enemy.attackPattern == EntityBase.AttackPattern.RANGED)
                     {
@@ -414,8 +414,6 @@ public class StageManager : MonoBehaviour
                         player.mHealth *= 2;
                         player.b_moveSpeed *= 1.35f;
                         player.weight += 2;
-                        player.PhysicalDodgeChance += 40;
-                        player.MagicalDodgeChance += 40;
                     }
                     else if (player.attackPattern == EntityBase.AttackPattern.RANGED)
                     {

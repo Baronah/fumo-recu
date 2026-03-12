@@ -122,7 +122,7 @@ public class CasterProjectileScript : ProjectileScript
         if (bounceSFX && b_audioPlayLockout <= 0f)
         {
             bounceSFX.Play();
-            b_audioPlayLockout = 0.5f;
+            b_audioPlayLockout = 1f;
         }
     }
 
@@ -212,7 +212,7 @@ public class CasterProjectileScript : ProjectileScript
         if (enviSFX && e_audioPlayLockout <= 0f)
         {
             enviSFX.Play();
-            e_audioPlayLockout = 0.5f;
+            e_audioPlayLockout = 1f;
         }
     }
 }

@@ -532,11 +532,11 @@ public class PlayerBase : EntityBase
         };
     }
 
-    public override void TakeDamage(DamageInstance damage, EntityBase source, ProjectileScript projectileInfo = null)
+    public override void TakeDamage(DamageInstance damage, EntityBase source, ProjectileScript projectileInfo = null, bool IgnoreInvulnerability = false)
     {
-        base.TakeDamage(damage, source, projectileInfo);
+        base.TakeDamage(damage, source, projectileInfo, IgnoreInvulnerability);
 
-        if (source && !isInvulnerable)
+        if (source && !isInvulnerable && !IgnoreInvulnerability)
             playerManager.OnPlayerAttacked(damage.TotalDamage * 1.0f / (mHealth * 0.5f));
     }
 

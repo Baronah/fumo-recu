@@ -37,9 +37,9 @@ public class Zealot : EnemyBase
         return base.OnAttackComplete();
     }
 
-    public override void TakeDamage(DamageInstance damage, EntityBase source, ProjectileScript projectileInfo = null)
+    public override void TakeDamage(DamageInstance damage, EntityBase source, ProjectileScript projectileInfo = null, bool IgnoreInvulnerability = false)
     {
-        if (!this || !this.IsAlive() || this.isInvulnerable) return;
+        if (!this || !this.IsAlive() || (this.isInvulnerable && !IgnoreInvulnerability)) return;
 
         if (source != this)
         {

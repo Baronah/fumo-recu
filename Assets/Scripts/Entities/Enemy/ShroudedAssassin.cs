@@ -122,7 +122,7 @@ public class ShroudedAssassin : EnemyBase
 
     public int MaxFeudLevel = 20;
     public float MaxDamageReduction = 1f, MaxAtkBuff = 0.3f, MaxMspdBuff = 0.3f;
-    public override void TakeDamage(DamageInstance damage, EntityBase source, ProjectileScript projectileInfo = null)
+    public override void TakeDamage(DamageInstance damage, EntityBase source, ProjectileScript projectileInfo = null, bool IgnoreInvulnerability = false)
     {
         if (source && source == SpottedPlayer)
         {
@@ -135,7 +135,7 @@ public class ShroudedAssassin : EnemyBase
         else if (damage.TotalDamage > 0) damage.SetTotal(1);
 
         if (damage.TotalDamage > 0) dashCooldownTimerCountdown--;
-        base.TakeDamage(damage, source);
+        base.TakeDamage(damage, source, projectileInfo, IgnoreInvulnerability);
     }
 
     public override void Move()

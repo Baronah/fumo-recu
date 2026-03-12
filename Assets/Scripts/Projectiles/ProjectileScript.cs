@@ -14,6 +14,7 @@ public class ProjectileScript : MonoBehaviour
     protected float ProjectileLifespan = 8f;
 
     public DamageInstance DamageInstance;
+
 	[HideInInspector] public string displayMsg = string.Empty;
 	[HideInInspector] public Vector3 msgDisplayOffset = Vector3.zero;
 	public bool doesDamage = true;
@@ -40,6 +41,7 @@ public class ProjectileScript : MonoBehaviour
     }
 
 	public ProjectileType projectileType;
+    bool DamageScaleWithDistance = false;
 
 	public void ShootTowards(EntityBase enemy, ProjectileType projectileType, bool useAbsoluteDirection = false)
 	{
@@ -65,6 +67,8 @@ public class ProjectileScript : MonoBehaviour
 
         transform.rotation = Quaternion.Euler(0f, 0f, desiredZRotation);
 
+        DamageScaleWithDistance = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.ABSOLUTISM);
+
         allowingUpdate = true;
     }
 
@@ -81,10 +85,13 @@ public class ProjectileScript : MonoBehaviour
 
         transform.rotation = Quaternion.Euler(0f, 0f, desiredZRotation);
 
+        DamageScaleWithDistance = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.ABSOLUTISM);
+
         allowingUpdate = true;
     }
 
     protected float Lifespan = 3f;
+    float TravelTimeCount = 0f;
     protected virtual void FixedUpdate()
 	{
 		if (!allowingUpdate) return;
@@ -112,6 +119,15 @@ public class ProjectileScript : MonoBehaviour
         }
 
         TravelSpeed += Acceleration * Time.fixedDeltaTime;
+
+        TravelTimeCount += Time.fixedDeltaTime;
+        if (DamageScaleWithDistance && TravelTimeCount >= 0.25f)
+        {
+            float upPerSecond = 0.5f;
+            DamageInstance.AddByPercentage(upPerSecond * TravelTimeCount);
+
+            TravelTimeCount = 0;
+        }
     }
 
 	public virtual void OnHitEvent(EntityBase target)

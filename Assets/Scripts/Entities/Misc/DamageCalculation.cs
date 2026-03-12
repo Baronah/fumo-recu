@@ -6,6 +6,9 @@ namespace DamageCalculation
     {
         public void Process(EntityBase attacker, EntityBase target, DamageInstance instance)
         {
+            float distance = 0;
+            bool calculatedDistance = false;
+
             PlayerBase playerBase = attacker as PlayerBase;
             if (playerBase)
             {
@@ -21,13 +24,27 @@ namespace DamageCalculation
                 
                 if (playerBase.Skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_SCOPE))
                 {
+                    distance = Vector3.Distance(attacker.transform.position, target.transform.position);
+                    calculatedDistance = true;
                     float maxDistance = Mathf.Min(Mathf.Max(350, attacker.attackRange * 1.2f), 1000);
-                    float distance = Vector3.Distance(attacker.transform.position, target.transform.position);
                     if (distance <= 100) distance = 0;
 
                     float damageMultiply = Mathf.Lerp(1.0f, 1.5f, distance * 1.0f / maxDistance);
                     instance.Multiply(damageMultiply);
                 }
+            }
+
+            if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.ABSOLUTISM) 
+                && target.attackPattern == EntityBase.AttackPattern.MELEE)
+            {
+                if (!calculatedDistance && attacker)
+                {
+                    distance = Vector3.Distance(attacker.transform.position, target.transform.position);
+                    calculatedDistance = true;
+                }
+
+                // If the target is out of melee range, reduce the physical and magical damage by 50%
+                if (calculatedDistance && distance > target.attackRange + 50f) instance.Multiply(0.5f, 0.5f, 1f);
             }
         }
     }
@@ -63,7 +80,8 @@ namespace DamageCalculation
         public void Process(EntityBase attacker, EntityBase target, DamageInstance instance)
         {
             if (target.PhysicalDodgeChance <= 0 && target.MagicalDodgeChance <= 0) return;
-            
+            if (target.IsStunned || target.IsFrozen) return;
+
             if (instance.PhysicalDamage > 0 && target.PhysicalDodgeChance > 0)
             {
                 bool Dodged = Random.Range(0, 100) < target.PhysicalDodgeChance;

@@ -22537,13 +22537,15 @@ MonoBehaviour:
   skillName: 55
   skillNameText: '''Absolutism'''
   skillDescription: '- Melee units have <color=green>+100% HP</color>, <color=#00ffbf>+35%
-    MSPD</color>, <color=#2985FF>+2 weight levels</color> and obtain <color=yellow>40%
-    physical and magical dodge</color>.\n- Ranged units gains <color=#ffd61f>15%
-    base attack range as ASPD</color>, attack range <color=red>becomes global</color>,
-    and their projectiles <color=#ff00ff>travel 30% faster</color>.'
-  favorText: In infinite tries you should never die.
-  skillDescriptionInShort: Melee units have increased HP, MSPD and weight. Ranged
-    units have their attack range expanded to the entire field.
+    MSPD</color>, <color=#2985FF>+2 weight levels</color> and take <color=yellow>50%
+    less physical and magical damage</color> from attacks outside of their attack
+    range.\n- Ranged units gains <color=#ffd61f>15% base attack range as ASPD</color>,
+    attack range <color=red>becomes global</color>, and their projectiles deals <color=#ff00ff>50%
+    more damage</color> per second traveled.'
+  favorText: 
+  skillDescriptionInShort: Melee units have increased HP, MSPD, weights and take
+    less damage outside of their range. Ranged units have their attack range expanded
+    to the entire field.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1033819579

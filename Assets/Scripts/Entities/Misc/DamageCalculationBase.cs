@@ -5,47 +5,30 @@ using UnityEngine;
 public class DamageInstance
 { 
     public float PhysicalDamage { get; set; }
-    
+    private float BasePhysicalDamage { get; set; }
+
     public float MagicalDamage { get; set; }
-    
+    private float BaseMagicalDamage { get; set; }
+
     public float TrueDamage { get; set; }
+    private float BaseTrueDamage { get; set; }
 
     public bool IsDodged = false;
 
     public float TotalDamage => PhysicalDamage + MagicalDamage + TrueDamage;
 
-    public DamageInstance()
-    {
-        PhysicalDamage = 0;
-        MagicalDamage = 0;
-        TrueDamage = 0;
-    }
+    public DamageInstance() => Set(0);
 
-    public DamageInstance(float amount)
-    {
-        PhysicalDamage = amount;
-        MagicalDamage = amount;
-        TrueDamage = amount;
-    }
+    public DamageInstance(float amount) => Set(amount);
 
     public DamageInstance(DamageInstance damageInstance)
-    {   
-        PhysicalDamage = damageInstance.PhysicalDamage;
-        MagicalDamage = damageInstance.MagicalDamage;
-        TrueDamage = damageInstance.TrueDamage;
-    }
+        => Set(damageInstance.PhysicalDamage, damageInstance.MagicalDamage, damageInstance.TrueDamage);
 
     public DamageInstance(float physical, float magical, float trueDamage)
-    {
-        PhysicalDamage = physical;
-        MagicalDamage = magical;
-        TrueDamage = trueDamage;
-    }
+        => Set(physical, magical, trueDamage);
 
-    public void Multiply(float percentage)
-    {
-        Multiply(percentage, percentage, percentage);
-    }
+
+    public void Multiply(float percentage) => Multiply(percentage, percentage, percentage);
 
     public void Multiply(float pPercentage, float mPercentage, float tPercentage)
     {
@@ -54,17 +37,23 @@ public class DamageInstance
         TrueDamage = Mathf.CeilToInt(TrueDamage * tPercentage);
     }
 
-    public void Set(float physical, float magical, float trueDamage)
+    public void MultiplyBase(float percentage) => MultiplyBase(percentage, percentage, percentage);
+
+    public void MultiplyBase(float pPercentage, float mPercentage, float tPercentage)
     {
-        PhysicalDamage = physical;
-        MagicalDamage = magical;
-        TrueDamage = trueDamage;
+        PhysicalDamage = Mathf.CeilToInt(BasePhysicalDamage * pPercentage);
+        MagicalDamage = Mathf.CeilToInt(BaseMagicalDamage * mPercentage);
+        TrueDamage = Mathf.CeilToInt(BaseTrueDamage * tPercentage);
     }
 
-    public void Set(float amount)
+    public void Set(float physical, float magical, float trueDamage)
     {
-        Set(amount, amount, amount);
+        PhysicalDamage = BasePhysicalDamage = physical;
+        MagicalDamage = BaseMagicalDamage = magical;
+        TrueDamage = BaseTrueDamage = trueDamage;
     }
+
+    public void Set(float amount) => Set(amount, amount, amount);
 
     public void SetTotal(float amount)
     {
@@ -75,6 +64,33 @@ public class DamageInstance
         }
         float split = amount / 3;
         Set(split, split, amount - (split * 2));
+    }
+
+    public void Add(float amount) => Add(amount, amount, amount);
+
+    public void Add(float pAmount, float mAmount, float tAmount)
+    {
+        PhysicalDamage += pAmount;
+        MagicalDamage += mAmount;
+        TrueDamage += tAmount;
+    }
+
+    public void AddByPercentage(float percentage) => AddByPercentage(percentage, percentage, percentage);
+
+    public void AddByPercentage(float pPercentage, float mPercentage, float tPercentage)
+    {
+        PhysicalDamage += BasePhysicalDamage * pPercentage;
+        MagicalDamage += BaseMagicalDamage * mPercentage;
+        TrueDamage += BaseTrueDamage * tPercentage;
+    }
+
+    public override string ToString()
+    {
+        return 
+            $"(Base) Physical: {BasePhysicalDamage} / {PhysicalDamage}\n" +
+            $"(Base) Magical: {BaseMagicalDamage} / {MagicalDamage}\n" +
+            $"(Base) True: {BaseTrueDamage} / {TrueDamage}\n" +
+            $"Total: {TotalDamage}";
     }
 }
 

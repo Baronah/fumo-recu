@@ -13,9 +13,9 @@ public class BloodthirstyHeir : EnemyBase
         base.InitializeComponents();
     }
 
-    public override void TakeDamage(DamageInstance damage, EntityBase source, ProjectileScript projectileInfo = null)
+    public override void TakeDamage(DamageInstance damage, EntityBase source, ProjectileScript projectileInfo = null, bool IgnoreInvulnerability = false)
     {
-        base.TakeDamage(damage, source);
+        base.TakeDamage(damage, source, projectileInfo, IgnoreInvulnerability);
         if (IsAlive() && !mspdIncreased)
         {
             mspdIncreased = true;

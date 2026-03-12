@@ -984,10 +984,10 @@ public class EntityBase : MonoBehaviour
 
     public DamageInstance GetInstanceBasedOnDamagetype(int atk)
     {
-        DamageInstance instance = new DamageInstance();
-        if (damageType == DamageType.PHYSICAL) instance.PhysicalDamage = atk;
-        else if (damageType == DamageType.MAGICAL) instance.MagicalDamage = atk;
-        else instance.TrueDamage = atk;
+        DamageInstance instance = new();
+        if (damageType == DamageType.PHYSICAL) instance.Set(atk, 0, 0);
+        else if (damageType == DamageType.MAGICAL) instance.Set(0, atk, 0);
+        else instance.Set(0, 0, atk);
         return instance;
     }
 
@@ -1024,9 +1024,9 @@ public class EntityBase : MonoBehaviour
         }
     }
 
-    public virtual void TakeDamage(DamageInstance damage, EntityBase source, ProjectileScript projectileInfo = null)
+    public virtual void TakeDamage(DamageInstance damage, EntityBase source, ProjectileScript projectileInfo = null, bool IgnoreInvulnerability = false)
     {
-        if (!this || !this.IsAlive() || this.isInvulnerable) return;
+        if (!this || !this.IsAlive() || (this.isInvulnerable && !IgnoreInvulnerability)) return;
 
         OnAttackReceive(source);
         ShowDamageDealt(damage);
@@ -1823,8 +1823,7 @@ public class EntityBase : MonoBehaviour
 
         if (absolutism)
         {
-            travelSpeed *= 1.3f;
-            acceleration *= 1.3f;
+            lifeSpan = Mathf.Min(15f, lifeSpan * 1.5f);
         }
 
         projectileScript.ProjectileFirer = this;
@@ -1844,8 +1843,7 @@ public class EntityBase : MonoBehaviour
 
         if (absolutism)
         {
-            travelSpeed *= 1.3f;
-            acceleration *= 1.3f;
+            lifeSpan = Mathf.Min(15f, lifeSpan * 1.5f);
         }
 
         projectileScript.ProjectileFirer = this;
