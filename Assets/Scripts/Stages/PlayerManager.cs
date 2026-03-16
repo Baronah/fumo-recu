@@ -188,15 +188,15 @@ public class PlayerManager : MonoBehaviour
         
         SwapReadyEffect.SetActive(CanSwapPlayer);
 
-        if (Input.GetKeyDown(InputManager.Instance.PlayerSwapKey) && CanSwapPlayer)
+        if (Input.GetKeyDown(GlobalStageManager.PlayerSwapKey) && CanSwapPlayer)
         {
             SwapPlayer();
         }
-        else if (Input.GetKeyDown(InputManager.Instance.ViewInfoKey))
+        else if (Input.GetKeyDown(GlobalStageManager.ViewInfoKey))
         {
             ViewSkill();
         }
-        else if (Input.GetKeyDown(InputManager.Instance.SwapInfoKey))
+        else if (Input.GetKeyDown(GlobalStageManager.SwapInfoKey))
         {
             SwapView();
         }

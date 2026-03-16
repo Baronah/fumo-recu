@@ -176,11 +176,11 @@ public class PlayerRanged : PlayerBase
     {
         if (!IsAlive()) return;
 
-        if (Input.GetKeyDown(InputManager.Instance.AttackKey))
+        if (Input.GetKeyDown(GlobalStageManager.AttackKey))
         {
             AttackCoroutine = StartCoroutine(Attack());
         }
-        else if (Input.GetKeyDown(InputManager.Instance.SkillKey))
+        else if (Input.GetKeyDown(GlobalStageManager.SkillKey))
         {
             if (Skills.Contains(SkillTree_Manager.SkillName.KNOTS) && !playerManager.hasVowed)
             {
@@ -190,7 +190,7 @@ public class PlayerRanged : PlayerBase
             if (SkillCoroutine == null) UseSkill();
             else CancelSkill();
         }
-        else if (Input.GetKeyDown(InputManager.Instance.SpecialKey))
+        else if (Input.GetKeyDown(GlobalStageManager.SpecialKey))
         {
             if (Skills.Contains(SkillTree_Manager.SkillName.KNOTS) && !playerManager.hasVowed)
             {
@@ -768,6 +768,8 @@ public class PlayerRanged : PlayerBase
     [SerializeField] float FlowerMaxDuration = 1.5f;
     public override void DealDamage(EntityBase target, float pDmg, float mDmg, float tDmg, bool allowWhenDisabled = false, ProjectileScript projectileScript = null)
     {
+        if (!gameObject) return;
+
         base.DealDamage(target, pDmg, mDmg, tDmg, allowWhenDisabled);
         if (IsSkillActive 
             && Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_PHANTOM) 

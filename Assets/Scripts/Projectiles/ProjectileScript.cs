@@ -34,7 +34,7 @@ public class ProjectileScript : MonoBehaviour
         rb2d = GetComponent<Rigidbody2D>();
 
         var sfxs = GetComponents<AudioSource>();
-        float volume = SaveDataManager.GetSFXVolume();
+        float volume = GlobalStageManager.GetSFX();
         foreach (var sfx in sfxs)
         {
             sfx.volume = volume;

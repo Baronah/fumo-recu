@@ -140,11 +140,11 @@ public class PlayerMelee : PlayerBase
     {
         if (!IsAlive()) return;
 
-        if (Input.GetKeyDown(InputManager.Instance.AttackKey))
+        if (Input.GetKeyDown(GlobalStageManager.AttackKey))
         {
             AttackCoroutine = StartCoroutine(Attack());
         }
-        else if (Input.GetKeyDown(InputManager.Instance.SkillKey))
+        else if (Input.GetKeyDown(GlobalStageManager.SkillKey))
         {
             if (Skills.Contains(SkillTree_Manager.SkillName.KNOTS) && !playerManager.hasVowed)
             {
@@ -153,7 +153,7 @@ public class PlayerMelee : PlayerBase
 
             UseSkill();
         }
-        else if (Input.GetKeyDown(InputManager.Instance.SpecialKey))
+        else if (Input.GetKeyDown(GlobalStageManager.SpecialKey))
         {
             if (Skills.Contains(SkillTree_Manager.SkillName.KNOTS) && !playerManager.hasVowed)
             {

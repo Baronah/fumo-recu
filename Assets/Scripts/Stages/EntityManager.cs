@@ -47,7 +47,7 @@ public class EntityManager : MonoBehaviour
 
     private void Start()
     {
-        SFXValue = PlayerPrefs.GetFloat("SFX", 1f);
+        SFXValue = SaveDataManager.GetSFXVolume();
         SpriteRenderers = FindObjectsOfType<SpriteRenderer>().Where(o => o.sortingLayerName == "Entities").ToList();
         SortLayerIndex();
     }

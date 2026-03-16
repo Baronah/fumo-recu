@@ -410,7 +410,7 @@ public class PlayerBase : EntityBase
     {
         if (!IsAlive()) return;
 
-        if (Input.GetKeyDown(InputManager.Instance.AttackKey))
+        if (Input.GetKeyDown(GlobalStageManager.AttackKey))
         {
             StartCoroutine(Attack());
         }
