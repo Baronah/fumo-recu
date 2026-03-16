@@ -59,7 +59,7 @@ public class EnemyBase : EntityBase
     [SerializeField] private bool showPathGizmos = true;
     [SerializeField] private bool allowDiagonalMovement = true;
     [SerializeField] private float pathfindingDistanceThreshold = 100f;
-    [SerializeField] private float cornerAvoidanceDistance = 50f; 
+    [SerializeField] private float cornerAvoidanceDistance = 75f; 
     [SerializeField] private float pathSmoothingLookahead = 2; // How many waypoints ahead to look for smoothing
 
     [Header("Checkpoints System")]
@@ -90,8 +90,8 @@ public class EnemyBase : EntityBase
     private bool isUsingPathfinding = false; // Track if we're currently using pathfinding
     private float stuckTimer = 0f; // Track how long we've been stuck
     private Vector2 lastPosition = Vector2.zero; // Track last position for stuck detection
-    private float stuckThreshold = 1.25f; // Time before considering stuck
-    private float stuckMovementThreshold = 25f; // Distance moved to not be considered stuck
+    private readonly float stuckThreshold = 0.85f; // Time before considering stuck
+    private readonly float stuckMovementThreshold = 25f; // Distance moved to not be considered stuck
 
     private const short PathfindCntThreshold = 100, ScanPlayerCntThreshold = 20, MoveCntThreshold = 15;
     private short ScanPlayerCnt = 0, MoveCnt = 0, PathfindCnt = 0;
@@ -656,6 +656,39 @@ public class EnemyBase : EntityBase
         return bestDirection;
     }
 
+    protected virtual List<EntityBase> GetNearbyEnemiesToFindPlayer()
+    {
+        var result = SearchForEntitiesAroundSelf(detectionRange, typeof(EnemyBase), true);
+        if (IsStandingOnEnvironmentalTile(StageManager.EnvironmentType.DARK_ZONE)) return result;
+
+        return result.Where(e => !e.IsStandingOnEnvironmentalTile(StageManager.EnvironmentType.DARK_ZONE)).ToList();
+    }
+
+    bool CanFindPlayerFromNearbyAllies()
+    {
+        var enemies = GetNearbyEnemiesToFindPlayer();
+        foreach (var e in enemies)
+        {
+            EnemyBase enemy = e as EnemyBase;
+
+            if (!enemy || !enemy.IsAlive() || !enemy.SpottedPlayer) continue;
+
+            RaycastHit2D checkObstacle = Physics2D.Raycast(
+                FeetPosition.position,
+                (enemy.FeetPosition.position - FeetPosition.position).normalized,
+                Vector2.Distance(FeetPosition.position, enemy.FeetPosition.position) - 50f,
+                obstacleLayer);
+
+            if (checkObstacle && checkObstacle.collider) continue;
+
+            RecentlyScannedPlayer = enemy.SpottedPlayer;
+            return true;
+        }
+
+        if (!RecentlyScannedPlayer) RecentlyScannedPlayer = DetectPlayer();
+        return false;
+    }
+
     public void ScanPlayer()
     {
         if (ScanPlayerCnt < ScanPlayerCntThreshold)
@@ -670,27 +703,7 @@ public class EnemyBase : EntityBase
         bool spottedViaAlert = false;
         if (!SpottedPlayer)
         {
-            var enemies = SearchForEntitiesAroundSelf(detectionRange, typeof(EnemyBase), true);
-            foreach (var e in enemies)
-            {
-                EnemyBase enemy = e as EnemyBase;
-
-                if (!enemy || !enemy.IsAlive() || !enemy.SpottedPlayer) continue;
-                
-                RaycastHit2D checkObstacle = Physics2D.Raycast(
-                    FeetPosition.position,
-                    (enemy.FeetPosition.position - FeetPosition.position).normalized,
-                    Vector2.Distance(FeetPosition.position, enemy.FeetPosition.position) - 50f,
-                    obstacleLayer);
-
-                if (checkObstacle && checkObstacle.collider) continue;
-
-                RecentlyScannedPlayer = enemy.SpottedPlayer;
-                spottedViaAlert = true;
-                break;
-            }
-
-            if (!RecentlyScannedPlayer) RecentlyScannedPlayer = DetectPlayer();
+            spottedViaAlert = CanFindPlayerFromNearbyAllies();
         }
         else
         {
@@ -801,6 +814,11 @@ public class EnemyBase : EntityBase
         }
 
         yield return null;
+    }
+
+    public PlayerBase DetectPlayer(Vector3 position, float radius, bool catchInvisible = false)
+    {
+        return (PlayerBase)SearchForNearestEntityAroundCertainPoint(typeof(PlayerBase), position, radius, catchInvisible);
     }
 
     public PlayerBase DetectPlayer(float radius, bool catchInvisible = false)

@@ -236,7 +236,10 @@ public class EntityBase : MonoBehaviour
     }
 
     RectTransform GravityCircle;
-    bool absolutism = false;
+    readonly bool absolutism = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.ABSOLUTISM);
+    readonly bool statis = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.STATIS);
+    readonly bool gravity = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.GRAVITY);
+    readonly bool acceleration = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.ACCELERATION);
     public virtual void InitializeComponents()
     {
         Transform Sprite = transform.Find("Sprite");
@@ -263,8 +266,11 @@ public class EntityBase : MonoBehaviour
         if (circleFind)
         {
             GravityCircle = circleFind.GetComponent<RectTransform>();
-            GravityCircle.gameObject.SetActive(CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.GRAVITY));
+            GravityCircle.gameObject.SetActive(gravity);
         }
+
+        StatisObj = transform.Find("Statis").gameObject;
+        StatisObj.SetActive(statis);
 
         health = mHealth;
         atk = bAtk;
@@ -313,8 +319,6 @@ public class EntityBase : MonoBehaviour
             if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.ATTENTION_DEVICE))
                 StatisRequiredTimer = 3f;
         }
-
-        absolutism = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.ABSOLUTISM);
     }
 
     [SerializeField] protected bool HasOnStartCoroutine = true;
@@ -1162,7 +1166,7 @@ public class EntityBase : MonoBehaviour
     private readonly float PullForce_Base = 0.8f, PullForce_Growth = 0.5f;
     protected virtual void ProcessGravity()
     {
-        if (!CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.GRAVITY) || weight <= 0) return;
+        if (!gravity || weight <= 0) return;
         GravityTimerCount += Time.fixedDeltaTime;
         if (GravityTimerCount < PullTick) return;
 
@@ -1205,7 +1209,7 @@ public class EntityBase : MonoBehaviour
     private readonly float AcceTick = 0.25f;
     protected virtual void ProcessAccelaration()
     {
-        if (!CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.ACCELERATION)) return;
+        if (!acceleration) return;
         AcceTimerCount += Time.fixedDeltaTime;
         if (AcceTimerCount < AcceTick) return;
 
@@ -1259,9 +1263,10 @@ public class EntityBase : MonoBehaviour
     protected float StatisRequiredTimer = 5f;
     private float StatisTimer = 0f;
     private bool enteredStatis = false;
+    private GameObject StatisObj;
     protected virtual void ProcessStatis()
     {
-        if (!CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.STATIS)) return;
+        if (!statis) return;
 
         string keyAtk = "STATIS_DEBUFF_ATK";
         if (rb2d.velocity == Vector2.zero && PrevPosition == transform.position)
@@ -1284,6 +1289,8 @@ public class EntityBase : MonoBehaviour
             enteredStatis = false;
             StatisTimer = 0f;
         }
+
+        StatisObj.SetActive(enteredStatis);
     }
 
     public virtual void StopMovement()
@@ -1604,7 +1611,7 @@ public class EntityBase : MonoBehaviour
     protected float HealingEffectiveness = 1f;
     public virtual void Heal(float amount, EntityBase target, bool healThroughDead = false, bool displayMsg = true)
     {
-        if (amount <= 0 || (!target.IsAlive() && !healThroughDead)) return;
+        if (!target || amount <= 0 || (!target.IsAlive() && !healThroughDead)) return;
         
         amount *= HealingEffectiveness;
 

@@ -36,7 +36,7 @@ public class OriginiumSpider : EnemyBase
 
     IEnumerator Explode()
     {
-        float targetRadius = explosionRadius * 2.15f;
+        float targetRadius = explosionRadius * 2.2f;
 
         ExplosionRangeIndicator_Outer.GetComponent<RectTransform>().sizeDelta = new Vector2(
             targetRadius, 
@@ -62,8 +62,8 @@ public class OriginiumSpider : EnemyBase
             {
                 GameObject effect = Instantiate(ExplosionEffect, transform.position + new Vector3(0, 60), Quaternion.identity);
                 effect.transform.localScale = new Vector3(
-                    targetRadius * 0.26f,
-                    targetRadius * 0.22f
+                    targetRadius * 0.24f,
+                    targetRadius * 0.2f
                 );
 
                 Destroy(effect, 2.0f);
@@ -78,7 +78,7 @@ public class OriginiumSpider : EnemyBase
         innerRect.sizeDelta = new Vector2(targetRadius, targetRadius);
         yield return null;
 
-        var player = DetectPlayer(explosionRadius, true);
+        var player = DetectPlayer(transform.position, explosionRadius, true);
         if (player)
         {
             DealDamage(player, new DamageInstance(0, 0, (int)(atk * explosionAtkScale)));

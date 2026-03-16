@@ -380,6 +380,10 @@ PrefabInstance:
       propertyPath: m_Color.a
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5288166252650138663, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6772246562461740860, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 10199.29
@@ -468,16 +472,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Caustic Originium Spider
   Icon: {fileID: 21300000, guid: dd91be91695bbe0408ec4f0c45657f3c, type: 3}
-  mHealth: 130
+  mHealth: 120
   bAtk: 18
-  bDef: 25
-  bRes: 10
+  bDef: 30
+  bRes: 5
   defPen: 0
   defIgn: 0
   resPen: 0
   resIgn: 0
   lifeSteal: 0
-  b_moveSpeed: 200
+  b_moveSpeed: 180
   b_attackRange: 60
   b_attackWindupTime: 0.45
   b_attackInterval: 2

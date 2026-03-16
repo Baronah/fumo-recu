@@ -356,6 +356,7 @@ public class PlayerMelee : PlayerBase
             Skills.Contains(SkillTree_Manager.SkillName.DASH_TOUCH);
 
         bool allowDashes = true;
+        bool extendingDash = false;
 
         while (allowDashes)
         {
@@ -386,6 +387,7 @@ public class PlayerMelee : PlayerBase
                         var enemyForDashExtend = enemies.FirstOrDefault(e => !EnemyHitByDash.Contains(e));
                         if (!allowDashes && enemyForDashExtend)
                         {
+                            extendingDash = true;
                             allowDashes = true;
                             EnemyHitByDash.Add(enemyForDashExtend);
                         }
@@ -405,7 +407,7 @@ public class PlayerMelee : PlayerBase
 
                 animator.SetFloat("move", movementInputs.magnitude);
 
-                SpawnIllusion();
+                SpawnIllusion(extendingDash);
 
                 dashTime += Time.fixedDeltaTime;
                 yield return new WaitForFixedUpdate();
@@ -436,13 +438,15 @@ public class PlayerMelee : PlayerBase
         if (EnemyHitByDash.Count > 0) EnemyHitByDash.Clear();
     }
 
-    void SpawnIllusion()
+    void SpawnIllusion(bool extendingDash = false)
     {
         GameObject Illusion = Instantiate(IllusionPrefab, transform.position, Quaternion.identity);
         SpriteRenderer IllusionSpriteRenderer = Illusion.GetComponentInChildren<SpriteRenderer>();
         IllusionSpriteRenderer.sprite = spriteRenderer.sprite;
         IllusionSpriteRenderer.flipX = spriteRenderer.flipX;
-        IllusionSpriteRenderer.color = new Color(1, 1, 1, 0.5f);
+        
+        if (extendingDash) IllusionSpriteRenderer.color = new Color(Color.green.r, Color.green.g, Color.green.b, 0.5f);
+        
         Destroy(Illusion, 0.2f);
     }
 
@@ -851,29 +855,30 @@ public class PlayerMelee : PlayerBase
 
         info.AttackText = $"Performs an attack that deals {atk} {damageType.ToString().ToLower()} damage to all enemies within range.";
 
+        info.SpecialName = "Evasion - ";
         if (Skills.Contains(SkillTree_Manager.SkillName.DASH_TOUCH))
         {
-            info.SpecialName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.DASH_TOUCH);
+            info.SpecialName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.DASH_TOUCH);
             info.SpecialText =
                 $"Dash a short distance toward the movement direction and briefly becomes invulnerable during the process, " +
                 $"hitting an enemy extends the dash while slowing them by {Up_DashSlowPercentage}% over {Up_DashSlowDuration} seconds.";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.DASH_LETHAL))
         {
-            info.SpecialName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.DASH_LETHAL);
+            info.SpecialName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.DASH_LETHAL);
             info.SpecialText =
                 $"Dash a short distance toward the movement direction, briefly becomes invulnerable during the process, deals {Up_DashDamageScale * 100}% ATK physical damage to all enemies self coming into contact with and push them alongside with the dash.";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.DASH_FAITH))
         {
-            info.SpecialName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.DASH_FAITH);
+            info.SpecialName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.DASH_FAITH);
             info.SpecialText =
                 $"Dash a short distance toward the movement direction. During the process, self becomes invulnerable while reflects all incoming attacks. " +
                 $"The first successful deflection also heals self for {Up_DashDeflectHealPercentage * 100}% max HP.";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.DASH_AFTERIMAGES))
         {
-            info.SpecialName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.DASH_AFTERIMAGES);
+            info.SpecialName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.DASH_AFTERIMAGES);
             info.SpecialText =
                 $"Dash a short distance toward the movement direction, leaving behind an afterimage and briefly becomes invulnerable during the process. The afterimage lasts " +
                 $"{Up_DashAfterImagePersistTime} seconds, casting this skill again during that period will teleport you back to the its location.";
@@ -892,9 +897,10 @@ public class PlayerMelee : PlayerBase
         }
         info.SpecialText += $" {Math.Round(DashCooldown, 1)}s cooldown.";
 
+        info.SkillName = "Juggernaut - ";
         if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_DURATION))
         {
-            info.SkillName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.JUGGERNAUNT_DURATION);
+            info.SkillName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.JUGGERNAUNT_DURATION);
             info.SkillText =
                 $"Immediately heals self for {BurstHeal_HpPercentage * 100}% max HP. In the next {SkillDuration} seconds: " +
                 $"ATK +{AtkBoost * 100}%, DEF +{DefBoost * 100}%, RES +{ResBoost}, MSPD +{SpeedBoost * 100}% and " +
@@ -902,7 +908,7 @@ public class PlayerMelee : PlayerBase
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_IGNITE))
         {
-            info.SkillName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.JUGGERNAUNT_IGNITE);
+            info.SkillName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.JUGGERNAUNT_IGNITE);
             info.SkillText =
                 $"Immediately heals self for {BurstHeal_HpPercentage * 100}% max HP. In the next {SkillDuration} seconds: " +
                 $"ATK +{AtkBoost * 100}%, DEF +{DefBoost * 100}%, RES +{ResBoost}, MSPD +{SpeedBoost * 100}%. " +
@@ -911,7 +917,7 @@ public class PlayerMelee : PlayerBase
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_PULL))
         {
-            info.SkillName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.JUGGERNAUNT_PULL);
+            info.SkillName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.JUGGERNAUNT_PULL);
             info.SkillText =
                 $"Immediately heals self for {BurstHeal_HpPercentage * 100}% max HP. In the next {SkillDuration} seconds: " +
                 $"ATK +{AtkBoost * 100}%, DEF +{DefBoost * 100}%, RES +{ResBoost}, MSPD +{SpeedBoost * 100}%. " +
@@ -919,7 +925,7 @@ public class PlayerMelee : PlayerBase
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_SHINDOUKAKU))
         {
-            info.SkillName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.JUGGERNAUNT_SHINDOUKAKU);
+            info.SkillName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.JUGGERNAUNT_SHINDOUKAKU);
             info.SkillText =
                 $"Immediately heals self for {BurstHeal_HpPercentage * 100}% max HP. In the next {SkillDuration} seconds: " +
                 $"ATK +{AtkBoost * 100}%, DEF +{DefBoost * 100}%, RES +{ResBoost}, MSPD +{SpeedBoost * 100}%. " +
@@ -927,14 +933,14 @@ public class PlayerMelee : PlayerBase
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.BEYOND_NIGHT))
         {
-            info.SkillName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.BEYOND_NIGHT);
+            info.SkillName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.BEYOND_NIGHT);
             info.SkillText =
                 $"Immediately heals self for {BurstHeal_HpPercentage * 100}% max HP and removes all enemy aggro. In the next {SkillDuration} seconds: " +
                 $"Becomes invisible, but ATK becomes 0, DEF +{DefBoost * 100}%, RES +{ResBoost}, MSPD +{SpeedBoost * 100}%. ";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.JUGGERNAUNT_AFTERSHOCK))
         {
-            info.SkillName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.JUGGERNAUNT_AFTERSHOCK);
+            info.SkillName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.JUGGERNAUNT_AFTERSHOCK);
             info.SkillText =
                 $"Immediately heals self for {BurstHeal_HpPercentage * 100}% max HP. In the next {SkillDuration} seconds: " +
                 $"ATK +{AtkBoost * 100}%, DEF +{DefBoost * 100}%, RES +{ResBoost}, MSPD +{SpeedBoost * 100}% and " +

@@ -682,7 +682,7 @@ public class ShroudedAssassin : EnemyBase
     void CheckForWrappedShrouded()
     {
         if (WarppedShroudedTriggered) return;
-        if (IsDashing || animator.GetBool("attack") || CurrentPhase != 2 || health >= mHealth * WrappedShroudHpTriggerThreshold) return;
+        if (IsDashing || attacking || CurrentPhase != 2 || health >= mHealth * WrappedShroudHpTriggerThreshold) return;
 
         StartCoroutine(ActivateVanishAndDashTowardPlayer());
     }

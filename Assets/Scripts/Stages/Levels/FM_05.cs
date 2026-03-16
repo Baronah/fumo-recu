@@ -14,4 +14,10 @@ public class FM_05 : StageManager
             enemy.IsPhysicalImmune = enemy.IsMagicalImmune = true;
         }
     }
+
+    public override void OnPlayerSpawn(PlayerBase player)
+    {
+        base.OnPlayerSpawn(player);
+        player.b_moveSpeed *= 1.15f;
+    }
 }

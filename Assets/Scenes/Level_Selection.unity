@@ -7506,7 +7506,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 36
-  skillNameText: Evasion - 'Yesterday Once More'
+  skillNameText: '''Yesterday Once More'''
   skillDescription: After using 'Evasion', leaves behind an afterimage that lasts
     <color=#5b7ccf>3 seconds</color>. During this period, 'Evasion' can be recast
     once to <color=yellow>teleport</color> you back to the afterimage's location.
@@ -10719,7 +10719,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 24
-  skillNameText: Juggernaut - Aftershock
+  skillNameText: Aftershock
   skillDescription: While 'Juggernaut' is active, damage taken is stored. After 'Juggernaut'
     ends or upon swapping it's active, deals <color=#ff4545>physical damage</color>
     equal to <color=#b1b1b1>20% max HP + 80% stored damage</color> to all nearby
@@ -14447,7 +14447,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 27
-  skillNameText: Der Tag Neight Sich - Flowering Night
+  skillNameText: Der Ring des Nibelungen
   skillDescription: '''Der Tag Neight Sich'' fires 2 extra waves of projectiles.'
   favorText: She suggested adding another projectiles wave that would rotate in opposite
     direction to form a flower. And while this would reduce the firepower of individual
@@ -15877,7 +15877,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 41
-  skillNameText: Juggernaut - Resonance
+  skillNameText: Resonance
   skillDescription: Swapping for the first time during the duration of 'Juggernaut'
     <color=yellow>retains its effect</color>, and extends it by <color=yellow>2 seconds</color>.
   favorText: The wheel that weaves eternity and infinity, spins the bond between
@@ -18337,7 +18337,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1052, y: 0}
+  m_AnchoredPosition: {x: 1232, y: 0}
   m_SizeDelta: {x: 95, y: 95}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &873688060
@@ -18355,7 +18355,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 29
-  skillNameText: Der Tag Neight Sich - Twilight of Wolumonde
+  skillNameText: Moonlight Sonata
   skillDescription: While 'Der Tag Neight Sich' is active, swapping or cancelling
     it will leave behind a phantom that <color=yellow>maintains the skill</color>
     for the remaining duration. The phantom inherits <color=#ff4545>50% of self ATK</color>.
@@ -22242,7 +22242,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 18
-  skillNameText: Zeropoint Burst - Superconduct
+  skillNameText: Superconduct
   skillDescription: Enemies hit by 'Zeropoint Burst' also have <color=#5b7ccf>-50%
     DEF and RES</color> for equivalent duration.
   favorText: Modified version of the defroster, now weakens the structure of the
@@ -22388,7 +22388,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 16
-  skillNameText: Zeropoint Burst - Snow Blossom
+  skillNameText: Cryopump
   skillDescription: '''Zeropoint Burst'' <color=#00ffff>marks</color> all enemies
     hit. After a 2 seconds delay, marked enemies create an extra ''Zeropoint Burst''
     around them, whose maximum freeze duration equals to the current freeze duration
@@ -24497,7 +24497,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 13
-  skillNameText: Evasion - Rewinding Breeze
+  skillNameText: Rewinding Breeze
   skillDescription: During the duration of 'Evasion', <color=yellow>reflects all
     incoming attacks</color> toward self to nearby enemies. Reflected projectiles
     instead will be sent back to the attacker. The first successful reflection also
@@ -25218,7 +25218,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 46
-  skillNameText: Juggernaut - 'Beyond the Night'
+  skillNameText: '''Beyond the Night'''
   skillDescription: Upon 'Juggernaut' activation, <color=yellow>removes all aggro</color>
     from enemies to self. While 'Juggernaut' is active, <color=#5b7ccf>ATK becomes
     0</color>, but renders self to become <color=#b1b1b1>'Invisible'</color> throughout
@@ -25899,17 +25899,17 @@ MonoBehaviour:
   - The present. Day and night. And even time. I will run through them all.\n<color=yellow>Your
     units have increased MSPD in this level.</color>\n<color=red>The 'Sudarim' are
     immune to damage from Originium Pollutions.</color>
-  - Next time, set me on fire instead.
-  - Even those small fingers, were like light to me.\nHold the time tight when we
-    lived together.\nOur life go on.\n<color=yellow>Swap cool-down is halved in this
-    level. And your units have greatly increased attributes.</color>
+  - O your flawless, beautiful soul,\nIf it's truly never sinned, then, please burn
+    me down.
+  - Hold tight to the days we spent together,\nNever let them go.\n<color=yellow>Swap
+    cool-down is halved in this level. And your units have greatly increased attributes.</color>
   - Won't you set him free?
   - The picture of such a day,\nIn words, I write them down and send to you.
   - Even the malice someone held,\nEven the nights of a nameless town,\nEven you,
     shut tightly away in yourself like this,\nI know I'll still remain connected.\nYeah,
     let's paint it white.
-  - Still, I want to discuss with you about the future, and shine weakly until the
-    day I burn out.
+  - Even so, I still want to talk about the future,\nKeep shining faintly, until
+    the day I burn out.
   ChallengeModes:
   - '''Hounds'' have greatly increased HP and ATK.'
   - Terrains and enemies will differ in places, and more enemies will appear.
@@ -25930,9 +25930,9 @@ MonoBehaviour:
     will appear.
   - '''Gloompincers'' have increased ASPD under shrouded zones. And all enemies have
     increased MSPD.'
-  - One 'Candle' is placed beforehand. 'Knight Territory Hibernators' need to stay
-    inside shrouded zones for longer to fall asleep, and have increased ATK and MSPD
-    upon waking up.
+  - Some 'Candles' will be placed beforehand. 'Knight Territory Hibernators' need
+    to stay inside shrouded zones for longer to fall asleep, and have increased ATK
+    and MSPD upon waking up.
   - '''Candle''''s illumination range is reduced. ''Sentinent Toys'' have greatly
     increased DEF and RES.'
   CompleteCondition: 0100000001000000010000000000000001000000010000000000000001000000000000000300000000000000010000000000000000000000
@@ -28649,7 +28649,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 12
-  skillNameText: Evasion - Wind's Elegy
+  skillNameText: Wind's Elegy
   skillDescription: During the duration of 'Evasion', enemies coming into contact
     with self takes physical damage equal to <color=#ff4545>100% ATK</color> and
     are <color=#2985FF>pushed</color> alongside with the dash.
@@ -34615,7 +34615,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 17
-  skillNameText: Zeropoint Burst - Thermodynamic
+  skillNameText: Thermodynamic
   skillDescription: Every enemy hit by 'Zeropoint Burst' <color=yellow>refunds</color>
     its cool-down by <color=#ff9717>15%</color>.
   favorText: Oh I get it, the name is 'cool-down' because the cold will speed up
@@ -37576,7 +37576,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 21
-  skillNameText: Juggernaut - Persistence
+  skillNameText: Persistence
   skillDescription: While 'Juggernaut' is active, receiving damage extends its duration
     by <color=yellow>0.75 seconds</color>, up to a total bonus of <color=#5b7ccf>100%
     base duration</color>.
@@ -39743,7 +39743,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 11
-  skillNameText: Evasion - Gently Weeps
+  skillNameText: Gently Weeps
   skillDescription: During the duration of 'Evasion', coming into contact with an
     enemy <color=#00ffe1>extends</color> the dash and slows the collided enemies
     for 3 seconds.
@@ -42334,7 +42334,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 22
-  skillNameText: Juggernaut - Rim of the Sun
+  skillNameText: Pyroclasm
   skillDescription: While 'Juggernaut' is active, a fire ring is created around you,
     dealing <color=#ff4545>34% ATK</color> as physical damage every second and inflicts
     a stacking <color=#5b7ccf>-15% DEF</color> to nearby enemy every second.
@@ -42824,7 +42824,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1232, y: 0}
+  m_AnchoredPosition: {x: 1052, y: 0}
   m_SizeDelta: {x: 95, y: 95}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1766304372
@@ -42842,7 +42842,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 51
-  skillNameText: Der Tag Neight Sich - Widely Read
+  skillNameText: "F\xFCr Elise"
   skillDescription: Cancelling 'Der Tag Neight Sich' <color=yellow>refunds</color>
     a portion of its cool-down based on the remaining duration, up to <color=yellow>80%</color>
     within <color=#5b7ccf>the first 1 seconds</color>.
@@ -47751,7 +47751,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 39
-  skillNameText: Der Tag Neight Sich - Phantom Dance
+  skillNameText: Ein deutsches Requiem
   skillDescription: Defeating an enemy during the duration of 'Der Tag Neight Sich'
     <color=yellow>creates another wave of projectiles</color> starting at their position.
     These extra waves can trigger up to <color=#5b7ccf>3 times</color>, and last
@@ -48610,7 +48610,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 53
-  skillNameText: Zeropoint Burst - Deep Breath
+  skillNameText: Absolute Zero
   skillDescription: '''Zeropoint Burst'' can be <color=yellow>maintained</color>
     by holding down the cast key for up to <color=#5b7ccf>5 more seconds</color>.
     Self can not act while maintaining the skill.'
@@ -48830,7 +48830,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 23
-  skillNameText: Juggernaut - Swirling Vortex
+  skillNameText: Swirling Vortex
   skillDescription: While 'Juggernaut' is active, nearby enemies have <color=#5b7ccf>-33%
     MSPD and ASPD</color>, and are continuously <color=#2985FF>pulled toward self</color>.
   favorText: '"Would you like to see some of my magic?"'
@@ -50862,7 +50862,7 @@ MonoBehaviour:
   OnSelectSFX: {fileID: 0}
   skillType: 1
   skillName: 28
-  skillNameText: Der Tag Neight Sich - Ghost Lead
+  skillNameText: Carmina Burana
   skillDescription: '''Der Tag Neight Sich'' <color=#ff00ff>locks-on to</color> the
     nearest enemy within attack range. While the locked target is alive, all bullets
     instead will <color=yellow>home toward them</color>.'

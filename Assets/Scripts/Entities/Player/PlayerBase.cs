@@ -15,7 +15,10 @@ public class PlayerBase : EntityBase
     public LayerMask ObstacleLayers;
     public Sprite AttackSprite, SkillSprite, SpecialSprite;
     public string AttackDes, SkillName, SkillDes, SpecialName, SpecialDes;
+    
     protected PlayerManager playerManager;
+    public PlayerManager getPlayerManager => playerManager;
+    
     protected StageManager stageManager;
 
     [SerializeField] protected GameObject HH_Effect_parent;
@@ -537,7 +540,10 @@ public class PlayerBase : EntityBase
         base.TakeDamage(damage, source, projectileInfo, IgnoreInvulnerability);
 
         if (source && !isInvulnerable && !IgnoreInvulnerability)
-            playerManager.OnPlayerAttacked(damage.TotalDamage * 1.0f / (mHealth * 0.5f));
+        {
+            float strengthLevel = damage.TotalDamage * 1.0f / (mHealth * 0.5f);
+            playerManager.OnPlayerAttacked(strengthLevel);
+        }
     }
 
     public float heavyHitterMaxTimer = 10f;

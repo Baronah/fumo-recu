@@ -29,6 +29,7 @@ public class MainMenu : MonoBehaviour
     private bool FlipX = true;
 
     private AudioSource BGM;
+    private AudioSource[] SFXs;
 
     private static bool firstTimeBootup = true;
     private void Awake()
@@ -59,6 +60,9 @@ public class MainMenu : MonoBehaviour
 
             }
         }
+
+        SFXs = FindObjectsOfType<AudioSource>().Where(s => s != BGM).ToArray();
+        
     }
 
     IEnumerator HideFakeMenu()
@@ -163,6 +167,7 @@ public class MainMenu : MonoBehaviour
         BGMSlider.maxValue = SFXSlider.maxValue = 1f;
 
         BGM.volume = BGMSlider.value;
+        foreach (var SFX in SFXs) SFX.volume = SFXSlider.value;
 
         ResolutionIndex = PlayerPrefs.GetInt("Resolution", 3);
         ChangeResolution(0);
@@ -179,6 +184,7 @@ public class MainMenu : MonoBehaviour
     {
         PlayerPrefs.SetFloat("SFX", v);
         SFXSlider.value = v;
+        foreach (var sfx in SFXs) sfx.volume = v;
     }
 
     public void ChangeResolution(int dir)

@@ -73,8 +73,9 @@ public class FM_10 : StageManager
         if (enemy as Sudaram)
         {
             enemy.bAtk = (short)(enemy.bAtk * 0.6f);
-            enemy.mHealth = 120;
-            enemy.bDef = enemy.bRes = 5;
+            enemy.mHealth = 200;
+            enemy.bDef /= 2;
+            enemy.bRes /= 2;
         }
     }
 }

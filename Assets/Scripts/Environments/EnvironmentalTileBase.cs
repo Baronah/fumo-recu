@@ -39,7 +39,7 @@ public class EnvironmentalTileBase : MonoBehaviour
         entitiesWithin.Add(entity);
         if (entity is PlayerBase pb)
         {
-
+            ProcessPlayerGeologistUpgrade(pb);
         }
     }
 

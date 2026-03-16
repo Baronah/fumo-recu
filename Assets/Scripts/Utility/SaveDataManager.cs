@@ -50,4 +50,7 @@ public class SaveDataManager
 
         return aFumo;
     }
+
+    public static float GetSFXVolume() => PlayerPrefs.GetFloat("SFX", 1.0f);
+    public static float GetBGMVolume() => PlayerPrefs.GetFloat("BGM", 1.0f);
 }

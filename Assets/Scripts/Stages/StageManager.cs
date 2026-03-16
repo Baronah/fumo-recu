@@ -240,9 +240,10 @@ public class StageManager : MonoBehaviour
         return count;
     }
 
+    GameObject StageTransitionOverlay;
     IEnumerator OnStartOverlayFadeout()
     {
-        GameObject StageTransitionOverlay = GameObject.Find("StageOverlayTransition");
+        StageTransitionOverlay = GameObject.Find("StageOverlayTransition");
         if (!StageTransitionOverlay) yield break;
 
         Image image = StageTransitionOverlay.GetComponentInChildren<Image>();
@@ -798,6 +799,8 @@ public class StageManager : MonoBehaviour
         EnemySpawnpointScript.OnStageRetry();
         string currentSceneName = SceneManager.GetActiveScene().name;
         Addressables.LoadSceneAsync(currentSceneName, LoadSceneMode.Single, true);
+        
+        if (StageTransitionOverlay) Destroy(StageTransitionOverlay);
     }
 
     public virtual void QuitStage()
@@ -814,6 +817,8 @@ public class StageManager : MonoBehaviour
 
         SceneManager.LoadSceneAsync(CharacterPrefabsStorage.LevelSelectionKey);
         // Addressables.LoadSceneAsync(CharacterPrefabsStorage.LevelSelectionKey, LoadSceneMode.Single, true);
+
+        if (StageTransitionOverlay) Destroy(StageTransitionOverlay);
     }
 
     public void OnPlayerFumoPickup(PlayerBase player, Collider2D FumoObj)

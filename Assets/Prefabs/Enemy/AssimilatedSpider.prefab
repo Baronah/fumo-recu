@@ -368,6 +368,10 @@ PrefabInstance:
       propertyPath: m_Color.a
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5288166252650138663, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6772246562461740860, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -456,9 +460,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Assimilated Originium Spider
   Icon: {fileID: 21300000, guid: df69882a8c471804f99bdd709c35b8b1, type: 3}
-  mHealth: 130
+  mHealth: 110
   bAtk: 15
-  bDef: 5
+  bDef: 15
   bRes: 10
   defPen: 0
   defIgn: 0

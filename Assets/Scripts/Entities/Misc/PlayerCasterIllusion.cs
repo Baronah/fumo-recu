@@ -25,7 +25,9 @@ public class PlayerCasterIllusion : EntityBase
         SetInvulnerable(9999f);
     }
 
-    public void SetInherit(short ATK, float maxDuration, float duration, float multiplier, float interval, bool flipX)
+    public bool FieldExpert = false;
+    public PlayerManager playerManager = null;
+    public void SetInherit(short ATK, float maxDuration, float duration, float multiplier, float interval, bool FieldExpert, PlayerManager playerManager, float lifeSpan, bool flipX)
     {
         InitSpriteColor = new(1, 0, 0.15f, 0.75f);
         spriteRenderer.color = InitSpriteColor;
@@ -34,8 +36,14 @@ public class PlayerCasterIllusion : EntityBase
         SkillCurrentDuration = duration;
         Skill_DamageMulitplier = multiplier;
         Skill_AtkInterval = interval;
+
+        this.FieldExpert = FieldExpert; 
+        this.playerManager = playerManager;
+
         spriteRenderer.flipX = flipX;
         HandleSpriteFlipping();
+
+        this.lifeSpan = lifeSpan;
 
         if (Debut) Debut.Play();
         StartCoroutine(CastSkill());
@@ -74,6 +82,7 @@ public class PlayerCasterIllusion : EntityBase
         spriteRenderer.color = InitSpriteColor;
     }
 
+    float lifeSpan;
     public IEnumerator CastSkill()
     {
         yield return null;
@@ -88,7 +97,6 @@ public class PlayerCasterIllusion : EntityBase
         SkillBar.maxValue = SkillDuration;
         SkillBar.value = SkillDuration - count;
 
-        float lifeSpan = 1.5f;
         float speed = ProjectileSpeed * 0.25f;
 
         while (count < SkillDuration)

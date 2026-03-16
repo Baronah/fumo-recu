@@ -116,6 +116,9 @@ public class PlayerRanged : PlayerBase
             duration: skillCurrentDuration,
             Skill_DamageMulitplier,
             GetSkillFiringInterval(),
+            Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_FIELD_EXPERT),
+            playerManager,
+            Skill_ProjLifeSpan,
             flipX: spriteRenderer.flipX);
     }
 
@@ -914,23 +917,24 @@ public class PlayerRanged : PlayerBase
             $"Projectiles can touch an environmental tile to gain additional effect.";
         }
 
+        info.SkillName = "Der Tag neight Sich - ";
         if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_MORE))
         {
-            info.SkillName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.SPIRAL_MORE);
+            info.SkillName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.SPIRAL_MORE);
             info.SkillText =
                 $"Continuously unleashes multiple waves of projectiles spreading in all direction around self, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action). " +
                 $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD.";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_TRAVEL))
         {
-            info.SkillName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.SPIRAL_TRAVEL);
+            info.SkillName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.SPIRAL_TRAVEL);
             info.SkillText =
                 $"Locks-on to the nearest enemy within range and continuously unleashes waves of projectiles, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action). " +
                 $". Each projectile hits the first enemy it comes into contact with (if there is a locked enemy, all projectiles homing toward them instead), dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD.";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_PHANTOM))
         {
-            info.SkillName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.SPIRAL_PHANTOM);
+            info.SkillName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.SPIRAL_PHANTOM);
             info.SkillText =
                 $"Continuously unleashes waves of projectiles spreading in all direction around self, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action). " +
                 $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD. " +
@@ -939,7 +943,7 @@ public class PlayerRanged : PlayerBase
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_SHADOW))
         {
-            info.SkillName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.SPIRAL_SHADOW);
+            info.SkillName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.SPIRAL_SHADOW);
             info.SkillText =
                 $"Continuously unleashes waves of projectiles spreading in all direction around self, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action). " +
                 $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD. " +
@@ -948,7 +952,7 @@ public class PlayerRanged : PlayerBase
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_READ))
         {
-            info.SkillName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.SPIRAL_READ);
+            info.SkillName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.SPIRAL_READ);
             info.SkillText =
                 $"Continuously unleashes waves of projectiles spreading in all direction around self, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action, " +
                 $"and refunds upon doing so, up to {SP_SkillMaxRefund * 100}% CD). " +
@@ -966,16 +970,17 @@ public class PlayerRanged : PlayerBase
 
         info.SkillText += $" {Math.Round(SkillCooldown, 1)}s cooldown.";
 
+        info.SpecialName = "Zeropoint Burst - ";
         if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_BLOOM))
         {
-            info.SpecialName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.FREEZE_BLOOM);
+            info.SpecialName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.FREEZE_BLOOM);
             info.SpecialText =
                 $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds, inversely based on distance. Frozen enemies continues to " +
                 $"create an extra freeze ring around their position (trigger once per enemy)";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_HOLD))
         {
-            info.SpecialName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.FREEZE_HOLD);
+            info.SpecialName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.FREEZE_HOLD);
             info.SpecialText =
                 $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds, " +
                 $"inversely based on distance. The freeze can be maintained by holding the skill's key for up to an additional " +
@@ -983,14 +988,14 @@ public class PlayerRanged : PlayerBase
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_CHARGE))
         {
-            info.SpecialName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.FREEZE_CHARGE);
+            info.SpecialName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.FREEZE_CHARGE);
             info.SpecialText =
                 $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds, inversely based on distance. Every enemy hit " +
                 $"shortens the cool-down of the next usage by {FreezeChargeCDRefund * 100}%";
         }
         else if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_SUPERCONDUCT))
         {
-            info.SpecialName = CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.FREEZE_SUPERCONDUCT);
+            info.SpecialName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.FREEZE_SUPERCONDUCT);
             info.SpecialText =
                 $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds, inversely based on distance " +
                 $"and reduce their DEF and RES by {FreezeConductDebuff}% for equivalent duration";
@@ -1013,7 +1018,7 @@ public class PlayerRanged : PlayerBase
 
         info.SpecialText += $". {Math.Round(FreezeCooldown, 1)}s cool-down.";
 
-            return info;
+        return info;
     }
 
     private void OnDrawGizmos()

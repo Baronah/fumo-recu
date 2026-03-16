@@ -9,18 +9,32 @@ public class CasterProjectileScript : ProjectileScript
     private bool fieldExpertEnabled = false;
 
     private HashSet<EnvironmentType> contactedEnvironmentType = new();
+    
+    PlayerManager playerManager;
+    void GetFieldExpert()
+    {
+        PlayerRanged player = ProjectileFirer ? ProjectileFirer.GetComponent<PlayerRanged>() : null;
+        PlayerCasterIllusion playerCasterIllusion = ProjectileFirer && !player ? ProjectileFirer.GetComponent<PlayerCasterIllusion>() : null;
+
+        fieldExpertEnabled =
+            (player && player.Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_FIELD_EXPERT))
+            ||
+            (playerCasterIllusion && playerCasterIllusion.FieldExpert);
+
+        playerManager = player ? player.getPlayerManager : playerCasterIllusion ? playerCasterIllusion.playerManager : null;
+    }
 
     public override void ShootTowards(Vector3 targetPosition, ProjectileType projectileType, float ProjectileLifespan, bool useAbsoluteDirection = false, params Type[] enemy)
     {
-        PlayerRanged player = ProjectileFirer ? ProjectileFirer.GetComponent<PlayerRanged>() : null;
-        fieldExpertEnabled = player && player.Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_FIELD_EXPERT);
+        GetFieldExpert();
+
         base.ShootTowards(targetPosition, projectileType, ProjectileLifespan, useAbsoluteDirection, enemy);
     }
 
     public override void ShootTowards(Vector3 targetPosition, EntityBase enemy, ProjectileType projectileType, float ProjectileLifespan, bool useAbsoluteDirection = false)
     {
-        PlayerRanged player = ProjectileFirer ? ProjectileFirer.GetComponent<PlayerRanged>() : null;
-        fieldExpertEnabled = player && player.Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_FIELD_EXPERT);
+        GetFieldExpert();
+
         base.ShootTowards(targetPosition, enemy, projectileType, ProjectileLifespan, useAbsoluteDirection);
     }
 
@@ -57,10 +71,9 @@ public class CasterProjectileScript : ProjectileScript
     }
 
     bool appliedDamage = false;
+    readonly bool ragingTerrain = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.TERRAIN);
     void ApplyContactedEnvironmentalEffects(EntityBase target)
     {
-        bool ragingTerrain = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.TERRAIN);
-
         foreach (var contactedEnvironmentType in contactedEnvironmentType)
         {
             float value;
@@ -80,7 +93,9 @@ public class CasterProjectileScript : ProjectileScript
                     value = 0.04f;
                     if (ragingTerrain) value *= 2;
 
-                    ProjectileFirer.Heal(ProjectileFirer.mHealth * value);
+                    if (playerManager) playerManager.activePlayer.Heal(playerManager.activePlayer.mHealth * value);
+                    else ProjectileFirer.Heal(ProjectileFirer.mHealth * value);
+
                     break;
 
                 case EnvironmentType.HEAT_PUMP_VENT:

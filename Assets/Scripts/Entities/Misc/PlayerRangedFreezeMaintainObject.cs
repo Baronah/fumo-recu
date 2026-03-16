@@ -9,25 +9,19 @@ public class PlayerRangedFreezeMaintainObject : MonoBehaviour
     [SerializeField] float PulseWait = 0.5f;
     [SerializeField] float FinalPulse_Alpha = 0.6f;
 
-    private void Start()
-    {
-        StartCoroutine(Pulse());
-    }
+    SpriteRenderer renderer;
+    Image image;
 
     private void Update()
     {
         transform.Rotate(new(0, 0, RotateDegree * Time.deltaTime));
     }
 
+    Color init;
+    Color clear;
     IEnumerator Pulse()
     {
-        SpriteRenderer renderer = GetComponent<SpriteRenderer>();
-        Image image = GetComponent<Image>();
-
         if (!renderer && !image) yield break;
-
-        Color init = renderer ? renderer.color : image.color;
-        Color clear = new(init.r, init.g, init.b, FinalPulse_Alpha);
 
         bool pulseIn = false;
 
@@ -69,5 +63,20 @@ public class PlayerRangedFreezeMaintainObject : MonoBehaviour
             pulseIn = !pulseIn;
             yield return new WaitForSeconds(PulseWait);
         }
+    }
+
+    bool initialized = false;
+    private void OnEnable()
+    {
+        if (!initialized)
+        {
+            image = GetComponent<Image>();
+            renderer = GetComponent<SpriteRenderer>();
+            init = renderer ? renderer.color : image.color;
+            clear = new(init.r, init.g, init.b, FinalPulse_Alpha);
+            initialized = true;
+        }
+
+        StartCoroutine(Pulse());
     }
 }
