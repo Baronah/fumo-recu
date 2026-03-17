@@ -261,16 +261,19 @@ public class EntityBase : MonoBehaviour
 
         GravityTimerCount = UnityEngine.Random.Range(0f, PullTick);
 
-        var circleFind = transform.Find("GravityCircle/Radius");
-
+        Transform circleFind = transform.Find("GravityCircle/Radius");
         if (circleFind)
         {
             GravityCircle = circleFind.GetComponent<RectTransform>();
             GravityCircle.gameObject.SetActive(gravity);
         }
 
-        StatisObj = transform.Find("Statis").gameObject;
-        StatisObj.SetActive(statis);
+        Transform StatisTransform = transform.Find("Statis");
+        if (StatisTransform)
+        { 
+            StatisObj = StatisTransform.gameObject;
+            StatisObj.SetActive(statis);
+        }
 
         health = mHealth;
         atk = bAtk;

@@ -1225,7 +1225,7 @@ MonoBehaviour:
   FreezeDurationMin: 1
   FreezeDurationMax: 4
   MinDistanceForFreezeDuration: 100
-  FreezeCooldown: 10.5
+  FreezeCooldown: 12
   FreezeCastDuration: 0.1
   IllusionPrefab: {fileID: 4804969973133499271, guid: 09bcf3452a6a99f4a94ce939d3a3fc57, type: 3}
   SkillSfx: {fileID: 3379531209446343463}

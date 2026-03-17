@@ -662,14 +662,14 @@ public class PlayerMelee : PlayerBase
 
     void ProcessPull()
     {
-        GameObject o = Instantiate(SwirlEffect, transform.position, Quaternion.identity);
+        GameObject o = Instantiate(SwirlEffect, transform.position, Quaternion.identity, transform);
         o.transform.localScale *= PullRadius / PullRadiusBase;
         
         Destroy(o, 1.5f);
         var enemies = SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, PullRadius, true);
         foreach (EntityBase enemy in enemies)
         {
-            PullEntityTowards(enemy, transform, 3f, 0.12f);
+            PullEntityTowards(enemy, transform, 3f, 0.13f);
             enemy.ApplyEffect(Effect.AffectedStat.MSPD, "JUGGERNAUNT_PULL_DEBUFF_MSPD", -PullDebuffValue, 1.25f, true);
             enemy.ApplyEffect(Effect.AffectedStat.ASPD, "JUGGERNAUNT_PULL_DEBUFF_ASPD", -PullDebuffValue, 1.25f, false);
         }

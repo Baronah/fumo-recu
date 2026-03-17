@@ -756,7 +756,7 @@ MonoBehaviour:
   RotateDegree: 0
   PulseTime: 1
   PulseWait: 0.5
-  FinalPulse_Alpha: 0.3
+  FinalPulse_Alpha: 0.5
 --- !u!1 &6785075912546172993
 GameObject:
   m_ObjectHideFlags: 0
