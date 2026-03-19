@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class CircularMaskMover : MonoBehaviour
 {
-    public bool UseMouseMovement = false;
+    public bool UseMouseMovement = false, UseCustomCenter = false;
+    public Vector2 Center;
     public Material maskMaterial;
     public float radius = 0f, bgColor = 1f;
 
@@ -17,6 +18,8 @@ public class CircularMaskMover : MonoBehaviour
             Vector2 screenPos = new Vector2(mousePos.x / Screen.width, mousePos.y / Screen.height);
             maskMaterial.SetVector("_Center", new Vector4(screenPos.x, screenPos.y, 0, 0));
         }
+        else if (UseCustomCenter)
+            maskMaterial.SetVector("_Center", new Vector4(Center.x, Center.y, 0, 0));
 
         // Calculate aspect ratio (width divided by height)
         float aspectRatio = (float)Screen.width / Screen.height;

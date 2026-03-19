@@ -175,13 +175,45 @@ public class PlayerBase : EntityBase
         }
     }
 
+
     public virtual void OnFieldEnter()
     {
+        short diff = (short)(CharacterPrefabsStorage.DifficultyLevel - 1);
+        if (diff >= 13) StartCoroutine(DifficultModifierNegativeStatus(diff));
+
+        if (diff >= 15 && playerManager.IsFirstTimeStageEnter)
+        {
+            SetHealth(1);
+            playerManager.IsFirstTimeStageEnter = false;
+        }
+
         GetVow();
         if (Skills.Contains(SkillTree_Manager.SkillName.SWAP_START_ATK))
         {
             Heal((mHealth - health) * 0.3f);
             ApplyEffect(Effect.AffectedStat.ATK, "SWAP_START_ATKBUFF", 75f, 5f, true, EffectPersistType.PERSIST);
+        }
+    }
+
+    IEnumerator DifficultModifierNegativeStatus(short diff)
+    {
+        if (diff < 13) yield break;
+
+        if (diff == 13) yield return new WaitForSeconds(10f);
+
+        float c = 0, d = 40f;
+        while (c < d)
+        {
+            float Strength_Scale80To0 = Mathf.Lerp(0, 80f, c * 1.0f / d),
+                  Strength_Scale50To0 = Mathf.Lerp(0, 50f, c * 1.0f / d);
+
+            ApplyEffect(Effect.AffectedStat.ATK, "DIFFICULT_HANDICAP_ATK", Strength_Scale80To0 * -1, 9999f, true);
+
+            if (diff >= 14)
+                ApplyEffect(Effect.AffectedStat.MSPD, "DIFFICULT_HANDICAP_MSPD", Strength_Scale50To0 * -1, 9999f, true);
+
+            c += 1;
+            yield return new WaitForSeconds(1f);
         }
     }
 
@@ -275,7 +307,7 @@ public class PlayerBase : EntityBase
                     break;
 
                 case SkillTree_Manager.SkillName.EQUIPMENT_BLADE:
-                    defIgn += 10;
+                    defPen += 15;
                     break;
 
                 case SkillTree_Manager.SkillName.EQUIPMENT_SCOPE:

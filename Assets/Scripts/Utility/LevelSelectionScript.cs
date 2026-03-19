@@ -12,6 +12,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static EnemyBase;
 using static PlayerManager;
+using static SaveDataManager;
 using static StageManager;
 
 public class LevelSelectionScript : MonoBehaviour
@@ -19,14 +20,14 @@ public class LevelSelectionScript : MonoBehaviour
     [SerializeField] private GameObject LevelPrefabTemplate, LevelsPoint, Overlay, LevelSelectionConfirm, Nav, LevelEnemyView, EnemyViewPrefab, EnemyViewContent;
     [SerializeField] private CharacterPrefabsStorage characterPrefabsStorage;
     [SerializeField] private Transform[] Containers;
-    [SerializeField] private Sprite Incompleted, Completed, CompletedCM;
+    [SerializeField] private Sprite Incompleted, Completed, CompletedCM, CompletedCM_DF;
 
     [SerializeField] private Sprite NMSprite, CMSprite, LockedSprite;
     [SerializeField] private Button CMToggleButton;
     private Image CMToggleImg => CMToggleButton.GetComponent<Image>();
 
     [SerializeField] private TMP_Text SelectedLvlName, SelectedLvlDescription;
-    [SerializeField] private string[] Descriptions, ChallengeModes;
+    [SerializeField] private string[] Descriptions, ChallengeModes, SecretDescriptions;
     [SerializeField] private StageCompleteCondition[] CompleteCondition;
     [SerializeField] private StageEnvironment[] Environments;
     [SerializeField] private AppearingEnemies[] AppearingEnemies;
@@ -99,6 +100,8 @@ public class LevelSelectionScript : MonoBehaviour
 
     private void Start()
     {
+        SaveDataManager.GetAllCompletedLevels();
+
         FindAnyObjectByType<SkillTree_Manager>(FindObjectsInactive.Include).GetPlayerProgress();
 
         SetSfxs();
@@ -140,7 +143,6 @@ public class LevelSelectionScript : MonoBehaviour
             if (l != null) Destroy(l);
         }
         LevelPrefabs.Clear();
-
         Nav.SetActive(TotalPages > 1);
         if (Nav.activeSelf)
         {
@@ -148,7 +150,9 @@ public class LevelSelectionScript : MonoBehaviour
             Nav.transform.Find("Prev").gameObject.SetActive(CurrentPageIndex > 0);
         }
 
-        var regex = new Regex(@"^FM-(\d+)(_CM)?$");
+        // Updated regex: now allows optional _CM and required _<difficulty> suffix
+        var regex = new Regex(@"^FM-(\d+)(_CM)?_(-?\d+)$");
+
         int startLevelIndex = CurrentPageIndex * MaxPageSize;
         List<string> CompletedLevels = PlayerPrefs.GetString("CompletedLevels", string.Empty)
                                         .Split(" ", StringSplitOptions.RemoveEmptyEntries)
@@ -160,72 +164,80 @@ public class LevelSelectionScript : MonoBehaviour
         {
             var numbers = CompletedLevels
                 .Select(p => int.Parse(regex.Match(p).Groups[1].Value));
-
             highestLevelCompleted = numbers.Max() + 1;
         }
 
         for (int i = 0; i < MaxPageSize; ++i)
         {
             int levelIndex = startLevelIndex + i;
-
             if (levelIndex >= TotalLevels) break;
-
             bool levelUnlocked = levelIndex < highestLevelCompleted + 1;
-
             var targetLevel = characterPrefabsStorage.SceneAssetReferences[levelIndex];
             var runtimeKey = targetLevel.RuntimeKey.ToString();
-
             GameObject level = Instantiate(LevelPrefabTemplate, Containers[i].position, Quaternion.identity, LevelsPoint.transform);
             TMP_Text nameText = level.GetComponentInChildren<TMP_Text>();
             Image completionStatus = level.transform.Find("CompletionStatus").GetComponent<Image>();
+            string displayName = GetLevelNameByIndex(levelIndex);
 
-            string displayName = GetSceneName(levelIndex);
             nameText.text = displayName;
 
-            if (CompletedLevels.Contains(displayName + "_CM"))
+            // Use GetLevelCompletionType instead of raw string matching
+            CompletionType completion = SaveDataManager.GetLevelCompletionType(displayName);
+
+            switch (completion)
             {
-                IsMapCleared.Add(true);
-                completionStatus.sprite = CompletedCM;
-            }
-            else if (CompletedLevels.Contains(displayName))
-            {
-                IsMapCleared.Add(true);
-                completionStatus.sprite = Completed;
-            }
-            else
-            {
-                IsMapCleared.Add(false);
-                completionStatus.sprite = Incompleted;
+                case CompletionType.CHALLENGE_MODE:
+                    IsMapCleared.Add(true);
+                    completionStatus.sprite = CompletedCM;
+                    break;
+
+                case CompletionType.CHALLENGE_MODE_DIFF:
+                    IsMapCleared.Add(true);
+                    completionStatus.sprite = CompletedCM_DF;
+                    break;
+
+                case CompletionType.OBSERVER_NORMAL:
+                case CompletionType.NORMAL:
+                case CompletionType.NORMAL_DIFF:
+                    IsMapCleared.Add(true);
+                    completionStatus.sprite = Completed;
+                    break;
+
+                default:
+                    IsMapCleared.Add(false);
+                    completionStatus.sprite = Incompleted;
+                    break;
             }
 
             string capturedKey = runtimeKey;
-
             Button levelButton = level.GetComponent<Button>();
             levelButton.onClick.AddListener(() => SelectLevel(levelIndex, capturedKey));
             levelButton.interactable = levelUnlocked;
-
             Transform Lock = level.transform.Find("Lock");
             Lock.gameObject.SetActive(!levelUnlocked);
-
             Image[] imgs = level.GetComponentsInChildren<Image>();
             foreach (var item in imgs)
             {
                 if (item.transform == Lock || item.transform.parent == Lock) continue;
                 item.color = levelUnlocked ? Color.white : new(0.18f, 0.18f, 0.18f);
             }
-
             LevelPrefabs.Add(level);
         }
     }
 
-    string GetSceneName(int levelIndex)
+    string GetLevelNameByIndex(int levelIndex)
     {
         return "FM-" + (levelIndex < 10 ? $"0{levelIndex}" : levelIndex);
     }
 
+    bool CanUnlockCM(int index) => IsMapCleared[index] && SaveDataManager.GetLevelCompletionType(GetLevelNameByIndex(index)) != CompletionType.OBSERVER_NORMAL;
+
+    [SerializeField] LevelDifficultyModifier levelDifficultyModifier;
     void SelectLevel(int index, string runtimeKey)
     {
         if (isViewingMap) return;
+
+        levelDifficultyModifier.SetRecordText(GetLevelNameByIndex(index));
 
         LevelDescriptionScrollbar.verticalNormalizedPosition = 1;
 
@@ -233,11 +245,11 @@ public class LevelSelectionScript : MonoBehaviour
 
         selectedIndex = index;
         selectedKey = runtimeKey;
-        SelectedLvlName.text = GetSceneName(selectedIndex) + ": " + characterPrefabsStorage.LevelTitles[selectedIndex];
+        SelectedLvlName.text = GetLevelNameByIndex(selectedIndex) + ": " + characterPrefabsStorage.LevelTitles[selectedIndex];
         SelectedLvlDescription.text = GetLevelDescription(selectedIndex);
 
-        if (!IsMapCleared[selectedIndex]) CMToggleImg.sprite = LockedSprite;
-        CMToggleButton.interactable = IsMapCleared[selectedIndex];
+        bool unlockCM = CanUnlockCM(index);
+        if (!unlockCM) CMToggleImg.sprite = LockedSprite;
 
         MapPreviewImgOverlay.sprite = MapPreviewImg.sprite = Map_SSs[selectedIndex];
 
@@ -277,32 +289,40 @@ public class LevelSelectionScript : MonoBehaviour
         }
         else
         {
-            string stageCompleteCondition = CompleteCondition[index] switch
+            bool secret = SaveDataManager.GetLevelCompletionType(GetLevelNameByIndex(index)) == CompletionType.CHALLENGE_MODE_DIFF;
+            if (secret)
             {
-                StageCompleteCondition.ELIMINATE_ALL_ENEMIES => "<color=red><Annihilation></color> Eliminate all enemies to complete the stage.",
-                StageCompleteCondition.RETRIEVE_FUMO => "<color=#00ffb7><Rescue></color> Reach the location of the Fumo to complete the stage.",
-                StageCompleteCondition.SURVIVE_FOR_GIVEN_TIME => "<color=yellow><Survive></color> Survive until the time runs out to complete the stage.",
-                StageCompleteCondition.PROTECT_FUMO => "<color=yellow><Protect></color> Protect the Fumo from enemies until the time runs out to complete the stage.",
-                _ => "Unknown condition"
-            };
-
-            string environmentDescription = string.Empty;
-            foreach (var env in Environments[index].Environments)
-            {
-                string envDes = env switch
-                {
-                    EnvironmentType.KEYS => "<color=purple><Key></color> Collect to remove the terrains with corresponding color.",
-                    EnvironmentType.ONE_WAY_PASSAGE => "<color=#d6d930><One-directional Passage></color> Can only be passed through when appoarched from a certain direction.",
-                    EnvironmentType.ORIGINIUM_TILE => "<color=#C40000><Originium Pollution></color> Continuously deals true damage to the player and enemy units standing on it.",
-                    EnvironmentType.HEAT_PUMP_VENT => "<color=#ff9a03><Heatpump Vent></color> Periodically pushes the player and enemies within range toward a certain direction.",
-                    EnvironmentType.MEDICAL_TILE => "<color=green><Medical Tile></color> Continuously heals the player and enemies standing on it.",
-                    EnvironmentType.DARK_ZONE => "<color=black><Shrouded Zone></color> Some areas of the map is covered in darkness. Units standing on those areas have reduced attack and detection range, but can not be detected and targeted by units standing on brighter areas.",
-                    _ => "Unknown environment"
-                };
-                environmentDescription += $"{envDes}\n";
+                description = $"<color=#00FFD5>{SecretDescriptions[index]}</color>";
             }
+            else
+            {
+                string stageCompleteCondition = CompleteCondition[index] switch
+                {
+                    StageCompleteCondition.ELIMINATE_ALL_ENEMIES => "<color=red><Annihilation></color> Eliminate all enemies to complete the stage.",
+                    StageCompleteCondition.RETRIEVE_FUMO => "<color=#00ffb7><Rescue></color> Reach the location of the Fumo to complete the stage.",
+                    StageCompleteCondition.SURVIVE_FOR_GIVEN_TIME => "<color=yellow><Survive></color> Survive until the time runs out to complete the stage.",
+                    StageCompleteCondition.PROTECT_FUMO => "<color=yellow><Protect></color> Protect the Fumo from enemies until the time runs out to complete the stage.",
+                    _ => "Unknown condition"
+                };
 
-            description += $"\n\n<color=#E5E5E5>{stageCompleteCondition}\n{environmentDescription}</color>";
+                string environmentDescription = string.Empty;
+                foreach (var env in Environments[index].Environments)
+                {
+                    string envDes = env switch
+                    {
+                        EnvironmentType.KEYS => "<color=purple><Key></color> Collect to remove the terrains with corresponding color.",
+                        EnvironmentType.ONE_WAY_PASSAGE => "<color=#d6d930><One-directional Passage></color> Can only be passed through when appoarched from a certain direction.",
+                        EnvironmentType.ORIGINIUM_TILE => "<color=#C40000><Originium Pollution></color> Continuously deals true damage to the player and enemy units standing on it.",
+                        EnvironmentType.HEAT_PUMP_VENT => "<color=#ff9a03><Heatpump Vent></color> Periodically pushes the player and enemies within range toward a certain direction.",
+                        EnvironmentType.MEDICAL_TILE => "<color=green><Medical Tile></color> Continuously heals the player and enemies standing on it.",
+                        EnvironmentType.DARK_ZONE => "<color=black><Shrouded Zone></color> Some areas of the map is covered in darkness. Units standing on those areas have reduced attack and detection range, but can not be detected and targeted by units standing on brighter areas.",
+                        _ => "Unknown environment"
+                    };
+                    environmentDescription += $"{envDes}\n";
+                }
+
+                description += $"\n\n<color=#E5E5E5>{stageCompleteCondition}\n{environmentDescription}</color>";
+            }
         }
         return description.Replace(@"\n", "\n");
     }
@@ -386,9 +406,17 @@ public class LevelSelectionScript : MonoBehaviour
         isViewingMap = false;
     }
 
+    [SerializeField] private GameObject CMUnlockMessageBox;
     public void ToggleChallengeMode()
     {
         if (sfxs[2]) sfxs[2].Play();
+
+        if (!CanUnlockCM(selectedIndex))
+        {
+            CMUnlockMessageBox.SetActive(true);
+            return;
+        }
+
         if (!enableCM)
         {
             enableCM = true;
@@ -401,6 +429,7 @@ public class LevelSelectionScript : MonoBehaviour
         }
 
         SelectedLvlDescription.text = GetLevelDescription(selectedIndex);
+        levelDifficultyModifier.AdjustMaxDiffOnCMSelect(enableCM);
     }
 
     IEnumerator ConfirmLevelSelection()

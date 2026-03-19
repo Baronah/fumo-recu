@@ -6,6 +6,15 @@ namespace DamageCalculation
     {
         public void Process(EntityBase attacker, EntityBase target, DamageInstance instance)
         {
+            if (target.damageAmplify != 0) instance.Multiply(1.0f + target.damageAmplify / 100f);
+            if (target.damageReduction != 0) instance.Multiply(1.0f - target.damageReduction / 100f);
+        }
+    }
+
+    public class AccountSkillTreeEffects : IDamageStep
+    {
+        public void Process(EntityBase attacker, EntityBase target, DamageInstance instance)
+        {
             float distance = 0;
             bool calculatedDistance = false;
 

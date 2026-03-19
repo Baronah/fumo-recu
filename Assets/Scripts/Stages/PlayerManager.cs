@@ -202,9 +202,19 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    public bool IsFirstTimeStageEnter = true;
     public bool MintBlessing = false;
     public void GetPlayerSkills()
     {
+        short diff = (short)(CharacterPrefabsStorage.DifficultyLevel - 1);
+        if (diff >= 11)
+        {
+            SwapCooldown *= diff == 11 ? 1.5f : 2f;
+            swapCooldownTimer = 0;
+            SwapOverflowTimer = 0;
+            SwapStacks = 0;
+        }
+
         if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.EQUIPMENT_RADIO))
         {
             SwapCooldown *= 0.85f;

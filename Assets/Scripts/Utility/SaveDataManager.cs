@@ -1,4 +1,7 @@
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class SaveDataManager
@@ -32,25 +35,177 @@ public class SaveDataManager
 
     public static bool IsEligibleForTechUnlock()
     {
-        string[] CompletedLevels = PlayerPrefs.GetString("CompletedLevels", "").Split(' ');
-        return GetAllTimeFumo() >= 4 && CompletedLevels.Any(c => c.EndsWith("_CM"));
+        return GetAllTimeFumo() >= 4 && PlayerPrefs
+            .GetString("CompletedLevels", "")
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .Any(c => c.Contains("_CM_"));
     }
 
     public static int GetAllTimeFumo()
     {
         int aFumo = 0;
-        string[] CompletedLevels = PlayerPrefs.GetString("CompletedLevels", "").Split(' ');
+        var regex = new Regex(@"^FM-(\d+)(_CM)?_(-?\d+)$");
+        string[] CompletedLevels = PlayerPrefs
+            .GetString("CompletedLevels", "")
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
         foreach (var level in CompletedLevels)
         {
-            if (level.StartsWith("FM-"))
-                aFumo++;
-            if (level.EndsWith("_CM"))
+            var match = regex.Match(level);
+            if (!match.Success) continue;
+
+            aFumo++;                            // NM entry always counts
+            if (match.Groups[2].Success)        // _CM group present
                 aFumo++;
         }
-
         return aFumo;
     }
 
     public static float GetSFXVolume() => PlayerPrefs.GetFloat("SFX", 1.0f);
     public static float GetBGMVolume() => PlayerPrefs.GetFloat("BGM", 1.0f);
+
+    public static List<string> GetAllCompletedLevels()
+    {
+        List<string> CompletedLevels = PlayerPrefs
+            .GetString("CompletedLevels", string.Empty)
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .ToList();
+
+        for (int i = 0; i < CompletedLevels.Count; i++)
+        {
+            string entry = CompletedLevels[i];
+            if (!Regex.IsMatch(entry, @"_\d+$"))
+                CompletedLevels[i] = entry + "_1";
+        }
+
+        PlayerPrefs.SetString("CompletedLevels", string.Join(' ', CompletedLevels));
+
+        return CompletedLevels;
+    }
+
+    public static void SaveLevelCompletion(string LevelName, out bool IsFirsttime, out CompletionType completionType, out bool IsDifficultyHigher)
+    {
+        IsFirsttime = IsDifficultyHigher = false;
+        completionType = CompletionType.UNCLEARED;
+
+        short Difficulty = CharacterPrefabsStorage.DifficultyLevel;
+        bool IsChallengeMode = CharacterPrefabsStorage.EnableChallengeMode;
+
+        string NM_Prefix = LevelName;
+        string CM_Prefix = LevelName + "_CM";
+
+        // --- Load & migrate old entries (no difficulty suffix → _1) ---
+        List<string> CompletedLevels = GetAllCompletedLevels();
+
+        // --- Find existing entries ---
+        string existingNM = CompletedLevels.FirstOrDefault(s =>
+            s.StartsWith(NM_Prefix + "_") && !s.Contains("_CM"));
+
+        string existingCM = CompletedLevels.FirstOrDefault(s =>
+            s.StartsWith(CM_Prefix + "_"));
+
+        // --- Helper: parse difficulty from entry ---
+        int GetEntryDifficulty(string entry)
+        {
+            if (entry == null) return -1;
+            int lastUnderscore = entry.LastIndexOf('_');
+            return int.TryParse(entry.Substring(lastUnderscore + 1), out int d) ? d : -1;
+        }
+
+        // --- Apply save logic ---
+        if (IsChallengeMode)
+        {
+            IsFirsttime = existingCM == null;
+            completionType = Difficulty > 1 ? CompletionType.CHALLENGE_MODE_DIFF : CompletionType.CHALLENGE_MODE;
+
+            if (existingCM == null)
+            {
+                IsDifficultyHigher = true;
+                CompletedLevels.Add(CM_Prefix + "_" + Difficulty);
+            }
+            else if (Difficulty > GetEntryDifficulty(existingCM))
+            {
+                IsDifficultyHigher = true;
+
+                CompletedLevels.Remove(existingCM);
+                CompletedLevels.Add(CM_Prefix + "_" + Difficulty);
+            }
+        }
+        else
+        {
+            IsFirsttime = existingNM == null;
+            completionType = Difficulty == 0 
+                ? CompletionType.OBSERVER_NORMAL 
+                : Difficulty > 1 ? CompletionType.NORMAL_DIFF 
+                : CompletionType.NORMAL;
+
+            if (existingNM == null)
+            {
+                IsDifficultyHigher = true;
+                CompletedLevels.Add(NM_Prefix + "_" + Difficulty);
+            }
+            else if (Difficulty > GetEntryDifficulty(existingNM))
+            {
+                IsDifficultyHigher = true;
+
+                CompletedLevels.Remove(existingNM);
+                CompletedLevels.Add(NM_Prefix + "_" + Difficulty);
+            }
+        }
+
+        PlayerPrefs.SetString("CompletedLevels", string.Join(' ', CompletedLevels));
+    }
+
+    /// <summary>
+    /// Returns the highest difficulty cleared for both NM and CM of a given level.
+    /// Returns -1 if the mode has never been cleared.
+    /// </summary>
+    public static (int? NM_Difficulty, int? CM_Difficulty) GetLevelHighestDifficulty(string LevelName)
+    {
+        string NM_Prefix = LevelName;
+        string CM_Prefix = LevelName + "_CM";
+
+        List<string> CompletedLevels = PlayerPrefs
+            .GetString("CompletedLevels", string.Empty)
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .ToList();
+
+        int? ParseDifficulty(string entry)
+        {
+            if (entry == null) return null;
+            int lastUnderscore = entry.LastIndexOf('_');
+            return int.TryParse(entry.Substring(lastUnderscore + 1), out int d) ? d : null;
+        }
+
+        string nmEntry = CompletedLevels.FirstOrDefault(s =>
+            s.StartsWith(NM_Prefix + "_") && !s.Contains("_CM"));
+
+        string cmEntry = CompletedLevels.FirstOrDefault(s =>
+            s.StartsWith(CM_Prefix + "_"));
+
+        return (ParseDifficulty(nmEntry), ParseDifficulty(cmEntry));
+    }
+
+    public enum CompletionType
+    { 
+        UNCLEARED,
+        OBSERVER_NORMAL,
+        NORMAL,
+        NORMAL_DIFF,
+        CHALLENGE_MODE,
+        CHALLENGE_MODE_DIFF,
+    };
+
+    public static CompletionType GetLevelCompletionType(string LevelName)
+    {
+        var (nmDiff, cmDiff) = GetLevelHighestDifficulty(LevelName);
+
+        if (cmDiff > 1) return CompletionType.CHALLENGE_MODE_DIFF;
+        if (cmDiff == 1) return CompletionType.CHALLENGE_MODE;
+        if (nmDiff > 1) return CompletionType.NORMAL_DIFF;
+        if (nmDiff == 1) return CompletionType.NORMAL;
+        if (cmDiff == 0 || nmDiff == 0) return CompletionType.OBSERVER_NORMAL;
+
+        return CompletionType.UNCLEARED;
+    }
 }

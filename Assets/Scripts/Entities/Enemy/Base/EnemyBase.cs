@@ -100,6 +100,7 @@ public class EnemyBase : EntityBase
 
     protected StageManager stageManager;
 
+    bool hasDRWhenNotCombat = false;
     public override void InitializeComponents()
     {
         if (IsComponentsInitialized) return;
@@ -124,11 +125,19 @@ public class EnemyBase : EntityBase
         b_detectionRange = detectionRange;
 
         WriteStats();
-        if (!ViewOnlyMode && SpotPlayerUponSpawn) ForceSpotPlayer();
+        if (!ViewOnlyMode)
+        {
+            if (SpotPlayerUponSpawn) ForceSpotPlayer();
+            hasDRWhenNotCombat = CharacterPrefabsStorage.DifficultyLevel >= 7;
+            if (hasDRWhenNotCombat) damageReduction += 60;
+            IsComponentsInitialized = true;
 
-        IsComponentsInitialized = true;
-
-        if (!ViewOnlyMode && CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.HIBERNATE)) StartCoroutine(Deforst());
+            if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.HIBERNATE)) StartCoroutine(Deforst());
+        }
+        else
+        {
+            IsComponentsInitialized = true;
+        }
     }
 
     IEnumerator Deforst()
@@ -759,6 +768,11 @@ public class EnemyBase : EntityBase
 
     public virtual void OnFirsttimePlayerSpot(bool viaAlert = false)
     {
+        if (hasDRWhenNotCombat)
+        {
+            damageReduction -= 60;
+        }
+
         MoveToOverridePosition = false;
         MoveToOverridePositionJumpCnt = 0;
         FaceToward(SpottedPlayer.transform.position);

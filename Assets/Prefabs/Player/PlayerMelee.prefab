@@ -5861,7 +5861,7 @@ MonoBehaviour:
   Icon: {fileID: 21300000, guid: 16d47974b79ddaf4886e53951e987eab, type: 3}
   mHealth: 200
   bAtk: 26
-  bDef: 20
+  bDef: 25
   bRes: 5
   defPen: 0
   defIgn: 0

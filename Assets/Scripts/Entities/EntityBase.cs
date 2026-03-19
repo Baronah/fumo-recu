@@ -977,6 +977,7 @@ public class EntityBase : MonoBehaviour
         };
 
         pipeline.Add(new ModifyRawDamage());
+        pipeline.Add(new AccountSkillTreeEffects());
         pipeline.Add(new CalculateDefense());
         pipeline.Add(new AccountDodges());
         pipeline.Calculate();

@@ -341,12 +341,64 @@ public class StageManager : MonoBehaviour
         if (CharacterPrefabsStorage.EnableChallengeMode) Title.text += "\n<color=red><size=52>[CHALLENGE MODE]</size></color>";
     }
 
+    void ProcessEnemyDifficultyScaling(EnemyBase enemy)
+    {
+        short diffLevel = (short)(CharacterPrefabsStorage.DifficultyLevel - 1);
+        if (diffLevel <= 0) return;
+
+        enemy.bAtk = (short)(enemy.bAtk * (1f + CharacterPrefabsStorage.GetEnemiesAtkMultiplier()));
+        enemy.mHealth *= 1f + CharacterPrefabsStorage.GetEnemiesHpMultiplier();
+
+        if (diffLevel >= 4)
+        {
+            short resAdd = 4, defAdd = 10;
+            if (StageCompleteConditionType == StageCompleteCondition.PROTECT_FUMO || StageCompleteConditionType == StageCompleteCondition.SURVIVE_FOR_GIVEN_TIME)
+            {
+                resAdd *= 4;
+                defAdd *= 4;
+            }
+
+            enemy.bDef += defAdd;
+            enemy.bRes += resAdd;
+        }
+
+        if (diffLevel >= 5)
+        {
+            float mspdAdd = enemy.b_moveSpeed * 0.05f, aspdAdd = 5;
+            if (StageCompleteConditionType == StageCompleteCondition.RETRIEVE_FUMO)
+            {
+                mspdAdd *= 4;
+                aspdAdd *= 4;
+            }
+
+            enemy.b_moveSpeed += mspdAdd;
+            enemy.ASPD += aspdAdd;
+        }
+
+        if (diffLevel >= 6)
+        {
+            float hpAdd = enemy.mHealth * 0.05f, atkAdd = enemy.bAtk * 0.05f;
+            if (StageCompleteConditionType == StageCompleteCondition.ELIMINATE_ALL_ENEMIES)
+            {
+                hpAdd *= 4;
+                atkAdd *= 4;
+            }
+
+            enemy.mHealth += hpAdd;
+            enemy.bAtk += (short)atkAdd;
+        }
+
+        if (diffLevel >= 8 && (enemy.attackPattern == EntityBase.AttackPattern.MELEE || enemy.attackPattern == EntityBase.AttackPattern.NONE))
+            enemy.StatusResistTimer += 9999f;
+    }
+
     public virtual void OnEnemySpawn(EnemyBase enemy)
     {
+        ProcessEnemyDifficultyScaling(enemy);
+
         if (CharacterPrefabsStorage.EnableChallengeMode)
         {
             enemy.bAtk = (short)(enemy.bAtk * ChallengeModeStatsModifier);
-            enemy.bDef = (short)(enemy.bDef * ChallengeModeStatsModifier);
             enemy.mHealth = (int)(enemy.mHealth * ChallengeModeStatsModifier);
         }
 
@@ -395,6 +447,12 @@ public class StageManager : MonoBehaviour
 
     public virtual void OnPlayerSpawn(PlayerBase player)
     {
+        if (CharacterPrefabsStorage.DifficultyLevel == 0)
+        {
+            player.mHealth *= 2f;
+            player.bAtk = (short)(player.bAtk * 1.5f);
+        }
+
         foreach (var skillData in CharacterPrefabsStorage.Skills)
         {
             SkillName skill = skillData.Key;
@@ -702,51 +760,58 @@ public class StageManager : MonoBehaviour
 
     void ProceedAsVictory(TMP_Text text, ResultType resultType)
     {
-        bool StageClearedCMFirsttime = false;
         foreach (var item in enemySpawnpoints)
         {
             Destroy(item);
         }
 
-        List<string> CompletedLevels = PlayerPrefs.GetString("CompletedLevels", string.Empty).Split(" ").ToList();
-        if (CharacterPrefabsStorage.EnableChallengeMode)
-        {
-            var CMLVL = LevelName + "_CM";
-            StageClearedCMFirsttime = !CompletedLevels.Contains(CMLVL);
+        SaveDataManager.SaveLevelCompletion(
+            LevelName, 
+            out bool IsFirsttime, 
+            out SaveDataManager.CompletionType CompletionType,
+            out bool IsDifficultyHigher);
 
-            if (StageClearedCMFirsttime)
-            {
-                if (CompletedLevels.Contains(LevelName)) CompletedLevels.Remove(LevelName);
-                CompletedLevels.Add(CMLVL);
-            }
-        }
-        else
+        if (resultType != ResultType.HEATH_DEATH && CharacterPrefabsStorage.DifficultyLevel > 1)
         {
-            if (!CompletedLevels.Contains(LevelName) && !CompletedLevels.Contains(LevelName + "_CM"))
-            {
-                CompletedLevels.Add(LevelName);
-                StageClearedNMFirsttime = true;
-            }
+            text.text = "<color=#00ffb7>Research Conducted!";
         }
 
-        PlayerPrefs.SetString("CompletedLevels", string.Join(' ', CompletedLevels.ToArray()));
+        if (IsFirsttime) text.text += "\n<size=36>+1 Mint fumo</size>";
 
         if (resultType == ResultType.HEATH_DEATH)
         {
             text.text += "\n<color=#00ffb7><size=36>But, let's not do that again...</size></color>";
         }
-        else if (StageClearedNMFirsttime)
-        {
-            text.text += "\n<size=36>+1 Mint fumo\nChallenge Mode has been unlocked!</size>";
-        }
-        else if (StageClearedCMFirsttime)
-        {
-            text.text += "\n<size=36>+1 Mint fumo\nThis is crazy</size>";
-        }
         else
-            text.text += "\n<size=32><color=#00ffb7>But you already claimed the Fumo...</color></size>";
+        {
+            switch (CompletionType)
+            {
+                case SaveDataManager.CompletionType.OBSERVER_NORMAL:
+                    if (IsFirsttime) text.text += "\n<size=36>Complete this stage in Explorer mode and above to unlock CM!</size>";
+                    break;
 
-        if (StageClearedNMFirsttime || StageClearedCMFirsttime) AddFumo();
+                case SaveDataManager.CompletionType.NORMAL:
+                    if (IsDifficultyHigher) text.text += "\n<size=36>Challenge mode has been unlocked!</size>";
+                    else text.text += "\n<size=36>It's very hype.</size>";
+                    break;
+
+                case SaveDataManager.CompletionType.NORMAL_DIFF:
+                    if (IsDifficultyHigher) text.text += "\n<size=36>It's a new rekky!</size>";
+                    else text.text += "\n<size=36>Challenge mode has been unlocked!</size>";
+                    break;
+
+                case SaveDataManager.CompletionType.CHALLENGE_MODE:
+                    text.text += "\n<size=36>It's just so peak...</size>";
+                    break;
+
+                case SaveDataManager.CompletionType.CHALLENGE_MODE_DIFF:
+                    if (IsDifficultyHigher) text.text += "\n<size=36>Oh my fricking shit...</size>";
+                    else text.text += "\n<size=36>It's just so peak...</size>";
+                    break;
+            }
+        }
+
+        if (IsFirsttime) AddFumo();
 
         o_QuitBtn.transform.localPosition = new Vector3(0, o_QuitBtn.transform.localPosition.y);
         o_RetryBtn.gameObject.SetActive(false);

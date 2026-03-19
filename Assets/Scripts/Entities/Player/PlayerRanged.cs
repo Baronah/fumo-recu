@@ -140,6 +140,23 @@ public class PlayerRanged : PlayerBase
 
     public override void GetSkillTreeEffects()
     {
+        short diff = (short)(CharacterPrefabsStorage.DifficultyLevel - 1);
+        if (diff == -1)
+        {
+            FreezeCooldown *= 0.6f;
+            SkillCooldown *= 0.6f;
+        }
+        else if (diff == 8)
+        {
+            FreezeCooldown *= 1.5f;
+            SkillCooldown *= 1.25f;
+        }
+        else if (diff >= 9)
+        {
+            FreezeCooldown *= 2f;
+            SkillCooldown *= 1.5f;
+        }
+
         base.GetSkillTreeEffects();
         if (Skills.Contains(SkillTree_Manager.SkillName.WINGED_STEPS_C))
         {
@@ -163,6 +180,8 @@ public class PlayerRanged : PlayerBase
 
     public override void OnFieldEnter()
     {
+        freezeCooldownTimer = FreezeCooldown;
+        skillCooldownTimer = SkillCooldown;
         base.OnFieldEnter();
 
         if (Skills.Contains(SkillTree_Manager.SkillName.MAJOR_DEBUT))

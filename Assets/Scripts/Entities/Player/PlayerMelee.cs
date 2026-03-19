@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using static PlayerManager;
@@ -111,6 +110,23 @@ public class PlayerMelee : PlayerBase
 
     public override void GetSkillTreeEffects()
     {
+        short diff = (short)(CharacterPrefabsStorage.DifficultyLevel - 1);
+        if (diff == -1)
+        {
+            DashCooldown *= 0.6f;
+            UltCooldown *= 0.6f;
+        }
+        else if (diff == 8)
+        {
+            DashCooldown *= 1.5f;
+            UltCooldown *= 1.25f;
+        }
+        else if (diff >= 9)
+        {
+            DashCooldown *= 2f;
+            UltCooldown *= 1.5f;
+        }
+
         base.GetSkillTreeEffects();
 
         if (Skills.Contains(SkillTree_Manager.SkillName.HAIR_RIBBON) && CharacterPrefabsStorage.startingPlayer == PlayerManager.PlayerType.MELEE)
