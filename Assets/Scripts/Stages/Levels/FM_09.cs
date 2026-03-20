@@ -49,10 +49,8 @@ public class FM_09 : StageManager
 
        if (enemy as Matterllurgist) enemy.ASPD += 40;
 
-       if (enemy as Hound || enemy as Wetwork || enemy as Archer || enemy as BloodthirstyHeir)
-            enemy.mHealth += (int)(enemy.mHealth * 0.6f);
-       else
-            enemy.mHealth += (int)(enemy.mHealth * 0.2f);
+        if (enemy as Hound || enemy as Wetwork || enemy as Archer || enemy as BloodthirstyHeir)
+            enemy.mHealth *= 1.3f;
     }
 
     public override void OnPlayerSpawn(PlayerBase player)

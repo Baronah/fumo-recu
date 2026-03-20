@@ -5,6 +5,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static LevelDifficultyModifier;
 using static PlayerManager;
 
 public class PlayerMelee : PlayerBase
@@ -68,9 +69,6 @@ public class PlayerMelee : PlayerBase
         SkillBar = SkillBarObj.GetComponentInChildren<Slider>();
         SkillEffectColor = SkillEffect.GetComponent<SpriteRenderer>().color;
 
-        dashCooldownTimer = DashCooldown;
-        ultCooldownTimer = UltCooldown;
-
         PullRadiusBase = PullRadius;
         DoTRadiusBase = DoTRadius;
         AoERadiusBase = AoERadius;
@@ -111,17 +109,17 @@ public class PlayerMelee : PlayerBase
     public override void GetSkillTreeEffects()
     {
         short diff = (short)(CharacterPrefabsStorage.DifficultyLevel - 1);
-        if (diff == -1)
+        if (diff + 1 == (int) DiffType.Observer)
         {
             DashCooldown *= 0.6f;
             UltCooldown *= 0.6f;
         }
-        else if (diff == 8)
+        else if (diff == (int)DiffType.PlayerCD_1)
         {
             DashCooldown *= 1.5f;
             UltCooldown *= 1.25f;
         }
-        else if (diff >= 9)
+        else if (diff >= (int)DiffType.PlayerCD_2)
         {
             DashCooldown *= 2f;
             UltCooldown *= 1.5f;
@@ -237,7 +235,7 @@ public class PlayerMelee : PlayerBase
         }
     }
 
-    float dashCooldownTimer = 0f;
+    float dashCooldownTimer = 9999f;
     protected override IEnumerator SpecialLockout()
     {
         StartCoroutine(base.SpecialLockout());
@@ -272,7 +270,7 @@ public class PlayerMelee : PlayerBase
         StartCoroutine(playerManager.SpecialCooldown(DashCooldown, dashCooldownTimer));
     }
 
-    float ultCooldownTimer = 0f;
+    float ultCooldownTimer = 9999f;
     protected override IEnumerator UltimateLockout()
     {
         StartCoroutine(base.UltimateLockout());

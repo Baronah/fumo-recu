@@ -22,8 +22,6 @@ public class FM_03 : StageManager
 
     public override void OnEnemySpawn(EnemyBase enemy)
     {
-        base.OnEnemySpawn(enemy);
-
         if (CharacterPrefabsStorage.EnableChallengeMode)
         {
             if (enemy as Sentinel) enemy.b_moveSpeed *= SentinelBonusMSPD_Ratio;
@@ -35,5 +33,7 @@ public class FM_03 : StageManager
             enemy.def -= 10;
             enemy.res -= 10;
         }
+
+        base.OnEnemySpawn(enemy);
     }
 }

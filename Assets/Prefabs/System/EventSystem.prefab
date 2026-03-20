@@ -3469,6 +3469,7 @@ MonoBehaviour:
   - {fileID: 8018060462294976817}
   stageManager: {fileID: 0}
   FirstBlackFlash: 1
+  IsFirstTimeStageEnter: 1
   MintBlessing: 0
   RangedSealSkill: 0
   MeleeSealSkill: 0
@@ -4796,7 +4797,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.0099487305, y: -23.539764}
+  m_AnchoredPosition: {x: -0.0099487305, y: -75}
   m_SizeDelta: {x: 1266.5337, y: 63.8812}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3250258636245944009
@@ -4860,7 +4861,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 2
+  m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -11013,7 +11014,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.0099487305, y: 75}
+  m_AnchoredPosition: {x: -0.0099487305, y: 50}
   m_SizeDelta: {x: 1266.5337, y: 87.3939}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5687977267791390926
@@ -12799,7 +12800,7 @@ Transform:
   m_GameObject: {fileID: 8138116287106014697}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -957, y: 293, z: -110}
+  m_LocalPosition: {x: -1660, y: 0, z: -110}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

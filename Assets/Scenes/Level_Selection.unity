@@ -3811,7 +3811,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Explore Mode\n<size=24><i>(click on the mode \nto see details)</i></size>"
+  m_text: "Exploration Mode\n<size=24><i>(click on the mode \nto see details)</i></size>"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
   m_sharedMaterial: {fileID: 2164040, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
@@ -7511,81 +7511,6 @@ RectTransform:
   m_AnchoredPosition: {x: 602.3162, y: 0}
   m_SizeDelta: {x: 141.32886, y: 326.06918}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &361688225
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 361688226}
-  - component: {fileID: 361688228}
-  - component: {fileID: 361688227}
-  m_Layer: 5
-  m_Name: Image
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &361688226
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 361688225}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1455102867}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1.631, y: 0}
-  m_SizeDelta: {x: 110, y: 110}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &361688227
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 361688225}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0.7735849, g: 0.7735849, b: 0.7735849, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 4f581c1ff03dbb5448aabf2d1e62e6e1, type: 3}
-  m_Type: 3
-  m_PreserveAspect: 1
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &361688228
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 361688225}
-  m_CullTransparentMesh: 1
 --- !u!1 &368324332
 GameObject:
   m_ObjectHideFlags: 0
@@ -17845,9 +17770,9 @@ MonoBehaviour:
   DiffDown: {fileID: 1426418053}
   ModifierText: {fileID: 1039426504}
   ModifierDetail: {fileID: 1186326414}
+  RecordText: {fileID: 769586131}
   Content: {fileID: 1186326412}
   Background: {fileID: 1209393603}
-  RecordText: {fileID: 769586131}
 --- !u!114 &840496241
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26730,7 +26655,8 @@ MonoBehaviour:
   Incompleted: {fileID: 21300000, guid: 8da235742f0643f419e802538fa58062, type: 3}
   Completed: {fileID: 21300000, guid: e06c91590f727064fb765aecf4bc3c3f, type: 3}
   CompletedCM: {fileID: 21300000, guid: 29f286724b2ebb841a33aa1b7256c471, type: 3}
-  CompletedCM_DF: {fileID: 21300000, guid: 8df2f99dfa7535541865c480e27259f9, type: 3}
+  CompletedCM_H_DF: {fileID: 21300000, guid: 8df2f99dfa7535541865c480e27259f9, type: 3}
+  CompletedCM_DF: {fileID: 21300000, guid: 4f581c1ff03dbb5448aabf2d1e62e6e1, type: 3}
   NMSprite: {fileID: 21300000, guid: 798108dd32c95484ea80fa263954ddbd, type: 3}
   CMSprite: {fileID: 21300000, guid: e2f3b6f2a5bdf564788ea5131276f286, type: 3}
   LockedSprite: {fileID: 21300000, guid: 9081c4d88b5bbe24397e760cc147d3a1, type: 3}
@@ -36145,8 +36071,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
   m_ConstrainProportionsScale: 1
-  m_Children:
-  - {fileID: 361688226}
+  m_Children: []
   m_Father: {fileID: 287254778}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
@@ -40246,14 +40171,12 @@ MonoBehaviour:
   Title: {fileID: 1791290098}
   FlavourTxts:
   - Let's try something crazy today!
-  - '"So this is where you were! Found you."'
   - Check out these epical moves!
   - She wishes to participate in more research projects.
   - We love theories.
   - Never afraid to try!
   - It's peak
   - Is hype
-  - '"There''s cookies on the table"'
   - Sorry there is no AFK guide for this...
   - Like, the Mint from arknights
   - '"Creativity takes courage"'
@@ -40280,6 +40203,7 @@ MonoBehaviour:
   SecretKeys:
   - ANGOUNOWALTZ
   - NOODLES
+  MessageBox: {fileID: 6314675184610959723, guid: f3f25d8907bc8554d9e3eec68e6c318f, type: 3}
   IsIntroPlaying: 0
   QuitBtn: {fileID: 812363002}
   Techs: {fileID: 739711758}
@@ -51249,7 +51173,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UseMouseMovement: 0
   UseCustomCenter: 1
-  Center: {x: 0.15, y: 0.45}
+  Center: {x: 0.14, y: 0.48}
   maskMaterial: {fileID: 2100000, guid: 3b0cac448e13b4640911cbdbb6565023, type: 2}
   radius: 0.27
   bgColor: 0.995

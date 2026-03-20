@@ -42,7 +42,6 @@ public class FM_07 : StageManager
         }
         else if (enemy as Sentinel)
         {
-            enemy.mHealth *= 2;
             enemy.bDef += 10;
             enemy.bRes += 10;
         }

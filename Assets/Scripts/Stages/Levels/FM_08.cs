@@ -17,10 +17,7 @@ public class FM_08 : StageManager
         }
         else if (enemy as OriginiumSpiderAlpha) enemy.bAtk = (short)(enemy.bAtk * 0.85f);
         else if (enemy is BloodboilKnight b)
-        {
-            b.bDef += 30;
-            b.bRes += 10;
-            
+        {   
             b.maxStackCount *= 2;
             b.mspdAddPerEnemyKilled /= 2;
             b.aspdAddPerEnemyKilled /= 2;

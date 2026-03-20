@@ -6,6 +6,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using static LevelDifficultyModifier;
 using static PlayerManager;
 
 public class PlayerRanged : PlayerBase
@@ -87,10 +88,6 @@ public class PlayerRanged : PlayerBase
     public override void InitializeComponents()
     {
         SkillBar = SkillBarObj.GetComponentInChildren<Slider>();
-
-        freezeCooldownTimer = FreezeCooldown;
-        skillCooldownTimer = SkillCooldown;
-
         base.InitializeComponents();
     }
 
@@ -141,17 +138,17 @@ public class PlayerRanged : PlayerBase
     public override void GetSkillTreeEffects()
     {
         short diff = (short)(CharacterPrefabsStorage.DifficultyLevel - 1);
-        if (diff == -1)
+        if (diff + 1 == (int) DiffType.Observer)
         {
             FreezeCooldown *= 0.6f;
             SkillCooldown *= 0.6f;
         }
-        else if (diff == 8)
+        else if (diff == (int) DiffType.PlayerCD_1)
         {
             FreezeCooldown *= 1.5f;
             SkillCooldown *= 1.25f;
         }
-        else if (diff >= 9)
+        else if (diff >= (int) DiffType.PlayerCD_2)
         {
             FreezeCooldown *= 2f;
             SkillCooldown *= 1.5f;
@@ -180,8 +177,6 @@ public class PlayerRanged : PlayerBase
 
     public override void OnFieldEnter()
     {
-        freezeCooldownTimer = FreezeCooldown;
-        skillCooldownTimer = SkillCooldown;
         base.OnFieldEnter();
 
         if (Skills.Contains(SkillTree_Manager.SkillName.MAJOR_DEBUT))
@@ -367,7 +362,7 @@ public class PlayerRanged : PlayerBase
         base.Move();
     }
 
-    float skillCooldownTimer = 0f;
+    float skillCooldownTimer = 9999f;
     protected override IEnumerator UltimateLockout()
     {
         StartCoroutine(base.UltimateLockout());
@@ -384,7 +379,7 @@ public class PlayerRanged : PlayerBase
         CanUseSkill = true;
     }
 
-    float freezeCooldownTimer = 0f;
+    float freezeCooldownTimer = 9999f;
     protected override IEnumerator SpecialLockout()
     {
         StartCoroutine(base.SpecialLockout());

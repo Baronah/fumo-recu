@@ -61,8 +61,6 @@ public class FM_10 : StageManager
 
     public override void OnEnemySpawn(EnemyBase enemy)
     {
-        base.OnEnemySpawn(enemy);
-
         enemy.detectionRange = 5000f;
 
         if (enemy is ShroudedAssassin a)
@@ -77,5 +75,7 @@ public class FM_10 : StageManager
             enemy.bDef /= 2;
             enemy.bRes /= 2;
         }
+
+        base.OnEnemySpawn(enemy);
     }
 }

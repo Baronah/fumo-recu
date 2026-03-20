@@ -149,8 +149,12 @@ public class SkillTree_Manager : MonoBehaviour
         Block.SetActive(!techUnlocked);
     }
 
+    LevelDifficultyModifier levelDifficultyModifier;
     public void CheckUnlockStatus()
     {
+        if (!levelDifficultyModifier) levelDifficultyModifier = FindFirstObjectByType<LevelDifficultyModifier>();
+        levelDifficultyModifier.GetDifficulties();
+
         bool IsSensesUnlocked = PlayerPrefs.GetInt("SensesUnlocked", 0) != 0,
              IsTechUnlocked = PlayerPrefs.GetInt("TechsUnlocked", 0) != 0,
              IsSpecsUnlocked = PlayerPrefs.GetInt("SpecsUnlocked", 0) != 0;
@@ -175,7 +179,7 @@ public class SkillTree_Manager : MonoBehaviour
         FumoCnt.text = "x " + fumo;
         SensesUnlockTxt.text = $"Spend       x{FUMO_COST_SENSE} to unlock this branch \n(+2 slots).";
         TechsUnlockTxt.text = $"Spend       x{FUMO_COST_TECHS} to unlock this branch \n(+2 slot).";
-        SpecsUnlockTxt.text = $"Spend         x{FUMO_COST_SPECS} to unlock this branch.";
+        SpecsUnlockTxt.text = $"Spend          x{FUMO_COST_SPECS} to unlock this branch.";
 
         int maxSkill = Mathf.Min(PlayerMaxSkills, MaxSkillCount);
         for (int i = 0; i < maxSkill; i++)
@@ -220,6 +224,7 @@ public class SkillTree_Manager : MonoBehaviour
         StartCoroutine(RemoveSeals(TECHS_BLOCK));
     }
 
+    [SerializeField] GameObject MessageBox;
     public void UnlockSpecs()
     {
         int fumo = PlayerPrefs.GetInt("Fumo", 0);
@@ -283,6 +288,14 @@ public class SkillTree_Manager : MonoBehaviour
 
         cg.alpha = 0f;
         BlockObject.SetActive(false);
+
+        if (BlockObject == SPECS_BLOCK)
+        {
+            GameObject o = Instantiate(MessageBox);
+            PopupMessageBox popupMessageBox = o.GetComponent<PopupMessageBox>();
+            popupMessageBox.SetMessage("Exploration mode <color=yellow>Researcher</color> is now available!");
+            popupMessageBox.Display(5);
+        }
 
         CheckUnlockStatus();
         Clear();

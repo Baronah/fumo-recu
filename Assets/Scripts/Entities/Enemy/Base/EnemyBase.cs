@@ -5,6 +5,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
+using static LevelDifficultyModifier;
 
 public class EnemyBase : EntityBase
 {
@@ -74,6 +75,8 @@ public class EnemyBase : EntityBase
     private bool MoveToOverridePosition = false;
 
     protected PlayerBase SpottedPlayer, RecentlyScannedPlayer;
+    public bool HasSpottedPlayer => SpottedPlayer;
+
     protected bool IsGuarding = true;
     public bool CanDetectThroughWalls = false;
     private short CurrentCheckpointIndex = 0;
@@ -100,7 +103,7 @@ public class EnemyBase : EntityBase
 
     protected StageManager stageManager;
 
-    bool hasDRWhenNotCombat = false;
+    public bool hasDRWhenNotCombat = false;
     public override void InitializeComponents()
     {
         if (IsComponentsInitialized) return;
@@ -127,9 +130,10 @@ public class EnemyBase : EntityBase
         WriteStats();
         if (!ViewOnlyMode)
         {
+            hasDRWhenNotCombat = (CharacterPrefabsStorage.DifficultyLevel - 1) >= (int)DiffType.EnemiesUncombatDRBuff;
+
             if (SpotPlayerUponSpawn) ForceSpotPlayer();
-            hasDRWhenNotCombat = CharacterPrefabsStorage.DifficultyLevel >= 7;
-            if (hasDRWhenNotCombat) damageReduction += 60;
+            
             IsComponentsInitialized = true;
 
             if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.HIBERNATE)) StartCoroutine(Deforst());
@@ -768,11 +772,6 @@ public class EnemyBase : EntityBase
 
     public virtual void OnFirsttimePlayerSpot(bool viaAlert = false)
     {
-        if (hasDRWhenNotCombat)
-        {
-            damageReduction -= 60;
-        }
-
         MoveToOverridePosition = false;
         MoveToOverridePositionJumpCnt = 0;
         FaceToward(SpottedPlayer.transform.position);

@@ -9,6 +9,7 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static EnemyBase;
+using static LevelDifficultyModifier;
 using static SkillTree_Manager;
 using Image = UnityEngine.UI.Image;
 
@@ -82,8 +83,7 @@ public class StageManager : MonoBehaviour
     bool IsStageReady = false,
         IsStageEnd = false,
         IsStageEndOverlayActive = false,
-        IsResultVictory = false,
-        StageClearedNMFirsttime = false;
+        IsResultVictory = false;
 
     GameObject TopOverlay;
 
@@ -132,7 +132,9 @@ public class StageManager : MonoBehaviour
 
         enemySpawnpoints = FindObjectsOfType<EnemySpawnpointScript>(true).ToArray();
         playerManager = GetComponent<PlayerManager>();
-        LoadingState.text = "Loading stage, please wait...";
+
+        if (CharacterPrefabsStorage.EnableChallengeMode) LoadingState.transform.position += new Vector3(0, -50);
+        LoadingState.text = "<i>Loading stage, please wait...</i>";
 
         StartCoroutine(LoadRequiredPrefabs());
         EnemyTooltipsScript.isAnyTooltipsShowing = false;
@@ -142,7 +144,10 @@ public class StageManager : MonoBehaviour
     void SetGoal()
     {
         TMP_Text TxtGoal = GameObject.Find("Goal").GetComponent<TMP_Text>();
-        TxtGoal.text = StageCompleteConditionType switch
+        if (CharacterPrefabsStorage.EnableChallengeMode) TxtGoal.transform.position += new Vector3(0, -50);
+
+        TxtGoal.text = GetExplorationMode() + "\n";
+        TxtGoal.text += StageCompleteConditionType switch
         {
             StageCompleteCondition.RETRIEVE_FUMO => "Goal: <color=#00ffff>Retrieve the Mint Fumo</color></b>",
             StageCompleteCondition.PROTECT_FUMO => "Goal: <color=yellow>Protect the Mint Fumo</color></b>",
@@ -349,33 +354,36 @@ public class StageManager : MonoBehaviour
         enemy.bAtk = (short)(enemy.bAtk * (1f + CharacterPrefabsStorage.GetEnemiesAtkMultiplier()));
         enemy.mHealth *= 1f + CharacterPrefabsStorage.GetEnemiesHpMultiplier();
 
-        if (diffLevel >= 4)
+        if (diffLevel >= (int)DiffType.EnemiesDefenseSurvivalBuff)
         {
-            short resAdd = 4, defAdd = 10;
+            short defAdd = 10;
+            float mspdAdd = enemy.b_moveSpeed * 0.05f;
+
             if (StageCompleteConditionType == StageCompleteCondition.PROTECT_FUMO || StageCompleteConditionType == StageCompleteCondition.SURVIVE_FOR_GIVEN_TIME)
             {
-                resAdd *= 4;
+                mspdAdd *= 4;
                 defAdd *= 4;
             }
 
             enemy.bDef += defAdd;
-            enemy.bRes += resAdd;
+            enemy.b_moveSpeed += mspdAdd;
         }
 
-        if (diffLevel >= 5)
+        if (diffLevel >= (int) DiffType.EnemiesRescueBuff)
         {
-            float mspdAdd = enemy.b_moveSpeed * 0.05f, aspdAdd = 5;
+            short resAdd = 10;
+            float aspdAdd = 5;
             if (StageCompleteConditionType == StageCompleteCondition.RETRIEVE_FUMO)
             {
-                mspdAdd *= 4;
+                resAdd *= 4;
                 aspdAdd *= 4;
             }
 
-            enemy.b_moveSpeed += mspdAdd;
+            enemy.bRes += resAdd;
             enemy.ASPD += aspdAdd;
         }
 
-        if (diffLevel >= 6)
+        if (diffLevel >= (int) DiffType.EnemiesAnnihilationBuff)
         {
             float hpAdd = enemy.mHealth * 0.05f, atkAdd = enemy.bAtk * 0.05f;
             if (StageCompleteConditionType == StageCompleteCondition.ELIMINATE_ALL_ENEMIES)
@@ -388,7 +396,8 @@ public class StageManager : MonoBehaviour
             enemy.bAtk += (short)atkAdd;
         }
 
-        if (diffLevel >= 8 && (enemy.attackPattern == EntityBase.AttackPattern.MELEE || enemy.attackPattern == EntityBase.AttackPattern.NONE))
+        if (diffLevel >= (int)DiffType.EnemiesStatusResistant
+            && (enemy.attackPattern == EntityBase.AttackPattern.MELEE || enemy.attackPattern == EntityBase.AttackPattern.NONE))
             enemy.StatusResistTimer += 9999f;
     }
 
@@ -520,9 +529,21 @@ public class StageManager : MonoBehaviour
         }
 
         IsStageReady = true;
-        LoadingState.text = "<color=green>---Press any key to start---</color>";
+        LoadingState.text = 
+            (CharacterPrefabsStorage.DifficultyLevel > 1
+            ? "<color=green><i>---Goodluck---</i></color>"
+            : "<color=green><i>---Press any key to start---</i></color>");
     }
     #endregion
+
+    string GetExplorationMode()
+    {
+        string result = "<color=white>Exploring as: </color>";
+        int diff = CharacterPrefabsStorage.DifficultyLevel;
+        if (diff <= 0) return result + "<color=#00ffbf>Observer</color>";
+        if (diff == 1) return result + "<color=yellow>Explorer</color>";
+        return result + $"<color=#ff4545>Researcher LV.{diff - 1}</color>";
+    }
 
     #region Stage Procession
     IEnumerator TitleFadeOut()

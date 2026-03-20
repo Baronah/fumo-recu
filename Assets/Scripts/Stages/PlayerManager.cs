@@ -9,6 +9,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using static EntityBase;
+using static LevelDifficultyModifier;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -207,10 +208,11 @@ public class PlayerManager : MonoBehaviour
     public void GetPlayerSkills()
     {
         short diff = (short)(CharacterPrefabsStorage.DifficultyLevel - 1);
-        if (diff >= 11)
+        if (diff >= (int) DiffType.PlayerSwap_1)
         {
-            SwapCooldown *= diff == 11 ? 1.5f : 2f;
-            swapCooldownTimer = 0;
+            float mul = diff == (int)DiffType.PlayerSwap_1 ? 1.5f : 2f;
+            SwapCooldown *= mul;
+            swapCooldownTimer = mul;
             SwapOverflowTimer = 0;
             SwapStacks = 0;
         }

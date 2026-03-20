@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,6 +7,7 @@ public class LevelDifficultyModifier : MonoBehaviour
 {
     [SerializeField] Button DiffUp, DiffDown;
     [SerializeField] TMP_Text ModifierText, ModifierDetail;
+    [SerializeField] TMP_Text RecordText;
     [SerializeField] RectTransform Content, Background;
     
     private short MinDiff = 0, MaxDiff = 16;
@@ -17,13 +19,17 @@ public class LevelDifficultyModifier : MonoBehaviour
 
     private void Start()
     {
+        if (DiffUp.onClick.GetPersistentEventCount() <= 0) DiffUp.onClick.AddListener(AddDiff);
+        if (DiffDown.onClick.GetPersistentEventCount() <= 0) DiffDown.onClick.AddListener(LowerDiff);
+        GetDifficulties();
+    }
+
+    public void GetDifficulties()
+    {
         MaxDiff = (short)(SaveDataManager.AllResearchesUnlocked ? 16 : 1);
-        DiffUp.onClick.AddListener(AddDiff);
-        DiffDown.onClick.AddListener(LowerDiff);
         SetDifficultyDescription();
     }
 
-    [SerializeField] TMP_Text RecordText;
     public void SetRecordText(string levelName)
     {
         var (NM_Difficulty, CM_Difficulty) = SaveDataManager.GetLevelHighestDifficulty(levelName);
@@ -41,9 +47,9 @@ public class LevelDifficultyModifier : MonoBehaviour
         else CM = $"RS.{CM_Difficulty - 1}";
 
         RecordText.text =
-            $"<size=48>Records</size>\n\n" +
+            $"<size=48>RECORDS</size>\n\n" +
             $"<color=yellow>Normal:</color> <b>{NM}</b>" +
-            $"\n<color=red>C.Mode:</color>  <b>{CM}</b>";
+            $"\n<color=red>C.Mode:</color>  <b>{CM}</b>\n\n";
     }
 
     public void AdjustMaxDiffOnCMSelect(bool IsCM)
@@ -53,6 +59,24 @@ public class LevelDifficultyModifier : MonoBehaviour
         CharacterPrefabsStorage.DifficultyLevel = (short) Mathf.Max(MinDiff, CurrentDifficultyLevel);
         SetDifficultyDescription();
     }
+
+    public enum DiffType 
+    {
+        Observer = 0,
+        Normal = 1,
+        EnemiesDefenseSurvivalBuff = 4,
+        EnemiesRescueBuff = 5,
+        EnemiesAnnihilationBuff = 6,
+        EnemiesUncombatDRBuff = 7,
+        EnemiesStatusResistant = 8,
+        PlayerCD_1 = 9, 
+        PlayerCD_2 = 10,
+        PlayerSwap_1 = 11,
+        PlayerSwap_2 = 12,
+        PlayerFieldDebuff_1 = 13, 
+        PlayerFieldDebuff_2 = 14,
+        Player1HP = 15
+    };
 
     public void SetDifficultyDescription()
     {
@@ -65,7 +89,7 @@ public class LevelDifficultyModifier : MonoBehaviour
         if (IsObserver)
         {
             ModifierDetail.text =
-                $"- Your units have +100% HP, +50% ATK and their special and ultimate cooldowns are reduced by 40%.\n\n" +
+                $"- Your units have <color=green>+100% HP</color>, <color=#ff4545>+50% ATK</color> and their special and ultimate cooldowns are reduced by 40%.\n\n" +
                 $"<color=yellow>- Completing a level in this difficulty will unlock the preceding level but will not unlock the Challenge Mode for this level.</color>\n\n" +
                 $"- Observer is not available in Challenge Modes.";
         }
@@ -83,43 +107,43 @@ public class LevelDifficultyModifier : MonoBehaviour
                 $"<color=green>{Mathf.CeilToInt(CharacterPrefabsStorage.GetEnemiesHpMultiplier() * 100)}%</color> and " +
                 $"<color=#ff4545>{Mathf.CeilToInt(CharacterPrefabsStorage.GetEnemiesAtkMultiplier() * 100)}%</color>, respectively.";
 
-            if (ConvertedDiffLevel >= 4)
+            if (ConvertedDiffLevel >= (int) DiffType.EnemiesDefenseSurvivalBuff)
                 ModifierDetail.text += 
                     "\n\nAll enemies additionally have <color=yellow>+10 DEF</color> " +
-                    "and <color=#00ffff>+4 RES</color>, quadrupled in <color=yellow>survival and defense</color> mission.";
+                    "and <color=#00ffbf>+5% MSPD</color>, quadrupled in <color=yellow>survival and defense</color> mission.";
 
-            if (ConvertedDiffLevel >= 5)
-                ModifierDetail.text += 
-                    "\n\nAll enemies additionally have <color=#00ffbf>+5% MSPD</color> and <color=#ffd61f>+5 ASPD</color>, " +
+            if (ConvertedDiffLevel >= (int) DiffType.EnemiesRescueBuff)
+                ModifierDetail.text +=
+                    "\n\nAll enemies additionally have <color=#00ffff>+10 RES</color> and <color=#ffd61f>+5 ASPD</color>, " +
                     "quadrupled in <color=#00ffbf>rescue</color> mission.";
 
-            if (ConvertedDiffLevel >= 6)
+            if (ConvertedDiffLevel >= (int) DiffType.EnemiesAnnihilationBuff)
                 ModifierDetail.text += 
                     $"\n\nAll enemies additionally have <color=green>+5% HP</color> and <color=#ff4545>+5% ATK</color>, " +
                     $"quadrupled in <color=red>annihilation</color> mission.";
 
-            if (ConvertedDiffLevel >= 7)
+            if (ConvertedDiffLevel >= (int) DiffType.EnemiesUncombatDRBuff)
                 ModifierDetail.text += $"\n\nEnemies who are not in combat mode takes <color=yellow>60% less</color> physical and magical damage.";
             
-            if (ConvertedDiffLevel >= 8)
+            if (ConvertedDiffLevel >= (int) DiffType.EnemiesStatusResistant)
                 ModifierDetail.text += $"\n\nMelee enemies gains <color=#ff00ff>status resistance</color>, which halves the durations of negative statuses on them.";
 
-            if (ConvertedDiffLevel == 9)
+            if (ConvertedDiffLevel == (int) DiffType.PlayerCD_1)
                 ModifierDetail.text += "\n\nYour units special's CD <color=#ff9717>+50%</color>, ultimate's CD <color=#ff9717>+25%</color>.";
-            else if (ConvertedDiffLevel >= 10)
+            else if (ConvertedDiffLevel >= (int) DiffType.PlayerCD_2)
                 ModifierDetail.text += "\n\nYour units special's CD <color=#ff9717>+100%</color>, ultimate's CD <color=#ff9717>+50%.</color>";
 
-            if (ConvertedDiffLevel == 11)
+            if (ConvertedDiffLevel == (int) DiffType.PlayerSwap_1)
                 ModifierDetail.text += "\n\nSwap cool-down increased by <color=#ff9717>50%</color>.";
-            else if (CurrentDifficultyLevel >= 12)
+            else if (CurrentDifficultyLevel >= (int) DiffType.PlayerSwap_2)
                 ModifierDetail.text += "\n\nSwap cool-down increased by <color=#ff9717>100%</color>.";
 
-            if (ConvertedDiffLevel == 13)
+            if (ConvertedDiffLevel == (int) DiffType.PlayerFieldDebuff_1)
                 ModifierDetail.text += "\n\nAfter staying on the field for 10 seconds, your character gradually has <color=#5b7ccf>reduced ATK</color>, up to 80% after 40 seconds (resets on swap).";
-            else if (ConvertedDiffLevel >= 14)
+            else if (ConvertedDiffLevel >= (int) DiffType.PlayerFieldDebuff_2)
                 ModifierDetail.text += "\n\nWhile staying on the field, your character gradually has reduced <color=#5b7ccf>ATK and MSPD</color>, up to 80% and 50%, respectively, after 40 seconds (resets on swap).";
 
-            if (ConvertedDiffLevel >= 15)
+            if (ConvertedDiffLevel >= (int) DiffType.Player1HP)
                 ModifierDetail.text += "\n\nUpon entering the stage, <color=red>your HP becomes 1</color>.";
         }
     }

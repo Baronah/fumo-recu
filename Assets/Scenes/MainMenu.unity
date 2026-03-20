@@ -3058,11 +3058,11 @@ MonoBehaviour:
     step by step, you will learn, and you will overcome it.\r\n\r\nIf you aren't
     into that idea however, you can be an <b>Observer</b> instead! \r\nThink of it
     as starting your journey with a few essentials already in hand. The world remains
-    the same. You still need to move forward and see the it for yourself, but the
-    journey is more comfortable now.\r\n\r\nWhichever way you choose, eventually,
-    you will meet <b>her</b>. \r\n\r\nShe knows this place, and she will help you
-    through it. \r\nAnd if you are willig...\r\nshe may even show you another way
-    to explore this world."
+    the same. You still need to move forward and see it for yourself, but the journey
+    is more comfortable now.\r\n\r\nWhichever way you choose, eventually, you will
+    meet <b>her</b>. \r\n\r\nShe knows this place, and she will help you through
+    it. \r\nAnd if you are willig...\r\nshe may even show you another way to explore
+    this world."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5e61686ba236ff04b8632d6a26736acd, type: 2}
   m_sharedMaterial: {fileID: 2509212030381675100, guid: 5e61686ba236ff04b8632d6a26736acd, type: 2}
@@ -3620,11 +3620,11 @@ MonoBehaviour:
     step by step, you will learn, and you will overcome it.\r\n\r\nIf you aren't
     into that idea however, you can be an <b>Observer</b> instead! \r\nThink of it
     as starting your journey with a few essentials already in hand. The world remains
-    the same. You still need to move forward and see the it for yourself, but the
-    journey is more comfortable now.\r\n\r\nWhichever way you choose, eventually,
-    you will meet <b>her</b>. \r\n\r\nShe knows this place, and she will help you
-    through it. \r\nAnd if you are willig...\r\nshe may even show you another way
-    to explore this world."
+    the same. You still need to move forward and see it for yourself, but the journey
+    is more comfortable now.\r\n\r\nWhichever way you choose, eventually, you will
+    meet <b>her</b>. \r\n\r\nShe knows this place, and she will help you through
+    it. \r\nAnd if you are willig...\r\nshe may even show you another way to explore
+    this world."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5e61686ba236ff04b8632d6a26736acd, type: 2}
   m_sharedMaterial: {fileID: 2509212030381675100, guid: 5e61686ba236ff04b8632d6a26736acd, type: 2}
@@ -27239,10 +27239,8 @@ MonoBehaviour:
     in your hands, what would you do?\r\n\r\nAt first, you might panic. You might
     try to make sense of it, to clear your vision...\r\nBut eventually... you will
     have to take a step forward, right?\r\n\r\nThe first steps might be slow and
-    uncertain. \r\nThat's alright.\r\n\r\nBefore long, you\u2019ll find your footing.\r\n\r\nYou
-    intend to head toward this direction, you don't know why, just feel like it.
-    There might be something awaiting for you there.\n\nAnyhow, you take a step.\nYour
-    exploration begins."
+    uncertain. \r\nThat's alright.\r\n\r\nBefore long, you\u2019ll find your footing.\r\n\r\nAnd
+    when you do...\nyour exploration begins."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5e61686ba236ff04b8632d6a26736acd, type: 2}
   m_sharedMaterial: {fileID: 2509212030381675100, guid: 5e61686ba236ff04b8632d6a26736acd, type: 2}
@@ -32457,10 +32455,8 @@ MonoBehaviour:
     in your hands, what would you do?\r\n\r\nAt first, you might panic. You might
     try to make sense of it, to clear your vision...\r\nBut eventually... you will
     have to take a step forward, right?\r\n\r\nThe first steps might be slow and
-    uncertain. \r\nThat's alright.\r\n\r\nBefore long, you\u2019ll find your footing.\r\n\r\nYou
-    intend to head toward this direction, you don't know why, just feel like it.
-    There might be something awaiting for you there.\n\nAnyhow, you take a step.\nYour
-    exploration begins."
+    uncertain. \r\nThat's alright.\r\n\r\nBefore long, you\u2019ll find your footing.\r\n\r\nAnd
+    when you do...\nyour exploration begins."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5e61686ba236ff04b8632d6a26736acd, type: 2}
   m_sharedMaterial: {fileID: 2509212030381675100, guid: 5e61686ba236ff04b8632d6a26736acd, type: 2}

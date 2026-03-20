@@ -20,7 +20,7 @@ public class LevelSelectionScript : MonoBehaviour
     [SerializeField] private GameObject LevelPrefabTemplate, LevelsPoint, Overlay, LevelSelectionConfirm, Nav, LevelEnemyView, EnemyViewPrefab, EnemyViewContent;
     [SerializeField] private CharacterPrefabsStorage characterPrefabsStorage;
     [SerializeField] private Transform[] Containers;
-    [SerializeField] private Sprite Incompleted, Completed, CompletedCM, CompletedCM_DF;
+    [SerializeField] private Sprite Incompleted, Completed, CompletedCM, CompletedCM_H_DF, CompletedCM_DF;
 
     [SerializeField] private Sprite NMSprite, CMSprite, LockedSprite;
     [SerializeField] private Button CMToggleButton;
@@ -184,30 +184,16 @@ public class LevelSelectionScript : MonoBehaviour
             // Use GetLevelCompletionType instead of raw string matching
             CompletionType completion = SaveDataManager.GetLevelCompletionType(displayName);
 
-            switch (completion)
+            completionStatus.sprite = completion switch
             {
-                case CompletionType.CHALLENGE_MODE:
-                    IsMapCleared.Add(true);
-                    completionStatus.sprite = CompletedCM;
-                    break;
+                CompletionType.CHALLENGE_MODE => CompletedCM,
+                CompletionType.CHALLENGE_MODE_DIFF => CompletedCM_DF,
+                CompletionType.CHALLENGE_MODE_DIFF_HIGH => CompletedCM_H_DF,
+                CompletionType.OBSERVER_NORMAL or CompletionType.NORMAL or CompletionType.NORMAL_DIFF => Completed,
+                _ => Incompleted,
+            };
 
-                case CompletionType.CHALLENGE_MODE_DIFF:
-                    IsMapCleared.Add(true);
-                    completionStatus.sprite = CompletedCM_DF;
-                    break;
-
-                case CompletionType.OBSERVER_NORMAL:
-                case CompletionType.NORMAL:
-                case CompletionType.NORMAL_DIFF:
-                    IsMapCleared.Add(true);
-                    completionStatus.sprite = Completed;
-                    break;
-
-                default:
-                    IsMapCleared.Add(false);
-                    completionStatus.sprite = Incompleted;
-                    break;
-            }
+            IsMapCleared.Add(completion != CompletionType.UNCLEARED);
 
             string capturedKey = runtimeKey;
             Button levelButton = level.GetComponent<Button>();
@@ -289,7 +275,7 @@ public class LevelSelectionScript : MonoBehaviour
         }
         else
         {
-            bool secret = SaveDataManager.GetLevelCompletionType(GetLevelNameByIndex(index)) == CompletionType.CHALLENGE_MODE_DIFF;
+            bool secret = SaveDataManager.GetLevelCompletionType(GetLevelNameByIndex(index)) == CompletionType.CHALLENGE_MODE_DIFF_HIGH;
             if (secret)
             {
                 description = $"<color=#00FFD5>{SecretDescriptions[index]}</color>";

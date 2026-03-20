@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using static LevelDifficultyModifier;
 
 public class SaveDataManager
 {
@@ -116,27 +117,33 @@ public class SaveDataManager
         if (IsChallengeMode)
         {
             IsFirsttime = existingCM == null;
-            completionType = Difficulty > 1 ? CompletionType.CHALLENGE_MODE_DIFF : CompletionType.CHALLENGE_MODE;
+            completionType = Difficulty > (int) DiffType.Normal ? CompletionType.CHALLENGE_MODE_DIFF : CompletionType.CHALLENGE_MODE;
 
             if (existingCM == null)
             {
+                Debug.Log("No existing CM found");
+
                 IsDifficultyHigher = true;
                 CompletedLevels.Add(CM_Prefix + "_" + Difficulty);
             }
             else if (Difficulty > GetEntryDifficulty(existingCM))
             {
+                Debug.Log("Override. Existing CM diff: " + GetEntryDifficulty(existingCM) + "\nCurrent diff: " + Difficulty);
+
                 IsDifficultyHigher = true;
 
                 CompletedLevels.Remove(existingCM);
                 CompletedLevels.Add(CM_Prefix + "_" + Difficulty);
             }
+            else
+                Debug.Log("Existing CM diff: " + GetEntryDifficulty(existingCM) + "\nCurrent diff: " + Difficulty);
         }
         else
         {
             IsFirsttime = existingNM == null;
-            completionType = Difficulty == 0 
+            completionType = Difficulty == (int) DiffType.Observer 
                 ? CompletionType.OBSERVER_NORMAL 
-                : Difficulty > 1 ? CompletionType.NORMAL_DIFF 
+                : Difficulty > (int) DiffType.Normal ? CompletionType.NORMAL_DIFF 
                 : CompletionType.NORMAL;
 
             if (existingNM == null)
@@ -194,12 +201,14 @@ public class SaveDataManager
         NORMAL_DIFF,
         CHALLENGE_MODE,
         CHALLENGE_MODE_DIFF,
+        CHALLENGE_MODE_DIFF_HIGH,
     };
 
     public static CompletionType GetLevelCompletionType(string LevelName)
     {
         var (nmDiff, cmDiff) = GetLevelHighestDifficulty(LevelName);
 
+        if (cmDiff >= 6) return CompletionType.CHALLENGE_MODE_DIFF_HIGH;
         if (cmDiff > 1) return CompletionType.CHALLENGE_MODE_DIFF;
         if (cmDiff == 1) return CompletionType.CHALLENGE_MODE;
         if (nmDiff > 1) return CompletionType.NORMAL_DIFF;

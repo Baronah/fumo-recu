@@ -8,6 +8,9 @@ namespace DamageCalculation
         {
             if (target.damageAmplify != 0) instance.Multiply(1.0f + target.damageAmplify / 100f);
             if (target.damageReduction != 0) instance.Multiply(1.0f - target.damageReduction / 100f);
+
+            if (target is EnemyBase e && e.hasDRWhenNotCombat && !e.HasSpottedPlayer)
+                instance.Multiply(0.4f, 0.4f, 1f);
         }
     }
 

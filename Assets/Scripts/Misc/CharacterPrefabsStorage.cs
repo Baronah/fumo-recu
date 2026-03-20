@@ -22,7 +22,7 @@ public class CharacterPrefabsStorage : ScriptableObject
 
 	public static short DifficultyLevel = 1;
 	public static float DifficultyHpMultiplierBase => 0.05f;
-    public static float DifficultyAtkMultiplierBase => 0.025f;
+    public static float DifficultyAtkMultiplierBase => 0.0225f;
 
 	public static float GetEnemiesHpMultiplier()
 	{
@@ -33,7 +33,7 @@ public class CharacterPrefabsStorage : ScriptableObject
 		float finalMul = 0;
 		for (int i = 1; i <= Diff; i++)
 		{
-			if (i <= 3 || i == 15) finalMul += DifficultyHpMultiplierBase * 4;
+			if (i <= 3) finalMul += DifficultyHpMultiplierBase * 4;
 			else finalMul += DifficultyHpMultiplierBase;
 		}
 

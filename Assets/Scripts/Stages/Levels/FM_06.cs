@@ -22,8 +22,7 @@ public class FM_06 : StageManager
 
     public override void OnEnemySpawn(EnemyBase enemy)
     {
-        base.OnEnemySpawn(enemy);
-
         if (enemy is OriginiumSpiderAlpha alp) alp.mHealth = 60;
+        base.OnEnemySpawn(enemy);
     }
 }

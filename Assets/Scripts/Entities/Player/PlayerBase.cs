@@ -5,6 +5,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static LevelDifficultyModifier;
 using static PlayerManager;
 using static SkillTree_Manager;
 using SkillType = PlayerManager.SkillType;
@@ -179,9 +180,9 @@ public class PlayerBase : EntityBase
     public virtual void OnFieldEnter()
     {
         short diff = (short)(CharacterPrefabsStorage.DifficultyLevel - 1);
-        if (diff >= 13) StartCoroutine(DifficultModifierNegativeStatus(diff));
+        if (diff >= (int) DiffType.PlayerFieldDebuff_1) StartCoroutine(DifficultModifierNegativeStatus(diff));
 
-        if (diff >= 15 && playerManager.IsFirstTimeStageEnter)
+        if (diff >= (int) DiffType.Player1HP && playerManager.IsFirstTimeStageEnter)
         {
             SetHealth(1);
             playerManager.IsFirstTimeStageEnter = false;
@@ -197,9 +198,9 @@ public class PlayerBase : EntityBase
 
     IEnumerator DifficultModifierNegativeStatus(short diff)
     {
-        if (diff < 13) yield break;
+        if (diff < (int)DiffType.PlayerFieldDebuff_1) yield break;
 
-        if (diff == 13) yield return new WaitForSeconds(10f);
+        if (diff == (int)DiffType.PlayerFieldDebuff_1) yield return new WaitForSeconds(10f);
 
         float c = 0, d = 40f;
         while (c < d)
@@ -209,7 +210,7 @@ public class PlayerBase : EntityBase
 
             ApplyEffect(Effect.AffectedStat.ATK, "DIFFICULT_HANDICAP_ATK", Strength_Scale80To0 * -1, 9999f, true);
 
-            if (diff >= 14)
+            if (diff >= (int) DiffType.PlayerFieldDebuff_2)
                 ApplyEffect(Effect.AffectedStat.MSPD, "DIFFICULT_HANDICAP_MSPD", Strength_Scale50To0 * -1, 9999f, true);
 
             c += 1;
