@@ -212,7 +212,7 @@ public class PlayerManager : MonoBehaviour
         {
             float mul = diff == (int)DiffType.PlayerSwap_1 ? 1.5f : 2f;
             SwapCooldown *= mul;
-            swapCooldownTimer = mul;
+            swapCooldownTimer *= mul;
             SwapOverflowTimer = 0;
             SwapStacks = 0;
         }

@@ -104,6 +104,7 @@ public class ProjectileScript : MonoBehaviour
 		if (!allowingUpdate) return;
 
         Lifespan -= Time.fixedDeltaTime;
+        if (projectileType == ProjectileType.HOMING_TO_SPECIFIC_TARGET && ProjectileDestination && !ProjectileDestination.IsAlive()) Lifespan = 0f;
         if (Lifespan <= 0f)
         {
             allowingUpdate = false;

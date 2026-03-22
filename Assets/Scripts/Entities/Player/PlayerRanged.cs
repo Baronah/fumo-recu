@@ -67,6 +67,9 @@ public class PlayerRanged : PlayerBase
             );
         }
 
+        LockIn.gameObject.SetActive(IsSkillActive && lockInTarget && lockInTarget.IsAlive());
+        if (LockIn.gameObject.activeSelf) LockIn.transform.position = lockInTarget.transform.position;
+
         bool alive = IsAlive();
         bool SkillActive = IsSkillActive && alive, FreezeActive = IsFreezeActive && alive;
         SkillEffect.SetActive(SkillActive);
@@ -577,7 +580,9 @@ public class PlayerRanged : PlayerBase
         return Skill_AtkInterval * ScaleFactor;
     }
 
+    [SerializeField] Transform LockIn;
     [SerializeField] private float lockInDamageFalloff = 0.01f, lockInDamageMulMin = 0.2f;
+    EntityBase lockInTarget;
     public IEnumerator CastSkill()
     {
         if (!IsAlive()) yield break;
@@ -596,9 +601,11 @@ public class PlayerRanged : PlayerBase
         bool shootAdditionalBullets = Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_MORE),
              homingOnFirstTarget = Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_TRAVEL);
 
-        EntityBase lockInTarget = homingOnFirstTarget 
+        lockInTarget = homingOnFirstTarget 
             ? SearchForNearestEntityAroundSelf(typeof(EnemyBase))
             : null;
+
+        if (!lockInTarget) homingOnFirstTarget = false;
 
         SkillBar.maxValue = SkillBar.value = SkillDuration;
         float intervalCounter = GetSkillFiringInterval();
@@ -609,6 +616,15 @@ public class PlayerRanged : PlayerBase
         while (skillCurrentDuration < SkillDuration)
         {
             SkillBar.value = SkillDuration - skillCurrentDuration;
+
+            if (homingOnFirstTarget && (!lockInTarget || !lockInTarget.IsAlive()))
+            {
+                lockInTarget = homingOnFirstTarget
+                        ? SearchForNearestEntityAroundSelf(typeof(EnemyBase))
+                        : null;
+
+                if (!lockInTarget) homingOnFirstTarget = false;
+            }
 
             if (intervalCounter >= GetSkillFiringInterval())
             {

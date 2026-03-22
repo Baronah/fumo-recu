@@ -824,7 +824,8 @@ MonoBehaviour:
     toward self, pull radius scales with their weight, pull force on other units
     is proportional to weight difference.
   favorText: 
-  skillDescriptionInShort: 
+  skillDescriptionInShort: All units have reduced MSPD based on weight. Heavier units
+    continuously pull lighter units toward self.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &50429474
@@ -1486,7 +1487,8 @@ MonoBehaviour:
   skillDescription: Gains <color=#ff4545>+50% ATK</color> while standing on an environmental
     tile.
   favorText: Curiosity is her greatest weapon.
-  skillDescriptionInShort: 
+  skillDescriptionInShort: Gains increased ATK while standing on an environmental
+    tile.
   mutuallyExclusiveSkills: 0600000004000000
   Overlay: {fileID: 0}
 --- !u!114 &93957425
@@ -2691,7 +2693,8 @@ MonoBehaviour:
   skillDescription: <color=#ffd61f>ASPD +20</color>, landing an attack grants <color=#00ffbf>40%
     decaying MSPD</color> over 2 seconds.
   favorText: '''Sometimes I like to imagine...'''
-  skillDescriptionInShort: 
+  skillDescriptionInShort: ASPD +20, landing an attack grants decaying MSPD over
+    2 seconds.
   mutuallyExclusiveSkills: 0200000003000000
   Overlay: {fileID: 0}
 --- !u!114 &161036919
@@ -6936,7 +6939,9 @@ MonoBehaviour:
     skill once with no cool-down. In the next 5 seconds, your special skill recharges
     <color=#ff9717>200% faster</color>.
   favorText: Hey!! Don't light it in here!
-  skillDescriptionInShort: 
+  skillDescriptionInShort: Upon entering the field, your unit immediately casts their
+    special skill once with no cool-down. In the next 5 seconds, your special skill
+    recharges way faster.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &328159939
@@ -8534,7 +8539,8 @@ MonoBehaviour:
   skillDescription: Your ultimate skill <color=yellow>charges 40% faster</color>
     while standing on an environmental tile.
   favorText: She seeks recognition as a scholar far more than as a caster.
-  skillDescriptionInShort: 
+  skillDescriptionInShort: Your ultimate skill chargesfaster while standing on an
+    environmental tile.
   mutuallyExclusiveSkills: 0500000006000000
   Overlay: {fileID: 0}
 --- !u!114 &428760886
@@ -11592,7 +11598,8 @@ MonoBehaviour:
   skillDescription: Upon entering the field, restores <color=green>30% missing HP</color>
     and gains <color=#ff4545>+75% ATK</color> over 5 seconds.
   favorText: She also has sugar-free variety, if you prefer that.
-  skillDescriptionInShort: 
+  skillDescriptionInShort: Upon entering the field, restores 30% missing HP and gains
+    greatly increased ATK over 5 seconds.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &598140781
@@ -14113,7 +14120,8 @@ MonoBehaviour:
   skillDescription: <color=green>Healing effectiveness +25%</color>, recovers 1%
     max HP plus 2% missing HP every second.
   favorText: No one can work with an empty stomach!
-  skillDescriptionInShort: 
+  skillDescriptionInShort: Healing effectiveness increases and regenerates missing
+    HP overtime.
   mutuallyExclusiveSkills: 070000000800000009000000
   Overlay: {fileID: 0}
 --- !u!114 &730178025
@@ -14642,7 +14650,8 @@ MonoBehaviour:
   favorText: Even if it is an unassuming piece of ore that is covered in dirt, if
     she gives you a present, please accept it. It must be something she likes a lot
     and wants to share with you anyway.
-  skillDescriptionInShort: 
+  skillDescriptionInShort: Gains increased HP, ATK and MSPD. Upon entering the field,
+    grants your character a random upgrade.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &744608037
@@ -26151,11 +26160,13 @@ MonoBehaviour:
   skillName: 57
   skillNameText: '''Heat Death'''
   skillDescription: Your units have <color=#5b7ccf>-45% max HP</color>. Upon death,
-    they deal <color=#b1b1b1>200 true damage</color> to all presenting enemies. If
-    all enemies are defeated this way, <color=yellow>the battle concludes in your
+    they deal <color=#b1b1b1>200 + 10% HP true damage</color> to all presenting enemies.
+    If all enemies are defeated this way, <color=yellow>the battle concludes in your
     victory</color>.
   favorText: 
-  skillDescriptionInShort: 
+  skillDescriptionInShort: Your units have reduced max HP. Upon death, they deal
+    true damage to all presenting enemies. If all enemies are defeated this way,
+    the battle concludes in your victory.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1131664740
@@ -28322,7 +28333,9 @@ MonoBehaviour:
     seconds</color> (maximum duration is 3 seconds).
   favorText: The harder you wind it up, the more lively it becomes. As simple as
     that!
-  skillDescriptionInShort: 
+  skillDescriptionInShort: After using the special ability, gains greatly increased
+    MSPD for 1 seconds. Every time this effect is activated, its duration extends
+    (has a limit).
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1175370156
@@ -33189,12 +33202,14 @@ MonoBehaviour:
   skillType: 2
   skillName: 59
   skillNameText: '''Ice Age'''
-  skillDescription: Enemies have <color=red>+100% max HP</color>. Upon spawning,
-    their HP is halved and they are frozen for <color=#ff9717>30 seconds</color>,
-    but have <color=yellow>+70 DEF</color>, <color=#00ffff>+25 RES</color> and <color=green>recovers
+  skillDescription: Enemies have <color=red>+50% max HP</color>. Upon spawning, their
+    HP is halved and they are frozen for <color=#ff9717>40 seconds</color>, but have
+    <color=yellow>+70 DEF</color>, <color=#00ffff>+25 RES</color> and <color=green>recovers
     2% max HP every second</color> throughout the duration.
   favorText: 
-  skillDescriptionInShort: 
+  skillDescriptionInShort: Enemies have increased HP, but spawned with 50% HP and
+    frozen for 40 seconds, during which they have increased DEF and RES, and regenerates
+    HP until the freeze is lost.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1356330839
@@ -38065,7 +38080,7 @@ MonoBehaviour:
     for every <color=#00ffbf>1% bonus MSPD</color>.
   favorText: '''With a knife-sharp heart, I shave off these long and thin, meaningless
     days...'''
-  skillDescriptionInShort: 
+  skillDescriptionInShort: MSPD +5, gains bonus ASPD based on bonus MSPD.
   mutuallyExclusiveSkills: 0100000003000000
   Overlay: {fileID: 0}
 --- !u!114 &1553408582
@@ -38847,7 +38862,8 @@ MonoBehaviour:
     to distance travel.
   favorText: A massive pachinko ball. Legend says when the stars align, a single
     strike from this thing can completely alter one's fate, for the better or worse.
-  skillDescriptionInShort: 
+  skillDescriptionInShort: Weight level +1. Enemies that are being shifted by self
+    will also take magical damage proportional to distance travel.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1581416829
@@ -39433,7 +39449,8 @@ MonoBehaviour:
   skillDescription: Gains <color=#00ffbf>+50% MSPD</color> while standing on an environmental
     tile.
   favorText: Don't wander off too far this time...
-  skillDescriptionInShort: 
+  skillDescriptionInShort: Gains increased MSPD while standing on an environmental
+    tile.
   mutuallyExclusiveSkills: 0500000004000000
   Overlay: {fileID: 0}
 --- !u!114 &1605181632
@@ -43604,7 +43621,8 @@ MonoBehaviour:
   skillDescription: <color=#ff9717>Swap cool-down -15%</color>, every available swap
     further reduces the cool-down by <color=#ff9717>20%</color>.
   favorText: '"Mmmm... Whuh? What? Yes, I''m listening!"'
-  skillDescriptionInShort: 
+  skillDescriptionInShort: Swap cool-down reduces, further reduces for every available
+    charge.
   mutuallyExclusiveSkills: 07000000080000000a000000
   Overlay: {fileID: 0}
 --- !u!114 &1755008031
@@ -47963,7 +47981,7 @@ MonoBehaviour:
     damage based on the target's missing health (maximum bonus reaches at <color=red>+50%
     damage</color>).
   favorText: It's actually cat paws.
-  skillDescriptionInShort: Attacks ignore 10 DEF and deal increased damage based
+  skillDescriptionInShort: Attacks ignore some DEF and deal increased damage based
     on the target's missing health.
   mutuallyExclusiveSkills: 08000000090000000a000000
   Overlay: {fileID: 0}
@@ -52426,7 +52444,7 @@ GameObject:
   - component: {fileID: 2139595025}
   - component: {fileID: 2139595024}
   m_Layer: 5
-  m_Name: Spiral_fast
+  m_Name: Spiral_home
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -52468,8 +52486,9 @@ MonoBehaviour:
   skillName: 28
   skillNameText: Carmina Burana
   skillDescription: '''Der Tag Neight Sich'' <color=#ff00ff>locks-on to</color> the
-    nearest enemy within attack range. While the locked target is alive, all bullets
-    instead will <color=yellow>home toward them</color>.'
+    nearest enemy within attack range. While locking on to a target, all bullets
+    will <color=yellow>home toward them</color>, but its damage ramps down overtime
+    (to a minium of <color=#5b7ccf>30% of the base damage</color>).'
   favorText: Her attention device didn't quite work for her. The good news is that,
     for some reasons, it worked wonder on projectiles!
   skillDescriptionInShort: '''Der Tag Neight Sich'' homes all its bullets toward

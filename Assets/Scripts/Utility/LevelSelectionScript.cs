@@ -193,6 +193,12 @@ public class LevelSelectionScript : MonoBehaviour
                 _ => Incompleted,
             };
 
+            if (completion == CompletionType.CHALLENGE_MODE)
+            {
+                var (NM_Difficulty, CM_Difficulty) = GetLevelHighestDifficulty(displayName);
+                if (NM_Difficulty > 1 || CM_Difficulty > 1) completionStatus.sprite = CompletedCM_DF;
+            }
+
             IsMapCleared.Add(completion != CompletionType.UNCLEARED);
 
             string capturedKey = runtimeKey;

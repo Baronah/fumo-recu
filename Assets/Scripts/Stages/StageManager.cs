@@ -194,6 +194,12 @@ public class StageManager : MonoBehaviour
         "Buffs are carried across swaps, debuffs are not.",
     };
 
+    private readonly List<string> ResearcherTips = new()
+    {
+        "Clear challenge mode of a level and complete Researcher 1 or higher to trim your medal (it's very valuable trust).",
+        "Clear challenge mode of a level at Researcher 6 or higher to trim your trimmed medal(?).",
+    };
+
     const string SlowKey = "SLOWKEYREPLACE",
                 AttributeKey = "ATTRIBUTEKEY",
                 SwapAttribute = "SKILLVIEWTOGGLE";
@@ -208,6 +214,7 @@ public class StageManager : MonoBehaviour
         "Nicho5.",
         "I never troll.",
         "noodles.",
+        "expect reading :)",
         "Post this sheep at random interval.",
         "In infinite tries everything is possible.",
         "Welcome back Jonny",
@@ -220,6 +227,7 @@ public class StageManager : MonoBehaviour
         List<string> Tips = new(BaseTips);
         if (CharacterPrefabsStorage.Skills.Count > 0) Tips.AddRange(MintLabTips);
         if (tipCount >= 10) Tips.AddRange(AdvancedTips);
+        if (SaveDataManager.AllResearchesUnlocked) Tips.AddRange(ResearcherTips);
 
         TxtTips = GameObject.Find("Tips").GetComponent<TMP_Text>();
 
@@ -440,8 +448,8 @@ public class StageManager : MonoBehaviour
                     }
                     break;
                 case SkillName.HIBERNATE:
-                    float duration = 30f;
-                    enemy.mHealth *= 2;
+                    float duration = 40f;
+                    enemy.mHealth *= 1.5f;
                     enemy.ApplyFreeze(enemy, duration);
 
                     if (!enemy.IsFreezeImmune)
@@ -456,15 +464,15 @@ public class StageManager : MonoBehaviour
 
     public virtual void OnPlayerSpawn(PlayerBase player)
     {
-        if (CharacterPrefabsStorage.DifficultyLevel == 0)
+        if (CharacterPrefabsStorage.DifficultyLevel == (int) DiffType.Observer)
         {
             player.mHealth *= 2f;
             player.bAtk = (short)(player.bAtk * 1.5f);
         }
 
-        foreach (var skillData in CharacterPrefabsStorage.Skills)
+        var Skills = CharacterPrefabsStorage.Skills.Select(s => s.Key).OrderBy(s => s);
+        foreach (SkillName skill in Skills)
         {
-            SkillName skill = skillData.Key;
             switch (skill)
             {
                 case SkillName.OBSCURE_VISION:
@@ -493,7 +501,7 @@ public class StageManager : MonoBehaviour
                     }
                     break;
                 case SkillName.HEAT_DEATH:
-                    player.mHealth = (int)(player.mHealth * 0.55f);
+                    player.mHealth *= 0.55f;
                     break;
             }
         }

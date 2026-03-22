@@ -90,7 +90,7 @@ public class LevelDifficultyModifier : MonoBehaviour
         {
             ModifierDetail.text =
                 $"- Your units have <color=green>+100% HP</color>, <color=#ff4545>+50% ATK</color> and their special and ultimate cooldowns are reduced by 40%.\n\n" +
-                $"<color=yellow>- Completing a level in this difficulty will unlock the preceding level but will not unlock the Challenge Mode for this level.</color>\n\n" +
+                $"<color=yellow>- Completing a level in this difficulty will unlock the next level but will not unlock the Challenge Mode for this level.</color>\n\n" +
                 $"- Observer is not available in Challenge Modes.";
         }
         else if (IsNormal)

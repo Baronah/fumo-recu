@@ -293,6 +293,7 @@ public class PlayerBase : EntityBase
             }
         }
 
+        SelectedSkills = SelectedSkills.OrderBy(s => s).ToList();
         foreach (var skill in SelectedSkills)
         {
             Skills.Add(skill);
@@ -547,7 +548,7 @@ public class PlayerBase : EntityBase
             SkillSprite = SkillSprite,
             SpecialSprite = SpecialSprite,
             attackRange = attackRange,
-            attackSpeed = attackWindupTime,
+            attackSpeed = GetWindupTime(),
             attackInterval = attackInterval,
             atk = atk,
             bAtk = bAtk,

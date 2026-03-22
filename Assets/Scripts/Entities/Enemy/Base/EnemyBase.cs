@@ -215,14 +215,27 @@ public class EnemyBase : EntityBase
     }
 
     protected Vector3 StopVector = new Vector3(Mathf.Epsilon, Mathf.Epsilon, 0);
+    private static int pathfindsThisFrame = 0;
+    private static int lastBudgetFrame = -1;
+    private const int MaxPathfindsPerFrame = 3; // tune to taste
     private void UpdatePathfinding()
     {
+        if (Time.frameCount != lastBudgetFrame)
+        {
+            pathfindsThisFrame = 0;
+            lastBudgetFrame = Time.frameCount;
+        }
+
         PathfindCnt++;
 
         if (IsFrozen || IsStunned || !IsAlive() || rb2d.velocity.magnitude <= 0 || IsBound || MovementLockout > 0) return;
 
         if (PathfindCnt <= PathfindCntThreshold) return;
+
+        if (pathfindsThisFrame >= MaxPathfindsPerFrame) return;
+
         PathfindCnt = 0;
+        pathfindsThisFrame++;
 
         Vector2 currentPos = FeetPosition.position;
         Vector2 desiredDestination = GetUniversalDestination();
@@ -246,29 +259,10 @@ public class EnemyBase : EntityBase
 
         // Check if there's a direct line to our desired destination
         Vector2 directionToDestination = (desiredDestination - currentPos).normalized;
-        RaycastHit2D[] hit = Physics2D.RaycastAll(currentPos, directionToDestination, distanceToDestination, obstacleLayer);
+        RaycastHit2D hit = Physics2D.Raycast(currentPos, directionToDestination, distanceToDestination, obstacleLayer);
 
         // Only skip pathfinding if we have completely clear path
-        bool hasDirectPath = hit.Length <= 0;
-
-        // Additional check: ensure the direct path doesn't take us too close to other obstacles
-        if (hasDirectPath)
-        {
-            // Sample points along the direct path to ensure it's truly safe
-            int sampleCount = Mathf.Max(3, Mathf.RoundToInt(distanceToDestination / 30f));
-            for (int i = 1; i < sampleCount; i++)
-            {
-                float t = (float)i / sampleCount;
-                Vector2 samplePoint = Vector2.Lerp(currentPos, desiredDestination, t);
-
-                // Check for obstacles around this point
-                if (Physics2D.OverlapCircle(samplePoint, 40f, obstacleLayer) != null)
-                {
-                    hasDirectPath = false;
-                    break;
-                }
-            }
-        }
+        bool hasDirectPath = hit.collider == null || colliders.Contains(hit.collider);
 
         if (hasDirectPath)
         {
@@ -277,15 +271,14 @@ public class EnemyBase : EntityBase
             return;
         }
 
-        pathfindingRadius = Mathf.Clamp(distanceToDestination, 700, 1800);
+        pathfindingRadius = Mathf.Clamp(distanceToDestination, 500, 1800);
         // Determine what changed to decide if we need path updates
         Vector2 currentTargetPos = SpottedPlayer ? SpottedPlayer.transform.position : desiredDestination;
 
         // Need pathfinding - make updates more responsive
         bool shouldUpdatePath = Time.time - lastPathUpdateTime > pathUpdateInterval ||
-                               Vector2.Distance(currentTargetPos, lastTargetPosition) > gridCellSize * 1.5f ||
-                               Vector2.Distance(currentPos, lastPosition) > gridCellSize ||
-                               currentPath.Count == 0;
+                               currentPath.Count == 0 ||
+                               Vector2.Distance(currentTargetPos, lastTargetPosition) > gridCellSize * 1.5f;
 
         if (shouldUpdatePath)
         {
@@ -359,12 +352,14 @@ public class EnemyBase : EntityBase
         if (!SpottedPlayer) return StopVector;
 
         var playerInRange = DetectPlayer(attackPattern == AttackPattern.MELEE ? attackRange * DangerRange_RatioOfAttackRange : attackRange, false);
+
+        float DistanceTransformToPlayerTransform = Vector2.Distance(transform.position, SpottedPlayer.transform.position);
         bool playerIsFarAway = 
             playerInRange == null 
             ||
             isUsingPathfinding 
             || 
-            Vector2.Distance(transform.position, SpottedPlayer.transform.position) > attackRange * 1.2f;
+            DistanceTransformToPlayerTransform > attackRange * 1.2f;
 
         Vector2 playerPos = playerIsFarAway ? SpottedPlayer.Feetposition : SpottedPlayer.transform.position;
         Vector2 enemyPos = playerIsFarAway ? FeetPosition.position : AttackPosition.position;
@@ -560,7 +555,7 @@ public class EnemyBase : EntityBase
         StartCoroutine(TemporarilyDisableHitbox());
 
         // Force path recalculation
-        ForceChangePath();
+        // ForceChangePath();
         stuckTimer = 0f;
 
         /*************************
