@@ -217,7 +217,7 @@ public class EnemyBase : EntityBase
     protected Vector3 StopVector = new Vector3(Mathf.Epsilon, Mathf.Epsilon, 0);
     private static int pathfindsThisFrame = 0;
     private static int lastBudgetFrame = -1;
-    private const int MaxPathfindsPerFrame = 3; // tune to taste
+    private const int MaxPathfindsPerFrame = 2; // tune to taste
     private void UpdatePathfinding()
     {
         if (Time.frameCount != lastBudgetFrame)
@@ -886,10 +886,36 @@ public class EnemyBase : EntityBase
         if (CurrentCheckpointIndex >= Checkpoints.Count) CurrentCheckpointIndex = 0;
     }
 
+    readonly protected bool Adaption = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.ADAPTION);
+    protected float Adaption_DefJump = 7;
+    protected float Adaption_ResJump = 5;
+    protected short Adaption_MaxCount = 30;
     public override void TakeDamage(DamageInstance damage, EntityBase source, ProjectileScript projectileInfo = null, bool IgnoreInvulnerability = false)
     {
         OnAttackReceive(source);
         base.TakeDamage(damage, source, projectileInfo, IgnoreInvulnerability);
+        ProcessAdaption(damage, source);
+    }
+
+    protected void ProcessAdaption(DamageInstance damage, EntityBase source)
+    {
+        if (!source || !Adaption || !IsAlive()) return;
+
+        if (damage.PhysicalDamage > 0)
+        {
+            string key = "ADAPTION_DEF_BUFF";
+            float CurrentStrength = DefBuffs.ContainsKey(key) ? DefBuffs[key].Value : 0;
+            float Strength = Mathf.Min(CurrentStrength + Adaption_DefJump, Adaption_DefJump * Adaption_MaxCount);
+            ApplyEffect(Effect.AffectedStat.DEF, key, Strength, 9999f, false);
+        }
+
+        if (damage.MagicalDamage > 0)
+        {
+            string key = "ADAPTION_RES_BUFF";
+            float CurrentStrength = ResBuffs.ContainsKey(key) ? ResBuffs[key].Value : 0;
+            float Strength = Mathf.Min(CurrentStrength + Adaption_ResJump, Adaption_ResJump * Adaption_MaxCount);
+            ApplyEffect(Effect.AffectedStat.RES, key, Strength, 9999f, false);
+        }
     }
 
     public override void OnAttackReceive(EntityBase source)

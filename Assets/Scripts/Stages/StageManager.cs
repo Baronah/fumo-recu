@@ -218,6 +218,7 @@ public class StageManager : MonoBehaviour
         "Post this sheep at random interval.",
         "In infinite tries everything is possible.",
         "Welcome back Jonny",
+        "Oh nyo you lost the game",
         "wife:\njustnya, iana, typhon, mulberry, pozy if skin, archetto, vendela, ceylon (skin), rushia, warfarin (stab), lin, santalla, ines, mint?, honeyberry?? (but maybe that's mint's wife?), eyja, erota, pallas, goldenglow (skin), swire, ray, astgenne, virtuoso, weedy, monch, reedalt, indigo, amiya(?), dusk, franka, mudrock, coldshot, jessica2, lemuen, blacknight, valarqvin, skadi, aqua, irene, lolcal\n\ndaughters:\nscene, ros, suzu, ifrit, shamare shama, scene, papika, kafka, cement, podenco, vigna, ceobe, amiya, tomimi, iris, lunacub\n\nno wife:\nsora, qiubai, tomimi, paprika, shu (only looks like wife), exu, sussurro (master's wife), mumu, surtr, degen, whisperain (therapist, friend's wife), mr. nothing, rosa, mint?\n\nhusband: degenbrecher?\n\nirl:\nLessing, Ray, Blacknight's Tapir, Ray's Capybara, Ines, Mandragora\n\nupdated: 25/05/24 12:04 GMT",
         "Sorry, Amanai. I'm not even angry over you right now. I bear no grudge against anyone. It's just that the world feels so, so wonderful right now. \"Throughout Heaven and Earth, I alone am the honored one\". However, even in the Gojo clan only a scant few know about this. Take the amplified and the reversal, then combine those two different expressions of infinity to create and push out imaginary mass. Imaginary technique... Purple.",
     };
@@ -428,12 +429,14 @@ public class StageManager : MonoBehaviour
                     enemy.b_attackRange *= 0.8f;
                     enemy.detectionRange *= 0.8f;
                     break;
+
                 case SkillName.HUNGER:
                     enemy.bAtk = (short)(enemy.bAtk * 1.5f);
                     enemy.ASPD += 30;
                     enemy.lifeSteal += 0.3f;
                     enemy.mHealth = (int)(enemy.mHealth * 0.6f);
                     break;
+
                 case SkillName.ABSOLUTISM:
                     if (enemy.attackPattern == EntityBase.AttackPattern.MELEE)
                     {
@@ -447,6 +450,7 @@ public class StageManager : MonoBehaviour
                         enemy.b_attackRange = enemy.detectionRange = 15000f;
                     }
                     break;
+
                 case SkillName.HIBERNATE:
                     float duration = 40f;
                     enemy.mHealth *= 1.5f;
@@ -458,6 +462,11 @@ public class StageManager : MonoBehaviour
                         enemy.ApplyEffect(Effect.AffectedStat.RES, "ICEAGE_RES_BUFF", 25f, duration, false);
                     }
                     break;
+
+                case SkillName.ADAPTION:
+                    enemy.mHealth += (enemy.bDef + enemy.bRes) / 2;
+                    enemy.bDef = enemy.bRes = 0;
+                    break;
             }
         }
     }
@@ -467,7 +476,7 @@ public class StageManager : MonoBehaviour
         if (CharacterPrefabsStorage.DifficultyLevel == (int) DiffType.Observer)
         {
             player.mHealth *= 2f;
-            player.bAtk = (short)(player.bAtk * 1.5f);
+            player.bAtk = (short)(player.bAtk * 1.3f);
         }
 
         var Skills = CharacterPrefabsStorage.Skills.Select(s => s.Key).OrderBy(s => s);

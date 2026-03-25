@@ -522,7 +522,7 @@ public class PlayerManager : MonoBehaviour
             foreach (var enemy in enemies)
             {
                 if (!enemy || !enemy.IsAlive()) continue;
-                enemy.TakeDamage(new(0, 0, 200), null, null, true);
+                enemy.TakeDamage(new(0, 0, 200 + enemy.mHealth * 0.1f), null, null, true);
             }
 
             stageManager.CheckWinWithHeathDeath();

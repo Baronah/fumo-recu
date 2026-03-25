@@ -105,6 +105,7 @@ public class SkillTree_Manager : MonoBehaviour
         HIBERNATE,
         KNOTS,
         A_NICE_LOOKING_ROCK,
+        ADAPTION,
     }
 
     public static SkillTree_Manager Instance;

@@ -65,6 +65,7 @@ public class Zealot : EnemyBase
             AdjustHealthOnDamageReceive(damage);
 
         if (barrierHealth <= 0 && damage.TotalDamage > 0) StartCoroutine(PulseSprite());
+        ProcessAdaption(damage, source);
     }
 
     public override void WriteStats()
