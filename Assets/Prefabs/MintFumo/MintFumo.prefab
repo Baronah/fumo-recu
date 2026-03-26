@@ -109,8 +109,9 @@ MonoBehaviour:
   squishInterval: 7
   squishDuration: 0.15
   squishAmount: 0.35
-  SkillRange: 800
+  SkillRange: 1000
   ObjectiveType: 0
+  PushEffect: {fileID: 2117930059494790756, guid: b744328d839d77e45be9493c5bffffe6, type: 3}
 --- !u!82 &-1878488280740500059
 AudioSource:
   m_ObjectHideFlags: 0
@@ -269,7 +270,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!1 &625465054188774426
 GameObject:
   m_ObjectHideFlags: 0
@@ -5428,7 +5429,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 1, b: 0.6945205, a: 0.050980393}
+  m_Color: {r: 0, g: 1, b: 0.6945205, a: 0.023529412}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

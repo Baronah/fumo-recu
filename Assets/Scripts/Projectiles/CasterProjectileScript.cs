@@ -57,8 +57,8 @@ public class CasterProjectileScript : ProjectileScript
 
         if (doesDamage)
         {
-            if (ProjectileFirer) ProjectileFirer.DealDamage(target, DamageInstance.PhysicalDamage, DamageInstance.MagicalDamage, DamageInstance.TrueDamage, true, this);
-            else target.TakeDamage(DamageInstance, null, this);
+            EntityBase damageDealer = ProjectileFirer ? ProjectileFirer : playerManager.activePlayer;
+            damageDealer.DealDamage(target, DamageInstance.PhysicalDamage, DamageInstance.MagicalDamage, DamageInstance.TrueDamage, true, this);
 
             if (!resetOnHit) allowingUpdate = false;
         }

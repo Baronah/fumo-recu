@@ -57,7 +57,7 @@ public class FM_09 : StageManager
     {
         base.OnPlayerSpawn(player);
         player.mHealth *= 2;
-        player.bDef += 20;
+        player.bDef += 15;
         player.bRes += 10;
         player.bAtk = (short)(player.bAtk * 1.5f);
         player.ASPD += 25;

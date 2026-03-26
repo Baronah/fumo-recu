@@ -51,48 +51,70 @@ public class FumoScript : MonoBehaviour
         StartCoroutine(SquishCoroutine());
     }
 
+    [SerializeField] GameObject PushEffect;
+    float baseRange = 1000f;
+
+    readonly bool WindRush = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.MINT_WINDRUSH);
+    readonly bool Phalanx = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.MINT_PHALANX);
+
+    Image rangeImg;
+    Color initColor, glowColor;
     public IEnumerator SkillEffect()
     {
-        bool canUseSkill = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.MINT_PHALANX)
-                            || CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.MINT_WINDRUSH);
+        bool canUseSkill = Phalanx || WindRush;
+        
+        rangeIndicator.SetActive(canUseSkill);
+
+        rangeImg = rangeIndicator.GetComponent<Image>();
+        
+        initColor = rangeImg.color;
+        glowColor = new Color(initColor.r, initColor.g, initColor.b, initColor.a * 2.35f);
 
         if (!canUseSkill) yield break;
 
-        rangeIndicator.SetActive(canUseSkill);
         rectTransform.sizeDelta = new(
                 SkillRange * 2f,
                 SkillRange * 2f
             );
 
+        float waitInterval = Phalanx ? 0.5f : 5.2f, jump = 0.25f;
+        float counter = 0f;
+
         while (true)
         {
-            yield return new WaitForSeconds(0.5f);
+            counter += jump;
 
             var player = EntityBase.Base_SearchForNearestEntityAroundCertainPoint(typeof(PlayerBase), transform.position, SkillRange, true);
-            if (!player)
+            rangeImg.color = player ? glowColor : initColor;
+            
+            if (!player || counter < waitInterval)
             {
+                yield return new WaitForSeconds(jump);
                 continue;
             }
 
-            string Key;
-            if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.MINT_PHALANX))
+            counter = 0;
+            if (Phalanx)
             {
-                Key = "FUMO_SKILL_PHALANX";
-                player.ApplyEffect(Effect.AffectedStat.DEF, Key, 215, 0.6f, true);
-                player.ApplyEffect(Effect.AffectedStat.RES, Key, 25, 0.6f, false);
+                string Key = "FUMO_SKILL_PHALANX";
+                player.ApplyEffect(Effect.AffectedStat.DEF, Key, 215, waitInterval + 0.05f, true);
+                player.ApplyEffect(Effect.AffectedStat.RES, Key, 25, waitInterval + 0.05f, false);
             }
-            else if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.MINT_WINDRUSH))
+            else if (WindRush)
             {
-                float Base = 34f, Max = 100f;
-                Key = "FUMO_SKILL_WINDRUSH";
-                if (player.MspdBuffs.ContainsKey(Key))
+                GameObject o = Instantiate(PushEffect, transform.position, Quaternion.identity);
+                o.transform.localScale *= SkillRange / baseRange;
+                Destroy(o, 1f);
+
+                var enemies = EntityBase.Base_SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, SkillRange, true);
+                foreach (var enemy in enemies)
                 {
-                    float BuffValue = Mathf.Min(player.MspdBuffs[Key].Value + Base / 2, Max);
-                    player.ApplyEffect(Effect.AffectedStat.MSPD, Key, BuffValue, 0.6f, true);
+                    player.DealDamage(enemy, new DamageInstance(0, 30, 0));
+                    enemy.PushEntityFrom(enemy, transform.position, 3.7f, 0.25f, true);
                 }
-                else
-                    player.ApplyEffect(Effect.AffectedStat.MSPD, Key, Base, 0.6f, true);
             }
+
+            yield return new WaitForSeconds(jump);
         }
     }
 

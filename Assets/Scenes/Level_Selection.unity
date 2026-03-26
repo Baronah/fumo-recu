@@ -9606,14 +9606,14 @@ RectTransform:
   m_GameObject: {fileID: 472487716}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1.3, y: 1.3, z: 1.3}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 152420056}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -606.9838, y: -14.419983}
+  m_AnchoredPosition: {x: -606.9838, y: 4}
   m_SizeDelta: {x: 131.9935, y: 100.5859}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &472487718
@@ -41818,7 +41818,8 @@ MonoBehaviour:
   skillDescription: During the duration of 'Evasion', coming into contact with an
     enemy <color=#00ffe1>extends</color> the dash and slows the collided enemies
     for 3 seconds.
-  favorText: '"Please don''t get in our way!"'
+  favorText: She looks quiet and proper at first glance, but in truth she bursts
+    with a curious spirit and a lively step.
   skillDescriptionInShort: '''Evasion'' extends upon coming into contact with an
     enemy and slows them.'
   mutuallyExclusiveSkills: 0c0000000d00000024000000
@@ -43099,12 +43100,12 @@ MonoBehaviour:
   skillType: 0
   skillName: 32
   skillNameText: '''Fumo Recu'' - Wind''s Whisper'
-  skillDescription: Gains <color=#00ffbf>+34% MSPD</color> every second you are within
-    800 radius around the Mint Fumo. Stacks up to <color=#00ffbf>+100%</color>.
-  favorText: She looks quiet and proper at first glance, but in truth she bursts
-    with a curious spirit and a lively step.
-  skillDescriptionInShort: Gains stacking MSPD while nearby the Mint Fumo (marked
-    by green area).
+  skillDescription: 'While you are 1000 radius around the Mint Fumo: Every <color=yellow>5.2
+    seconds</color>, Mint casts arts on all enemies within said area, dealing <color=#ff00ff>30
+    magical damage</color> and <color=#2985FF>pushing</color> them away from her.'
+  favorText: '"Please don''t get in our way!"'
+  skillDescriptionInShort: Mint Fumo periodically pushes nearby enemies away from
+    her.
   mutuallyExclusiveSkills: 1f000000
   Overlay: {fileID: 0}
 --- !u!114 &1723544906
@@ -45614,8 +45615,8 @@ MonoBehaviour:
   skillType: 0
   skillName: 31
   skillNameText: '''Fumo Recu'' - Phalanx'
-  skillDescription: Gains <color=yellow>+215% DEF</color> and <color=#00ffff>+25
-    RES</color> while you are within 800 radius around the Mint Fumo.
+  skillDescription: While you are within 1000 radius around the Mint Fumo, gain <color=yellow>+215%
+    DEF</color> and <color=#00ffff>+25 RES</color>.
   favorText: "\"One, two\u2014whoopsie-daisy.\""
   skillDescriptionInShort: Gains increased DEF and RES while nearby the Mint Fumo
     (marked by green area).
