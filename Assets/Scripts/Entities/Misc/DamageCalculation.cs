@@ -18,6 +18,8 @@ namespace DamageCalculation
     {
         public void Process(EntityBase attacker, EntityBase target, DamageInstance instance)
         {
+            if (attacker == target) return;
+
             float distance = 0;
             bool calculatedDistance = false;
 
