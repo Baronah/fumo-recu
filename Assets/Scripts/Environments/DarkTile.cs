@@ -8,7 +8,7 @@ using UnityEngine.Tilemaps;
 public class DarkTile : EnvironmentalTileBase
 {
     [SerializeField] private GameObject DarkZoneEffectPrefab;
-    private Dictionary<EntityBase, DarkZoneEffect> activeEffects = new Dictionary<EntityBase, DarkZoneEffect>();
+    private Dictionary<EntityBase, UI_DarkZoneEffect> activeEffects = new Dictionary<EntityBase, UI_DarkZoneEffect>();
 
     private Tilemap tilemap;
     private bool isInitialized = false;
@@ -69,7 +69,7 @@ public class DarkTile : EnvironmentalTileBase
         }
         else
         {
-            DarkZoneEffect effectInstance = Instantiate(DarkZoneEffectPrefab, entity.transform.position + Vector3.up * 100f, Quaternion.identity).GetComponent<DarkZoneEffect>();
+            UI_DarkZoneEffect effectInstance = Instantiate(DarkZoneEffectPrefab, entity.transform.position + Vector3.up * 100f, Quaternion.identity).GetComponent<UI_DarkZoneEffect>();
             effectInstance.Initialize(entity);
             activeEffects.Add(entity, effectInstance);
         }

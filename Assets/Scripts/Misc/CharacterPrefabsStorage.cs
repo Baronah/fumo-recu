@@ -24,11 +24,13 @@ public class CharacterPrefabsStorage : ScriptableObject
 	public static float DifficultyHpMultiplierBase => 0.05f;
     public static float DifficultyAtkMultiplierBase => 0.0225f;
 
-	public static float GetEnemiesHpMultiplier()
+    static int GetDiff => Mathf.Min(DifficultyLevel - 1, 15);
+
+    public static float GetEnemiesHpMultiplier()
 	{
 		if (DifficultyLevel <= 1) return 0;
 
-		int Diff = Mathf.Min(DifficultyLevel - 1, 15);
+		int Diff = GetDiff;
 		
 		float finalMul = 0;
 		for (int i = 1; i <= Diff; i++)
@@ -44,7 +46,7 @@ public class CharacterPrefabsStorage : ScriptableObject
 	{
         if (DifficultyLevel <= 1) return 0;
 
-        int Diff = Mathf.Min(DifficultyLevel - 1, 15);
+        int Diff = GetDiff;
 
         float finalMul = 0;
         for (int i = 1; i <= Diff; i++)
@@ -63,10 +65,13 @@ public class CharacterPrefabsStorage : ScriptableObject
 
     public static void ClearBattleData()
 	{
-		var skillNames = Skills.Select(s => s.Key).ToArray();
+		if (SaveDataManager.IsResearchUnlocked)
+		{
+			var skillNames = Skills.Select(s => s.Key).ToArray();
+			PlayerPrefs.SetString("InventionsUsed", string.Join(" ", skillNames));
+			PlayerPrefs.Save();
+		}
 
-        PlayerPrefs.SetString("InventionsUsed", string.Join(" ", skillNames));
-		PlayerPrefs.Save();
 		ClearPrebattleData();
 	}
 

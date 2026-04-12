@@ -224,6 +224,11 @@ public class EntityBase : MonoBehaviour
 
     public bool ViewOnlyMode => FindAnyObjectByType<StageManager>() == null;
 
+    public Vector3 GetMovementDirection()
+    {
+        return rb2d.velocity.normalized;
+    }
+
     public Vector3 GetAttackPosition()
     {
         if (useTransformAsAttackPosition) return transform.position;
@@ -1268,12 +1273,18 @@ public class EntityBase : MonoBehaviour
     private float StatisTimer = 0f;
     private bool enteredStatis = false;
     private GameObject StatisObj;
+
+    public virtual bool IsMoving()
+    {
+        return rb2d.velocity != Vector2.zero || PrevPosition != transform.position;
+    }
+
     protected virtual void ProcessStatis()
     {
         if (!statis) return;
 
         string keyAtk = "STATIS_DEBUFF_ATK";
-        if (rb2d.velocity == Vector2.zero && PrevPosition == transform.position)
+        if (IsMoving())
         {
             StatisTimer += Time.fixedDeltaTime;
             if (StatisTimer >= StatisRequiredTimer && !enteredStatis)
@@ -1470,6 +1481,7 @@ public class EntityBase : MonoBehaviour
 
     public void EndStun()
     {
+        StartCoroutine(EndLevitate());
         StunTimer = 0f;
         OnStunExit();
     }
@@ -1569,6 +1581,7 @@ public class EntityBase : MonoBehaviour
 
         LockoutMovementOnAttackCoroutine = null;
         AttackCoroutine = null;
+        attacking = false;
     }
 
     public float GetWindupTime() => attackWindupTime * (100 / Mathf.Max(20, ASPD));
@@ -1887,7 +1900,7 @@ public class EntityBase : MonoBehaviour
             result = result.Where(e => e && !e.IsStandingOnEnvironmentalTile(EnvironmentType.DARK_ZONE)).ToList();
         }
         
-        return result;
+        return take < 0 ? result : result.Take(take).ToList();
     }
 
     public static List<EntityBase> Base_SearchForEntitiesAroundCertainPoint(Type type, Vector2 pos, float r, bool catchInvisibles = false, short take = -1)
@@ -1898,10 +1911,13 @@ public class EntityBase : MonoBehaviour
         {
             entityBases = EntityManager.Entities
                 .Where(entity => 
-                    entity && entity.colliders.Any(c => c.enabled) 
-                    && entity.IsComponentsInitialized && entity.IsAlive() 
+                    entity 
+                    && entity.colliders.Any(c => c.enabled) 
+                    && entity.IsComponentsInitialized 
+                    && entity.IsAlive() 
                     && (!entity.isInvisible || catchInvisibles) 
-                    && (type != null && type.IsAssignableFrom(entity.GetType())))
+                    && type != null 
+                    && type.IsAssignableFrom(entity.GetType()))
                 .ToList();
         }
         else
@@ -1926,9 +1942,9 @@ public class EntityBase : MonoBehaviour
         }
 
         if (entityBases.Count == 1 || entityBases.Count <= take) return entityBases;
-
-        entityBases = entityBases.OrderBy(e => Vector2.Distance(e.transform.position, pos)).ToList();
-        return take == -1 ? entityBases : entityBases.Take(take).ToList();
+        if (take > 0) entityBases = entityBases.OrderBy(e => Vector2.Distance(e.transform.position, pos)).ToList();
+        
+        return entityBases;
     }
 
     public virtual EntityBase SearchForNearestEntityAroundSelf(Type type = null, bool catchInvisible = false)

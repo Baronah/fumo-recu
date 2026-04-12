@@ -528,6 +528,10 @@ PrefabInstance:
       propertyPath: m_Color.a
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5288166252650138663, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6772246562461740860, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 5801.747
@@ -677,6 +681,8 @@ MonoBehaviour:
   FreezeTimer: 0
   StunTimer: 0
   StatusResistTimer: 0
+  PhysicalDodgeChance: 0
+  MagicalDodgeChance: 0
   preferredMoveAnimationPlaySpeed: 0.85
   preferredAttackAnimationSpeed: 1.1
   HasOnStartCoroutine: 1
@@ -699,7 +705,6 @@ MonoBehaviour:
   b_detectionRange: 250
   DangerRange_RatioOfAttackRange: 1
   MinimumDistanceFromPlayer: 50
-  gridCellSize: 60
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -716,6 +721,7 @@ MonoBehaviour:
   MoveToOverridePositionSpeedMultiplierJump: 0.35
   CanDetectThroughWalls: 0
   IsInsignificant: 0
+  hasDRWhenNotCombat: 0
   SleepEffect: {fileID: 5249531247759391519}
   SleepFill: {fileID: 5243561150908866210}
   SleepCountTime: 5

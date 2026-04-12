@@ -4,9 +4,10 @@ using UnityEngine.Tilemaps;
 
 public class FM_10 : StageManager
 {
-    [SerializeField] private GameObject activateGameObject;
+    [SerializeField] private GameObject activateSudaram, activateStatue;
+    [SerializeField] private Transform AssassinRestPort;
 
-    bool spawnMoreEnemies = false;
+    bool spawnSudaram = false;
     ShroudedAssassin shroudedAssassin;
     bool assassinReviveTriggered = false;
 
@@ -15,7 +16,7 @@ public class FM_10 : StageManager
         if (IsStageStarted && shroudedAssassin != null 
             && 
             !assassinReviveTriggered 
-            && (!shroudedAssassin.IsAlive() || shroudedAssassin.WarppedShroudedTriggered)
+            && (!shroudedAssassin.IsAlive() || shroudedAssassin.TowardDeathTriggered)
             )
         {
             OnAssassinSkillTrigger();
@@ -28,7 +29,8 @@ public class FM_10 : StageManager
     [SerializeField] Tilemap bg1, bg2;
     void OnAssassinSkillTrigger()
     {
-        if (spawnMoreEnemies) activateGameObject.SetActive(true);
+        activateStatue.SetActive(true);
+        if (spawnSudaram) activateSudaram.SetActive(true);
         StartCoroutine(TilemapDarkens());
     }
 
@@ -51,11 +53,11 @@ public class FM_10 : StageManager
     {
         base.EnableChallengeMode();
 
-        spawnMoreEnemies = CharacterPrefabsStorage.EnableChallengeMode;
+        spawnSudaram = CharacterPrefabsStorage.EnableChallengeMode;
 
         if (!CharacterPrefabsStorage.EnableChallengeMode)
         {
-            Destroy(activateGameObject);
+            Destroy(activateSudaram);
         }
     }
 
@@ -66,14 +68,7 @@ public class FM_10 : StageManager
         if (enemy is ShroudedAssassin a)
         {
             shroudedAssassin = a;
-        }
-
-        if (enemy as Sudaram)
-        {
-            enemy.bAtk = (short)(enemy.bAtk * 0.6f);
-            enemy.mHealth = 200;
-            enemy.bDef /= 2;
-            enemy.bRes /= 2;
+            a.TowardDeathRestPort = AssassinRestPort;
         }
 
         base.OnEnemySpawn(enemy);

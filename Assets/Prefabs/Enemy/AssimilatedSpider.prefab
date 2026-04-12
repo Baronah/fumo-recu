@@ -414,11 +414,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8775152862550477468, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_Value
-      value: 130
+      value: 110
       objectReference: {fileID: 0}
     - target: {fileID: 8775152862550477468, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_MaxValue
-      value: 130
+      value: 110
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7523077825662678453, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
@@ -475,9 +475,9 @@ MonoBehaviour:
   b_attackInterval: 2
   MIN_PHYSICAL_DMG: 0.05
   MIN_MAGICAL_DMG: 0.1
-  health: 130
+  health: 110
   atk: 15
-  def: 5
+  def: 15
   res: 10
   ASPD: 100
   moveSpeed: 200
@@ -536,7 +536,6 @@ MonoBehaviour:
   b_detectionRange: 185
   DangerRange_RatioOfAttackRange: 1
   MinimumDistanceFromPlayer: 20
-  gridCellSize: 60
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -556,6 +555,7 @@ MonoBehaviour:
   MoveToOverridePositionSpeedMultiplierJump: 0.35
   CanDetectThroughWalls: 0
   IsInsignificant: 0
+  hasDRWhenNotCombat: 0
   explosionDelay: 1
   explosionAtkScale: 2.5
   explosionRadius: 175

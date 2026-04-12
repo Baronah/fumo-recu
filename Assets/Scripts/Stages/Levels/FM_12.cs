@@ -27,12 +27,7 @@ public class FM_12 : StageManager
     public override void OnEnemySpawn(EnemyBase enemy)
     {
         base.OnEnemySpawn(enemy);
-        if (enemy is Sudaram s)
-        {
-            s.originiumPollutionBonusASPD = 100;
-            s.originiumPollutionDamageMultiplier = 0f;
-        }
-        else if (CharacterPrefabsStorage.EnableChallengeMode && enemy is HibernatorKnight h)
+        if (CharacterPrefabsStorage.EnableChallengeMode && enemy is HibernatorKnight h)
         {
             h.SleepCountTime += CM_Hiber_SleepCountTimeAdd;
             h.Wake_AtkBuff += CM_Hiber_WakeAtkBuffAdd;

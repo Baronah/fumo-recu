@@ -355,64 +355,10 @@ public class StageManager : MonoBehaviour
         if (CharacterPrefabsStorage.EnableChallengeMode) Title.text += "\n<color=red><size=52>[CHALLENGE MODE]</size></color>";
     }
 
-    void ProcessEnemyDifficultyScaling(EnemyBase enemy)
-    {
-        short diffLevel = (short)(CharacterPrefabsStorage.DifficultyLevel - 1);
-        if (diffLevel <= 0) return;
-
-        enemy.bAtk = (short)(enemy.bAtk * (1f + CharacterPrefabsStorage.GetEnemiesAtkMultiplier()));
-        enemy.mHealth *= 1f + CharacterPrefabsStorage.GetEnemiesHpMultiplier();
-
-        if (diffLevel >= (int)DiffType.EnemiesDefenseSurvivalBuff)
-        {
-            short defAdd = 10;
-            float mspdAdd = enemy.b_moveSpeed * 0.05f;
-
-            if (StageCompleteConditionType == StageCompleteCondition.PROTECT_FUMO || StageCompleteConditionType == StageCompleteCondition.SURVIVE_FOR_GIVEN_TIME)
-            {
-                mspdAdd *= 4;
-                defAdd *= 4;
-            }
-
-            enemy.bDef += defAdd;
-            enemy.b_moveSpeed += mspdAdd;
-        }
-
-        if (diffLevel >= (int) DiffType.EnemiesRescueBuff)
-        {
-            short resAdd = 10;
-            float aspdAdd = 5;
-            if (StageCompleteConditionType == StageCompleteCondition.RETRIEVE_FUMO)
-            {
-                resAdd *= 4;
-                aspdAdd *= 4;
-            }
-
-            enemy.bRes += resAdd;
-            enemy.ASPD += aspdAdd;
-        }
-
-        if (diffLevel >= (int) DiffType.EnemiesAnnihilationBuff)
-        {
-            float hpAdd = enemy.mHealth * 0.05f, atkAdd = enemy.bAtk * 0.05f;
-            if (StageCompleteConditionType == StageCompleteCondition.ELIMINATE_ALL_ENEMIES)
-            {
-                hpAdd *= 4;
-                atkAdd *= 4;
-            }
-
-            enemy.mHealth += hpAdd;
-            enemy.bAtk += (short)atkAdd;
-        }
-
-        if (diffLevel >= (int)DiffType.EnemiesStatusResistant
-            && (enemy.attackPattern == EntityBase.AttackPattern.MELEE || enemy.attackPattern == EntityBase.AttackPattern.NONE))
-            enemy.StatusResistTimer += 9999f;
-    }
-
     public virtual void OnEnemySpawn(EnemyBase enemy)
     {
-        ProcessEnemyDifficultyScaling(enemy);
+        EnemyStatsLookup.GetStats(enemy, LevelIndex, out bool hasChanged);
+        EnemyStatsLookup.ProcessEnemyDifficultyScaling(enemy, StageCompleteConditionType);
 
         if (CharacterPrefabsStorage.EnableChallengeMode)
         {
@@ -704,7 +650,9 @@ public class StageManager : MonoBehaviour
     public void CheckWinWithHeathDeath()
     {
         HDCoroutine = StartCoroutine(HeatDeathEffect());
+        
         UpdateEnemyCountUI();
+        RemainingEnemiesGO.SetActive(true);
 
         if (GetEnemyCount(countInfiniteSpawns: true) > 0 || FindObjectsOfType<EnemyBase>().Any(e => e && e.IsAlive())) return;
 
@@ -755,6 +703,8 @@ public class StageManager : MonoBehaviour
     }
     public virtual void OnStageEnd(ResultType resultType)
     {
+        UpdateEnemyCountUI();
+
         PauseButton.gameObject.SetActive(false);
         IsStageEnd = true;
         FindObjectsOfType<EnemySpawnpointScript>().ToList().ForEach(e => e.enabled = false);
@@ -811,7 +761,7 @@ public class StageManager : MonoBehaviour
 
         if (resultType != ResultType.HEATH_DEATH && CharacterPrefabsStorage.DifficultyLevel > 1)
         {
-            text.text = "<color=#00ffb7>Research Conducted!";
+            text.text = "<color=#00ffb7>Research Conducted!</color>";
         }
 
         if (IsFirsttime) text.text += "\n<size=36>+1 Mint fumo</size>";

@@ -100,9 +100,9 @@ Transform:
   m_GameObject: {fileID: 4823490072830741474}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.32, y: 0.25, z: 0}
+  m_LocalPosition: {x: 2.2, y: 0.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 2570123632696497706}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -153,6 +153,14 @@ PrefabInstance:
     - target: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_Color.r
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1264031143448460936, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_fontColor.a
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1264031143448460936, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 54527
       objectReference: {fileID: 0}
     - target: {fileID: 1779737740583634941, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_LocalScale.x
@@ -239,11 +247,19 @@ PrefabInstance:
       value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 5250980034755208933, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_FlipX
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5250980034755208933, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 891465061a7769644a434373f64bb1b6, type: 3}
+      objectReference: {fileID: 21300000, guid: 5e8a4bfa5f417174e9d419b730404464, type: 3}
     - target: {fileID: 5250980034755208933, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_Color.a
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5288166252650138663, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6772246562461740860, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
@@ -314,6 +330,10 @@ PrefabInstance:
       propertyPath: m_MaxValue
       value: 800
       objectReference: {fileID: 0}
+    - target: {fileID: 8801038682056989348, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7523077825662678453, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
     m_RemovedGameObjects: []
@@ -382,26 +402,26 @@ MonoBehaviour:
   Icon: {fileID: 21300000, guid: 768971f047b2b80438ed90c5c9bd1639, type: 3}
   mHealth: 800
   bAtk: 70
-  bDef: 50
-  bRes: 20
+  bDef: 30
+  bRes: 5
   defPen: 0
   defIgn: 10
   resPen: 0
   resIgn: 0
   lifeSteal: 0
   b_moveSpeed: 120
-  b_attackRange: 100
+  b_attackRange: 90
   b_attackWindupTime: 0.25
   b_attackInterval: 3
   MIN_PHYSICAL_DMG: 0.05
   MIN_MAGICAL_DMG: 0.1
   health: 800
   atk: 70
-  def: 50
-  res: 20
+  def: 30
+  res: 5
   ASPD: 100
   moveSpeed: 120
-  attackRange: 100
+  attackRange: 90
   attackWindupTime: 0.25
   attackInterval: 3
   hpRegenFlat: 0
@@ -452,27 +472,29 @@ MonoBehaviour:
   Skillset: "\u2022 [Feud Bonding] Receiving damage from the player unit builds up
     \"Feud\" on them (has a limit). Self takes reduced damage from the attacker based
     on how much \"Feud\" they have built up, up to 100%. Gains greatly increased
-    ATK and MSPD when the target has their \"Feud\" maxed out.\n\n<b><color=red>FIRST
-    PHASE</color></b>\n\n\u2022 [Pack Up] Stops moving, becomes immune to freeze
-    and stun, then charges up and quickly dash toward your position, dealing physical
-    damage if comes into contact with. Receving damage shortens the cool-down of
-    the next use.\n\n\u2022 [Held Breath] When HP reaches 0, enters a revival state
-    and rapidly builds up \"Feud\" on the presenting player throughout the duration.
-    Enters the second phase afterward.\n\n<b><color=red>SECOND PHASE</color></b>\n\n\u2022
-    DEF and RES are reduced.\n\n\u2022 [Overflowing Hatred] \"Feud\" is now gradually
-    builds up overtime, and 'slows' the player at max stacks.\n\n\u2022 [Toward Death]
-    Stops moving, becomes immune to freeze and stun, then creates multiple illusion
-    of self. After a short delay, dashes toward these illusions in quick succession
-    and damages the player if comes into contact with. Dash speed increases as HP
-    decreases. Receving damage shortens the cool-down of the next use.\n\n\u2022
-    [Wrapped Shroud] When HP falls below 50% for the first time: Stops attacking,
-    becomes invisible and invulnerable. Periodically reappears to cast [Toward Death],
-    disables 'Invisibility' during the process and resumes them after finished."
-  detectionRange: 30
-  b_detectionRange: 30
-  DangerRange_RatioOfAttackRange: 0.75
+    MSPD when the target has their \"Feud\" maxed out.\n\n\u2022 [Silencer] Receving
+    damage increases ATK (stacks to a limit) and shortens the cool-down of the next
+    [Pack Up] and [Wrapped Shroud] use. After using [Pack Up] or [Wrapped Shroud],
+    follows with a dash toward the player position and resets the ATK buff.\n\n<b><color=red>FIRST
+    PHASE</color></b>\n\n\u2022 [Pack Up] Stops moving, creates an illusion behind
+    the player then dashes toward it, dealing physical damage if collides. Cool-down
+    is refunded if interrupted.\n\n\u2022 [Held Breath] When HP reaches 0, enters
+    a revival state: Gradually recovers HP to full while continuously builds up \"Feud\"
+    and spawns illusion at the player position throughout the duration. When finished,
+    cast [Pack Up] on them. Enters the second phase afterward.\n\n<b><color=red>SECOND
+    PHASE</color></b>\n\n\u2022 [Overflowing Hatred] \"Feud\" is now gradually builds
+    up overtime, and 'slows' the player at max stacks.\n\n\u2022 [Wrapped Shroud]
+    Stops moving, creates multiple illusion of self then dashes toward them in quick
+    succession, damages the player if collides. Dash speed increases as HP decreases.
+    Cool-down is refunded if interrupted.\n\n\u2022 [Toward Death] When HP falls
+    below 35% for the first time: Stops attacking and becomes 'Invisible'. Periodically
+    reappears to cast [Wrapped Shroud], disables 'Invisibility' during the process
+    and resumes them after finished. When inflicted by stun or freeze while casting
+    [Wrapped Shroud], both the skill and that effect will be prematurely ended."
+  detectionRange: 500
+  b_detectionRange: 500
+  DangerRange_RatioOfAttackRange: 0.8
   MinimumDistanceFromPlayer: 20
-  gridCellSize: 80
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -492,20 +514,25 @@ MonoBehaviour:
   MoveToOverridePositionSpeedMultiplierJump: 0.35
   CanDetectThroughWalls: 0
   IsInsignificant: 0
+  hasDRWhenNotCombat: 0
   shadowClonePrefab: {fileID: 6227222074570190167, guid: aaa7e34ade2686643ad8b54869a8f08b, type: 3}
   feudBond: {fileID: 8026367807147734761, guid: 4d80df3aa8c3d4149a2671152919af1e, type: 3}
   dashCooldown: 16
-  dashDuration: 0.17
+  dashDuration: 0.2
   dashInterval: 0.15
   dashDistance: 1000
   dashAtkScale: 1
-  WrappedShroudHpTriggerThreshold: 0.5
+  TowardDeathHpTriggerThreshold: 0.35
+  TowardDeathRestPort: {fileID: 0}
   MaxFeudLevel: 20
   MaxDamageReduction: 1
-  MaxAtkBuff: 0.4
+  MaxAtkBuff: 0.5
   MaxMspdBuff: 0.3
-  WarppedShroudedTriggered: 0
+  AtkBuff_Jump: 0.05
+  DashExpectedDistance: 600
+  TowardDeathTriggered: 0
   trailPrefab: {fileID: 6209281345805936895, guid: 3c0261128b277894cac6bd5c079ad2f8, type: 3}
+  Revive_PlayerPosStoreInterval: 1.5
 --- !u!82 &1763570007023390080
 AudioSource:
   m_ObjectHideFlags: 0

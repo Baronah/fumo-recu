@@ -21,7 +21,7 @@ public class BloodboilKnight : EnemyBase
     {
         base.FixedUpdate();
 
-        SkillEffect.SetActive(stackCount >= (maxStackCount / 2) && IsAlive());
+        if (!ViewOnlyMode) SkillEffect.SetActive(stackCount >= (maxStackCount / 2) && IsAlive());
     }
 
     public void OnEnemyDeath()

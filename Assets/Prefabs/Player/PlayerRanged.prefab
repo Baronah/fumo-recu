@@ -1416,7 +1416,7 @@ MonoBehaviour:
   mHealth: 150
   bAtk: 50
   bDef: 5
-  bRes: 20
+  bRes: 30
   defPen: 0
   defIgn: 0
   resPen: 0

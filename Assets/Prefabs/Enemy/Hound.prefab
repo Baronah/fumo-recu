@@ -241,7 +241,7 @@ MonoBehaviour:
   resPen: 0
   resIgn: 0
   lifeSteal: 0
-  b_moveSpeed: 260
+  b_moveSpeed: 270
   b_attackRange: 65
   b_attackWindupTime: 0.4
   b_attackInterval: 2
@@ -303,7 +303,6 @@ MonoBehaviour:
   b_detectionRange: 200
   DangerRange_RatioOfAttackRange: 1
   MinimumDistanceFromPlayer: 20
-  gridCellSize: 60
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -320,6 +319,7 @@ MonoBehaviour:
   MoveToOverridePositionSpeedMultiplierJump: 0.35
   CanDetectThroughWalls: 0
   IsInsignificant: 0
+  hasDRWhenNotCombat: 0
 --- !u!1 &6784049404754971277 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 773491194806959642, guid: f3221dbae6b487b49907a796747ecac4, type: 3}

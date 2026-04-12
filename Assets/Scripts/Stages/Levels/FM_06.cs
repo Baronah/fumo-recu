@@ -19,10 +19,4 @@ public class FM_06 : StageManager
         var spiderSpawns = FindObjectsOfType<EnemySpawnpointScript>(true).Where(s => s.enemyPrefab == EnemyBase.EnemyCode.ORIGINIUM_SPIDER);
         foreach (var spider in spiderSpawns) spider.enemyPrefab = EnemyBase.EnemyCode.ORIGINIUM_SPIDER_ALPHA;
     }
-
-    public override void OnEnemySpawn(EnemyBase enemy)
-    {
-        if (enemy is OriginiumSpiderAlpha alp) alp.mHealth = 60;
-        base.OnEnemySpawn(enemy);
-    }
 }

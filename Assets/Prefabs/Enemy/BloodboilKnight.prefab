@@ -380,7 +380,6 @@ MonoBehaviour:
   b_detectionRange: 200
   DangerRange_RatioOfAttackRange: 0.85
   MinimumDistanceFromPlayer: 50
-  gridCellSize: 60
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -397,6 +396,7 @@ MonoBehaviour:
   MoveToOverridePositionSpeedMultiplierJump: 0.35
   CanDetectThroughWalls: 0
   IsInsignificant: 0
+  hasDRWhenNotCombat: 0
   SkillEffect: {fileID: 9121667887855823670}
   atkAddPerEnemyKilled: 0.125
   aspdAddPerEnemyKilled: 10

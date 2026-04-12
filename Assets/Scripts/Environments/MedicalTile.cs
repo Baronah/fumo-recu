@@ -32,7 +32,9 @@ public class MedicalTile : EnvironmentalTileBase
     {
         base.OnEntityStay(entity);
         float healAmount = UsePercentageHeal ? entity.mHealth * HealPerTick : HealPerTick;
-        entity.Heal(healAmount);
+        
+        if (entity is SaintStatue ss) ss.OnMedicalTileHealingReceive(healAmount);
+        else entity.Heal(healAmount);
     }
 
     IEnumerator Pulse()

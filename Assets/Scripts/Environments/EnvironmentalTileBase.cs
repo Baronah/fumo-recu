@@ -26,6 +26,7 @@ public class EnvironmentalTileBase : MonoBehaviour
         {
             yield return new WaitForSeconds(Interval);
 
+            entitiesWithin.RemoveAll(e => !e || !e.IsAlive());
             entitiesWithin.ForEach(e =>
             {
                 OnEntityStay(e);

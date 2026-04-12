@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using TMPro;
 using Unity.Loading;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
@@ -36,7 +37,7 @@ public class LevelSelectionScript : MonoBehaviour
     [SerializeField] private Image MapPreviewImg, MapPreviewImgOverlay;
     [SerializeField] private Sprite[] Map_SSs;
 
-    [SerializeField] private TMP_Text FetchingDataTxt;
+    [SerializeField] private GameObject FetchingData_1, FetchingData_2;
     [SerializeField] private Sprite DefaultEnemyIcon;
     [SerializeField] private GameObject EnemyDetail, SelectedBorder;
     [SerializeField] private TMP_Text 
@@ -54,6 +55,7 @@ public class LevelSelectionScript : MonoBehaviour
         Rating_DRNG,
         Rating_CALV;
 
+    [SerializeField] private GameObject SP_Text;
     [SerializeField] private Image EnemyIcon;
 
     private bool IsLoadingEnemyPrefabs = false;
@@ -121,11 +123,8 @@ public class LevelSelectionScript : MonoBehaviour
 
         StartCoroutine(OverlayFadeOut());
 
-        if (SaveDataManager.IsResearchUnlocked)
-        {
-            FetchingDataTxt.text = 
-                "<size=36><color=#6DFFD5>Wait a min, I have the info in my book...\nLemme find them for you</color></size>";
-        }
+        FetchingData_1.SetActive(!SaveDataManager.IsResearchUnlocked);
+        FetchingData_2.SetActive(SaveDataManager.IsResearchUnlocked);
     }
 
     short cnt = 60;
@@ -461,7 +460,7 @@ public class LevelSelectionScript : MonoBehaviour
     {
         SetEnemyDefaultUI();
         EnemyDescription.text = 
-            "Select an enemy to view their information.";
+            "Select an enemy to view their information.\nHover over a statline to see its description.";
     }
 
     void SetUnknownEnemyInfo()
@@ -477,9 +476,13 @@ public class LevelSelectionScript : MonoBehaviour
         Weight.text = Rating_CALV.text = Rating_DRNG.text = Rating_MSPD.text = Rating_ASPD.text =
             Rating_ARNG.text = Rating_DEF.text = Rating_RES.text = Rating_ATK.text =
             Rating_HP.text = EnemyPattern.text = EnemyName.text = "N/A";
+
+        SP_Text.SetActive(false);
     }
 
     [SerializeField] ScrollRect LevelDescriptionScrollbar, EnemyInfoScrollbar; 
+    
+    readonly Dictionary<EnemyStatKey, EnemyBase> InstantiatedEnemyGOsForThisLevel = new();
     public IEnumerator GetEnemyInformation(EnemyCode enemyCode, Vector3 position)
     {
         EnemyInfoScrollbar.verticalNormalizedPosition = 1;
@@ -496,29 +499,64 @@ public class LevelSelectionScript : MonoBehaviour
         }
 
         if (IsLoadingEnemyPrefabs) yield return new WaitUntil(() => !IsLoadingEnemyPrefabs);
-        GameObject enemyGO = CharacterPrefabsStorage.EnemyPrefabs[(int) enemyCode];
-        EnemyBase enemy = enemyGO.GetComponent<EnemyBase>();
-        
-        enemy.InitializeComponents();
+
+        bool hasStatsChanged = EnemyStatsLookup.HasStatsChange(enemyCode, selectedIndex);
+        EnemyStatKey enemyStatKey = new() 
+        { 
+            Code = enemyCode, 
+            LevelIndex = hasStatsChanged ? selectedIndex : -1, 
+            hasChanged = EnemyStatsLookup.HasStatsChange(enemyCode, selectedIndex) 
+        };
+
+        EnemyBase enemy;
+
+        if (InstantiatedEnemyGOsForThisLevel.ContainsKey(enemyStatKey))
+        {
+            enemy = InstantiatedEnemyGOsForThisLevel[enemyStatKey];
+        }
+        else
+        {
+            GameObject enemyGO = CharacterPrefabsStorage.EnemyPrefabs[(int)enemyCode];
+            if (hasStatsChanged)
+            {
+                GameObject instantiate = GameObject.Instantiate(enemyGO);
+                enemy = instantiate.GetComponent<EnemyBase>();
+                EnemyStatsLookup.GetStats(enemy, selectedIndex, out bool hasChanged);
+                enemyStatKey.hasChanged = hasChanged;
+            }
+            else
+            {
+                enemy = enemyGO.GetComponent<EnemyBase>();
+            }
+            
+            enemy.InitializeComponents();
+            InstantiatedEnemyGOsForThisLevel.Add(enemyStatKey, enemy);
+        }
 
         EnemyIcon.sprite = enemy.Icon;
+
         EnemyName.text = enemy.Name;
-        EnemyPattern.text = $"{enemy.attackPattern} {enemy.damageType}";
+
+        EnemyPattern.text = enemy.attackPattern == EntityBase.AttackPattern.NONE
+            ? $"{enemy.attackPattern}"
+            : $"{enemy.attackPattern} {enemy.damageType}";
         
         Weight.text = enemy.weight.ToString();
 
+        SP_Text.SetActive(hasStatsChanged);
+
         // hp
-        if (enemy.mHealth <= 25) 
+        if (enemy.mHealth <= 30) 
             Rating_HP.text = "E";
-        else if (enemy.mHealth <= 50)
+        else if (enemy.mHealth <= 60)
             Rating_HP.text = "D";
-        else if (enemy.mHealth <= 90)
+        else if (enemy.mHealth <= 100)
             Rating_HP.text = "C";
-        else if (enemy.mHealth <= 125)
+        else if (enemy.mHealth <= 150)
             Rating_HP.text = "C+";
         else if (enemy.mHealth <= 200)
             Rating_HP.text = "B";
-        else if (enemy.mHealth <= 250)
+        else if (enemy.mHealth <= 260)
             Rating_HP.text = "B+";
         else if (enemy.mHealth <= 400)
             Rating_HP.text = "A";
@@ -532,21 +570,21 @@ public class LevelSelectionScript : MonoBehaviour
         // atk
         if (enemy.atk <= 0) 
             Rating_ATK.text = "E";
-        else if (enemy.atk <= 10)
-            Rating_ATK.text = $"D";
         else if (enemy.atk <= 15)
-            Rating_ATK.text = "C";
+            Rating_ATK.text = $"D";
         else if (enemy.atk <= 20)
+            Rating_ATK.text = "C";
+        else if (enemy.atk <= 25)
             Rating_ATK.text = "C+";
-        else if (enemy.atk <= 35)
+        else if (enemy.atk <= 40)
             Rating_ATK.text = "B";
-        else if (enemy.atk <= 50)
+        else if (enemy.atk <= 55)
             Rating_ATK.text = "B+";
-        else if (enemy.atk <= 75)
+        else if (enemy.atk <= 80)
             Rating_ATK.text = "A";
-        else if (enemy.atk <= 100)
+        else if (enemy.atk <= 110)
             Rating_ATK.text = "A+";
-        else if (enemy.atk <= 150)
+        else if (enemy.atk <= 160)
             Rating_ATK.text = "S";
         else
             Rating_ATK.text = "S+";
@@ -649,21 +687,21 @@ public class LevelSelectionScript : MonoBehaviour
         // mspd
         if (enemy.moveSpeed <= 0) 
             Rating_MSPD.text = "E";
-        else if (enemy.moveSpeed <= 30f)
+        else if (enemy.moveSpeed <= 50f)
             Rating_MSPD.text = "D";
-        else if (enemy.moveSpeed <= 60f)
-            Rating_MSPD.text = "C";
         else if (enemy.moveSpeed <= 80f)
+            Rating_MSPD.text = "C";
+        else if (enemy.moveSpeed <= 110f)
             Rating_MSPD.text = "C+";
-        else if (enemy.moveSpeed <= 95f)
+        else if (enemy.moveSpeed <= 150f)
             Rating_MSPD.text = "B";
-        else if (enemy.moveSpeed <= 130f)
-            Rating_MSPD.text = "B+";
         else if (enemy.moveSpeed <= 180f)
-            Rating_MSPD.text = "A";
+            Rating_MSPD.text = "B+";
         else if (enemy.moveSpeed <= 220f)
+            Rating_MSPD.text = "A";
+        else if (enemy.moveSpeed <= 270f)
             Rating_MSPD.text = "A+";
-        else if (enemy.moveSpeed <= 300f)
+        else if (enemy.moveSpeed <= 330f)
             Rating_MSPD.text = "S";
         else
             Rating_MSPD.text = "S+";
@@ -823,6 +861,7 @@ public class LevelSelectionScript : MonoBehaviour
         if (isViewingMap) return;
 
         enableCM = false;
+        levelDifficultyModifier.AdjustMaxDiffOnCMSelect(enableCM);
         StartCoroutine(ScaleLevelSelection(false));
     }
 
@@ -843,4 +882,30 @@ public class LevelSelectionScript : MonoBehaviour
 [Serializable] public class AppearingEnemies
 {
     public EnemyBase.EnemyCode[] Enemies;
+}
+
+public class EnemyStatKey
+{
+    public EnemyCode Code;
+
+    // if the stats of the enemy changes in this level,
+    // use the level index as part of the key to differentiate it from the default stats;
+    // otherwise, set it to -1 to save the trouble of maintaining the keys for levels without stat changes
+    public int LevelIndex;
+    public bool hasChanged;
+
+    public override bool Equals(object obj)
+    {
+        if (obj is not EnemyStatKey other) return false;
+        if (Code != other.Code) return false;
+
+        return
+            (hasChanged == false && other.hasChanged == false) || (LevelIndex == other.LevelIndex);
+    }
+
+    public override int GetHashCode()
+    {
+        if (!hasChanged) return HashCode.Combine(Code, false);
+        return HashCode.Combine(Code, LevelIndex, true);
+    }
 }

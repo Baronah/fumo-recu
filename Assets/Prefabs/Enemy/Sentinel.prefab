@@ -651,7 +651,6 @@ MonoBehaviour:
   b_detectionRange: 450
   DangerRange_RatioOfAttackRange: 0
   MinimumDistanceFromPlayer: 20
-  gridCellSize: 60
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -672,6 +671,7 @@ MonoBehaviour:
   MoveToOverridePositionSpeedMultiplierJump: 0.35
   CanDetectThroughWalls: 0
   IsInsignificant: 0
+  hasDRWhenNotCombat: 0
   SpeedBuffOnAlert: 1.35
   AtkBuffOnAlert: 1.5
   DetectCircle: {fileID: 5466385592610398606}

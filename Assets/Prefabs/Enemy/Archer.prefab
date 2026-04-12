@@ -5166,7 +5166,6 @@ MonoBehaviour:
   b_detectionRange: 420
   DangerRange_RatioOfAttackRange: 0.9
   MinimumDistanceFromPlayer: 20
-  gridCellSize: 60
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -5186,6 +5185,7 @@ MonoBehaviour:
   MoveToOverridePositionSpeedMultiplierJump: 0.35
   CanDetectThroughWalls: 0
   IsInsignificant: 0
+  hasDRWhenNotCombat: 0
   AtkPercentageUp_perSecond: 0.05
   AtkPercentageUp_cap: 2
   PS: {fileID: 7906865763794752210}

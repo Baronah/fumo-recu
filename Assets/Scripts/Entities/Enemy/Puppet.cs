@@ -5,6 +5,11 @@ public class Puppet : EnemyBase
         
     }
 
+    public override void OnAttackReceive(EntityBase source)
+    {
+        
+    }
+
     public override void EnemyFixedBehaviors()
     {
         

@@ -28,25 +28,6 @@ public class FM_07 : StageManager
         }
     }
 
-    public override void OnEnemySpawn(EnemyBase enemy)
-    {
-        base.OnEnemySpawn(enemy);
-        if (enemy is Sudaram sr)
-        {
-            sr.originiumPollutionBonusASPD = 100f;
-            sr.originiumPollutionDamageMultiplier = 0f;
-        }
-        else if (enemy as OriginiumSpider || enemy as OriginiumSpiderAlpha)
-        {
-            enemy.bAtk = (short)(enemy.bAtk * 0.85f);
-        }
-        else if (enemy as Sentinel)
-        {
-            enemy.bDef += 10;
-            enemy.bRes += 10;
-        }
-    }
-
     public override void OnPlayerSpawn(PlayerBase player)
     {
         base.OnPlayerSpawn(player);

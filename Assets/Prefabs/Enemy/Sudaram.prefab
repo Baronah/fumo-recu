@@ -5093,7 +5093,7 @@ MonoBehaviour:
     is now nourished by the power of the Nachzehrer King. For the Nachzehrer, consumption
     and nourishment\u2014greed and devotion\u2014are just two sides of the same dreaded
     coin."
-  Skillset: "\u2022 Takes reduced damage from <color=#CC4000>Originium Pollutions</color>.\n\u2022
+  Skillset: "\u2022 Takes 75% less damage from <color=#CC4000>Originium Pollutions</color>.\n\u2022
     While standing on an <color=#CC4000>Originium Pollution</color>, stops moving
     to gain increased ASPD. Attack range becomes global, and attacks now fire several
     projectiles."
@@ -5101,7 +5101,6 @@ MonoBehaviour:
   b_detectionRange: 300
   DangerRange_RatioOfAttackRange: 0.8
   MinimumDistanceFromPlayer: 20
-  gridCellSize: 60
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -5121,6 +5120,7 @@ MonoBehaviour:
   MoveToOverridePositionSpeedMultiplierJump: 0.35
   CanDetectThroughWalls: 0
   IsInsignificant: 0
+  hasDRWhenNotCombat: 0
   originiumPollutionEffect: {fileID: 1025464345471623337}
   originiumPollutionBonusASPD: 60
   originiumPollutionDamageMultiplier: 0.25

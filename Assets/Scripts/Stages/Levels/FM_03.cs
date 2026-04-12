@@ -27,13 +27,6 @@ public class FM_03 : StageManager
             if (enemy as Sentinel) enemy.b_moveSpeed *= SentinelBonusMSPD_Ratio;
         }
 
-        if (enemy as BloodboilKnight)
-        {
-            enemy.mHealth = 350;
-            enemy.def -= 10;
-            enemy.res -= 10;
-        }
-
         base.OnEnemySpawn(enemy);
     }
 }

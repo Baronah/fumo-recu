@@ -32,6 +32,7 @@ public class EnemyBase : EntityBase
         CANDLE_KNIGHT,
         CANDLE,
         TOY,
+        SAINT_STATUE,
     }
 
     public EnemyCode enemyCode;
@@ -52,7 +53,7 @@ public class EnemyBase : EntityBase
     bool showTooltips = false;
 
     [Header("A* Pathfinding")]
-    [SerializeField] private float gridCellSize = 50f;
+    private float gridCellSize = 80f;
     [SerializeField] private LayerMask obstacleLayer = 6;
     [SerializeField] private float pathfindingRadius = 3000f;
     [SerializeField] private float pathUpdateInterval = 0.5f;
@@ -94,7 +95,7 @@ public class EnemyBase : EntityBase
     private float stuckTimer = 0f; // Track how long we've been stuck
     private Vector2 lastPosition = Vector2.zero; // Track last position for stuck detection
     private readonly float stuckThreshold = 0.85f; // Time before considering stuck
-    private readonly float stuckMovementThreshold = 25f; // Distance moved to not be considered stuck
+    private readonly float stuckMovementThreshold = 50f; // Distance moved to not be considered stuck
 
     private const short PathfindCntThreshold = 100, ScanPlayerCntThreshold = 20, MoveCntThreshold = 15;
     private short ScanPlayerCnt = 0, MoveCnt = 0, PathfindCnt = 0;
@@ -175,7 +176,7 @@ public class EnemyBase : EntityBase
 
     public override void FixedUpdate()
     {
-        if (!IsAlive()) return;
+        if (!IsAlive() || ViewOnlyMode) return;
         if (DetectSymbol)
         {
             DetectSymbol.color = RecentlyScannedPlayer ? Color.red : Color.yellow;
@@ -193,6 +194,7 @@ public class EnemyBase : EntityBase
 
     public virtual void EnemyFixedBehaviors()
     {
+        if (!IsAlive() || ViewOnlyMode) return;
         ScanPlayer();
         UpdatePathfinding();
         Move();
@@ -271,7 +273,7 @@ public class EnemyBase : EntityBase
             return;
         }
 
-        pathfindingRadius = Mathf.Clamp(distanceToDestination, 500, 1800);
+        pathfindingRadius = Mathf.Clamp(distanceToDestination, 500, 2500);
         // Determine what changed to decide if we need path updates
         Vector2 currentTargetPos = SpottedPlayer ? SpottedPlayer.transform.position : desiredDestination;
 
@@ -887,9 +889,9 @@ public class EnemyBase : EntityBase
     }
 
     readonly protected bool Adaption = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.ADAPTION);
-    protected float Adaption_DefJump = 7;
-    protected float Adaption_ResJump = 5;
-    protected short Adaption_MaxCount = 30;
+    protected float Adaption_DefJump = 5;
+    protected float Adaption_ResJump = 3;
+    protected short Adaption_MaxCount = 40;
     public override void TakeDamage(DamageInstance damage, EntityBase source, ProjectileScript projectileInfo = null, bool IgnoreInvulnerability = false)
     {
         OnAttackReceive(source);

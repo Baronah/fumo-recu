@@ -25,7 +25,7 @@ public class HibernatorKnight : EnemyBase
     public override void FixedUpdate()
     {
         base.FixedUpdate(); 
-        CountSleep();
+        if (!ViewOnlyMode) CountSleep();
     }
 
     public override void EnemyFixedBehaviors()

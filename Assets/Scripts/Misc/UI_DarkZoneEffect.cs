@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DarkZoneEffect : MonoBehaviour
+public class UI_DarkZoneEffect : MonoBehaviour
 {
     [SerializeField] float offsetY = 100f;
     [HideInInspector] public EntityBase entity;

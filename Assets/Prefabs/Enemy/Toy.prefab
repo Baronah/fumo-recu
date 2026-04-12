@@ -4954,6 +4954,10 @@ PrefabInstance:
       propertyPath: m_Color.a
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5288166252650138663, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6772246562461740860, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
       propertyPath: m_LocalPosition.x
       value: -4880.103
@@ -5262,7 +5266,6 @@ MonoBehaviour:
   b_detectionRange: 475
   DangerRange_RatioOfAttackRange: 0.7
   MinimumDistanceFromPlayer: 20
-  gridCellSize: 60
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -5282,6 +5285,7 @@ MonoBehaviour:
   MoveToOverridePositionSpeedMultiplierJump: 0.35
   CanDetectThroughWalls: 0
   IsInsignificant: 0
+  hasDRWhenNotCombat: 0
   StartAni: {fileID: 7400000, guid: bdb1fca197cb2c444b88a3670da45db3, type: 2}
   WakenUp: 0
 --- !u!212 &8027194920986628365 stripped
