@@ -16,7 +16,7 @@ GameObject:
   m_Layer: 6
   m_Name: EnemyBase
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -198,7 +198,7 @@ MonoBehaviour:
   b_detectionRange: 0
   DangerRange_RatioOfAttackRange: 0.75
   MinimumDistanceFromPlayer: 20
-  gridCellSize: 35
+  GridCellSize: 70
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 256

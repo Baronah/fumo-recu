@@ -174,6 +174,8 @@ public class StageManager : MonoBehaviour
         "When a patrolling enemy is attacked, they and their nearby allies will try to rush toward where the attack came from (represented by the '?' symbol above them).",
         "Melee attack can be dodged by quickly moving out of the attacker's range.\nFor ranged attack, just dodge their projectiles.",
         "Enemies who have spotted you have a '!' symbol above them. If it turns red, it means you are inside their attack range.",
+        "DEF and RES reduce the respective damage type a unit receives by percentage.\n" +
+        "Every 1 DEF/RES reduces the amount of physical/magical damage by 1%, up to 95% and 90%, respectively.",
     };
 
     private readonly List<string> MintLabTips = new()
@@ -187,8 +189,8 @@ public class StageManager : MonoBehaviour
     {
         $"Need time to pull off a difficult move? Press '{SlowKey}' to toggle slow-mo!",
         "'Der Tag neight Sich' (Ranged character's ultimate) can be cancelled by recast, move, attack or use special during channel time.",
-        "'Der Tag neight Sich' (Ranged character's ultimate) projectiles travel for a while before disappearing, great for reaching faraway enemies.",
         "'Zeropoint Burst' (Ranged character's special) has a delay of 0.1 seconds",
+        "'Evasion' (Melee character's special) gives you invincibility during dash.",
         "Enemies with higher weight are more resistant to push/pull effects.",
         "Push/pull will also cancel attacks.",
         "Buffs are carried across swaps, debuffs are not.",
@@ -207,11 +209,10 @@ public class StageManager : MonoBehaviour
     private readonly string[] Trolls =
     {
         "Everyone likes Mint Arknights.",
-        "Build your Mint Arknights.",
         ":minthype:",
+        "Surf Bungaku Kamakura",
         "Tsukiyoi refers to the yoizuki in Japanese, the early evening moon of August which is also called the yuzuki.",
         "ASIAN KUNG-FU GENERATION my beloved.",
-        "Nicho5.",
         "I never troll.",
         "noodles.",
         "expect reading :)",
@@ -220,8 +221,10 @@ public class StageManager : MonoBehaviour
         "Welcome back Jonny",
         "Oh nyo you lost the game",
         "wife:\njustnya, iana, typhon, mulberry, pozy if skin, archetto, vendela, ceylon (skin), rushia, warfarin (stab), lin, santalla, ines, mint?, honeyberry?? (but maybe that's mint's wife?), eyja, erota, pallas, goldenglow (skin), swire, ray, astgenne, virtuoso, weedy, monch, reedalt, indigo, amiya(?), dusk, franka, mudrock, coldshot, jessica2, lemuen, blacknight, valarqvin, skadi, aqua, irene, lolcal\n\ndaughters:\nscene, ros, suzu, ifrit, shamare shama, scene, papika, kafka, cement, podenco, vigna, ceobe, amiya, tomimi, iris, lunacub\n\nno wife:\nsora, qiubai, tomimi, paprika, shu (only looks like wife), exu, sussurro (master's wife), mumu, surtr, degen, whisperain (therapist, friend's wife), mr. nothing, rosa, mint?\n\nhusband: degenbrecher?\n\nirl:\nLessing, Ray, Blacknight's Tapir, Ray's Capybara, Ines, Mandragora\n\nupdated: 25/05/24 12:04 GMT",
-        "Sorry, Amanai. I'm not even angry over you right now. I bear no grudge against anyone. It's just that the world feels so, so wonderful right now. \"Throughout Heaven and Earth, I alone am the honored one\". However, even in the Gojo clan only a scant few know about this. Take the amplified and the reversal, then combine those two different expressions of infinity to create and push out imaginary mass. Imaginary technique... Purple.",
     };
+
+    int[] luckyNumbers = new int[] { 52, 39, 2, 27, 4 };
+
     void SetTips()
     {
         int tipCount = PlayerPrefs.GetInt("TipsCounter", 0);
@@ -232,7 +235,7 @@ public class StageManager : MonoBehaviour
 
         TxtTips = GameObject.Find("Tips").GetComponent<TMP_Text>();
 
-        bool IsTroll = tipCount >= 25 && Random.Range(0, 100) <= 10;
+        bool IsTroll = tipCount >= 25 && luckyNumbers.Contains(Random.Range(0, 100));
         TxtTips.text = "<b>TIPS:</b> " +
             (IsTroll ? Trolls[Random.Range(0, Trolls.Length)] : Tips[Random.Range(0, Tips.Count)]);
         TxtTips.text = TxtTips.text
@@ -654,7 +657,8 @@ public class StageManager : MonoBehaviour
         UpdateEnemyCountUI();
         RemainingEnemiesGO.SetActive(true);
 
-        if (GetEnemyCount(countInfiniteSpawns: true) > 0 || FindObjectsOfType<EnemyBase>().Any(e => e && e.IsAlive())) return;
+        if (GetEnemyCount(countInfiniteSpawns: true) > 0 
+            || FindObjectsOfType<EnemyBase>().Any(e => e && e.IsAlive() && !e.IsInsignificant)) return;
 
         IsStageStarted = false;
         OnStageEnd(ResultType.HEATH_DEATH);

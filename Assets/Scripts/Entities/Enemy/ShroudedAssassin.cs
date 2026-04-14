@@ -9,7 +9,7 @@ using Random = UnityEngine.Random;
 public class ShroudedAssassin : EnemyBase
 {
     [SerializeField] private GameObject shadowClonePrefab;
-    [SerializeField] private GameObject feudBond;
+    [SerializeField] private GameObject feudBond, atkUpEffect;
     [SerializeField] private float dashCooldown = 30f;
     [SerializeField] private float dashDuration = 0.1f;
     [SerializeField] private float dashInterval = 0.1f;
@@ -52,9 +52,19 @@ public class ShroudedAssassin : EnemyBase
     SpriteRenderer shadowSpriteRend;
     Color shadowInitColor;
 
+    short ToggleAttackUpEffectCnt = 5;
     public override void FixedUpdate()
     {
         base.FixedUpdate();
+
+        ToggleAttackUpEffectCnt++;
+        if (ToggleAttackUpEffectCnt >= 5)
+        {
+            ToggleAttackUpEffectCnt = 0;
+            atkUpEffect.SetActive(
+                AtkBuffs.ContainsKey(SilencerAtkBuffKey) && AtkBuffs[SilencerAtkBuffKey].Value >= MaxAtkBuff * 100f / 2
+                );
+        }
 
         if (dashCooldownTimerCountdown > 0)
         {

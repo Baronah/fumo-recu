@@ -398,8 +398,8 @@ MonoBehaviour:
   Icon: {fileID: 21300000, guid: dcf4c32ddb922f149b55f7452c21d6b1, type: 3}
   mHealth: 500
   bAtk: 0
-  bDef: 10
-  bRes: 80
+  bDef: 50
+  bRes: 90
   defPen: 0
   defIgn: 0
   resPen: 0
@@ -458,6 +458,7 @@ MonoBehaviour:
   reviveDuration: 5
   postReviveDuration: 0
   enemyCode: 19
+  size: 1
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
   TooltipsHoldtime: 7
   Description: Church statue that has been abandoned for a very long time. Though
@@ -490,7 +491,7 @@ MonoBehaviour:
   IsInsignificant: 1
   hasDRWhenNotCombat: 0
   HealEffect: {fileID: 443374613090984116}
-  DefBuffPercentage: 30
+  DefBuffPercentage: 50
   ResBuffFlat: 20
   SelfHpHealingBonus: 0.005
   HealOnDeathPercentage: 0.35

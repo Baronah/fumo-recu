@@ -536,6 +536,7 @@ MonoBehaviour:
   reviveDuration: 5
   postReviveDuration: 0
   enemyCode: 9
+  size: 0
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
   TooltipsHoldtime: 6
   Description: A spider-like creature that has been mutated by Originium.

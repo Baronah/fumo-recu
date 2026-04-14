@@ -37,6 +37,16 @@ public class EnemyBase : EntityBase
 
     public EnemyCode enemyCode;
 
+    public enum Size
+    {
+        SMALL,
+        MEDIUM,
+        LARGE,
+        HUGE,
+    }
+
+    public Size size = Size.MEDIUM;
+
     private bool SpotPlayerUponSpawn = false;
     [SerializeField] private GameObject TooltipsPrefab;
     private int TooltipsPriority = 0;
@@ -53,7 +63,7 @@ public class EnemyBase : EntityBase
     bool showTooltips = false;
 
     [Header("A* Pathfinding")]
-    private float gridCellSize = 80f;
+    private float gridCellSize = 65f;
     [SerializeField] private LayerMask obstacleLayer = 6;
     [SerializeField] private float pathfindingRadius = 3000f;
     [SerializeField] private float pathUpdateInterval = 0.5f;
@@ -115,6 +125,15 @@ public class EnemyBase : EntityBase
         PathfindCnt = (short)UnityEngine.Random.Range(0, PathfindCntThreshold);
         MoveCnt = (short)UnityEngine.Random.Range(0, ScanPlayerCntThreshold);
         ScanPlayerCnt = (short)UnityEngine.Random.Range(0, MoveCntThreshold);
+
+        gridCellSize = size switch
+        {
+            Size.SMALL => 50f,
+            Size.MEDIUM => 65f,
+            Size.LARGE => 80f,
+            Size.HUGE => 100f,
+            _ => gridCellSize
+        };
 
         if (!ViewOnlyMode)
         {
