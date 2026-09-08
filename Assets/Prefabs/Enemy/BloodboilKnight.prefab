@@ -320,7 +320,7 @@ MonoBehaviour:
   resPen: 0
   resIgn: 0
   lifeSteal: 0
-  b_moveSpeed: 110
+  b_moveSpeed: 140
   b_attackRange: 105
   b_attackWindupTime: 0.6
   b_attackInterval: 3
@@ -349,15 +349,16 @@ MonoBehaviour:
   canRevive: 0
   isInvisible: 0
   InvulnerableTimer: 0
+  FeetPosition: {fileID: 0}
   CanBeHitByProjectiles: 1
   damageType: 0
   attackPattern: 0
   ProjectilePrefab: {fileID: 0}
   ProjectileType: 1
   ProjectileSpeed: 1000
-  DamagePopup: {fileID: 7498904281893358320, guid: b09dfacba160b6d47938cf47f8dea3c9, type: 3}
   ccBar: {fileID: 3699022713693373004}
   AttackAnimation: {fileID: 7400000, guid: 38cef02e111cc2741872318b17372723, type: 2}
+  FeetCollider: {fileID: 0}
   sfxs: []
   BeingShiftState: 0
   FreezeTimer: 0
@@ -376,6 +377,7 @@ MonoBehaviour:
   postReviveDuration: 0
   enemyCode: 5
   size: 1
+  CanDetectPlayer: 1
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
   TooltipsHoldtime: 6
   Description: A reowned knight from the Bloodboil Knightclub. The Bloodboil Knights
@@ -387,12 +389,11 @@ MonoBehaviour:
   b_detectionRange: 200
   DangerRange_RatioOfAttackRange: 0.85
   MinimumDistanceFromPlayer: 50
-  WaitTimes: []
   MoveToOverridePositionSpeedMultiplier: 1.5
   MoveToOverridePositionSpeedMultiplierJump: 0.35
   CanDetectThroughWalls: 0
   IsInsignificant: 0
-  hasDRWhenNotCombat: 0
+  DamageReductionOutsideCombat: 0
   SkillEffect: {fileID: 9121667887855823670}
   atkAddPerEnemyKilled: 0.125
   aspdAddPerEnemyKilled: 10

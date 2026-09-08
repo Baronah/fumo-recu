@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using static LevelDifficultyModifier;
 using static PlayerManager;
 using static SkillTree_Manager;
+using static UnityEngine.EventSystems.EventTrigger;
 using SkillType = PlayerManager.SkillType;
 
 public class PlayerBase : EntityBase
@@ -89,6 +90,7 @@ public class PlayerBase : EntityBase
             IdeasBuff();
             AttentionBuff();
             WindBladeBuff();
+            ProcessPlayerGeologistUpgrade();
         }
 
         WindanthemBar.SetActive(alive && AspdBuffs.ContainsKey(WindAnthemKey) && AspdBuffs[WindAnthemKey].IsInEffect);
@@ -103,6 +105,52 @@ public class PlayerBase : EntityBase
         WindanthemMaxEffect.SetActive(alive && IsWindAnthemMaxed);
 
         AllowVow.SetActive(alive && canVow && !playerManager.hasVowed);
+    }
+
+    public override void OnEnvironmentalTileEnter(StageManager.EnvironmentType environmentType)
+    {
+        base.OnEnvironmentalTileEnter(environmentType);
+        ProcessPlayerGeologistUpgrade();
+    }
+
+    float geologistCountUp = 0;
+    public virtual void ProcessPlayerGeologistUpgrade()
+    {
+        geologistCountUp += Time.fixedDeltaTime;
+        if (geologistCountUp <= 0.15f) return;
+
+        if (environmentalTilesStandingOn.Count <= 0)
+        {
+            geologistCountUp = 0;
+            return;
+        }
+
+        if (Skills.Contains(SkillTree_Manager.SkillName.GEOLOGIST_OBSERVE))
+        {
+            ReduceUltimateCooldown(geologistCountUp * 0.4f, PlayerBase.CooldownReductionType.FLAT);
+        }
+
+        if (Skills.Contains(SkillTree_Manager.SkillName.GEOLOGIST_STUDY))
+        {
+            ApplyEffect(Effect.AffectedStat.ATK, "GEOLOGIST_ATK_BUFF", 50f, 0.5f, true);
+        }
+
+        if (Skills.Contains(SkillTree_Manager.SkillName.GEOLOGIST_EXPLORE))
+        {
+            ApplyEffect(Effect.AffectedStat.MSPD, "GEOLOGIST_MSPD_BUFF", 50f, 0.5f, true);
+        }
+
+        geologistCountUp = 0;
+    }
+
+    public override void OnEnvironmentalTileExit(StageManager.EnvironmentType environmentType)
+    {
+        base.OnEnvironmentalTileExit(environmentType);
+        if (environmentalTilesStandingOn.Count <= 0)
+        {
+            RemoveEffect("GEOGOLIST_ATK_BUFF");
+            RemoveEffect("GEOGOLIST_MSPD_BUFF");
+        }
     }
 
     protected override bool TriggerHunger()

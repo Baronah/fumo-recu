@@ -62,6 +62,7 @@ public class StageManager : MonoBehaviour
 
     protected EnemySpawnpointScript[] enemySpawnpoints;
 
+    [SerializeField] protected float GlobalFlatSpeedAdd = 0f;
     [SerializeField] protected float ChallengeModeStatsModifier = 1.2f;
 
     protected float timeScaleSlow = 0.4f;
@@ -402,6 +403,8 @@ public class StageManager : MonoBehaviour
 
     public virtual void OnEnemySpawn(EnemyBase enemy)
     {
+        enemy.b_moveSpeed += GlobalFlatSpeedAdd;
+
         EnemyStatsLookup.GetStats(enemy, LevelIndex, out bool hasChanged);
         EnemyStatsLookup.ProcessEnemyDifficultyScaling(enemy, StageCompleteConditionType);
 
@@ -462,6 +465,8 @@ public class StageManager : MonoBehaviour
 
     public virtual void OnPlayerSpawn(PlayerBase player)
     {
+        player.b_moveSpeed += GlobalFlatSpeedAdd;
+
         if (CharacterPrefabsStorage.DifficultyLevel == (int) DiffType.Observer)
         {
             player.mHealth += player.mHealth * 0.5f;

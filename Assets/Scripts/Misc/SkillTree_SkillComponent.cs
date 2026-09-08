@@ -25,12 +25,14 @@ public class SkillTree_SkillComponent : MonoBehaviour
 
     private void Awake()
     {
+        if (selfButton && skillIconImage) return;
+
         selfButton = GetComponent<Button>();
         skillIconImage = GetComponent<Image>();
 
         selfButton.onClick.AddListener(OnSkillButtonClicked);
         var colors = selfButton.colors;
-        colors.disabledColor = new(0.35f, 0.35f, 0.35f);
+        colors.disabledColor = new(0.3f, 0.3f, 0.3f);
         
         selfButton.colors = colors;
     }
@@ -54,7 +56,7 @@ public class SkillTree_SkillComponent : MonoBehaviour
             var skillComponent = SkillTree_Manager.Instance.allSkills.Find(s => s.skillName == skill);
             if (skillComponent != null)
             {
-                skillComponent.skillIconImage.color = new(0.5f, 0.5f, 0.5f);
+                skillComponent.skillIconImage.color = new(0.4f, 0.4f, 0.4f);
             }
         }
 
@@ -66,17 +68,32 @@ public class SkillTree_SkillComponent : MonoBehaviour
         skillIconImage.color = Color.white;
         foreach (var skill in mutuallyExclusiveSkills)
         {
-            var skillComponent = SkillTree_Manager.Instance.allSkills.Find(s => s.skillName == skill);
+            SkillTree_SkillComponent skillComponent = SkillTree_Manager.Instance.allSkills.Find(s => s.skillName == skill);
             if (!skillComponent) continue;
 
-            if (CharacterPrefabsStorage.Skills.ContainsKey(skillComponent.skillName))
-                skillComponent.selfButton.interactable = false;
-            else
-            {
-                skillComponent.skillIconImage.color = Color.white;
-                skillComponent.selfButton.interactable = true;
-            }
+            skillComponent.SetInteractableState();
         }
+    }
+
+    public void SetInteractableState()
+    {
+        if (!selfButton || !skillIconImage) Awake();
+
+        bool interactableState = GetInteractableState();
+
+        if (interactableState) skillIconImage.color = Color.white;
+        selfButton.interactable = interactableState;
+    }
+
+    bool GetInteractableState()
+    {
+        if (CharacterPrefabsStorage.Skills.ContainsKey(skillName)) return false;
+        if (LevelSelectionScript.Instance.GetBanSkills.Contains(skillName)) return false;
+        foreach (var skill in mutuallyExclusiveSkills)
+        {
+            if (CharacterPrefabsStorage.Skills.ContainsKey(skill)) return false;
+        }
+        return true;
     }
 
     private void FixedUpdate()
@@ -86,7 +103,7 @@ public class SkillTree_SkillComponent : MonoBehaviour
             var colors = selfButton.colors;
             colors.disabledColor = CharacterPrefabsStorage.Skills.ContainsKey(skillName)
                 ? Color.white
-                : new(0.35f, 0.35f, 0.35f);
+                : new(0.3f, 0.3f, 0.3f);
         }
 
         if (Overlay == null) return;
@@ -130,9 +147,7 @@ public class SkillTree_SkillComponent : MonoBehaviour
     public void OnSkillClear()
     {
         if (CharacterPrefabsStorage.Skills.ContainsKey(skillName)) return;
-
-        selfButton.interactable = true;
-        skillIconImage.color = Color.white;
+        SetInteractableState();
     }
 }
 

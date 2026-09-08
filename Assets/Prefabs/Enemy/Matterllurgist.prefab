@@ -5068,7 +5068,7 @@ MonoBehaviour:
   resPen: 0
   resIgn: 0
   lifeSteal: 0
-  b_moveSpeed: 115
+  b_moveSpeed: 140
   b_attackRange: 420
   b_attackWindupTime: 0.28
   b_attackInterval: 1.8

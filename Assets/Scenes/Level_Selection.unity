@@ -16836,8 +16836,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 25
-  m_fontSizeBase: 25
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 14
@@ -29475,7 +29475,7 @@ MonoBehaviour:
   - 
   - '<color=yellow>Swap cool-down reduces. And your units have greatly increased
     attributes.</color>\n\n<color=#00FFD0>Mint Fumo: Grants ''Victory Rewind - Spirit''
-    if not already selected (ignores mutually exclusive).</color>'
+    (ignores mutually exclusive).</color>'
   - 
   - 
   - 
@@ -29483,7 +29483,7 @@ MonoBehaviour:
   - 
   - '<color=yellow>Swap cool-down reduces. And your units have greatly increased
     attributes.</color>\n\n<color=#00FFD0>Mint Fumo: Grants ''Geologist - Explore''
-    if not already selected (ignores mutually exclusive).</color>'
+    (ignores mutually exclusive).</color>'
   ChallengeModes:
   - '''Hounds'' have greatly increased HP and ATK.'
   - Terrains and enemies will differ in places, and more enemies will appear.
@@ -29577,6 +29577,23 @@ MonoBehaviour:
   - Enemies: 0e0000001000000012000000
   - Enemies: 020000000a0000000c000000130000000f0000001000000012000000
   - Enemies: 010000000a0000000e0000000f0000001200000013000000
+  BanSkills:
+  - Skills: 
+  - Skills: 
+  - Skills: 
+  - Skills: 
+  - Skills: 
+  - Skills: 
+  - Skills: 
+  - Skills: 
+  - Skills: 
+  - Skills: 19000000
+  - Skills: 
+  - Skills: 
+  - Skills: 
+  - Skills: 
+  - Skills: 
+  - Skills: 0600000038000000
   MapPreviewObj: {fileID: 340580784}
   MapPreviewImg: {fileID: 2125190412}
   MapPreviewImgOverlay: {fileID: 1141736479}

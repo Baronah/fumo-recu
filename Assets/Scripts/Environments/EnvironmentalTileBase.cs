@@ -48,58 +48,18 @@ public class EnvironmentalTileBase : MonoBehaviour
     {
         entity.AddEnvironmentalTilesThisUnitStandingOn(GetEnvironmentType());
         entitiesWithin.Add(entity);
-        if (entity is PlayerBase pb)
-        {
-            ProcessPlayerGeologistUpgrade(pb);
-        }
     }
 
     public virtual void OnEntityStay(EntityBase entity)
     {
         entity.AddEnvironmentalTilesThisUnitStandingOn(GetEnvironmentType());
         if (!entitiesWithin.Contains(entity)) entitiesWithin.Add(entity);
-
-        if (entity is PlayerBase pb)
-        {
-            ProcessPlayerGeologistUpgrade(pb);
-        }
-    }
-
-    public virtual void ProcessPlayerGeologistUpgrade(PlayerBase pb)
-    {
-        if (!pb) return;
-
-        if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOLOGIST_OBSERVE))
-        {
-            pb.ReduceUltimateCooldown(Interval * 0.4f, PlayerBase.CooldownReductionType.FLAT);
-        }
-        
-        if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOLOGIST_STUDY))
-        {
-            pb.ApplyEffect(Effect.AffectedStat.ATK, "GEOLOGIST_ATK_BUFF", 50f, 9999f, true);
-        }
-        
-        if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOLOGIST_EXPLORE))
-        {
-            pb.ApplyEffect(Effect.AffectedStat.MSPD, "GEOLOGIST_MSPD_BUFF", 50f, 9999f, true);
-        }
     }
 
     public virtual void OnEntityExit(EntityBase entity)
     {
         entity.RemoveEnvironmentalTilesThisUnitStandingOn(GetEnvironmentType());
         entitiesWithin.Remove(entity);
-        if (entity is PlayerBase pb && pb.environmentalTilesStandingOn.Count <= 0)
-        {
-            if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOLOGIST_STUDY))
-            {
-                pb.RemoveEffect("GEOGOLIST_ATK_BUFF");
-            }
-            else if (pb.Skills.Contains(SkillTree_Manager.SkillName.GEOLOGIST_EXPLORE))
-            {
-                pb.RemoveEffect("GEOGOLIST_MSPD_BUFF");
-            }
-        }
     }
 
     public virtual void OnTriggerEnter2D(Collider2D collision)

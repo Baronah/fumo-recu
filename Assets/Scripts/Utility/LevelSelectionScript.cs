@@ -16,6 +16,13 @@ using static StageManager;
 
 public class LevelSelectionScript : MonoBehaviour
 {
+    public static LevelSelectionScript Instance;
+    private void Awake()
+    {
+        if (!Instance) Instance = this;
+        else Destroy(gameObject);
+    }
+
     [SerializeField] private GameObject LevelPrefabTemplate, LevelsPoint, Overlay, LevelSelectionConfirm, Nav, LevelEnemyView, EnemyViewPrefab, EnemyViewContent;
     [SerializeField] private CharacterPrefabsStorage characterPrefabsStorage;
     [SerializeField] private Transform[] Containers;
@@ -30,6 +37,10 @@ public class LevelSelectionScript : MonoBehaviour
     [SerializeField] private StageCompleteCondition[] CompleteCondition;
     [SerializeField] private StageEnvironment[] Environments;
     [SerializeField] private AppearingEnemies[] AppearingEnemies;
+    [SerializeField] private BanSkills[] BanSkills;
+
+    public SkillTree_Manager.SkillName[] GetBanSkills
+        => BanSkills[selectedIndex].Skills;
 
     [SerializeField] private GameObject MapPreviewObj;
     [SerializeField] private Image MapPreviewImg, MapPreviewImgOverlay;
@@ -235,6 +246,8 @@ public class LevelSelectionScript : MonoBehaviour
         selectedKey = runtimeKey;
         SelectedLvlName.text = GetLevelNameByIndex(selectedIndex) + ": " + characterPrefabsStorage.LevelTitles[selectedIndex];
         SelectedLvlDescription.text = GetLevelDescription(selectedIndex);
+        
+        if (SkillTree_Manager.Instance) SkillTree_Manager.Instance.RemoveBannedSkills();
 
         bool unlockCM = CanUnlockCM(index);
         if (!unlockCM) CMToggleImg.sprite = LockedSprite;
@@ -280,8 +293,14 @@ public class LevelSelectionScript : MonoBehaviour
         }
 
         description = Descriptions[index];
+
+        if (BanSkills[index].Skills.Length > 0)
+        {
+            description += "\n\n<color=red>Some upgrades are not available to choose in this level.</color>";
+        }
+
         if (AddsOn[index] != null && AddsOn[index].Length > 0)
-            description += '\n' + AddsOn[index];
+            description += "\n\n" + AddsOn[index];
 
         if (enableCM)
         {
@@ -889,6 +908,11 @@ public class LevelSelectionScript : MonoBehaviour
 [Serializable] public class AppearingEnemies
 {
     public EnemyBase.EnemyCode[] Enemies;
+}
+
+[Serializable] public class BanSkills
+{
+    public SkillTree_Manager.SkillName[] Skills;
 }
 
 public class EnemyStatKey

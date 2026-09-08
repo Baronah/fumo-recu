@@ -594,7 +594,7 @@ MonoBehaviour:
   resPen: 0
   resIgn: 0
   lifeSteal: 0
-  b_moveSpeed: 120
+  b_moveSpeed: 150
   b_attackRange: 0
   b_attackWindupTime: 0
   b_attackInterval: 0
@@ -666,11 +666,6 @@ MonoBehaviour:
   b_detectionRange: 450
   DangerRange_RatioOfAttackRange: 0
   MinimumDistanceFromPlayer: 20
-  WaitTimes:
-  - 7
-  - 7
-  - 7
-  - 8
   MoveToOverridePositionSpeedMultiplier: 1.5
   MoveToOverridePositionSpeedMultiplierJump: 0.35
   CanDetectThroughWalls: 0

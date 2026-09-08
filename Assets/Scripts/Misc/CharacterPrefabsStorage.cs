@@ -9,14 +9,13 @@ using static PlayerManager;
 public class CharacterPrefabsStorage : ScriptableObject
 {
 	public static string LevelSelectionKey = "Level_Selection";
-    public AssetReference LevelSelectionScene;
 
-	public AssetReference[] PlayerAssetReferences;
+    public AssetReference[] PlayerAssetReferences;
 	public AssetReference[] EnemyAssetReferences;
 	public AssetReference[] SceneAssetReferences;
 	public string[] LevelTitles;
 
-	public static PlayerType startingPlayer = PlayerType.MELEE;
+    public static PlayerType startingPlayer = PlayerType.MELEE;
 	public static bool EnableChallengeMode = false;
 	public static Dictionary<SkillTree_Manager.SkillName, SkillDataSet> Skills = new();
 

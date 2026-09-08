@@ -26,7 +26,7 @@ public class SkillTree_Manager : MonoBehaviour
     [SerializeField] string[] FlavourTxts;
 
     private AudioSource[] audioSources;
-    LevelSelectionScript LevelSelectionScript;
+    LevelSelectionScript LevelSelectionScript => LevelSelectionScript.Instance;
 
     SkillTree_Outview Outview;
     [SerializeField] ScrollRect skillViewScroll;
@@ -475,6 +475,7 @@ public class SkillTree_Manager : MonoBehaviour
         ShowIntro = false;
         IsIntroPlaying = false;
         QuitBtn.SetActive(true);
+        OnSceneLoad_GetTechs();
     }
 
     IEnumerator FillImage(Image image)
@@ -539,6 +540,8 @@ public class SkillTree_Manager : MonoBehaviour
     private void OnEnable()
     {
         skillSaves = new(CharacterPrefabsStorage.Skills);
+        allSkills.ForEach(s => s.SetInteractableState());
+        
         LevelSelectionScript.BGMSource().Stop();
         BGM.Play();
 
@@ -554,6 +557,16 @@ public class SkillTree_Manager : MonoBehaviour
             StartCoroutine(Intro());
         else
             Outview.PlayQuickFadeOut();
+    }
+
+    public void RemoveBannedSkills()
+    {
+        SkillName[] bannedSkill = LevelSelectionScript.GetBanSkills;
+        foreach (var item in bannedSkill)
+        {
+            if (!CharacterPrefabsStorage.Skills.ContainsKey(item)) continue;
+            CharacterPrefabsStorage.Skills.Remove(item);
+        }
     }
 
     private void OnDisable()
@@ -607,8 +620,6 @@ public class SkillTree_Manager : MonoBehaviour
             {
                 audioSources[i].volume = PlayerPrefs.GetFloat("SFX", 1f);
             }
-
-            LevelSelectionScript = FindObjectOfType<LevelSelectionScript>(true);
         }
         else
         {
@@ -759,15 +770,25 @@ public class SkillTree_Manager : MonoBehaviour
     {
         allSkills.ForEach(s => s.OnSkillClear());
 
-        foreach (var item in CharacterPrefabsStorage.Skills)
+        List<SkillName> disabledSkills = CharacterPrefabsStorage.Skills.Keys.ToList();
+        foreach (var item in disabledSkills)
         {
-            SkillTree_SkillComponent comp = allSkills.Find(s => s.skillName == item.Key);
+            SkillTree_SkillComponent comp = allSkills.Find(s => s.skillName == item);
             if (comp == null) return;
             exclusions = comp.OnSkillSelected(exclusions, false);
             comp.Button.interactable = false;
-
-            OnSelect_Update();
         }
+
+        OnSelect_Update();
+    }
+
+    public List<SkillName> GetSkillsForDisable()
+    {
+        var skills = CharacterPrefabsStorage.Skills.Keys.ToList();
+        skills.AddRange(LevelSelectionScript.GetBanSkills);
+        skills = skills.Distinct().ToList();
+
+        return skills;
     }
 
     [SerializeField] GameObject Techs;

@@ -5868,7 +5868,7 @@ MonoBehaviour:
   resPen: 0
   resIgn: 0
   lifeSteal: 0
-  b_moveSpeed: 160
+  b_moveSpeed: 200
   b_attackRange: 65
   b_attackWindupTime: 0.245
   b_attackInterval: 1
@@ -5961,6 +5961,7 @@ MonoBehaviour:
   Up_DashAfterImagePersistTime: 3
   Up_DashSlowPercentage: 50
   Up_DashSlowDuration: 3
+  Up_DashExtendRefundPercentage: 0.35
   BL_AtkScale: 2.5
   BL_AtkBuff: 100
   BL_BuffDur: 7
