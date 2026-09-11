@@ -26,7 +26,7 @@ public class FM_15 : StageManager
     public override SkillTree_Manager.SkillName[] GetExtraSkills()
     {
         if (!fumo) fumo = FindFirstObjectByType<FumoScript>();
-        if (fumo) return new[] { SkillTree_Manager.SkillName.GEOLOGIST_EXPLORE };
+        if (fumo) return new[] { SkillTree_Manager.SkillName.GEOLOGIST_EXPLORE, SkillTree_Manager.SkillName.GEOLOGIST_STUDY };
         return base.GetExtraSkills();
     }
 

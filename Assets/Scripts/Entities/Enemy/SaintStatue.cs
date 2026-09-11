@@ -119,7 +119,7 @@ public class SaintStatue : EnemyBase
             "Though can no longer distinguish good from evil, it never forgets its duty, " +
             "continuing to bestow blessings upon those who seek for them.";
         Skillset =
-            "• Does not move and attack, immunes to crowd-controls, and does not count toward battle progress.\n" +
+            "• Does not move and attack, and does not count toward battle progress.\n" +
             "• Increases the DEF and RES of all enemies while present.\n" +
             "• While standing on a <color=green>Medical Tile</color>, transfers its healing effect to all presenting enemies on the map.\n" +
             "• Upon defeat, heals your units once and grants them a permanent DEF buff.";

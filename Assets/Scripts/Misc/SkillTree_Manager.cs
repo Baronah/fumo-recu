@@ -541,7 +541,8 @@ public class SkillTree_Manager : MonoBehaviour
     {
         skillSaves = new(CharacterPrefabsStorage.Skills);
         allSkills.ForEach(s => s.SetInteractableState());
-        
+        OnSelect_Update();
+
         LevelSelectionScript.BGMSource().Stop();
         BGM.Play();
 

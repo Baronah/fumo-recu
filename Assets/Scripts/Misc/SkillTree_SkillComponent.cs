@@ -32,7 +32,7 @@ public class SkillTree_SkillComponent : MonoBehaviour
 
         selfButton.onClick.AddListener(OnSkillButtonClicked);
         var colors = selfButton.colors;
-        colors.disabledColor = new(0.3f, 0.3f, 0.3f);
+        colors.disabledColor = new(0.35f, 0.35f, 0.35f);
         
         selfButton.colors = colors;
     }
@@ -56,7 +56,7 @@ public class SkillTree_SkillComponent : MonoBehaviour
             var skillComponent = SkillTree_Manager.Instance.allSkills.Find(s => s.skillName == skill);
             if (skillComponent != null)
             {
-                skillComponent.skillIconImage.color = new(0.4f, 0.4f, 0.4f);
+                skillComponent.skillIconImage.color = new(0.5f, 0.5f, 0.5f);
             }
         }
 
@@ -103,7 +103,7 @@ public class SkillTree_SkillComponent : MonoBehaviour
             var colors = selfButton.colors;
             colors.disabledColor = CharacterPrefabsStorage.Skills.ContainsKey(skillName)
                 ? Color.white
-                : new(0.3f, 0.3f, 0.3f);
+                : new(0.35f, 0.35f, 0.35f);
         }
 
         if (Overlay == null) return;

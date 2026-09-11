@@ -77,6 +77,22 @@ public class PlayerBase : EntityBase
         IsComponentsInitialized = true;
     }
 
+    protected override void OnInitialize_GetSkillTreeAttributes()
+    {
+        base.OnInitialize_GetSkillTreeAttributes();
+
+        if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.WINGED_STEPS_A)
+        || CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.WINGED_STEPS_B)
+        || CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.WINGED_STEPS_C))
+            AccelerationBuffPerSec *= 1.5f;
+
+        if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.ATTENTION_DEVICE))
+            StatisRequiredTimer = 3f;
+
+        HungerDamageCurrentHealthPercentagePerSec /= 2;
+        HungerDamageFlatPerSec /= 2;
+    }
+
     [SerializeField] GameObject AllowVow;
     public override void FixedUpdate()
     {

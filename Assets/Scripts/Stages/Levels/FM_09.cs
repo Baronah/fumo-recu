@@ -18,7 +18,7 @@ public class FM_09 : StageManager
     public override SkillTree_Manager.SkillName[] GetExtraSkills()
     {
         if (!fumo) fumo = FindFirstObjectByType<FumoScript>();
-        if (fumo) return new[] { SkillTree_Manager.SkillName.VICTORY_ATK };
+        if (fumo) return new[] { SkillTree_Manager.SkillName.VICTORY_ATK, SkillTree_Manager.SkillName.VICTORY_REFRESH };
         return base.GetExtraSkills();
     }
 

@@ -4290,7 +4290,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -0.0010070801, y: 267.19006}
-  m_SizeDelta: {x: 816.4625, y: 584.94}
+  m_SizeDelta: {x: 816.4625, y: 534.08}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &227070246
 MonoBehaviour:
@@ -4327,17 +4327,16 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "A private place filled with books, crafts, ideas, theories, and a bunch
-    of everything else. \r\nEach is a mystery awaiting to be figured out.\n\nShe
-    comes here whenever new idea sparks,\r\nTo implement. To experiment. To verify.
-    Or simply, to write it down.\r\n\r\nShe also uses this place to store valuable
-    items to her, such as samples for experiment, books, novel-looking ores, or just
-    thing she really likes.\r\n\r\nIn short, it's a little of everything.\nWelcome
-    to Mint's research!\n\r\nFeel free to look around, and if there's something that
-    you need here, you may bring it along.\r\nThough, remember to return them when
-    you're finished. \rShe might need some of them later.\n\r\nYou are welcomed to
-    this place anytime! \r\n\r\n<color=#b1b1b1>Oh, and also, this is her secret base.
-    \r\nShe loves it here more than anywhere. \r\nDon't tell anyone else about it,
-    okay?</color>"
+    of everything else. Each is a mystery awaiting to be figured out.\n\nShe comes
+    here whenever new idea sparks,\r\nTo implement. To experiment. To verify. Or
+    simply, to write it down.\r\n\r\nShe also uses this place to store valuable items
+    to her, such as samples for experiment, books, novel-looking ores, or just thing
+    she really likes.\r\n\r\nIn short, it's a little of everything.\nWelcome to Mint's
+    research!\n\r\nFeel free to look around, and if there's something that you need
+    here, you may bring it along.\r\nThough, remember to return them when you're
+    finished, she might need it later.\n\r\nYou are welcomed to this place anytime!
+    \r\n\r\n<color=#b1b1b1>Oh, and also, this is her secret base. \r\nShe loves it
+    here more than anywhere. \r\nDon't tell anyone else about it, okay?</color>"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5e61686ba236ff04b8632d6a26736acd, type: 2}
   m_sharedMaterial: {fileID: 2509212030381675100, guid: 5e61686ba236ff04b8632d6a26736acd, type: 2}
@@ -4346,7 +4345,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4292408718
+    rgba: 4293196714
   m_fontColor: {r: 0.6671342, g: 0.98490566, b: 0.895436, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -4364,8 +4363,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 23
-  m_fontSizeBase: 23
+  m_fontSize: 22
+  m_fontSizeBase: 22
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -29473,17 +29472,17 @@ MonoBehaviour:
   - <color=yellow>Your units have increased MSPD in this level.</color>\n<color=red>The
     'Sudarim' are immune to damage from Originium Pollutions.</color>
   - 
-  - '<color=yellow>Swap cool-down reduces. And your units have greatly increased
-    attributes.</color>\n\n<color=#00FFD0>Mint Fumo: Grants ''Victory Rewind - Spirit''
-    (ignores mutually exclusive).</color>'
+  - '<color=#00FFD0>Mint Fumo: Grants [INVENTIO] ''Victory Rewind - Spirit'' and
+    ''Victory Rewind - Excitement'' (ignores mutually exclusive).</color>\n\n<color=yellow>Swap
+    cool-down reduces. And your units have greatly increased attributes.</color>'
   - 
   - 
   - 
   - 
   - 
-  - '<color=yellow>Swap cool-down reduces. And your units have greatly increased
-    attributes.</color>\n\n<color=#00FFD0>Mint Fumo: Grants ''Geologist - Explore''
-    (ignores mutually exclusive).</color>'
+  - '<color=#00FFD0>Mint Fumo: Grants [INVENTIO] ''Geologist - Study'' and ''Geologist
+    - Explore'' (ignores mutually exclusive).</color>\n\n<color=yellow>Swap cool-down
+    reduces. And your units have greatly increased attributes.</color>'
   ChallengeModes:
   - '''Hounds'' have greatly increased HP and ATK.'
   - Terrains and enemies will differ in places, and more enemies will appear.
@@ -29587,13 +29586,13 @@ MonoBehaviour:
   - Skills: 
   - Skills: 
   - Skills: 
-  - Skills: 19000000
+  - Skills: 1a00000019000000
   - Skills: 
   - Skills: 
   - Skills: 
   - Skills: 
   - Skills: 
-  - Skills: 0600000038000000
+  - Skills: 060000000500000038000000
   MapPreviewObj: {fileID: 340580784}
   MapPreviewImg: {fileID: 2125190412}
   MapPreviewImgOverlay: {fileID: 1141736479}
@@ -35924,7 +35923,7 @@ MonoBehaviour:
   skillNameText: Bubble-making Arts Unit
   skillDescription: The first attack against an enemy deals additional <color=#ff00ff>10%
     ATK as magical damage</color> and <color=#2962ff>levitates</color> them for 2.5
-    seconds.
+    seconds (can not act, and weight becomes 0).
   favorText: A gift from her friend. The bubbles it creates have excellent plasticity
     and will not pop easily. Very useful for cleaning things up. Beautiful too.
   skillDescriptionInShort: The first attack against an enemy deals bonus magical
@@ -43560,8 +43559,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1734073347}
   m_HandleRect: {fileID: 1734073346}
   m_Direction: 2
-  m_Value: 0.9999988
-  m_Size: 0.9135638
+  m_Value: 0
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -46658,7 +46657,7 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 518057501}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.08643611}
+  m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0.9999999}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}

@@ -294,13 +294,13 @@ public class LevelSelectionScript : MonoBehaviour
 
         description = Descriptions[index];
 
+        if (AddsOn[index] != null && AddsOn[index].Length > 0)
+            description += "\n\n" + AddsOn[index];
+
         if (BanSkills[index].Skills.Length > 0)
         {
             description += "\n\n<color=red>Some upgrades are not available to choose in this level.</color>";
         }
-
-        if (AddsOn[index] != null && AddsOn[index].Length > 0)
-            description += "\n\n" + AddsOn[index];
 
         if (enableCM)
         {

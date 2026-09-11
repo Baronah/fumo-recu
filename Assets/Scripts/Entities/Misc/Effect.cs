@@ -11,6 +11,7 @@ public class Effect
         ARNG,
         MSPD,
         ASPD,
+        WEIGHT,
     }
 
     public AffectedStat affectedStat;

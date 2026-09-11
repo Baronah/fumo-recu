@@ -28,6 +28,8 @@ public class EntityBase : MonoBehaviour
     public float hpRegenFlat = 0, hpRegenPercentage = 0;
 
     public short weight = 0;
+    protected short b_weight = 0;
+
     public short damageReduction = 0, damageAmplify = 0;
 
     public bool IsShiftImmune = false;
@@ -171,7 +173,9 @@ public class EntityBase : MonoBehaviour
                     AspdBuffs = new(),
                     AspdDebuffs = new(),
                     ArngBuffs = new(),
-                    ArngDebuffs = new();
+                    ArngDebuffs = new(),
+                    WeightBuffs = new(),
+                    WeightDebuffs = new();
 
     protected List<Effect> AllEffects()
     {
@@ -187,6 +191,8 @@ public class EntityBase : MonoBehaviour
             .Concat(AspdDebuffs.Values)
             .Concat(ArngBuffs.Values)
             .Concat(ArngDebuffs.Values)
+            .Concat(WeightBuffs.Values)
+            .Concat(WeightDebuffs.Values)
             .ToList();
     }
 
@@ -199,7 +205,8 @@ public class EntityBase : MonoBehaviour
             ResBuffs,
             MspdBuffs,
             AspdBuffs,
-            ArngBuffs
+            ArngBuffs,
+            WeightBuffs,
         };
     }
 
@@ -212,7 +219,8 @@ public class EntityBase : MonoBehaviour
             ResDebuffs,
             MspdDebuffs,
             AspdDebuffs,
-            ArngDebuffs
+            ArngDebuffs,
+            WeightDebuffs,
         };
     }
 
@@ -295,6 +303,7 @@ public class EntityBase : MonoBehaviour
         attackRange = b_attackRange;
         attackWindupTime = b_attackWindupTime;
         attackInterval = b_attackInterval;
+        b_weight = weight;
 
         AttackPosition = transform.Find("AttackPosition");
         if (!AttackPosition)
@@ -324,19 +333,6 @@ public class EntityBase : MonoBehaviour
 
     protected virtual void OnInitialize_GetSkillTreeAttributes()
     {
-        if (this as PlayerBase)
-        {
-            if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.WINGED_STEPS_A)
-            || CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.WINGED_STEPS_B)
-            || CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.WINGED_STEPS_C))
-                AccelerationBuffPerSec *= 1.5f;
-
-            if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.ATTENTION_DEVICE))
-                StatisRequiredTimer = 3f;
-
-            HungerDamageCurrentHealthPercentagePerSec /= 2;
-            HungerDamageFlatPerSec /= 2;
-        }
     }
 
     [SerializeField] protected bool HasOnStartCoroutine = true;
@@ -471,6 +467,13 @@ public class EntityBase : MonoBehaviour
                     else
                         ArngDebuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
                     break;
+
+                case AffectedStat.WEIGHT:
+                    if (WeightDebuffs.ContainsKey(Key))
+                        WeightDebuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
+                    else
+                        WeightDebuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
+                    break;
             }
         }
         else
@@ -517,6 +520,13 @@ public class EntityBase : MonoBehaviour
                         ArngBuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
                     else
                         ArngBuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
+                    break;
+
+                case AffectedStat.WEIGHT:
+                    if (WeightBuffs.ContainsKey(Key))
+                        WeightBuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
+                    else
+                        WeightBuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
                     break;
             }
         }
@@ -600,6 +610,18 @@ public class EntityBase : MonoBehaviour
                 ArngDebuffs.Remove(Key);
                 hasChanged = true;
             }
+
+            if (WeightBuffs.ContainsKey(Key))
+            {
+                WeightBuffs.Remove(Key);
+                hasChanged = true;
+            }
+
+            if (WeightDebuffs.ContainsKey(Key))
+            {
+                WeightDebuffs.Remove(Key);
+                hasChanged = true;
+            }
         }
         
         if (hasChanged) CalculateBuffsAndDebuffs();
@@ -635,6 +657,7 @@ public class EntityBase : MonoBehaviour
         }
     }
 
+    short prevWeightAdd = 0;
     float prevAtkAdd = 0, prevDefAdd = 0, prevResAdd = 0;
     float prevMspdAdd = 0, prevAspdAdd = 0, prevArngAdd = 0, prevDrngAdd = 0;
     public void CalculateBuffsAndDebuffs()
@@ -646,6 +669,7 @@ public class EntityBase : MonoBehaviour
         atk -= (short) prevAtkAdd;
         def -= (short) prevDefAdd;
         res -= (short) prevResAdd;
+        weight -= prevWeightAdd;
         moveSpeed -= prevMspdAdd;
         ASPD -= prevAspdAdd;
 
@@ -655,6 +679,7 @@ public class EntityBase : MonoBehaviour
 
         prevAtkAdd = prevDefAdd = prevResAdd = 0;
         prevMspdAdd = prevAspdAdd = prevArngAdd = prevDrngAdd = 0;
+        prevWeightAdd = 0;
 
         // Buffs
         List<Effect> atkBuffsList = new(AtkBuffs.Values.Where(a => a.IsInEffect).ToList());
@@ -715,7 +740,6 @@ public class EntityBase : MonoBehaviour
             prevAspdAdd += a.Value;
         });
 
-
         List<Effect> arngBuffsList = new(ArngBuffs.Values.Where(a => a.IsInEffect).ToList());
         arngBuffsList.ForEach(a =>
         {
@@ -732,11 +756,18 @@ public class EntityBase : MonoBehaviour
             }
         });
 
+        List<Effect> weightBuffsList = new(WeightBuffs.Values.Where(a => a.IsInEffect).ToList());
+        weightBuffsList.ForEach(a =>
+        {
+            prevWeightAdd += (short) a.Value;
+        });
+
         float simAtk = (atk + prevAtkAdd),
              simDef = (def + prevDefAdd),
              simRes = (res + prevResAdd),
              simMspd = moveSpeed + prevMspdAdd,
              simAspd = ASPD + prevAspdAdd,
+             simWeight = weight + prevWeightAdd,
              simArng = attackRange + prevArngAdd,
              simDrng = 0;
 
@@ -856,6 +887,23 @@ public class EntityBase : MonoBehaviour
             }
         });
 
+        List<Effect> sortedWeightDebuffs = new(WeightDebuffs.Values.Where(a => a.IsInEffect).ToList());
+        sortedWeightDebuffs.Sort((a1, a2) => (int)(a2.Value - a1.Value));
+        sortedWeightDebuffs.ForEach(a =>
+        {
+            if (a.IsPercentage)
+            {
+                float reduction = simWeight * a.Value / 100f;
+                prevWeightAdd -= (short) reduction;
+                simWeight -= reduction;
+            }
+            else
+            {
+                prevWeightAdd -= (short)a.Value;
+                simWeight -= a.Value;
+            }
+        });
+
         // avoid negative amount and force it to be 0 instead
         // prevAdd * -1 >= stat means the debuff is greater than or equal to the current stat,
         // so we set the debuff to be equal to the current stat, effectively making the final stat 0
@@ -864,6 +912,7 @@ public class EntityBase : MonoBehaviour
         if (prevDefAdd * -1 >= def) prevDefAdd = def * -1;
         if (prevResAdd * -1 >= res) prevResAdd = res * -1;
         if (simAspd < 20) prevAspdAdd = ASPD - 20;
+        if (prevWeightAdd * -1 >= weight) prevWeightAdd = (short)(weight * -1);
 
         if (prevArngAdd * -1 >= attackRange)
             prevArngAdd = attackRange * -1;
@@ -882,6 +931,8 @@ public class EntityBase : MonoBehaviour
 
         attackRange += prevArngAdd;
         if (enemyBaseCheck) enemyBaseCheck.detectionRange += prevDrngAdd;
+
+        weight += prevWeightAdd;
     }
 
     #endregion
@@ -1347,8 +1398,8 @@ public class EntityBase : MonoBehaviour
         StatisObj.SetActive(enteredStatis);
     }
 
-    private float HungerDamageFlatPerSec = 5f;
-    private float HungerDamageCurrentHealthPercentagePerSec = 0.03f;
+    protected float HungerDamageFlatPerSec = 5f;
+    protected float HungerDamageCurrentHealthPercentagePerSec = 0.03f;
     private float HungerTimerCount = 0f;
     private readonly float HungerTick = 1f;
 
@@ -1458,6 +1509,7 @@ public class EntityBase : MonoBehaviour
         yield return null; // ensure this runs after stun is applied
         if (!IsStunned) yield break;
 
+        ApplyEffect(AffectedStat.WEIGHT, "LEVITATE_WEIGHT_DBUFF", -100f, duration, true);
         spriteInitPos = spriteRenderer.transform.localPosition;
         LevitationEffect.color = new Color(1, 1, 1, 0.3f);
         IsBeingLevitated = true;
@@ -1769,7 +1821,7 @@ public class EntityBase : MonoBehaviour
     private List<EntityBase> currentlyShiftedEntities = new();
     private IEnumerator ApplyForceCoroutine(EntityBase targetEntity, Vector3 referencePosition, float force, float duration, bool isPull, bool hasReferencePosition = true, bool cancelAction = true)
     {
-        if (targetEntity == null || targetEntity.rb2d == null || !targetEntity.IsAlive() || targetEntity.IsBeingLevitated || targetEntity.IsShiftImmune) yield break;
+        if (targetEntity == null || targetEntity.rb2d == null || !targetEntity.IsAlive() || targetEntity.IsShiftImmune) yield break;
 
         float ForceValue = force * duration / 0.03f;
         
