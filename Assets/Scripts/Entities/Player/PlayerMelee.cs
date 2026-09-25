@@ -922,7 +922,7 @@ public class PlayerMelee : PlayerBase
         if (Skills.Contains(SkillTree_Manager.SkillName.BLACKFLASH))
         {
             info.SpecialText += $" Landing an attack during this period increases its damage to {BL_AtkScale * 100}% " +
-                $"and grants you {BL_AtkBuff}% decaying ATK over {BL_BuffDur} seconds.";
+                $"and grants you {BL_AtkBuff}% decaying ATK over {Math.Round(BL_BuffDur, 1)} seconds.";
         }
         info.SpecialText += $" {Math.Round(DashCooldown, 1)}s cooldown.";
 

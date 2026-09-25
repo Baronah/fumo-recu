@@ -66,7 +66,7 @@ public class Vent : EnvironmentalTileBase
         }
     }
 
-    public override void OnTriggerEnter2D(Collider2D collision)
+    public override void OnEnter(Collider2D collision)
     {
         EntityBase entityBase = collision.GetComponent<EntityBase>();
         if (!collision
@@ -79,7 +79,7 @@ public class Vent : EnvironmentalTileBase
         OnEntityEnter(entityBase);
     }
 
-    public override void OnTriggerStay2D(Collider2D collision)
+    public override void OnStay(Collider2D collision)
     {
         EntityBase entityBase = collision.GetComponent<EntityBase>();
         if (!collision
@@ -91,7 +91,7 @@ public class Vent : EnvironmentalTileBase
         Entities.Add(entityBase, collision);
     }
 
-    public override void OnTriggerExit2D(Collider2D collision)
+    public override void OnExit(Collider2D collision)
     {
         EntityBase entityBase = collision.GetComponent<EntityBase>();
         if (!collision

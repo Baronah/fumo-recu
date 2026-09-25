@@ -858,7 +858,7 @@ public class EnemyBase : EntityBase
     public override void OnDeath()
     {
         base.OnDeath();
-        DetectSymbol.gameObject.SetActive(false);
+        if (DetectSymbol) DetectSymbol.gameObject.SetActive(false);
 
         EntityManager.Enemies.ForEach(enemy =>
         {

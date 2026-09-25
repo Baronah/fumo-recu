@@ -62,7 +62,13 @@ public class EnvironmentalTileBase : MonoBehaviour
         entitiesWithin.Remove(entity);
     }
 
-    public virtual void OnTriggerEnter2D(Collider2D collision)
+    public void OnTriggerEnter2D(Collider2D collision)
+        => OnEnter(collision);
+
+    private void OnCollisionEnter2D(Collision2D collision)
+        => OnEnter(collision.collider);
+
+    public virtual void OnEnter(Collider2D collision)
     {
         if (!collision) return;
 
@@ -73,25 +79,33 @@ public class EnvironmentalTileBase : MonoBehaviour
         OnEntityEnter(entityBase);
     }
 
-    public virtual void OnTriggerStay2D(Collider2D collision)
+    public void OnTriggerStay2D(Collider2D collision)
+        => OnStay(collision);
+
+    public void OnCollisionStay2D(Collision2D collision)
+        => OnStay(collision.collider);
+
+    public virtual void OnStay(Collider2D collision)
     {
         if (!collision) return;
-
         EntityBase entityBase = collision.GetComponent<EntityBase>();
         if (!entityBase || !entityBase.IsAlive() || entitiesWithin.Contains(entityBase)) return;
         if (collision.isTrigger) return;
-
         entitiesWithin.Add(entityBase);
     }
 
-    public virtual void OnTriggerExit2D(Collider2D collision)
+    public void OnTriggerExit2D(Collider2D collision)
+        => OnExit(collision);
+
+    public void OnCollisionExit2D(Collision2D collision)
+        => OnExit(collision.collider);
+
+    public virtual void OnExit(Collider2D collision)
     {
         if (!collision) return;
-
         EntityBase entityBase = collision.GetComponent<EntityBase>();
         if (!entityBase || !entityBase.IsAlive() || !entitiesWithin.Contains(entityBase)) return;
         if (collision.isTrigger) return;
-
         OnEntityExit(entityBase);
     }
 }
