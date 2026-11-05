@@ -222,7 +222,7 @@ public class SaveDataManager
     {
         if (!IsResearchUnlocked) return;
 
-        var skillNames = CharacterPrefabsStorage.Skills.Select(s => s.Key).ToArray();
+        var skillNames = CharacterPrefabsStorage.Skills.ToArray();
         PlayerPrefs.SetString("InventionsUsed", string.Join(" ", skillNames));
         PlayerPrefs.Save();
     }

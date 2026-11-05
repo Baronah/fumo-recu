@@ -1,0 +1,830 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bdc4f1410273fd4d95da147eb27fe0f, type: 3}
+  m_Name: Upgrades
+  m_EditorClassIdentifier: 
+  Inventios:
+  - skillName: 1
+    skillType: 0
+    name: Arts Unit - Winged Steps
+    icon: {fileID: 21300000, guid: 8ff847c2757c3d64da036cc4cadb8758, type: 3}
+    description: <color=#ffd61f>ASPD +20</color>. Landing an attack grants <color=#00ffbf>25%
+      MSPD</color> over 3 seconds. While in effect, trigger it again increases it
+      strength by <color=#00ffbf>5%</color>.
+    values:
+    - 20
+    - 25
+    - 3
+    - 5
+    shortDescription: ASPD +20. Landing an attack grants a stackable decaying MSPD
+      over 2.5 seconds.
+  - skillName: 2
+    skillType: 0
+    name: Arts Unit - Wind Beneath Blade
+    icon: {fileID: 21300000, guid: 3acc437748b7dca488f929cd17e9c7b2, type: 3}
+    description: <color=#00ffbf>MSPD +10%</color>, gains <color=#ffd61f>+7 ASPD</color>
+      for every <color=#00ffbf>10% bonus MSPD</color>.
+    values:
+    - 10
+    - 7
+    - 10
+    shortDescription: MSPD +10%, gains bonus ASPD based on bonus MSPD.
+  - skillName: 3
+    skillType: 0
+    name: Arts Unit - Flows of Ideas
+    icon: {fileID: 21300000, guid: 174110524dff5154fb126f4fa3e5aac4, type: 3}
+    description: While standing still, recharges your special skill's CD by <color=#ff9717>4%
+      amount</color> every second. While moving, recharges your ultimate's CD by
+      <color=#ff9717>2% amount</color> every second. Continuously trigger the same
+      effect enhances it by 50% amount, stacks up to 3 times.
+    values:
+    - 0.04
+    - 0.02
+    - 0.5
+    - 3
+    shortDescription: While standing still, your special recharges faster. While
+      moving, your ultimate recharges faster.
+  - skillName: 37
+    skillType: 0
+    name: Mint-flavor Gum
+    icon: {fileID: 21300000, guid: 2c281a77db05ec54e8b0933b20ebfde7, type: 3}
+    description: Upon entering the field, restores <color=green>30% missing HP</color>
+      and gains <color=#ff4545>+75% ATK</color> over 5 seconds.
+    values:
+    - 0.3
+    - 75
+    - 5
+    shortDescription: Upon entering the field, restores 30% missing HP and gains
+      greatly increased ATK over 5 seconds.
+  - skillName: 35
+    skillType: 0
+    name: Mint-color Firework
+    icon: {fileID: 21300000, guid: ff53dae341c668d4599a9547d8ee68bf, type: 3}
+    description: Upon entering the field, your unit immediately casts their special
+      skill once with no cool-down. In the next 5 seconds, your special skill recharges
+      <color=#ff9717>200% faster</color>.
+    values:
+    - 5
+    - 200
+    shortDescription: Upon entering the field, your unit immediately casts their
+      special skill once with no cool-down. In the next 5 seconds, your special skill
+      recharges way faster.
+  - skillName: 65
+    skillType: 0
+    name: Mint-fragrance Extract
+    icon: {fileID: 21300000, guid: a813fbc589658914f86fa56c3c40e194, type: 3}
+    description: Upon entering the field, gains <color=#00ffbf>+50% MSPD</color>.
+      Effect is removed upon taking damage.
+    values:
+    - 50
+    shortDescription: Upon entering the field, gains bonus MSPD until damage is taken.
+  - skillName: 7
+    skillType: 0
+    name: Equipment - Claw
+    icon: {fileID: 21300000, guid: 435d461e4ddf2ad479a85456745037aa, type: 3}
+    description: Attacks ignore <color=#ff4545>15% DEF</color> and deal increased
+      damage based on the target's missing health (maximum bonus reaches at <color=red>+50%
+      damage</color>).
+    values:
+    - 15
+    - 50
+    - 0.3
+    shortDescription: Attacks ignore some DEF and deal increased damage based on
+      the target's missing health.
+  - skillName: 8
+    skillType: 0
+    name: Equipment - Scope
+    icon: {fileID: 21300000, guid: 363f007670c4fde40a36ff370e0bbad3, type: 3}
+    description: <color=#ff00ff>Attack range +20%</color>, attacks deal increase
+      damage based on how far you are from the target (maximum bonus reaches at <color=red>+50%
+      damage</color>).
+    values:
+    - 0.2
+    - 50
+    shortDescription: Range increases, deal increase damage based on how far you
+      are from the target.
+  - skillName: 10
+    skillType: 0
+    name: Equipment - Provisions
+    icon: {fileID: 21300000, guid: 711b8036db6ed0441be5fb2501ba4ea1, type: 3}
+    description: <color=green>Healing effectiveness +25%</color>, recovers 1% max
+      HP plus 2% missing HP every second.
+    values:
+    - 0.25
+    - 0.01
+    - 0.02
+    shortDescription: Healing effectiveness increases and regenerates missing HP
+      overtime.
+  - skillName: 9
+    skillType: 0
+    name: Equipment - Radio
+    icon: {fileID: 21300000, guid: 8870bac2f99088b40ad1157ffc765c25, type: 3}
+    description: <color=#ff9717>Swap cool-down -15%</color>, every available swap
+      further reduces the cool-down by <color=#ff9717>20%</color>.
+    values:
+    - 0.15
+    - 0.2
+    shortDescription: Swap cool-down reduces, further reduces for every available
+      charge.
+  - skillName: 25
+    skillType: 0
+    name: Victory Rewind - Spirit
+    icon: {fileID: 21300000, guid: d45b0034452a4054d93629d7b5cb6147, type: 3}
+    description: After defeating an enemy, gains <color=#ff4545>+50% ATK</color>
+      and <color=#00ffbf>+50% MSPD</color> that decay over 5 seconds. Every enemy
+      defeated increases the amount by <color=yellow>5%</color>, stacks up to <color=#5b7ccf>10
+      times</color>.
+    values:
+    - 50
+    - 5
+    - 5
+    - 100
+    shortDescription: Gains a decaying ATK and MSPD buff after defeating an enemy,
+      increases for every enemy defeated.
+  - skillName: 26
+    skillType: 0
+    name: Victory Rewind - Excitement
+    icon: {fileID: 21300000, guid: d9d98376c437b2649a69f94c68546e89, type: 3}
+    description: After defeating an enemy, your special's current CD is shortened
+      by <color=#ff9717>30%</color>. Every enemy defeated increases the amount by
+      <color=yellow>7%</color>, stacks up to <color=#5b7ccf>10 times</color>.
+    values:
+    - 0.3
+    - 0.07
+    - 1
+    shortDescription: Refunds a portion of current special's CD after defeating an
+      enemy, increases for every enemy defeated.
+  - skillName: 33
+    skillType: 0
+    name: Book that can Bite
+    icon: {fileID: 21300000, guid: ebd7e4312140c2b4a9019cc81c2da936, type: 3}
+    description: When HP is above 85%, gains <color=#ff4545>+30% ATK</color> and
+      <color=#ffd61f>+20 ASPD</color>. At max HP, reduces physical and magical damage
+      taken by <color=#b1b1b1>80%</color>.
+    values:
+    - 0.85
+    - 30
+    - 20
+    - 0.8
+    shortDescription: When HP is above 85%, gains bonus ATK and ASPD. At max HP,
+      greatly reduce damage taken.
+  - skillName: 34
+    skillType: 0
+    name: Attention-holding Device
+    icon: {fileID: 21300000, guid: 021f9f5df15e7374497bf5bd40ce4082, type: 3}
+    description: When HP is below 60%, gains <color=yellow>+30 DEF</color> and <color=#00ffff>+20
+      RES</color>. At below 30%, additional gains <color=red>35% life-steal</color>.
+    values:
+    - 0.6
+    - 30
+    - 20
+    - 0.3
+    - 35
+    shortDescription: When HP is below 60%, gains bonus DEF and RES. At below 30%,
+      additional gains life-steal.
+  - skillName: 63
+    skillType: 0
+    name: Bug Spray
+    icon: {fileID: 21300000, guid: 10976b2fd93644d439e79fcc9eb4f6ee, type: 3}
+    description: Swapping releases a smoke zone that lasts 5 seconds, dealing <color=#ff00ff>20
+      + 2% max health magical damage</color> every second to all enemies inside while
+      presents. Damage ramps down over the duration.
+    values:
+    - 5
+    - 20
+    - 0.02
+    shortDescription: Swapping releases a smoke zone that damages all enemies inside
+      while presents.
+  - skillName: 64
+    skillType: 0
+    name: Pepper Spray
+    icon: {fileID: 21300000, guid: 3e4bf366f47230245b67df35e42bea9e, type: 3}
+    description: Swapping releases a smoke zone that lasts 5 seconds, causing <color=yellow>blindness</color>
+      to all enemies inside while presents. 'Blinded' enemies become unable to attack
+      and detect.
+    values:
+    - 5
+    shortDescription: Swapping releases a smoke zone that blinds all enemies inside
+      while presents.
+  - skillName: 31
+    skillType: 0
+    name: '''Fumo Recu'' - Phalanx'
+    icon: {fileID: 21300000, guid: 3287741a85ba2994c9a8cbd8ba4d2786, type: 3}
+    description: While you are within 1000 radius around the Mint Fumo, gain <color=yellow>+215%
+      DEF</color> and <color=#00ffff>+25 RES</color>.
+    values:
+    - 1000
+    - 215
+    - 25
+    shortDescription: Gains increased DEF and RES while nearby the Mint Fumo (marked
+      by green area).
+  - skillName: 32
+    skillType: 0
+    name: '''Fumo Recu'' - Wind''s Whisper'
+    icon: {fileID: 21300000, guid: 7162d5676d9660e42857cfff3159370a, type: 3}
+    description: 'While you are 1000 radius around the Mint Fumo: Every <color=yellow>5.2
+      seconds</color>, Mint casts arts on all enemies within said area, dealing <color=#ff00ff>30
+      magical damage</color> and <color=#2985FF>pushing</color> them away from her.'
+    values:
+    - 1000
+    - 5.2
+    - 30
+    shortDescription: Mint Fumo periodically pushes nearby enemies away from her.
+  - skillName: 4
+    skillType: 0
+    name: Geologist - Observe
+    icon: {fileID: 21300000, guid: 30a490b0571f8bd4d892f0e775f14e3d, type: 3}
+    description: Your ultimate skill <color=yellow>charges 40% faster</color> while
+      standing on an environmental tile.
+    values:
+    - 0.4
+    shortDescription: Your ultimate skill chargesfaster while standing on an environmental
+      tile.
+  - skillName: 5
+    skillType: 0
+    name: Geologist - Study
+    icon: {fileID: 21300000, guid: c646d536fbd921540aaa5a40242bf9e2, type: 3}
+    description: Gains <color=#ff4545>+50% ATK</color> while standing on an environmental
+      tile.
+    values:
+    - 50
+    shortDescription: Gains increased ATK while standing on an environmental tile.
+  - skillName: 6
+    skillType: 0
+    name: Geologist - Explore
+    icon: {fileID: 21300000, guid: c0dc4ea12f7eb2849802576b01aa2770, type: 3}
+    description: Gains <color=#00ffbf>+50% MSPD</color> while standing on an environmental
+      tile.
+    values:
+    - 50
+    shortDescription: Gains increased MSPD while standing on an environmental tile.
+  - skillName: 38
+    skillType: 0
+    name: Clockwork Engine
+    icon: {fileID: 21300000, guid: 689151e463c3d004bbc17f54e61105c8, type: 3}
+    description: After using the special ability, gains <color=#00ffbf>+100% MSPD</color>
+      for 1 seconds. Every time this effect is activated, its duration extends by
+      <color=yellow>0.5 seconds</color> (maximum duration is 3 seconds).
+    values:
+    - 100
+    - 1
+    - 0.5
+    - 3
+    shortDescription: After using the special ability, gains greatly increased MSPD
+      for 1 seconds. Every time this effect is activated, its duration extends (has
+      a limit).
+  - skillName: 66
+    skillType: 0
+    name: Lever Engine
+    icon: {fileID: 21300000, guid: cefe144c9c0ef1b409cfc73011a65bbf, type: 3}
+    description: Upon using the ultimate ability, releases a shockwave that <color=#2985FF>pushes</color>
+      enemies around you away and inflicts <color=yellow>a decaying slow</color>.
+      Afterwards, gains +25% <color=#ff4545>ATK</color>, <color=#ffd61f>ASPD</color>
+      and <color=#00ffbf>MSPD</color> that decay over 5 seconds.
+    values:
+    - 25
+    - 5
+    - 90
+    - 2
+    shortDescription: Using the ultimate ability releases a shockwave that pushes
+      and slows enemies. Afterwards, gains bonus ATK, ASPD and MSPD over 5 seconds.
+  - skillName: 40
+    skillType: 0
+    name: Very Heavy Blade
+    icon: {fileID: 21300000, guid: 8860e39fa1ddcc144abdae4ba1b80052, type: 3}
+    description: <color=#5b7ccf>ASPD -25</color>, <color=#ff4545>ATK +40%</color>.
+      While not attacking, the next attack gains gradually increased damage, up to
+      <color=#ff4545>+250%</color> after 10 seconds (resets upon attacking).
+    values:
+    - 25
+    - 0.4
+    - 2.5
+    - 10
+    shortDescription: Gradually charges up for a much stronger attack when not attacking
+      (resets upon attacking).
+  - skillName: 42
+    skillType: 0
+    name: High-performance Defroster
+    icon: {fileID: 21300000, guid: c565ffcdb93483f48b3183134ce5ce2a, type: 3}
+    description: Damaging frozen targets instantly <color=#5b7ccf>ends its effect</color>
+      to deal bonus true damage equals to <color=#b1b1b1>10% of the target max HP</color>.
+      Damage increases by <color=red>50% ATK</color> for every freeze remaining second
+      (cap at <color=red>400% base ATK</color>).
+    values:
+    - 0.1
+    - 0.5
+    - 4
+    shortDescription: Damaging frozen targets instantly ends its effect to deal bonus
+      true damage, increasing by the freeze's remaining duration.
+  - skillName: 58
+    skillType: 0
+    name: Certain Fate
+    icon: {fileID: 21300000, guid: 5118dd906b185484a82ad3d4940f910b, type: 3}
+    description: <color=#2985FF>Weight level +1</color>. Enemies that are being shifted
+      by self will also take <color=#ff00ff>magical damage</color> proportional to
+      distance travel.
+    values:
+    - 1
+    shortDescription: Weight level +1. Enemies that are being shifted by self will
+      also take magical damage proportional to distance travel.
+  - skillName: 49
+    skillType: 0
+    name: Bubble-making Arts Unit
+    icon: {fileID: 21300000, guid: 17611692e2e76b04aaafdee232149236, type: 3}
+    description: The first attack against an enemy deals additional <color=#ff00ff>10%
+      ATK as magical damage</color> and <color=#2962ff>levitates</color> them for
+      2.5 seconds (can not act, and weight becomes 0).
+    values:
+    - 0.1
+    - 2.5
+    shortDescription: The first attack against an enemy deals bonus magical damage
+      and levitates them for 2.5 seconds.
+  - skillName: 50
+    skillType: 0
+    name: Hair Ribbon
+    icon: {fileID: 21300000, guid: 5626f705e5a9b5e448ee7bc4c56eb8fb, type: 3}
+    description: Your starting character gains <color=#ff4545>+30% ATK</color>. If
+      the character is melee, <color=#ff9717>special's CD -10%</color> and gains
+      <color=green>+15% max HP</color>. If the character is ranged, <color=#ff9717>ultimate's
+      CD -10%</color> and gains <color=#00ffbf>+20% MSPD</color>.
+    values:
+    - 0.3
+    - 0.15
+    - 0.2
+    - 0.1
+    shortDescription: Starting character gains increased ATK. If the character is
+      melee, reduces special's CD and gains additional HP. If the character is ranged,
+      reduces ultimate's CD and gains additional MSPD.
+  - skillName: 45
+    skillType: 0
+    name: Amulet
+    icon: {fileID: 21300000, guid: 8834bd4bd01e3fb4e9329539af1fec9f, type: 3}
+    description: The first time HP reaches 0, immediately <color=green>restores 52%
+      max HP</color>, refreshes all special and skill's CDs and stores a swap charge.
+    values:
+    - 0.52
+    - 1.52
+    shortDescription: The first time HP reaches 0, revives with 52% max HP, refreshes
+      all skills and swap CD.
+  - skillName: 60
+    skillType: 0
+    name: Neatly tied knot
+    icon: {fileID: 21300000, guid: aa0c41ec6ffd25b49966408413738c0c, type: 3}
+    description: The first time you cast special or ultimate skill of a character,
+      forms a vow with it. Afterwards, that skill has <color=#ff9717>reduced cool-down</color>,
+      <color=#00ff00>enhanced effects</color> and grants you bonus attributes, <color=#5b7ccf>but
+      the remaining skill can no longer be used</color>.
+    values: []
+    shortDescription: Casting a special or ultimate skill for the first time forms
+      a vow with it, enhancing its effect but prevents the other skill from being
+      used.
+  - skillName: 61
+    skillType: 0
+    name: A nice-looking piece of rock
+    icon: {fileID: 21300000, guid: d605b07909e103840ba5150de8928cb4, type: 3}
+    description: Gains a 5.2% buff in <color=green>HP</color>, <color=#ff4545>ATK</color>
+      and <color=#00ffbf>MSPD</color>. Upon entering the field, grants your character
+      <color=#ff00ff>a random INVENTIO upgrade</color>. Upgrades granted this way
+      are not affected by mutual exclusives, but will not overlap with chosen ones.
+    values:
+    - 0.052
+    shortDescription: Gains increased HP, ATK and MSPD. Upon entering the field,
+      grants your character a random upgrade.
+  Ars:
+  - skillName: 11
+    skillType: 1
+    name: Gently Weeps
+    icon: {fileID: 21300000, guid: 024d7d6b4b31d5b45bf442ea0fc20015, type: 3}
+    description: During the duration of 'Evasion', coming into contact with an enemy
+      <color=#00ffe1>extends the dash</color> and slows the collided enemies for
+      <color=yellow>3 seconds</color>. If the dash is extended at least once, the
+      next cool-down is reduced by 35%.
+    values:
+    - 50
+    - 3
+    - 0.35
+    shortDescription: '''Evasion'' extends upon coming into contact with an enemy
+      and slows them.'
+  - skillName: 12
+    skillType: 1
+    name: Wind's Elegy
+    icon: {fileID: 21300000, guid: 126b98068e57fda46b78f2ee927c2373, type: 3}
+    description: During the duration of 'Evasion', enemies coming into contact with
+      self takes physical damage equal to <color=#ff4545>100% ATK + 30% MSPD</color>,
+      stunned for 1 second and are <color=#2985FF>pushed</color> alongside with the
+      dash.
+    values:
+    - 1
+    - 0.3
+    - 1
+    shortDescription: '''Evasion'' damages collided enemies, stunning and pushing
+      them away slightly.'
+  - skillName: 13
+    skillType: 1
+    name: Rewinding Breeze
+    icon: {fileID: 21300000, guid: f4235cec132afb24fb664ecc48dd6792, type: 3}
+    description: During the duration of 'Evasion', <color=yellow>reflects all incoming
+      attacks</color> toward self to nearby enemies. Reflected projectiles instead
+      will be sent back to the attacker. The first successful reflection also heals
+      self for <color=green>20% max HP</color>.
+    values:
+    - 1
+    - 0.2
+    shortDescription: '''Evasion'' now deflects all incoming attacks. First deflection
+      also heals self.'
+  - skillName: 36
+    skillType: 1
+    name: '''Yesterday Once More'''
+    icon: {fileID: 21300000, guid: 9c81c296a0775ae49b875c1262272b00, type: 3}
+    description: After using 'Evasion', leaves behind an afterimage that lasts <color=#5b7ccf>3
+      seconds</color>. During this period, 'Evasion' can be recast once to <color=yellow>teleport</color>
+      you back to the afterimage's location.
+    values:
+    - 3
+    shortDescription: Using 'Evasion' leaves behind an afterimage. While it persists,
+      recast will teleport you to the afterimage's location.
+  - skillName: 30
+    skillType: 1
+    name: '''Black Flash'''
+    icon: {fileID: 21300000, guid: 2b7026ac81f6dc84db7eb9f2d5b5e0d9, type: 3}
+    description: Successfully landing an attack while using 'Evasion' increases its
+      damage to <color=#ff4545>250%</color> and grants you <color=#ff4545>100% ATK</color>
+      that decays over 7 seconds. After the first activation, permanently gains <color=#ff4545>+20%
+      ATK</color> and the damage now also <color=#ff4545>ignores 60% DEF</color>.
+    values:
+    - 2.5
+    - 100
+    - 7
+    - 20
+    - 60
+    shortDescription: Successfully landing an attack while using 'Evasion' increases
+      its damage and grants you decaying ATK buff.
+  - skillName: 17
+    skillType: 1
+    name: Thermodynamic
+    icon: {fileID: 21300000, guid: b3f785573cde67d4c9b4a7e4b887b60e, type: 3}
+    description: Every enemy hit by 'Zeropoint Burst' <color=yellow>refunds</color>
+      its cool-down by <color=#ff9717>15%</color>.
+    values:
+    - 0.15
+    shortDescription: Every enemy hit by 'Zeropoint Burst' shortens its current cool-down.
+  - skillName: 18
+    skillType: 1
+    name: Superconduct
+    icon: {fileID: 21300000, guid: 6408e44bc4e60c1418e6ff3758760020, type: 3}
+    description: Enemies frozen by 'Zeropoint Burst' also have <color=#5b7ccf>-50%
+      DEF and RES</color> for equivalent duration.
+    values:
+    - 50
+    shortDescription: '''Zeropoint Burst'' now reduces the DEF and RES of frozen
+      targets.'
+  - skillName: 16
+    skillType: 1
+    name: Cryopump
+    icon: {fileID: 21300000, guid: 3f1ad36f3c7fd004384a2363f2bd191c, type: 3}
+    description: '''Zeropoint Burst'' <color=#00ffff>marks</color> all enemies hit.
+      After a 2 seconds delay, marked enemies create an extra ''Zeropoint Burst''
+      around them, whose maximum freeze duration equals to the current freeze duration
+      of the enemy starting it. Marks <color=yellow>persist across swaps</color>,
+      but can not appear on the same enemy twice per usage.'
+    values: []
+    shortDescription: '''Zeropoint Burst'' now spreads the freeze to enemies around
+      the targets.'
+  - skillName: 53
+    skillType: 1
+    name: Absolute Zero
+    icon: {fileID: 21300000, guid: ffb4ba5c202198c4a8454e610df58a68, type: 3}
+    description: '''Zeropoint Burst'' can be <color=yellow>maintained</color> by
+      holding down the cast key for up to <color=#5b7ccf>5 more seconds</color>.
+      Self can not act while maintaining the skill.'
+    values:
+    - 5
+    shortDescription: '''Zeropoint Burst'' can be maintained by holding down the
+      cast key. Self can not act while maintaining the skill.'
+  - skillName: 14
+    skillType: 1
+    name: Windblows up North
+    icon: {fileID: 21300000, guid: 9d8e3614f9fe5af48ae0785cd60f1f9d, type: 3}
+    description: '''Zeropoint Burst'' now <color=#2985FF>pushes</color> nearby enemies
+      to the rear of self attack range.'
+    values: []
+    shortDescription: '''Zeropoint Burst'' pushes nearby enemies to the rear of self
+      attack range.'
+  - skillName: 15
+    skillType: 1
+    name: Windblows down South
+    icon: {fileID: 21300000, guid: 3bf80d50692c4614fb4c83c34649d1b7, type: 3}
+    description: '''Zeropoint Burst'' now <color=#2985FF>pulls</color> faraway enemies
+      close to self.'
+    values: []
+    shortDescription: '''Zeropoint Burst'' pulls faraway enemies close to self.'
+  - skillName: 27
+    skillType: 1
+    name: Der Ring des Nibelungen
+    icon: {fileID: 21300000, guid: 26cf4718f4fa65d4186312b6f1f0ae66, type: 3}
+    description: '''Der Tag Neight Sich'' fires 2 extra waves of projectiles.'
+    values: []
+    shortDescription: '''Der Tag Neight Sich'' fires 2 extra waves of projectiles.'
+  - skillName: 28
+    skillType: 1
+    name: Carmina Burana
+    icon: {fileID: 21300000, guid: 41f54d87c0b588b4c95fc24d1710cb59, type: 3}
+    description: '''Der Tag Neight Sich'' <color=#ff00ff>locks-on to</color> the
+      nearest enemy within attack range. While locking on to a target, all bullets
+      will <color=yellow>home toward them</color>, but its damage ramps down overtime
+      (to a minium of <color=#5b7ccf>30% of the base damage</color>).'
+    values:
+    - 0.01
+    - 0.3
+    shortDescription: '''Der Tag Neight Sich'' homes all its bullets toward the nearest
+      enemy within range.'
+  - skillName: 39
+    skillType: 1
+    name: Ein deutsches Requiem
+    icon: {fileID: 21300000, guid: dbd1f406c62685844bd7516c0c84279a, type: 3}
+    description: Defeating an enemy during the duration of 'Der Tag Neight Sich'
+      <color=yellow>creates another wave of projectiles</color> starting at their
+      position. These extra waves can trigger up to <color=#5b7ccf>3 times</color>,
+      and last up to <color=#5b7ccf>2 seconds</color>.
+    values:
+    - 2
+    - 3
+    shortDescription: When 'Der Tag Neight Sich' defeats an enemy, it creates another
+      wave of projectiles starting at their position.
+  - skillName: 29
+    skillType: 1
+    name: Moonlight Sonata
+    icon: {fileID: 21300000, guid: 3c096a4f41cab8a4b9eed2bd9f2497fb, type: 3}
+    description: While 'Der Tag Neight Sich' is active, swapping or cancelling it
+      will leave behind a phantom that <color=yellow>maintains the skill</color>
+      for the remaining duration. The phantom inherits <color=#ff4545>50% of self
+      ATK</color>.
+    values:
+    - 0.5
+    shortDescription: While 'Der Tag Neight Sich' is active, swap or cancel it will
+      leave behind a phantom that maintains the skill for the remaining duration.
+  - skillName: 51
+    skillType: 1
+    name: "F\xFCr Elise"
+    icon: {fileID: 21300000, guid: c5faa801b8f2d8e4d959b62663845c33, type: 3}
+    description: Cancelling 'Der Tag Neight Sich' <color=yellow>refunds</color> a
+      portion of its cool-down based on the remaining duration, up to <color=yellow>80%</color>
+      within <color=#5b7ccf>the first 1 seconds</color>.
+    values:
+    - 0.8
+    - 1
+    - 0.9
+    - 0.5
+    shortDescription: Cancelling 'Der Tag Neight Sich' refunds a portion of its cool-down
+      based on the remaining duration.
+  - skillName: 47
+    skillType: 1
+    name: '''Field Researcher'''
+    icon: {fileID: 21300000, guid: da3d53da0e05a144fb8207d81f5b1ed5, type: 3}
+    description: 'For ranged player: Self''s projectiles <color=yellow>ricochet</color>
+      upon hitting the target (triggers up to <color=#5b7ccf>5 times</color>). When
+      a projectile comes into contact with an environmental tile, it <color=yellow>carries
+      the respective effect</color> and apply them upon hitting the target.'
+    values:
+    - 5
+    shortDescription: Ranged player's projectiles can ricochet and absorb the effects
+      of environmental tiles it comes into contact with.
+  - skillName: 21
+    skillType: 1
+    name: Easter
+    icon: {fileID: 21300000, guid: 99043af907b80ce4f8ce5a399999faf2, type: 3}
+    description: While 'Juggernaut' is active, receiving damage <color=green>recovers
+      2% max HP</color> and extends its duration by <color=yellow>0.75 seconds</color>,
+      up to a total bonus of <color=#5b7ccf>100% base duration</color>.
+    values:
+    - 0.75
+    - 0.02
+    - 1
+    shortDescription: '''Juggernaut''''s duration extends upon receiving damage.'
+  - skillName: 22
+    skillType: 1
+    name: Eternal Sunshine
+    icon: {fileID: 21300000, guid: ef6afd3c49cdf9c47829dc973a2c5f69, type: 3}
+    description: While 'Juggernaut' is active, a fire ring is created around you,
+      dealing <color=#ff4545>34% ATK</color> as physical damage every second and
+      inflicts a stacking <color=#5b7ccf>-15% DEF</color> to nearby enemy every second.
+    values:
+    - 0.34
+    - 15
+    shortDescription: '''Juggernaut'' continuously deals physical damage to nearby
+      enemies and reduces their DEF.'
+  - skillName: 23
+    skillType: 1
+    name: Swirling Vortex
+    icon: {fileID: 21300000, guid: 00c3b1a25ae04174eb6090bfd3664359, type: 3}
+    description: While 'Juggernaut' is active, nearby enemies have <color=#5b7ccf>-33%
+      MSPD and ASPD</color>, and are continuously <color=#2985FF>pulled toward self</color>.
+    values:
+    - 33
+    - 33
+    shortDescription: '''Juggernaut'' pulls nearby enemies toward self, reducing
+      their MSPD and ASPD.'
+  - skillName: 24
+    skillType: 1
+    name: Caterpillar
+    icon: {fileID: 21300000, guid: fde87ac5e622db54ebe3a462f2fb4097, type: 3}
+    description: While 'Juggernaut' is active, damage taken is stored. After 'Juggernaut'
+      ends or upon swapping it's active, deals <color=#ff4545>physical damage</color>
+      equal to <color=#b1b1b1>20% max HP + 80% stored damage</color> to all nearby
+      enemies and <color=#5b7ccf>'slows'</color> them briefly.
+    values:
+    - 0.8
+    - 0.2
+    - 1
+    shortDescription: '''Juggernaut'' stores a portion of damage taken during the
+      duration, and releases it as physical damage to nearby enemies when skill ends
+      or upon swapping.'
+  - skillName: 41
+    skillType: 1
+    name: Opera Glasses
+    icon: {fileID: 21300000, guid: 055279cfa8327ff4c849220545fd252a, type: 3}
+    description: Swapping for the first time during the duration of 'Juggernaut'
+      <color=yellow>retains its effect</color>, and <color=yellow>resets its duration</color>.
+    values: []
+    shortDescription: '''Juggernaut'' can be transferred to the swap in character,
+      resetting its duration and effect.'
+  - skillName: 46
+    skillType: 1
+    name: '''Beyond the Night'''
+    icon: {fileID: 21300000, guid: 0ab3707e34b172a4abaff35176ce0ea6, type: 3}
+    description: Upon 'Juggernaut' activation, <color=yellow>removes all aggro</color>
+      from enemies to self. While 'Juggernaut' is active, <color=#5b7ccf>ATK becomes
+      0</color>, but renders self to become <color=#b1b1b1>'Invisible'</color> throughout
+      the duration and grants <color=#00ffbf>increased MSPD</color>.
+    values:
+    - 0.25
+    shortDescription: '''Juggernaut'' now grants stealth and increased MSPD, but
+      sets your ATK to 0.'
+  - skillName: 52
+    skillType: 1
+    name: '''Anthem of the Wind'''
+    icon: {fileID: 21300000, guid: 64998e7a6b4e0524b854a0698225c6af, type: 3}
+    description: 'For melee player: Every attack land shortens the cool-down of ''Evasion''
+      by <color=#ff9717>0.75 seconds</color>, every ''Evasion'' usage shortens the
+      cool-down of ''Juggernaut'' by <color=#ff9717>4 seconds</color>, every ''Juggernaut''
+      usage grants <color=#ffd61f>+12 ASPD</color>, <color=#5b7ccf>lasts 15 seconds</color>
+      and stacks up to <color=yellow>6 times</color>. At max stacks, gains an additional
+      <color=#00ffbf>+36% MSPD</color> and all effects are <color=yellow>doubled</color>.'
+    values:
+    - 0.75
+    - 3
+    - 12
+    - 15
+    - 6
+    - 36
+    shortDescription: 'Melee player: Attack shortens ''Evasion'' CD, ''Evasion''
+      shortens ''Juggernaut'' CD, ''Juggernaut'' grants a stacking ASPD. At max stacks,
+      doubles the effect and has increased MSPD.'
+  Theorias:
+  - skillName: 43
+    skillType: 2
+    name: '''Famine'''
+    icon: {fileID: 21300000, guid: 1d36e177fcc165049b3e21413995a8ac, type: 3}
+    description: All units have their <color=#ff4545>ATK</color> and <color=#ffd61f>ASPD</color>
+      increased by <color=#ff4545>50%</color> and <color=#ffd61f>30</color>, respectively,
+      and restores HP equal to <color=green>30% damage dealt</color>. Your units
+      continuously lose HP while moving, enemies continuously lose HP while in combat.\n\n<i>If
+      <color=#ff00ff>'Equipment - Provision'</color> is selected, you become unaffected.</i>
+    values:
+    - 0.5
+    - 30
+    - 0.3
+    shortDescription: Units have increased ATK, ASPD and life-steal, but continuously
+      lose HP.
+  - skillName: 44
+    skillType: 2
+    name: '''Raging Terrains'''
+    icon: {fileID: 21300000, guid: 77a1b983db830404b90b66ca6a3601b6, type: 3}
+    description: Environmental effects have <color=yellow>+100% effectiveness</color>.\n\n<i>If
+      any <color=#ff00ff>'Geogolist'</color> upgrade is selected, effect becomes
+      <color=yellow>+200%</color> instead.</i>
+    values:
+    - 2
+    shortDescription: Environmental effects have +100% effectiveness.
+  - skillName: 48
+    skillType: 2
+    name: '''Subjective Time Dilation'''
+    icon: {fileID: 21300000, guid: b9e45e2b0b33c094b88de20c5f498330, type: 3}
+    description: 'Every <color=#ff9717>10 seconds</color>, all presenting enemies
+      alter between the two effects: <color=#5b7ccf>-50% MSPD and ASPD</color> and
+      <color=#ffd61f>+50% MSPD and ASPD</color>. This process happens indefinitely,
+      but has a 2-second cooldown inbetween.'
+    values: []
+    shortDescription: 'Every 10 seconds, all presenting enemies alter between the
+      two effects: Reduced MSPD and ASPD and increased MSPD and ASPD. This process
+      happens indefinitely.'
+  - skillName: 59
+    skillType: 2
+    name: '''Ice Age'''
+    icon: {fileID: 21300000, guid: 740358b693e3e4f4da74a619b29cea22, type: 3}
+    description: Enemies have <color=red>+50% max HP</color>. Upon spawning, their
+      HP is halved and they are frozen for <color=#ff9717>40 seconds</color>, but
+      have <color=yellow>+70 DEF</color>, <color=#00ffff>+25 RES</color> and <color=green>recovers
+      2% max HP every second</color> throughout the duration.
+    values:
+    - 40
+    - 0.5
+    - 0.02
+    - 70
+    - 25
+    - 0.5
+    shortDescription: Enemies have increased HP, but spawned with 50% HP and frozen
+      for 40 seconds, during which they have increased DEF and RES, and regenerates
+      HP until the freeze is lost.
+  - skillName: 62
+    skillType: 2
+    name: '''Adaption'''
+    icon: {fileID: 21300000, guid: 42f0b110e02d17f4fb3ee0be4d4f9a9c, type: 3}
+    description: Enemies <color=yellow>start with 0 DEF and RES</color>, but gain
+      <color=green>max HP</color> equals to their base DEF and RES. Upon receiving
+      <color=red>physical damage</color>, they gain <color=red>+5 DEF</color>. Upon
+      receiving <color=#ff00ff>magical damage</color>, they gain <color=#ff00ff>+3
+      RES</color>. Both can stack up to 30 times.
+    values:
+    - 0.5
+    shortDescription: Enemies have 0 DEF and RES, but gain increased DEF/RES upon
+      taking physical/magical damage.
+  - skillName: 54
+    skillType: 2
+    name: '''Hyper Acceleration'''
+    icon: {fileID: 21300000, guid: 5f942a80c4f3b2545a79f68cb46fd748, type: 3}
+    description: All units gain <color=#00ffbf>increased MSPD</color> when continuously
+      moving toward a direction, up to <color=#00ffbf>+200% MSPD</color>. Changing
+      direction will <color=yellow>remove the MSPD buff</color> and inflicts <color=#5b7ccf>a
+      decaying 'Slow'</color> based on the removed acceleration.\n\n<i>If any <color=#ff00ff>'Arts
+      Unit'</color> is selected, you accelerate <color=yellow>50% faster</color>.</i>
+    values: []
+    shortDescription: All units gain increased MSPD when continuously moving toward
+      a direction, up to +200% MSPD. Changing direction will remove the buff and
+      inflicts a decaying 'Slow' based on the previous acceleration.
+  - skillName: 56
+    skillType: 2
+    name: '''Statis'''
+    icon: {fileID: 21300000, guid: 2ad934c44cc754d4aa7ec015d53eaf14, type: 3}
+    description: 'All units that haven''t moved for more than <color=#ff9717>5 seconds</color>
+      enters ''statis'': Has <color=#5b7ccf>-50% ATK</color>, but <color=green>regenerates
+      4% HP</color> every second and <color=yellow>HP can not fall below 1</color>.
+      Any movement made breaks this state.\n\n<i>If <color=#ff00ff>''Attention-holding
+      Device''</color> is selected, required time on you is reduced to <color=#ff9717>3
+      seconds</color>.</i>'
+    values: []
+    shortDescription: 'All units that haven''t moved for a while enters ''statis'':
+      Has reduced ATK, but regenerates HP and HP can not fall below 1. Any movement
+      made breaks this state.'
+  - skillName: 20
+    skillType: 2
+    name: '''Gravity'''
+    icon: {fileID: 21300000, guid: 4418ff1c5e44b684f80dcb062c51034e, type: 3}
+    description: <color=yellow>All units have -10% MSPD for every weight level they
+      have</color>. Heavier units continuously <color=#2985FF>pull lighter units</color>
+      toward self, pull radius scales with their weight, pull force on other units
+      is proportional to weight difference.
+    values:
+    - 0.1
+    shortDescription: All units have reduced MSPD based on weight. Heavier units
+      continuously pull lighter units toward self.
+  - skillName: 55
+    skillType: 2
+    name: '''Absolutism'''
+    icon: {fileID: 21300000, guid: 0465d508d1d14704d8dcf3737e42f13d, type: 3}
+    description: '- Melee units have <color=green>+100% HP</color>, <color=#00ffbf>+35%
+      MSPD</color>, <color=#2985FF>+2 weight levels</color> and take <color=yellow>50%
+      less physical and magical damage</color> from attacks outside of their attack
+      range.\n- Ranged units gains <color=#ffd61f>15% base attack range as ASPD</color>,
+      attack range <color=red>becomes global</color>, and their projectiles deals
+      <color=#ff00ff>50% more damage</color> per second traveled.'
+    values:
+    - 1
+    - 0.35
+    - 2
+    - 0.15
+    shortDescription: Melee units have increased HP, MSPD, weights and take less
+      damage outside of their range. Ranged units have their attack range expanded
+      to the entire field.
+  - skillName: 57
+    skillType: 2
+    name: '''Heat Death'''
+    icon: {fileID: 21300000, guid: 9ae040fec50ee0447bba3bcfd601be57, type: 3}
+    description: Your units have <color=#5b7ccf>-45% max HP</color>. Upon death,
+      they deal <color=#b1b1b1>200 + 10% HP true damage</color> to all presenting
+      enemies. If all enemies are defeated this way, <color=yellow>the battle concludes
+      in your victory</color>.
+    values:
+    - 0.45
+    shortDescription: Your units have reduced max HP. Upon death, they deal true
+      damage to all presenting enemies. If all enemies are defeated this way, the
+      battle concludes in your victory.

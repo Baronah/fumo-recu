@@ -33,7 +33,15 @@ public class PlayerBase : EntityBase
     protected Slider WindanthemSlider;
     protected TMP_Text WindanthemCounter;
 
-    public List<SkillName> Skills = new();
+    public HashSet<UpgradeData> Skills = new();
+    public bool HasSkill(SkillName skillName) => Skills.Any(s => s.skillName == skillName);
+    public UpgradeData GetSkill(SkillName skillName) => Skills.FirstOrDefault(s => s.skillName == skillName);
+    public float[] GetSkillValues(SkillName skillName)
+    {
+        if (HasSkill(skillName)) 
+            return Skills.FirstOrDefault(s => s.skillName == skillName).values;
+        return UpgradesManager._instance.GetUpgradeValues(skillName);
+    }
 
     protected Coroutine SkillCoroutine = null;
 
@@ -62,10 +70,11 @@ public class PlayerBase : EntityBase
 
         playerManager.Register(this);
 
+        GetSkillTreeValues();
         GetSkillTreeEffects();
         StageManager.ProcessPlayerSkillTree(this);
 
-        HH_Effect_parent.SetActive(Skills.Contains(SkillTree_Manager.SkillName.HEAVY_HITTER));
+        HH_Effect_parent.SetActive(HasSkill(SkillTree_Manager.SkillName.HEAVY_HITTER));
         WindanthemSlider = WindanthemBar.GetComponentInChildren<Slider>();
         WindanthemCounter = WindanthemBar.GetComponentInChildren<TMP_Text>();
 
@@ -77,19 +86,20 @@ public class PlayerBase : EntityBase
         IsComponentsInitialized = true;
     }
 
+    protected virtual void GetSkillTreeValues() { }
+
     protected override void OnInitialize_GetSkillTreeAttributes()
     {
         base.OnInitialize_GetSkillTreeAttributes();
 
-        if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.WINGED_STEPS_A)
-        || CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.WINGED_STEPS_B)
-        || CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.WINGED_STEPS_C))
+        if (CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.WINGED_STEPS_A)
+        || CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.WINGED_STEPS_B)
+        || CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.WINGED_STEPS_C))
             AccelerationBuffPerSec *= 1.5f;
 
-        if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.ATTENTION_DEVICE))
+        if (CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.ATTENTION_DEVICE))
             StatisRequiredTimer = 3f;
 
-        HungerDamageCurrentHealthPercentagePerSec /= 2;
         HungerDamageFlatPerSec /= 2;
     }
 
@@ -141,17 +151,17 @@ public class PlayerBase : EntityBase
             return;
         }
 
-        if (Skills.Contains(SkillTree_Manager.SkillName.GEOLOGIST_OBSERVE))
+        if (HasSkill(SkillTree_Manager.SkillName.GEOLOGIST_OBSERVE))
         {
             ReduceUltimateCooldown(geologistCountUp * 0.4f, PlayerBase.CooldownReductionType.FLAT);
         }
 
-        if (Skills.Contains(SkillTree_Manager.SkillName.GEOLOGIST_STUDY))
+        if (HasSkill(SkillTree_Manager.SkillName.GEOLOGIST_STUDY))
         {
             ApplyEffect(Effect.AffectedStat.ATK, "GEOLOGIST_ATK_BUFF", 50f, 0.5f, true);
         }
 
-        if (Skills.Contains(SkillTree_Manager.SkillName.GEOLOGIST_EXPLORE))
+        if (HasSkill(SkillTree_Manager.SkillName.GEOLOGIST_EXPLORE))
         {
             ApplyEffect(Effect.AffectedStat.MSPD, "GEOLOGIST_MSPD_BUFF", 50f, 0.5f, true);
         }
@@ -171,7 +181,7 @@ public class PlayerBase : EntityBase
 
     protected override bool TriggerHunger()
     {
-        return base.TriggerHunger() && IsMoving() && !Skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_PROVISIONS);
+        return base.TriggerHunger() && IsMoving() && !HasSkill(SkillTree_Manager.SkillName.EQUIPMENT_PROVISIONS);
     }
 
     float w_countUp = 0;
@@ -181,7 +191,7 @@ public class PlayerBase : EntityBase
         if (w_countUp < 0.15f) return;
         w_countUp = 0;
 
-        if (!Skills.Contains(SkillTree_Manager.SkillName.WINGED_STEPS_B)) return;
+        if (!HasSkill(SkillTree_Manager.SkillName.WINGED_STEPS_B)) return;
 
         float amount = b_moveSpeed == 0
             ? 0 
@@ -201,7 +211,7 @@ public class PlayerBase : EntityBase
         float interval = i_countUp;
         i_countUp = 0;
 
-        if (!Skills.Contains(SkillTree_Manager.SkillName.WINGED_STEPS_C)) return;
+        if (!HasSkill(SkillTree_Manager.SkillName.WINGED_STEPS_C)) return;
         
         bool isMoving = rb2d.velocity.magnitude > 0.1f;
         if (isMoving == previouslyMoving) i_ContiuousCounter = (short) Mathf.Min(i_ContiuousCounter + 1, 3);
@@ -244,7 +254,7 @@ public class PlayerBase : EntityBase
             lifeSteal -= attentionMinLifesteal;
         }
 
-        if (health >= mHealth * 0.85f && Skills.Contains(SkillTree_Manager.SkillName.ATTENTION_BOOK))
+        if (health >= mHealth * 0.85f && HasSkill(SkillTree_Manager.SkillName.ATTENTION_BOOK))
         {
             ApplyEffect(Effect.AffectedStat.ATK, "ATTENTION_BUFF", 30, 0.22f, true);
             ApplyEffect(Effect.AffectedStat.ASPD, "ATTENTION_BUFF", 20, 0.22f, true);
@@ -256,7 +266,7 @@ public class PlayerBase : EntityBase
             }
         }
         
-        if (health <= mHealth * 0.6f && Skills.Contains(SkillTree_Manager.SkillName.ATTENTION_DEVICE))
+        if (health <= mHealth * 0.6f && HasSkill(SkillTree_Manager.SkillName.ATTENTION_DEVICE))
         {
             ApplyEffect(Effect.AffectedStat.DEF, "ATTENTION_BUFF", 30, 0.22f, false);
             ApplyEffect(Effect.AffectedStat.RES, "ATTENTION_BUFF", 20, 0.22f, false);
@@ -272,7 +282,7 @@ public class PlayerBase : EntityBase
     public override void UpdateCooldowns()
     {
         base.UpdateCooldowns();
-        if (Skills.Contains(SkillTree_Manager.SkillName.HEAVY_HITTER))
+        if (HasSkill(SkillTree_Manager.SkillName.HEAVY_HITTER))
         {
             timerSinceLastAttack += Time.fixedDeltaTime;
             HH_Effect_fill.fillAmount = Mathf.Lerp(0, 1f, timerSinceLastAttack / heavyHitterMaxTimer);
@@ -297,13 +307,13 @@ public class PlayerBase : EntityBase
         }
 
         GetVow();
-        if (Skills.Contains(SkillTree_Manager.SkillName.SWAP_START_ATK))
+        if (HasSkill(SkillTree_Manager.SkillName.SWAP_START_ATK))
         {
             Heal((mHealth - health) * 0.3f);
             ApplyEffect(Effect.AffectedStat.ATK, "SWAP_START_ATKBUFF", 75f, 5f, true, EffectPersistType.PERSIST);
         }
 
-        if (Skills.Contains(SkillTree_Manager.SkillName.SWAP_START_MSPD))
+        if (HasSkill(SkillTree_Manager.SkillName.SWAP_START_MSPD))
         {
             ApplyEffect(Effect.AffectedStat.MSPD, StartMspdBuffKey, 50f, 9999f, true, EffectPersistType.PERSIST, false);
         }
@@ -369,7 +379,7 @@ public class PlayerBase : EntityBase
     protected bool Debut = false;
     protected virtual IEnumerator SpecialLockout()
     {
-        if (!Debut && !FireWorkStarted && Skills.Contains(SkillTree_Manager.SkillName.SWAP_START_SPECIAL))
+        if (!Debut && !FireWorkStarted && HasSkill(SkillTree_Manager.SkillName.SWAP_START_SPECIAL))
             StartCoroutine(FireWork_Special());
         yield return null;
     }
@@ -407,7 +417,7 @@ public class PlayerBase : EntityBase
 
     public virtual void GetSkillTreeEffects()
     {
-        var SelectedSkills = CharacterPrefabsStorage.Skills.Keys.ToList();
+        var SelectedSkills = CharacterPrefabsStorage.Skills.ToList();
         
         var ExtraSkill = StageManager.GetExtraSkills();
         if (ExtraSkill != null) SelectedSkills.AddRange(ExtraSkill);
@@ -436,68 +446,79 @@ public class PlayerBase : EntityBase
         }
 
         SelectedSkills = SelectedSkills.OrderBy(s => s).ToList();
-        foreach (var skill in SelectedSkills)
+        float[] values;
+        foreach (var skillName in SelectedSkills)
         {
-            Skills.Add(skill);
+            Skills.Add(UpgradesManager._instance.GetUpgradeData(skillName));
 
-            switch (skill)
+            switch (skillName)
             {
                 case SkillTree_Manager.SkillName.WINGED_STEPS_A:
-                    ASPD += 20;
+                    values = GetSkillValues(SkillTree_Manager.SkillName.WINGED_STEPS_A);
+                    ASPD += values[0];
                     break;
 
                 case SkillTree_Manager.SkillName.WINGED_STEPS_B:
-                    ApplyEffect(Effect.AffectedStat.MSPD, "WINGED_STEPS_B_BUFF", 10f, 9999f, true, EffectPersistType.PERSIST);
+                    values = GetSkillValues(SkillTree_Manager.SkillName.WINGED_STEPS_B);
+                    ApplyEffect(Effect.AffectedStat.MSPD, "WINGED_STEPS_B_BUFF", values[0], 9999f, true, EffectPersistType.PERSIST);
                     break;
 
                 case SkillTree_Manager.SkillName.EQUIPMENT_BLADE:
-                    defPen += 15;
+                    values = GetSkillValues(SkillTree_Manager.SkillName.EQUIPMENT_BLADE);
+                    defPen += (short) values[0];
                     break;
 
                 case SkillTree_Manager.SkillName.EQUIPMENT_SCOPE:
-                    b_attackRange *= 1.2f;
+                    values = GetSkillValues(SkillTree_Manager.SkillName.EQUIPMENT_SCOPE);
+                    b_attackRange += b_attackRange * values[0];
                     break;
 
                 case SkillTree_Manager.SkillName.EQUIPMENT_PROVISIONS:
-                    HealingEffectiveness += 0.25f;
+                    values = GetSkillValues(SkillTree_Manager.SkillName.EQUIPMENT_PROVISIONS);
+                    HealingEffectiveness += values[0];
                     break;
 
                 case SkillTree_Manager.SkillName.HEAVY_HITTER:
-                    ASPD -= 25;
-                    bAtk += (short)(bAtk * 0.4f);
+                    values = GetSkillValues(SkillTree_Manager.SkillName.HEAVY_HITTER);
+                    ASPD -= values[0];
+                    bAtk += (short)(bAtk * values[1]);
+                    heavyHitterMaxTimer = values[3];
                     break;
 
                 case SkillTree_Manager.SkillName.A_NICE_LOOKING_ROCK:
-                    mHealth += (mHealth * 0.052f);
-                    bAtk = (short)(bAtk * 1.052f);
-                    b_moveSpeed += b_moveSpeed * 0.052f;
+                    values = GetSkillValues(SkillTree_Manager.SkillName.A_NICE_LOOKING_ROCK);
+                    mHealth += (mHealth * values[0]);
+                    bAtk = (short)(bAtk * (1 + values[0]));
+                    b_moveSpeed += b_moveSpeed * values[0];
                     break;
 
                 case SkillTree_Manager.SkillName.HAIR_RIBBON:
+                    values = GetSkillValues(SkillTree_Manager.SkillName.HAIR_RIBBON);
                     PlayerType playerType = GetPlayerType();
 
                     if (CharacterPrefabsStorage.startingPlayer == playerType)
                     {
-                        bAtk = (short)(bAtk * 1.3f);
+                        bAtk = (short)(bAtk * (1 + values[0]));
 
                         if (playerType == PlayerType.MELEE)
                         {
-                            mHealth += (int)(mHealth * 0.15f);
+                            mHealth += (int)(mHealth * values[1]);
                         }
                         else if (playerType == PlayerType.RANGED)
                         {
-                            b_moveSpeed += b_moveSpeed * 0.2f;
+                            b_moveSpeed += b_moveSpeed * values[2];
                         }
                     }
                     break;
 
                 case SkillTree_Manager.SkillName.CERTAIN_FATES:
-                    weight++;
+                    values = GetSkillValues(SkillTree_Manager.SkillName.CERTAIN_FATES);
+                    weight += (short)values[0];
                     break;
             }
         }
 
-        canVow = Skills.Contains(SkillTree_Manager.SkillName.KNOTS);
+        canVow = HasSkill(SkillTree_Manager.SkillName.KNOTS);
 
         if (playerManager && playerManager.MintBlessing)
         {
@@ -531,7 +552,7 @@ public class PlayerBase : EntityBase
 
         foreach (var skill in Skills)
         {
-            playerManager.PlayerInvoke_RemoveSkillUI(skill);
+            playerManager.PlayerInvoke_RemoveSkillUI(skill.skillName);
         }
     }
 
@@ -539,9 +560,10 @@ public class PlayerBase : EntityBase
     {
         float regenAmount = base.GetRegenAmount();
         float provisionAdd = 0;
-        if (Skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_PROVISIONS))
+        if (HasSkill(SkillTree_Manager.SkillName.EQUIPMENT_PROVISIONS))
         {
-            provisionAdd = mHealth * 0.01f + (mHealth - health) * 0.02f;
+            float[] values = GetSkillValues(SkillTree_Manager.SkillName.EQUIPMENT_PROVISIONS);
+            provisionAdd = mHealth * values[1] + (mHealth - health) * values[2];
         }
 
         return regenAmount + provisionAdd;
@@ -549,7 +571,7 @@ public class PlayerBase : EntityBase
 
     protected void MakeVow(PlayerManager.SkillType skillType)
     {
-        if (!Skills.Contains(SkillTree_Manager.SkillName.KNOTS) || playerManager.hasVowed || skillType == SkillType.NONE) return;
+        if (!HasSkill(SkillTree_Manager.SkillName.KNOTS) || playerManager.hasVowed || skillType == SkillType.NONE) return;
 
         SkillType seal;
 
@@ -630,7 +652,7 @@ public class PlayerBase : EntityBase
     {
         if (!IsAlive()) return;
 
-        if (Skills.Contains(SkillTree_Manager.SkillName.KNOTS) && !playerManager.hasVowed)
+        if (HasSkill(SkillTree_Manager.SkillName.KNOTS) && !playerManager.hasVowed)
         {
             MakeVow(PlayerManager.SkillType.ULTIMATE);
         }
@@ -642,7 +664,7 @@ public class PlayerBase : EntityBase
     {
         if (!IsAlive()) return;
 
-        if (Skills.Contains(SkillTree_Manager.SkillName.KNOTS) && !playerManager.hasVowed)
+        if (HasSkill(SkillTree_Manager.SkillName.KNOTS) && !playerManager.hasVowed)
         {
             MakeVow(PlayerManager.SkillType.SPECIAL);
         }
@@ -653,10 +675,11 @@ public class PlayerBase : EntityBase
     short specialCastCount = 0;
     public virtual void UseSpecial()
     {
-        if (Skills.Contains(SkillTree_Manager.SkillName.SPECIAL_MSPD))
+        if (HasSkill(SkillTree_Manager.SkillName.SPECIAL_MSPD))
         {
-            float duration = Mathf.Min(3f, 1f + specialCastCount * 0.5f);
-            ApplyEffect(Effect.AffectedStat.MSPD, "SPECIAL_MSPD_BUFF", 100f, duration, true, EffectPersistType.PERSIST);
+            float[] values = GetSkillValues(SkillTree_Manager.SkillName.SPECIAL_MSPD);
+            float duration = Mathf.Min(values[3], values[1] + specialCastCount * values[2]);
+            ApplyEffect(Effect.AffectedStat.MSPD, "SPECIAL_MSPD_BUFF", values[0], duration, true, EffectPersistType.PERSIST);
             specialCastCount++;
         }
     }
@@ -664,7 +687,7 @@ public class PlayerBase : EntityBase
     [SerializeField] GameObject UltimateShockwaveEffect;
     public virtual void UseSkill()
     {
-        if (Skills.Contains(SkillTree_Manager.SkillName.ULTIMATE_BUFF))
+        if (HasSkill(SkillTree_Manager.SkillName.ULTIMATE_BUFF))
         {
             ActivateLever();
         }
@@ -674,9 +697,10 @@ public class PlayerBase : EntityBase
     float leverCDTimer = 9999f;
     void ActivateLever()
     {
-        ApplyEffect(Effect.AffectedStat.ATK, "ULTIMATE_ATK_BUFF", 25f, 5f, true, EffectPersistType.DECAY);
-        ApplyEffect(Effect.AffectedStat.ASPD, "ULTIMATE_ASPD_BUFF", 25f, 5f, true, EffectPersistType.DECAY);
-        ApplyEffect(Effect.AffectedStat.MSPD, "ULTIMATE_MSPD_BUFF", 25f, 5f, true, EffectPersistType.DECAY);
+        float[] values = GetSkillValues(SkillTree_Manager.SkillName.ULTIMATE_BUFF);
+        ApplyEffect(Effect.AffectedStat.ATK, "ULTIMATE_ATK_BUFF", values[0], values[1], true, EffectPersistType.DECAY);
+        ApplyEffect(Effect.AffectedStat.ASPD, "ULTIMATE_ASPD_BUFF", values[0], values[1], true, EffectPersistType.DECAY);
+        ApplyEffect(Effect.AffectedStat.MSPD, "ULTIMATE_MSPD_BUFF", values[0], values[1], true, EffectPersistType.DECAY);
 
         if (leverCDTimer < leverCD) return;
 
@@ -686,7 +710,7 @@ public class PlayerBase : EntityBase
         foreach (var enemy in enemies)
         {
             if (!enemy || !enemy.IsAlive()) continue;
-            enemy.ApplyEffect(Effect.AffectedStat.MSPD, "ULTIMATE_ENEMY_DEBUFF", -90f, 2f, true, EffectPersistType.DECAY);
+            enemy.ApplyEffect(Effect.AffectedStat.MSPD, "ULTIMATE_ENEMY_DEBUFF", values[2] * -1, values[3], true, EffectPersistType.DECAY);
             PushEntityFrom(enemy, transform.position, 3.6f, 0.15f, true);
         }
 
@@ -812,18 +836,20 @@ public class PlayerBase : EntityBase
         }
     }
 
-    public float heavyHitterMaxTimer = 10f;
+    public float heavyHitterMaxTimer;
     protected float timerSinceLastAttack = 0f;
     protected float GetHeavyHitterMultiplier()
     {
-        if (!Skills.Contains(SkillTree_Manager.SkillName.HEAVY_HITTER)) return 1f;
-        float multiplier = 1f + Mathf.Lerp(0f, 2.5f, timerSinceLastAttack / heavyHitterMaxTimer);
+        if (!HasSkill(SkillTree_Manager.SkillName.HEAVY_HITTER)) return 1f;
+        float[] values = GetSkillValues(SkillTree_Manager.SkillName.HEAVY_HITTER);
+        float multiplier = 1f + Mathf.Lerp(0f, values[2], timerSinceLastAttack / heavyHitterMaxTimer);
         return multiplier;
     }
 
     protected void GetWingedStepMspdBuff()
     {
-        float baseValue = 30f, jumpValue = 5f;
+        float[] values = GetSkillValues(SkillTree_Manager.SkillName.WINGED_STEPS_A);
+        float baseValue = values[1], jumpValue = values[3];
         string key = "WINGED_STEPS_A_MSPD_BUFF";
         if (MspdBuffs.ContainsKey(key) && MspdBuffs[key].IsInEffect)
         {
@@ -832,19 +858,19 @@ public class PlayerBase : EntityBase
             ApplyEffect(
                 Effect.AffectedStat.MSPD, 
                 key,
-                Mathf.Max(baseValue, newValue), 
-                3f, 
+                Mathf.Max(baseValue, newValue),
+                values[2], 
                 true, 
                 EffectPersistType.PERSIST);
         }
         else
         {
-            ApplyEffect(Effect.AffectedStat.MSPD, key, baseValue, 3f, true, EffectPersistType.PERSIST);
+            ApplyEffect(Effect.AffectedStat.MSPD, key, baseValue, values[2], true, EffectPersistType.PERSIST);
         }
     }
 
     protected bool IsHeavyHitterMaxed =>
-        Skills.Contains(SkillTree_Manager.SkillName.HEAVY_HITTER)
+        HasSkill(SkillTree_Manager.SkillName.HEAVY_HITTER)
         &&
         timerSinceLastAttack >= heavyHitterMaxTimer;
 
@@ -853,19 +879,21 @@ public class PlayerBase : EntityBase
     {
         if (!target.IsAlive()) return;
 
-        if (Skills.Contains(SkillTree_Manager.SkillName.BUBBLE_ARTS) && !Levitated.Contains(target))
+        if (HasSkill(SkillTree_Manager.SkillName.BUBBLE_ARTS) && !Levitated.Contains(target))
         {
-            mDmg += (int)(atk * 0.1f);
-            ApplyLevitate(target, 2.5f);
+            float[] values = GetSkillValues(SkillTree_Manager.SkillName.BUBBLE_ARTS);
+            mDmg += (int)(atk * values[0]);
+            ApplyLevitate(target, values[1]);
             Levitated.Add(target);
         }
 
-        if (Skills.Contains(SkillTree_Manager.SkillName.BREAK_THE_ICE) && target.IsFrozen)
+        if (HasSkill(SkillTree_Manager.SkillName.BREAK_THE_ICE) && target.IsFrozen)
         {
+            float[] values = GetSkillValues(SkillTree_Manager.SkillName.BREAK_THE_ICE);
             float freezeDuration = target.FreezeTimer;
             target.EndFreeze();
 
-            int bonusDmg = (int)(target.mHealth * 0.1f + Mathf.Min(atk * 0.5f * freezeDuration, bAtk * 4f));
+            int bonusDmg = (int)(target.mHealth * values[0] + Mathf.Min(atk * values[1] * freezeDuration, bAtk * values[2]));
             tDmg += bonusDmg;
         }
 
@@ -879,15 +907,19 @@ public class PlayerBase : EntityBase
     int enemyDefeatCount = 0;
     public virtual void OnEnemyDefeat(EntityBase enemy)
     {
-        if (Skills.Contains(SkillTree_Manager.SkillName.VICTORY_ATK))
+        if (HasSkill(SkillTree_Manager.SkillName.VICTORY_ATK))
         {
-            float strength = Mathf.Min(100f, 50f + 5f * enemyDefeatCount), duration = 5f;
+            float[] values = GetSkillValues(SkillTree_Manager.SkillName.VICTORY_ATK);
+            float strength = Mathf.Min(values[3], values[0] + values[1] * enemyDefeatCount), duration = values[2];
             ApplyEffect(Effect.AffectedStat.ATK, "VICTORY_ATK_BUFF", strength, duration, true, EffectPersistType.DECAY);
             ApplyEffect(Effect.AffectedStat.MSPD, "VICTORY_MSPD_BUFF", strength, duration, true, EffectPersistType.DECAY);
         }
-        
-        if (Skills.Contains(SkillTree_Manager.SkillName.VICTORY_REFRESH))
-            ReduceSpecialCooldown(Mathf.Min(1.0f, 0.3f + 0.07f * enemyDefeatCount), CooldownReductionType.PERCENTAGE_FULL);
+
+        if (HasSkill(SkillTree_Manager.SkillName.VICTORY_REFRESH))
+        {
+            float[] values = GetSkillValues(SkillTree_Manager.SkillName.VICTORY_REFRESH);
+            ReduceSpecialCooldown(Mathf.Min(values[2], values[0] + values[1] * enemyDefeatCount), CooldownReductionType.PERCENTAGE_FULL);
+        }
 
         enemyDefeatCount++;
     }
@@ -923,11 +955,12 @@ public class PlayerBase : EntityBase
 
     protected virtual void MintRevive()
     {
-        Heal(mHealth * 0.52f, healThroughDead: true);
+        float[] values = GetSkillValues(SkillTree_Manager.SkillName.AMULET);
+        Heal(mHealth * values[0], healThroughDead: true);
 
         playerManager.MintBlessingRevival();
         playerManager.PlayerInvoke_RemoveSkillUI(SkillTree_Manager.SkillName.AMULET);
-        SetInvulnerable(1.52f);
+        SetInvulnerable(values[1]);
 
         Instantiate(RockEffect, transform.position, Quaternion.identity);
     }

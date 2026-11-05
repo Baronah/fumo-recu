@@ -51,12 +51,17 @@ public class HibernatorKnight : EnemyBase
 
     void Sleep()
     {
-        ApplyEffect(Effect.AffectedStat.DEF, "HIBERNATOR_NATURAL_DEF_DEBUFF", -100f, 9999f, false);
-        ApplyEffect(Effect.AffectedStat.RES, "HIBERNATOR_NATURAL_RES_DEBUFF", -100f, 9999f, false);
+        ApplyEffect(Effect.AffectedStat.DEF, "HIBERNATOR_NATURAL_DEF_DEBUFF", -100f, 9999f, true);
+        ApplyEffect(Effect.AffectedStat.RES, "HIBERNATOR_NATURAL_RES_DEBUFF", -100f, 9999f, true);
 
         CancelAttack();
         StopMovement();
         animator.SetBool("sleep", true);
+    }
+
+    public override bool IsValidForPlayerDetection()
+    {
+        return base.IsValidForPlayerDetection() && !IsSleeping;
     }
 
     public override void Move()

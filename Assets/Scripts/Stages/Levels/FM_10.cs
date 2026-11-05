@@ -56,9 +56,9 @@ public class FM_10 : StageManager
         bg1.color = bg2.color = darkenColor;
     }
 
-    public override void EnableChallengeMode()
+    public override void CheckForChallengeMode()
     {
-        base.EnableChallengeMode();
+        base.CheckForChallengeMode();
 
         spawnSudaram = CharacterPrefabsStorage.EnableChallengeMode;
 

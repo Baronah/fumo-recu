@@ -30,7 +30,7 @@ public class CasterProjectileScript : ProjectileScript
         PlayerCasterIllusion playerCasterIllusion = ProjectileFirer && !caster ? ProjectileFirer.GetComponent<PlayerCasterIllusion>() : null;
 
         fieldExpertEnabled =
-            (caster && caster.Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_FIELD_EXPERT))
+            (caster && caster.HasSkill(SkillTree_Manager.SkillName.SPIRAL_FIELD_EXPERT))
             ||
             (playerCasterIllusion && playerCasterIllusion.FieldExpert);
     }
@@ -92,7 +92,7 @@ public class CasterProjectileScript : ProjectileScript
     }
 
     bool appliedDamage = false;
-    readonly bool ragingTerrain = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.TERRAIN);
+    readonly bool ragingTerrain = CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.TERRAIN);
     void ApplyContactedEnvironmentalEffects(EntityBase target)
     {
         foreach (var contactedEnvironmentType in contactedEnvironmentType)

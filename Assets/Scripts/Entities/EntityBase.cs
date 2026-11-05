@@ -1399,7 +1399,7 @@ public class EntityBase : MonoBehaviour
     }
 
     protected float HungerDamageFlatPerSec = 5f;
-    protected float HungerDamageCurrentHealthPercentagePerSec = 0.03f;
+    protected float HungerDamageCurrentHealthPercentagePerSec = 0.02f;
     private float HungerTimerCount = 0f;
     private readonly float HungerTick = 1f;
 
@@ -1835,7 +1835,7 @@ public class EntityBase : MonoBehaviour
             e.StopObstacleIgnore();
         }
 
-        bool ShiftDoesDamage = this is PlayerBase b && targetEntity != this && b.Skills.Contains(SkillTree_Manager.SkillName.CERTAIN_FATES);
+        bool ShiftDoesDamage = this is PlayerBase b && targetEntity != this && b.HasSkill(SkillTree_Manager.SkillName.CERTAIN_FATES);
 
         float multiplier = ForceValueAfterWeight / ForceValue;
         force *= multiplier;
@@ -1943,39 +1943,39 @@ public class EntityBase : MonoBehaviour
         }
     }
 
-    public void CreateProjectileAndShootToward(EntityBase target, ProjectileScript.ProjectileType projectileType, float acceleration = 0)
+    public GameObject CreateProjectileAndShootToward(EntityBase target, ProjectileScript.ProjectileType projectileType, float acceleration = 0)
     {
-        CreateProjectileAndShootToward(ProjectilePrefab, GetInstanceBasedOnDamagetype(), target, AttackPosition.position, target.transform.position, projectileType, ProjectileSpeed, acceleration);
+        return CreateProjectileAndShootToward(ProjectilePrefab, GetInstanceBasedOnDamagetype(), target, AttackPosition.position, target.transform.position, projectileType, ProjectileSpeed, acceleration);
     }
 
-    public void CreateProjectileAndShootToward(EntityBase target, ProjectileScript.ProjectileType projectileType, float travelSpeed, float acceleration)
+    public GameObject CreateProjectileAndShootToward(EntityBase target, ProjectileScript.ProjectileType projectileType, float travelSpeed, float acceleration)
     {
-        CreateProjectileAndShootToward(ProjectilePrefab, GetInstanceBasedOnDamagetype(), target, AttackPosition.position, target.transform.position, projectileType, travelSpeed, acceleration);
+        return CreateProjectileAndShootToward(ProjectilePrefab, GetInstanceBasedOnDamagetype(), target, AttackPosition.position, target.transform.position, projectileType, travelSpeed, acceleration);
     }
 
-    public void CreateProjectileAndShootToward(EntityBase target, Vector3 targetPosition, ProjectileScript.ProjectileType projectileType, float acceleration = 0)
+    public GameObject CreateProjectileAndShootToward(EntityBase target, Vector3 targetPosition, ProjectileScript.ProjectileType projectileType, float acceleration = 0)
     {
-        CreateProjectileAndShootToward(ProjectilePrefab, GetInstanceBasedOnDamagetype(), target, AttackPosition.position, targetPosition, projectileType, ProjectileSpeed, acceleration);
+        return CreateProjectileAndShootToward(ProjectilePrefab, GetInstanceBasedOnDamagetype(), target, AttackPosition.position, targetPosition, projectileType, ProjectileSpeed, acceleration);
     }
 
-    public void CreateProjectileAndShootToward(EntityBase target, Vector3 spawnPosition, Vector3 targetPosition, ProjectileScript.ProjectileType projectileType, float acceleration = 0)
+    public GameObject CreateProjectileAndShootToward(EntityBase target, Vector3 spawnPosition, Vector3 targetPosition, ProjectileScript.ProjectileType projectileType, float acceleration = 0)
     {
-        CreateProjectileAndShootToward(ProjectilePrefab, GetInstanceBasedOnDamagetype(), target, spawnPosition, targetPosition, projectileType, ProjectileSpeed, acceleration);
+        return CreateProjectileAndShootToward(ProjectilePrefab, GetInstanceBasedOnDamagetype(), target, spawnPosition, targetPosition, projectileType, ProjectileSpeed, acceleration);
     }
 
-    public void CreateProjectileAndShootToward(EntityBase target, Vector3 spawnPosition, Vector3 targetPosition, ProjectileScript.ProjectileType projectileType, float travelSpeed, float acceleration = 0)
+    public GameObject CreateProjectileAndShootToward(EntityBase target, Vector3 spawnPosition, Vector3 targetPosition, ProjectileScript.ProjectileType projectileType, float travelSpeed, float acceleration = 0)
     {
-        CreateProjectileAndShootToward(ProjectilePrefab, GetInstanceBasedOnDamagetype(), target, spawnPosition, targetPosition, projectileType, travelSpeed, acceleration);
+        return CreateProjectileAndShootToward(ProjectilePrefab, GetInstanceBasedOnDamagetype(), target, spawnPosition, targetPosition, projectileType, travelSpeed, acceleration);
     }
 
-    public void CreateProjectileAndShootToward(EntityBase target, DamageInstance damageInstance, ProjectileScript.ProjectileType projectileType, float acceleration = 0)
+    public GameObject CreateProjectileAndShootToward(EntityBase target, DamageInstance damageInstance, ProjectileScript.ProjectileType projectileType, float acceleration = 0)
     {
-        CreateProjectileAndShootToward(ProjectilePrefab, damageInstance, target, AttackPosition.position,target.transform.position, projectileType, ProjectileSpeed, acceleration);
+        return CreateProjectileAndShootToward(ProjectilePrefab, damageInstance, target, AttackPosition.position,target.transform.position, projectileType, ProjectileSpeed, acceleration);
     }
 
-    public void CreateProjectileAndShootToward(EntityBase target, DamageInstance damageInstance, Vector3 targetPosition, ProjectileScript.ProjectileType projectileType, float acceleration = 0)
+    public GameObject CreateProjectileAndShootToward(EntityBase target, DamageInstance damageInstance, Vector3 targetPosition, ProjectileScript.ProjectileType projectileType, float acceleration = 0)
     {
-        CreateProjectileAndShootToward(ProjectilePrefab, damageInstance, target, AttackPosition.position, targetPosition, projectileType, ProjectileSpeed, acceleration);
+        return CreateProjectileAndShootToward(ProjectilePrefab, damageInstance, target, AttackPosition.position, targetPosition, projectileType, ProjectileSpeed, acceleration);
     }
 
     private GameObject GetProjectile(GameObject prefab, Vector3 spawnPosition)

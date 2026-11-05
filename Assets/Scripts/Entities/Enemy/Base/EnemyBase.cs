@@ -207,16 +207,21 @@ public class EnemyBase : EntityBase
     {
         yield return new WaitUntil(() => IsComponentsInitialized);
 
-        ApplyEffect(Effect.AffectedStat.DEF, "ICEAGE_DEF_BUFF", 70f, duration, false);
-        ApplyEffect(Effect.AffectedStat.RES, "ICEAGE_RES_BUFF", 25f, duration, false);
-        SetHealth(mHealth * 0.5f);
+        float[] values = UpgradesManager._instance.GetUpgradeValues(SkillTree_Manager.SkillName.HIBERNATE);
+        float defAdd = values[3], 
+                resAdd = values[4], 
+                phps = values[2];
+
+        ApplyEffect(Effect.AffectedStat.DEF, "ICEAGE_DEF_BUFF", defAdd, duration, false);
+        ApplyEffect(Effect.AffectedStat.RES, "ICEAGE_RES_BUFF", resAdd, duration, false);
+        SetHealth(mHealth * values[5]);
 
         yield return null;
 
         while (IsFrozen)
         {
             yield return _waitForSeconds1;
-            Heal(mHealth * 0.02f);
+            Heal(mHealth * phps);
         }
 
         RemoveEffect("ICEAGE_DEF_BUFF");

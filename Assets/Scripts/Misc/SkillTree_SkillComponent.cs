@@ -9,11 +9,12 @@ using static SkillTree_Manager;
 public class SkillTree_SkillComponent : MonoBehaviour
 {
     public AudioSource OnSelectSFX;
-    public SkillType skillType;
+    [HideInInspector] public SkillType skillType;
     public SkillName skillName;
 
     public Sprite skillIcon => skillIconImage.sprite;
-    public string skillNameText, skillDescription, favorText, skillDescriptionInShort = "";
+    [HideInInspector] public string skillNameText, skillDescription, skillDescriptionInShort = "";
+    public string favorText;
     public SkillName[] mutuallyExclusiveSkills;
 
     private Button selfButton;
@@ -35,6 +36,18 @@ public class SkillTree_SkillComponent : MonoBehaviour
         colors.disabledColor = new(0.35f, 0.35f, 0.35f);
         
         selfButton.colors = colors;
+    }
+
+    private void Start()
+    {
+        UpgradeData upgradeData = SkillTree_Manager.Instance.GetUpgradeData(skillName);
+        skillType = upgradeData.skillType;
+        skillNameText = upgradeData.name;
+        skillDescription = upgradeData.description;
+        skillDescriptionInShort = upgradeData.shortDescription;
+
+        if (skillIconImage)
+            skillIconImage.sprite = upgradeData.icon;
     }
 
     public void OnTickOverlayCreated()
@@ -87,11 +100,11 @@ public class SkillTree_SkillComponent : MonoBehaviour
 
     bool GetInteractableState()
     {
-        if (CharacterPrefabsStorage.Skills.ContainsKey(skillName)) return false;
+        if (CharacterPrefabsStorage.Skills.Contains(skillName)) return false;
         if (LevelSelectionScript.Instance.GetBanSkills.Contains(skillName)) return false;
         foreach (var skill in mutuallyExclusiveSkills)
         {
-            if (CharacterPrefabsStorage.Skills.ContainsKey(skill)) return false;
+            if (CharacterPrefabsStorage.Skills.Contains(skill)) return false;
         }
         return true;
     }
@@ -101,13 +114,13 @@ public class SkillTree_SkillComponent : MonoBehaviour
         if (selfButton)
         {
             var colors = selfButton.colors;
-            colors.disabledColor = CharacterPrefabsStorage.Skills.ContainsKey(skillName)
+            colors.disabledColor = CharacterPrefabsStorage.Skills.Contains(skillName)
                 ? Color.white
                 : new(0.35f, 0.35f, 0.35f);
         }
 
         if (Overlay == null) return;
-        Overlay.gameObject.SetActive(CharacterPrefabsStorage.Skills.ContainsKey(skillName));
+        Overlay.gameObject.SetActive(CharacterPrefabsStorage.Skills.Contains(skillName));
     }
 
     public HashSet<SkillName> OnSkillSelected(HashSet<SkillName> existings, bool addToPlayerSkill = true)
@@ -123,20 +136,13 @@ public class SkillTree_SkillComponent : MonoBehaviour
         if (addToPlayerSkill)
         {
             CharacterPrefabsStorage.Skills.Add(
-                skillName,
-                new SkillDataSet()
-                {
-                    skillType = skillType,
-                    skillIcon = skillIcon,
-                    nameInString = skillNameText,
-                    skillDescription = skillDescriptionInShort == "" ? skillDescription : skillDescriptionInShort,
-                }
+                skillName
                 );
 
             foreach (var item in CharacterPrefabsStorage.Skills)
             {
-                if (mutuallyExclusiveSkills.Contains(item.Key))
-                    CharacterPrefabsStorage.Skills.Remove(item.Key);
+                if (mutuallyExclusiveSkills.Contains(item))
+                    CharacterPrefabsStorage.Skills.Remove(item);
             }
         }
 
@@ -146,7 +152,7 @@ public class SkillTree_SkillComponent : MonoBehaviour
 
     public void OnSkillClear()
     {
-        if (CharacterPrefabsStorage.Skills.ContainsKey(skillName)) return;
+        if (CharacterPrefabsStorage.Skills.Contains(skillName)) return;
         SetInteractableState();
     }
 }

@@ -8,7 +8,7 @@ public class FM_01 : StageManager
     [SerializeField] NavMeshData Nav_NM, Nav_CM;
     [SerializeField] private GameObject[] CM_EnableObjs, CM_DisableObjs;
 
-    public override void EnableChallengeMode()
+    public override void CheckForChallengeMode()
     {
         NavMesh.RemoveAllNavMeshData();
         NavMeshDataInstance currentInstance = NavMesh.AddNavMeshData(Nav_NM);
@@ -18,7 +18,7 @@ public class FM_01 : StageManager
             NavMesh.RemoveNavMeshData(currentInstance);
             NavMesh.AddNavMeshData(Nav_CM);
 
-            base.EnableChallengeMode();
+            base.CheckForChallengeMode();
 
             foreach (GameObject obj in CM_EnableObjs) obj.SetActive(true);
             for (int i = 0; i < CM_DisableObjs.Length; i++) Destroy(CM_DisableObjs[i]);

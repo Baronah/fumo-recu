@@ -4,9 +4,9 @@ public class FM_08 : StageManager
 {
     [SerializeField] private GameObject CM_DisableSpawns, CM_EnableSpawns;
 
-    public override void EnableChallengeMode()
+    public override void CheckForChallengeMode()
     {
-        base.EnableChallengeMode();
+        base.CheckForChallengeMode();
         if (CharacterPrefabsStorage.EnableChallengeMode)
         {
             Destroy(CM_DisableSpawns);

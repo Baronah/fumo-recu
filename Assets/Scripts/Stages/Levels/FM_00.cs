@@ -7,9 +7,9 @@ public class FM_00 : StageManager
     [SerializeField] private GameObject[] CM_Removes;
     [SerializeField] private float HoundHpMultiplier = 1.5f, HoundAtkMultiplier = 2.5f;
 
-    public override void EnableChallengeMode()
+    public override void CheckForChallengeMode()
     {
-        base.EnableChallengeMode();
+        base.CheckForChallengeMode();
         if (CharacterPrefabsStorage.EnableChallengeMode)
         {
             foreach (var i in CM_Removes)

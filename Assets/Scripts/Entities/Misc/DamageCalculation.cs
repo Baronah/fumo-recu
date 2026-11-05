@@ -33,7 +33,7 @@ namespace DamageCalculation
             PlayerBase playerBase = attacker as PlayerBase;
             if (playerBase)
             {
-                if (playerBase.Skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_BLADE))
+                if (playerBase.HasSkill(SkillTree_Manager.SkillName.EQUIPMENT_BLADE))
                 {
                     float maxiumDamageThreshold = 80f;
                     float targetMissingHealth = target.GetMissinghealthPercentage();
@@ -43,7 +43,7 @@ namespace DamageCalculation
                     instance.Multiply(damageMultiply);
                 }
                 
-                if (playerBase.Skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_SCOPE))
+                if (playerBase.HasSkill(SkillTree_Manager.SkillName.EQUIPMENT_SCOPE))
                 {
                     distance = Vector3.Distance(attacker.transform.position, target.transform.position);
                     calculatedDistance = true;
@@ -55,7 +55,7 @@ namespace DamageCalculation
                 }
             }
 
-            if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.ABSOLUTISM) 
+            if (CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.ABSOLUTISM) 
                 && target.attackPattern == EntityBase.AttackPattern.MELEE)
             {
                 if (!calculatedDistance && attacker)

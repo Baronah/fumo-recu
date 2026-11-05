@@ -7,9 +7,9 @@ public class FM_07 : StageManager
     [SerializeField] private float PlayerBonusHP_Ratio = 0.25f;
     [SerializeField] private float PlayerBonusMSPD_Ratio = 0.3f;
 
-    public override void EnableChallengeMode()
+    public override void CheckForChallengeMode()
     {
-        base.EnableChallengeMode();
+        base.CheckForChallengeMode();
 
         if (CharacterPrefabsStorage.EnableChallengeMode)
         {

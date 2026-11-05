@@ -4,13 +4,18 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
-using static Unity.Collections.AllocatorManager;
 using Button = UnityEngine.UI.Button;
 using Image = UnityEngine.UI.Image;
 
 public class SkillTree_Manager : MonoBehaviour
 {
+    [SerializeField] Upgrades SkillUpgradesData;
+    public UpgradeData GetUpgradeData(SkillType skillType, SkillName name) 
+        => SkillUpgradesData.GetUpgradeData(skillType, name);
+
+    public UpgradeData GetUpgradeData(SkillName name)
+        => SkillUpgradesData.GetUpgradeData(name);
+
     [SerializeField] Button TechViewBtn;
     [SerializeField] GameObject Block, SkillHighlight;
 
@@ -536,7 +541,7 @@ public class SkillTree_Manager : MonoBehaviour
         skill.transform.localPosition = targetPos;
     }
 
-    Dictionary<SkillName, SkillDataSet> skillSaves = new();
+    HashSet<SkillName> skillSaves = new();
     private void OnEnable()
     {
         skillSaves = new(CharacterPrefabsStorage.Skills);
@@ -565,7 +570,7 @@ public class SkillTree_Manager : MonoBehaviour
         SkillName[] bannedSkill = LevelSelectionScript.GetBanSkills;
         foreach (var item in bannedSkill)
         {
-            if (!CharacterPrefabsStorage.Skills.ContainsKey(item)) continue;
+            if (!CharacterPrefabsStorage.Skills.Contains(item)) continue;
             CharacterPrefabsStorage.Skills.Remove(item);
         }
     }
@@ -712,6 +717,8 @@ public class SkillTree_Manager : MonoBehaviour
         SkillHighlight.transform.position = skill.transform.position;
         SkillHighlight.SetActive(true);
 
+        UpgradeData upgradeData = GetUpgradeData(skill.skillName);
+
         skill.SetMutuallyExclusive();
 
         SkillViewPanelImg.color = skillViewScrollbarImg.color = skill.skillType switch
@@ -723,9 +730,9 @@ public class SkillTree_Manager : MonoBehaviour
         };
 
         skillDetailsText.text =
-            (skill.skillDescription + $"\n\n<i><color=#b1b1b1>{skill.favorText}</color></i>").Replace(@"\n", "\n");
-        skillNameText.text = skill.skillNameText;
-        skillIconImage.sprite = skill.skillIcon;
+            (upgradeData.description + $"\n\n<i><color=#b1b1b1>{skill.favorText}</color></i>").Replace(@"\n", "\n");
+        skillNameText.text = upgradeData.name;
+        skillIconImage.sprite = upgradeData.icon;
     }
 
     public void ConfirmSkillSelect()
@@ -771,7 +778,7 @@ public class SkillTree_Manager : MonoBehaviour
     {
         allSkills.ForEach(s => s.OnSkillClear());
 
-        List<SkillName> disabledSkills = CharacterPrefabsStorage.Skills.Keys.ToList();
+        List<SkillName> disabledSkills = CharacterPrefabsStorage.Skills.ToList();
         foreach (var item in disabledSkills)
         {
             SkillTree_SkillComponent comp = allSkills.Find(s => s.skillName == item);
@@ -785,7 +792,7 @@ public class SkillTree_Manager : MonoBehaviour
 
     public List<SkillName> GetSkillsForDisable()
     {
-        var skills = CharacterPrefabsStorage.Skills.Keys.ToList();
+        var skills = CharacterPrefabsStorage.Skills.ToList();
         skills.AddRange(LevelSelectionScript.GetBanSkills);
         skills = skills.Distinct().ToList();
 
@@ -806,7 +813,7 @@ public class SkillTree_Manager : MonoBehaviour
         short cnt = 0;
         foreach (var item in CharacterPrefabsStorage.Skills)
         {
-            TechImgs[cnt].sprite = item.Value.skillIcon;
+            TechImgs[cnt].sprite = SkillUpgradesData.GetIconOfUpgrade(item);
             cnt++;
         }
 
@@ -826,13 +833,12 @@ public class SkillTree_Manager : MonoBehaviour
         OkButton.interactable = !IsSkillsEqual(CharacterPrefabsStorage.Skills, skillSaves);
     }
 
-    bool IsSkillsEqual(Dictionary<SkillName, SkillDataSet> skillsSet, Dictionary<SkillName, SkillDataSet> skillsSave)
+    bool IsSkillsEqual(HashSet<SkillName> skillsSet, HashSet<SkillName> skillsSave)
     {
         if (skillsSet.Count != skillsSave.Count) return false;
         foreach (var item in skillsSet)
         {
-            var key = item.Key;
-            if (!skillsSave.ContainsKey(key)) return false;
+            if (!skillsSave.Contains(item)) return false;
         }
         return true;
     }

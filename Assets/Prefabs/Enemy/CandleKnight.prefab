@@ -562,7 +562,7 @@ MonoBehaviour:
   def: 15
   res: 60
   ASPD: 100
-  moveSpeed: 95
+  moveSpeed: 120
   attackRange: 420
   attackWindupTime: 0.3
   attackInterval: 3
@@ -597,7 +597,7 @@ MonoBehaviour:
   StatusResistTimer: 0
   PhysicalDodgeChance: 0
   MagicalDodgeChance: 0
-  preferredMoveAnimationPlaySpeed: 0.7
+  preferredMoveAnimationPlaySpeed: 1
   preferredAttackAnimationSpeed: 0.65
   IsComponentsInitialized: 1
   HasOnStartCoroutine: 1

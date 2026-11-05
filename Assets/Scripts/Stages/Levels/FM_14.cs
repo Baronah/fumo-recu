@@ -1,25 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using static EnemyBase;
 
 public class FM_14 : StageManager
 {
-    [SerializeField] private EnemyCode CM_ReplaceFrom = EnemyCode.GLOOMPINCER, CM_ReplaceTo = EnemyCode.TOY;
+    [SerializeField] private float Candles_RangeReductionRatio = 0.5f;
+    [SerializeField] private float Toys_HPBonus = 0.35f;
+    [SerializeField] private short Toys_DefBonus = 60, Toys_ResBonus = 40;
 
-    public override void EnableChallengeMode()
+    public override void OnEnemySpawn(EnemyBase enemy)
     {
-        base.EnableChallengeMode();
-
+        base.OnEnemySpawn(enemy);
         if (CharacterPrefabsStorage.EnableChallengeMode)
         {
-            var spawnpoints = FindObjectsOfType<EnemySpawnpointScript>();
-            foreach (var spawnpoint in spawnpoints)
+            if (enemy as Candle) enemy.b_attackRange *= (1 - Candles_RangeReductionRatio);
+            else if (enemy as Toy)
             {
-                if (spawnpoint.enemyPrefab == CM_ReplaceFrom)
-                {
-                    spawnpoint.enemyPrefab = CM_ReplaceTo;
-                }
+                enemy.mHealth += (int)(enemy.mHealth * Toys_HPBonus);
+                enemy.bDef += Toys_DefBonus;
+                enemy.bRes += Toys_ResBonus;
             }
         }
     }

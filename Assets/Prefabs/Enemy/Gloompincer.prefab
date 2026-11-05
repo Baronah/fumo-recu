@@ -496,7 +496,7 @@ MonoBehaviour:
   def: 45
   res: 20
   ASPD: 100
-  moveSpeed: 185
+  moveSpeed: 200
   attackRange: 70
   attackWindupTime: 0.4
   attackInterval: 1.6

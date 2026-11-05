@@ -118,12 +118,12 @@ public class StageManager : MonoBehaviour
     {
         GlobalStageManager.OnStageStart();
 
-        Absolutism = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.ABSOLUTISM);
-        Statis = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.STATIS);
-        Gravity = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.GRAVITY);
-        Acceleration = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.ACCELERATION);
-        Hunger = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.HUNGER);
-        Adaption = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.ADAPTION);
+        Absolutism = CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.ABSOLUTISM);
+        Statis = CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.STATIS);
+        Gravity = CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.GRAVITY);
+        Acceleration = CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.ACCELERATION);
+        Hunger = CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.HUNGER);
+        Adaption = CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.ADAPTION);
 
         LevelName = SceneManager.GetActiveScene().name;
         Title.text = $"<b><size=120>{LevelName}</size></b>\n{prefabStorage.LevelTitles[LevelIndex]}";
@@ -143,7 +143,7 @@ public class StageManager : MonoBehaviour
         ObstacleCollider = FindObjectsOfType<TilemapCollider2D>().Where(t => t.gameObject.layer == 8).ToArray();
 
         GameObject TheoryWorld = GameObject.Find("TheoryWorld");
-        TheoryWorld.SetActive(CharacterPrefabsStorage.Skills.Any(s => s.Value.skillType == SkillType.THEORIA));
+        TheoryWorld.SetActive(UpgradesManager._instance.HasTheoria());
         if (!TheoryWorld.activeSelf) Destroy(TheoryWorld);
 
         mainCamera = GetComponentInChildren<CameraMovement>(true);
@@ -165,12 +165,12 @@ public class StageManager : MonoBehaviour
             Destroy(ExtraEnemySpawn);
         }
 
-        timeDilation.SetActive(CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.TIME_DILATION));
+        timeDilation.SetActive(CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.TIME_DILATION));
         if (StageCompleteConditionType == StageCompleteCondition.RETRIEVE_FUMO) timeDilation.transform.position += new Vector3(0, 100);
 
         RemainingEnemiesGO.SetActive(StageCompleteConditionType == StageCompleteCondition.ELIMINATE_ALL_ENEMIES);
 
-        EnableChallengeMode();
+        CheckForChallengeMode();
 
         enemySpawnpoints = FindObjectsOfType<EnemySpawnpointScript>(true).ToArray();
 
@@ -232,7 +232,6 @@ public class StageManager : MonoBehaviour
     {
         $"Need time to pull off a difficult move? Press '{SlowKey}' to toggle slow-mo!",
         "'Der Tag neight Sich' (Ranged character's ultimate) can be cancelled by recast, move, attack or use special during channel time.",
-        "'Zeropoint Burst' (Ranged character's special) has a delay of 0.1 seconds",
         "'Evasion' (Melee character's special) gives you invincibility during dash.",
         "Enemies with higher weight are more resistant to push/pull effects.",
         "Push/pull will also cancel attacks.",
@@ -396,7 +395,7 @@ public class StageManager : MonoBehaviour
     }
     #endregion
 
-    public virtual void EnableChallengeMode()
+    public virtual void CheckForChallengeMode()
     {
         if (CharacterPrefabsStorage.EnableChallengeMode) Title.text += "\n<color=red><size=52>[CHALLENGE MODE]</size></color>";
     }
@@ -414,45 +413,41 @@ public class StageManager : MonoBehaviour
             enemy.mHealth = (int)(enemy.mHealth * ChallengeModeStatsModifier);
         }
 
-        foreach (var skillData in CharacterPrefabsStorage.Skills)
+        float[] values;
+        foreach (SkillName skill in CharacterPrefabsStorage.Skills)
         {
-            SkillName skill = skillData.Key;
+            values = UpgradesManager._instance.GetUpgradeValues(skill);
             switch (skill)
             {
-                case SkillName.OBSCURE_VISION:
-                    enemy.b_attackRange *= 0.8f;
-                    enemy.detectionRange *= 0.8f;
-                    break;
-
                 case SkillName.HUNGER:
-                    enemy.bAtk = (short)(enemy.bAtk * 1.5f);
-                    enemy.ASPD += 30;
-                    enemy.lifeSteal += 0.3f;
+                    enemy.bAtk += (short)(enemy.bAtk * values[0]);
+                    enemy.ASPD += values[1];
+                    enemy.lifeSteal += values[2];
                     break;
 
                 case SkillName.ABSOLUTISM:
                     if (enemy.attackPattern == EntityBase.AttackPattern.MELEE || enemy.attackPattern == EntityBase.AttackPattern.NONE)
                     {
-                        enemy.mHealth *= 2;
-                        enemy.b_moveSpeed *= 1.35f;
-                        enemy.weight += 2;
+                        enemy.mHealth += enemy.mHealth * values[0];
+                        enemy.b_moveSpeed += enemy.b_moveSpeed * values[1];
+                        enemy.weight += (short) values[2];
                     }
                     else if (enemy.attackPattern == EntityBase.AttackPattern.RANGED)
                     {
-                        enemy.ASPD += enemy.b_attackRange * 0.15f;
+                        enemy.ASPD += enemy.b_attackRange * values[3];
                         enemy.b_attackRange = enemy.detectionRange = 15000f;
                     }
                     break;
 
                 case SkillName.HIBERNATE:
-                    float duration = 40f;
-                    enemy.mHealth *= 1.5f;
+                    float duration = values[0];
+                    enemy.mHealth += enemy.mHealth * values[1];
                     enemy.ApplyFreeze(enemy, duration);
                     enemy.StartDeforst(duration);
                     break;
 
                 case SkillName.ADAPTION:
-                    enemy.mHealth += (enemy.bDef + enemy.bRes) / 2;
+                    enemy.mHealth += (enemy.bDef + enemy.bRes) * values[0];
                     enemy.bDef = enemy.bRes = 0;
                     break;
             }
@@ -477,36 +472,35 @@ public class StageManager : MonoBehaviour
     public void ProcessPlayerSkillTree(PlayerBase player)
     {
         var Skills = player.Skills;
-        foreach (SkillName skill in Skills)
+        float[] values;
+        foreach (UpgradeData skill in Skills)
         {
-            switch (skill)
+            values = skill.values;
+            switch (skill.skillName)
             {
-                case SkillName.OBSCURE_VISION:
-                    player.b_attackRange *= 0.8f;
-                    break;
                 case SkillName.HUNGER:
-                    if (!CharacterPrefabsStorage.Skills.ContainsKey(SkillName.EQUIPMENT_PROVISIONS))
+                    if (!CharacterPrefabsStorage.Skills.Contains(SkillName.EQUIPMENT_PROVISIONS))
                     {
-                        player.bAtk = (short)(player.bAtk * 1.5f);
-                        player.ASPD += 30;
-                        player.lifeSteal += 0.3f;
+                        player.bAtk += (short)(player.bAtk * values[0]);
+                        player.ASPD += values[1];
+                        player.lifeSteal += values[2];
                     }
                     break;
                 case SkillName.ABSOLUTISM:
                     if (player.attackPattern == EntityBase.AttackPattern.MELEE)
                     {
-                        player.mHealth *= 2;
-                        player.b_moveSpeed *= 1.35f;
-                        player.weight += 2;
+                        player.mHealth += player.mHealth * values[0];
+                        player.b_moveSpeed += player.b_moveSpeed * values[1];
+                        player.weight += (short) values[2];
                     }
                     else if (player.attackPattern == EntityBase.AttackPattern.RANGED)
                     {
-                        player.ASPD += player.b_attackRange * 0.15f;
+                        player.ASPD += player.b_attackRange * values[3];
                         player.b_attackRange = 15000f;
                     }
                     break;
                 case SkillName.HEAT_DEATH:
-                    player.mHealth *= 0.55f;
+                    player.mHealth -= player.mHealth * values[0];
                     break;
             }
         }
@@ -595,7 +589,7 @@ public class StageManager : MonoBehaviour
         OnStageReady();
         IsStageStarted = true;
         StartCoroutine(CheckStageStatus());
-        if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.TIME_DILATION))
+        if (CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.TIME_DILATION))
         {
             StartCoroutine(TimeDilationCoroutine());
         }

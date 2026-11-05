@@ -29,9 +29,9 @@ public class FM_09 : StageManager
         base.Start();
     }
 
-    public override void EnableChallengeMode()
+    public override void CheckForChallengeMode()
     {
-        base.EnableChallengeMode();
+        base.CheckForChallengeMode();
         if (CharacterPrefabsStorage.EnableChallengeMode)
         {
             StageCompleteConditionType = StageCompleteCondition.PROTECT_FUMO;

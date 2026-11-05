@@ -54,8 +54,8 @@ public class FumoScript : MonoBehaviour
     [SerializeField] GameObject PushEffect;
     float baseRange = 1000f;
 
-    readonly bool WindRush = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.MINT_WINDRUSH);
-    readonly bool Phalanx = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.MINT_PHALANX);
+    readonly bool WindRush = CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.MINT_WINDRUSH);
+    readonly bool Phalanx = CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.MINT_PHALANX);
 
     Image rangeImg;
     Color initColor, glowColor;

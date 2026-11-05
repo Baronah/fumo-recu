@@ -17,13 +17,13 @@ public class CharacterPrefabsStorage : ScriptableObject
 
     public static PlayerType startingPlayer = PlayerType.MELEE;
 	public static bool EnableChallengeMode = false;
-	public static Dictionary<SkillTree_Manager.SkillName, SkillDataSet> Skills = new();
+	public static HashSet<SkillTree_Manager.SkillName> Skills = new();
 
 	public static short DifficultyLevel = 1;
 
     public static string GetSkillName(SkillTree_Manager.SkillName skill)
 	{
-		return Skills.ContainsKey(skill) ? Skills[skill].nameInString : string.Empty;
+		return Skills.Contains(skill) ? UpgradesManager._instance.GetUpgradeData(skill).name : string.Empty;
     }
 
     public static void ClearBattleData()

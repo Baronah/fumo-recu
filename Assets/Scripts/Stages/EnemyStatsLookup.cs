@@ -97,14 +97,18 @@ public static class EnemyStatsLookup
                 break;
 
             case 13:
-                codeWithStatsChange = new() { EnemyCode.HIBERNATOR_KNIGHT };
+                codeWithStatsChange = new() { EnemyCode.HIBERNATOR_KNIGHT, EnemyCode.SENTINEL };
                 break;
 
             case 14:
-                codeWithStatsChange = new() { EnemyCode.SENTINEL };
+                codeWithStatsChange = new() { EnemyCode.HIBERNATOR_KNIGHT };
                 break;
 
             case 15:
+                codeWithStatsChange = new() { EnemyCode.SENTINEL };
+                break;
+
+            case 16:
                 codeWithStatsChange = new() { EnemyCode.HIBERNATOR_KNIGHT, EnemyCode.SAINT_STATUE, EnemyCode.GLOOMPINCER };
                 break;
         }
@@ -240,6 +244,27 @@ public static class EnemyStatsLookup
                 break;
 
             case 13:
+                if (enemy as HibernatorKnight)
+                {
+                    enemy.bDef += 40;
+                    enemy.bRes += 40;
+                    hasChanged = true;
+                }
+                else if (enemy is Sudaram su12)
+                {
+                    su12.originiumPollutionBonusASPD += 50;
+                    hasChanged = true;
+                }
+                else if (enemy is Sentinel sen12)
+                {
+                    sen12.mHealth += 100;
+                    sen12.AtkBuffOnAlert += 0.3f;
+                    sen12.SpeedBuffOnAlert += 0.2f;
+                    hasChanged = true;
+                }
+                break;
+
+            case 14:
                 if (enemy is HibernatorKnight hk)
                 {
                     hk.ASPD += 30;
@@ -250,7 +275,7 @@ public static class EnemyStatsLookup
                 }
                 break;
 
-            case 14:
+            case 15:
                 if (enemy as Sentinel)
                 {
                     enemy.b_moveSpeed += 50f;
@@ -258,7 +283,7 @@ public static class EnemyStatsLookup
                 }
                 break;
 
-            case 15:
+            case 16:
                 if (enemy is SaintStatue ss15)
                 {
                     ss15.mHealth = 400;

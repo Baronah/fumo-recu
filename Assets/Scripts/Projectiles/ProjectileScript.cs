@@ -106,7 +106,7 @@ public class ProjectileScript : MonoBehaviour
 
         transform.rotation = Quaternion.Euler(0f, 0f, desiredZRotation);
 
-        DamageScaleWithDistance = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.ABSOLUTISM);
+        DamageScaleWithDistance = CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.ABSOLUTISM);
 
         allowingUpdate = true;
     }

@@ -5,9 +5,9 @@ public class FM_03 : StageManager
     [SerializeField] private GameObject DeactivateSentinel, ActivateSentinel;
     [SerializeField] private float SentinelBonusMSPD_Ratio = 1.5f;
 
-    public override void EnableChallengeMode()
+    public override void CheckForChallengeMode()
     {
-        base.EnableChallengeMode();
+        base.CheckForChallengeMode();
 
         if (CharacterPrefabsStorage.EnableChallengeMode)
         {

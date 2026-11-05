@@ -5,9 +5,9 @@ public class FM_12 : StageManager
     [SerializeField] private GameObject[] CM_ActivateGroup;
     [SerializeField] private float CM_Hiber_WakeAtkBuffAdd = 0.25f, CM_Hiber_WakeMspdBuffAdd = 0.35f, CM_Hiber_SleepCountTimeAdd = 5f;
 
-    public override void EnableChallengeMode()
+    public override void CheckForChallengeMode()
     {
-        base.EnableChallengeMode();
+        base.CheckForChallengeMode();
         if (CharacterPrefabsStorage.EnableChallengeMode)
         {
             foreach (var item in CM_ActivateGroup)

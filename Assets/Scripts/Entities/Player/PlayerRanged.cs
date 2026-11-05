@@ -22,7 +22,7 @@ public class PlayerRanged : PlayerBase
     [SerializeField] private float FreezeRange = 800f;
     [SerializeField] private float FreezeDurationMin = 1f, FreezeDurationMax = 4f, MinDistanceForFreezeDuration = 150f;
     [SerializeField] private float FreezeCooldown = 11.5f;
-    [SerializeField] private float FreezeCastDuration = 0.25f;
+    [SerializeField] private float FreezeCastDuration = 0.1f;
 
     [SerializeField] private GameObject IllusionPrefab;
 
@@ -41,6 +41,46 @@ public class PlayerRanged : PlayerBase
     {
         base.Start();
         AttackRangeIndicatorRect = AttackRangeIndicator.GetComponent<RectTransform>();
+    }
+
+    private float FreezeChargeCDRefund = 0.15f,
+                    FreezeConductDebuff = 50f,
+                    FreezeHoldMax = 5f;
+
+    private float Skill_LockInDamageFalloff, Skill_LockInDamageMulMin;
+    private float PhantomAtkInherit;
+
+    float SP_SkillMaxRefund,
+          SP_MinWinForRefundMax,
+          MaxRefund,
+          MinWindowForMaxRefund;
+    protected override void GetSkillTreeValues()
+    {
+        float[] freezeChargeValues = GetSkillValues(SkillTree_Manager.SkillName.FREEZE_CHARGE);
+        FreezeChargeCDRefund = freezeChargeValues[0];
+
+        float[] freezeConductValues = GetSkillValues(SkillTree_Manager.SkillName.FREEZE_SUPERCONDUCT);
+        FreezeConductDebuff = freezeConductValues[0];
+
+        float[] freezeHoldValues = GetSkillValues(SkillTree_Manager.SkillName.FREEZE_HOLD);
+        FreezeHoldMax = freezeHoldValues[0];
+
+        float[] skillLockValues = GetSkillValues(SkillTree_Manager.SkillName.SPIRAL_TRAVEL);
+        Skill_LockInDamageFalloff = skillLockValues[0];
+        Skill_LockInDamageMulMin = skillLockValues[1];
+
+        float[] skillFlowerValues = GetSkillValues(SkillTree_Manager.SkillName.SPIRAL_PHANTOM);
+        FlowerMaxDuration = skillFlowerValues[0];
+        MaxExtraFlowers = (short) skillFlowerValues[1];
+
+        float[] shadowValues = GetSkillValues(SkillTree_Manager.SkillName.SPIRAL_SHADOW);
+        PhantomAtkInherit = shadowValues[0];
+
+        float[] spiralReadValues = GetSkillValues(SkillTree_Manager.SkillName.SPIRAL_READ);
+        MaxRefund = spiralReadValues[0];
+        MinWindowForMaxRefund = spiralReadValues[1];
+        SP_SkillMaxRefund = spiralReadValues[2];
+        SP_MinWinForRefundMax = spiralReadValues[3];
     }
 
     short fixedUpdateCnt = 0;
@@ -103,10 +143,9 @@ public class PlayerRanged : PlayerBase
         if (freezeMaintRing) Destroy(freezeMaintRing);
     }
 
-    [SerializeField] float PhantomAtkInherit = 0.5f;
     void SpawnIllusion()
     {
-        if (!Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_SHADOW) || !IsSkillActive) return;
+        if (!HasSkill(SkillTree_Manager.SkillName.SPIRAL_SHADOW) || !IsSkillActive) return;
 
         // inherits stats and skill duration and start casting skill on time for remaining duration
         GameObject o = Instantiate(IllusionPrefab, transform.position, Quaternion.identity);
@@ -118,7 +157,7 @@ public class PlayerRanged : PlayerBase
             duration: skillCurrentDuration,
             Skill_DamageMulitplier,
             GetSkillFiringInterval(),
-            Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_FIELD_EXPERT),
+            HasSkill(SkillTree_Manager.SkillName.SPIRAL_FIELD_EXPERT),
             playerManager,
             Skill_ProjLifeSpan,
             flipX: spriteRenderer.flipX);
@@ -160,23 +199,16 @@ public class PlayerRanged : PlayerBase
         }
 
         base.GetSkillTreeEffects();
-        if (Skills.Contains(SkillTree_Manager.SkillName.WINGED_STEPS_C))
-        {
-            FreezeCooldown *= 0.85f;
-            SkillCooldown *= 0.85f;
-        }
 
-        if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_BLOOM))
+        if (HasSkill(SkillTree_Manager.SkillName.FREEZE_BLOOM))
         {
             FreezeDurationMin += 0.5f;
         }
 
-        if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_MORE))
-            Skill_DamageMulitplier *= 0.75f;
-
-        if (Skills.Contains(SkillTree_Manager.SkillName.HAIR_RIBBON) && CharacterPrefabsStorage.startingPlayer == PlayerManager.PlayerType.RANGED)
+        if (HasSkill(SkillTree_Manager.SkillName.HAIR_RIBBON) && CharacterPrefabsStorage.startingPlayer == PlayerManager.PlayerType.RANGED)
         {
-            SkillCooldown *= 0.9f;
+            float[] ribbonValues = GetSkillValues(SkillTree_Manager.SkillName.HAIR_RIBBON);
+            SkillCooldown -= (SkillCooldown * ribbonValues[3]);
         }
     }
 
@@ -184,7 +216,7 @@ public class PlayerRanged : PlayerBase
     {
         base.OnFieldEnter();
 
-        if (Skills.Contains(SkillTree_Manager.SkillName.SWAP_START_SPECIAL))
+        if (HasSkill(SkillTree_Manager.SkillName.SWAP_START_SPECIAL))
         {
             Debut = true;
             UseSpecial();
@@ -195,7 +227,7 @@ public class PlayerRanged : PlayerBase
     {
         if (!IsAlive()) return;
 
-        if (Skills.Contains(SkillTree_Manager.SkillName.KNOTS) && !playerManager.hasVowed)
+        if (HasSkill(SkillTree_Manager.SkillName.KNOTS) && !playerManager.hasVowed)
         {
             MakeVow(PlayerManager.SkillType.ULTIMATE);
         }
@@ -243,8 +275,8 @@ public class PlayerRanged : PlayerBase
             MaxExtraFlowers++;
             FlowerMaxDuration += 1f;
 
-            lockInDamageFalloff -= 0.003f;
-            lockInDamageMulMin += 0.1f;
+            Skill_LockInDamageFalloff -= 0.003f;
+            Skill_LockInDamageMulMin += 0.1f;
 
             PhantomAtkInherit += 0.2f;
         }
@@ -262,8 +294,8 @@ public class PlayerRanged : PlayerBase
     {
         if (!IsSkillActive || SkillCoroutine == null) return;
 
-        if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_SHADOW)) SpawnIllusion();
-        else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_READ)) RefundSkill();
+        if (HasSkill(SkillTree_Manager.SkillName.SPIRAL_SHADOW)) SpawnIllusion();
+        else if (HasSkill(SkillTree_Manager.SkillName.SPIRAL_READ)) RefundSkill();
 
         if (SkillSfx && SkillSfx.isPlaying) SkillSfx.Stop();
         
@@ -274,11 +306,6 @@ public class PlayerRanged : PlayerBase
         IsSkillActive = false;
     }
 
-    [SerializeField] float 
-                            SP_SkillMaxRefund = 0.9f, 
-                            SP_MinWinForRefundMax = 0.25f,
-                            MaxRefund = 0.8f, 
-                            MinWindowForMaxRefund = 0.5f;
     void RefundSkill()
     {
         float refundPercentage;
@@ -419,7 +446,7 @@ public class PlayerRanged : PlayerBase
 
         int currentAtk = atk;
         float atkPostBonus = atk;
-        if (Skills.Contains(SkillTree_Manager.SkillName.HEAVY_HITTER))
+        if (HasSkill(SkillTree_Manager.SkillName.HEAVY_HITTER))
         {
             atkPostBonus *= GetHeavyHitterMultiplier();
             timerSinceLastAttack = 0f;
@@ -431,7 +458,7 @@ public class PlayerRanged : PlayerBase
 
         atk = (short)currentAtk;
 
-        if (Skills.Contains(SkillTree_Manager.SkillName.WINGED_STEPS_A))
+        if (HasSkill(SkillTree_Manager.SkillName.WINGED_STEPS_A))
         {
             GetWingedStepMspdBuff();
         }
@@ -439,9 +466,6 @@ public class PlayerRanged : PlayerBase
 
     bool IsFreezeActive = false;
     GameObject freezeMaintRing = null;
-    [SerializeField] float FreezeChargeCDRefund = 0.15f, 
-                           FreezeConductDebuff = 50f,
-                           FreezeHoldMax = 5f;
     [SerializeField] GameObject SuperConnductUI;
     public IEnumerator CastFreeze()
     {
@@ -480,12 +504,12 @@ public class PlayerRanged : PlayerBase
             
             ApplyFreeze(enemy, freezeDuration);
 
-            if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_SUPERCONDUCT))
+            if (HasSkill(SkillTree_Manager.SkillName.FREEZE_SUPERCONDUCT))
             {
                 ApplySuperConduct(enemy);
             }
 
-            if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_NORTH))
+            if (HasSkill(SkillTree_Manager.SkillName.WINDBLOW_NORTH))
             {
                 float pushDuration = distance >= FreezeRange * 0.8f
                     ?
@@ -495,18 +519,18 @@ public class PlayerRanged : PlayerBase
 
                 PushEntityFrom(enemy, AttackPosition.transform, 2.3f, pushDuration);
             }
-            else if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_SOUTH))
+            else if (HasSkill(SkillTree_Manager.SkillName.WINDBLOW_SOUTH))
                 PullEntityTowards(enemy, AttackPosition.transform, 2.6f, 0.2f);
 
             InitialHitDictionary.Add(e, freezeDuration);
         }
 
-        if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_CHARGE))
+        if (HasSkill(SkillTree_Manager.SkillName.FREEZE_CHARGE))
         {
             for (int i = 1; i <= hitEnemies.Count; i++) ReduceSpecialCooldown(FreezeChargeCDRefund, CooldownReductionType.PERCENTAGE_CURRENT);
         }
 
-        if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_HOLD))
+        if (HasSkill(SkillTree_Manager.SkillName.FREEZE_HOLD))
         {
             float bonusDuration = 0, maxBonus = FreezeHoldMax;
             freezeMaintRing = null;
@@ -549,7 +573,7 @@ public class PlayerRanged : PlayerBase
         IsFreezeActive = false;
 
         animator.SetTrigger("skill_end");
-        if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_BLOOM))
+        if (HasSkill(SkillTree_Manager.SkillName.FREEZE_BLOOM))
             playerManager.ChainFreeze(InitialHitDictionary, FreezeRange, FreezeDurationMin, FreezeDurationMax, MinDistanceForFreezeDuration);
     }
 
@@ -585,7 +609,6 @@ public class PlayerRanged : PlayerBase
     }
 
     [SerializeField] Transform LockIn;
-    [SerializeField] private float lockInDamageFalloff = 0.01f, lockInDamageMulMin = 0.2f;
     EntityBase lockInTarget;
     public IEnumerator CastSkill()
     {
@@ -602,8 +625,8 @@ public class PlayerRanged : PlayerBase
 
         if (SkillSfx) SkillSfx.Play();
 
-        bool shootAdditionalBullets = Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_MORE),
-             homingOnFirstTarget = Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_TRAVEL);
+        bool shootAdditionalBullets = HasSkill(SkillTree_Manager.SkillName.SPIRAL_MORE),
+             homingOnFirstTarget = HasSkill(SkillTree_Manager.SkillName.SPIRAL_TRAVEL);
 
         lockInTarget = homingOnFirstTarget 
             ? SearchForNearestEntityAroundSelf(typeof(EnemyBase))
@@ -661,7 +684,7 @@ public class PlayerRanged : PlayerBase
                             projectileType: ProjectileScript.ProjectileType.HOMING_TO_SPECIFIC_TARGET
                             );
 
-                        if (lockInTargetDamageMul > lockInDamageMulMin) lockInTargetDamageMul -= lockInDamageFalloff;
+                        if (lockInTargetDamageMul > Skill_LockInDamageMulMin) lockInTargetDamageMul -= Skill_LockInDamageFalloff;
                     }
                     else
                     {
@@ -813,7 +836,7 @@ public class PlayerRanged : PlayerBase
         base.OnEnemyDefeat(enemy);
 
         if (IsSkillActive
-            && Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_PHANTOM)
+            && HasSkill(SkillTree_Manager.SkillName.SPIRAL_PHANTOM)
             && gameObject.activeSelf
             && !enemy.IsAlive()
             && flowerCount < MaxExtraFlowers)
@@ -979,7 +1002,7 @@ public class PlayerRanged : PlayerBase
         info.AttackText = $"Lauches a projectile toward the nearest enemy within range, " +
             $"which deals {atk} {damageType.ToString().ToLower()} damage upon contact.";
         
-        if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_FIELD_EXPERT))
+        if (HasSkill(SkillTree_Manager.SkillName.SPIRAL_FIELD_EXPERT))
         {
             info.AttackText = $"Lauches a projectile toward the nearest enemy within range, " +
             $"which deals {atk} {damageType.ToString().ToLower()} damage upon contact and ricochets (up to 5 times). " +
@@ -987,21 +1010,21 @@ public class PlayerRanged : PlayerBase
         }
 
         info.SkillName = "Der Tag neight Sich - ";
-        if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_MORE))
+        if (HasSkill(SkillTree_Manager.SkillName.SPIRAL_MORE))
         {
             info.SkillName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.SPIRAL_MORE);
             info.SkillText =
                 $"Continuously unleashes multiple waves of projectiles spreading in all direction around self, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action). " +
                 $"Each projectile hits the first enemy it comes into contact with, dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD.";
         }
-        else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_TRAVEL))
+        else if (HasSkill(SkillTree_Manager.SkillName.SPIRAL_TRAVEL))
         {
             info.SkillName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.SPIRAL_TRAVEL);
             info.SkillText =
                 $"Locks-on to the nearest enemy within range and continuously unleashes waves of projectiles, lasts up to {SkillDuration} seconds (can be cancelled via recast or perform other action). " +
                 $". Each projectile hits the first enemy it comes into contact with (if there is a locked enemy, all projectiles homing toward them instead), dealing {Skill_DamageMulitplier * 100}% ATK damage each, firing interval scales with ASPD.";
         }
-        else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_PHANTOM))
+        else if (HasSkill(SkillTree_Manager.SkillName.SPIRAL_PHANTOM))
         {
             info.SkillName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.SPIRAL_PHANTOM);
             info.SkillText =
@@ -1010,7 +1033,7 @@ public class PlayerRanged : PlayerBase
                 $"If an enemy is defeated while the skill is active, another wave of projectiles will be created " +
                 $"at their position, lasting up to {FlowerMaxDuration} seconds (triggers up to {MaxExtraFlowers} times).";
         }
-        else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_SHADOW))
+        else if (HasSkill(SkillTree_Manager.SkillName.SPIRAL_SHADOW))
         {
             info.SkillName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.SPIRAL_SHADOW);
             info.SkillText =
@@ -1019,7 +1042,7 @@ public class PlayerRanged : PlayerBase
                 $"Cancelling or swapping during the skill leaves behind a phantom that maintains the same effect for the remaining duration. " +
                 $"The phantom has {PhantomAtkInherit * 100}% of self ATK.";
         }
-        else if (Skills.Contains(SkillTree_Manager.SkillName.SPIRAL_READ))
+        else if (HasSkill(SkillTree_Manager.SkillName.SPIRAL_READ))
         {
             info.SkillName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.SPIRAL_READ);
             info.SkillText =
@@ -1040,14 +1063,14 @@ public class PlayerRanged : PlayerBase
         info.SkillText += $" {Math.Round(SkillCooldown, 1)}s cooldown.";
 
         info.SpecialName = "Zeropoint Burst - ";
-        if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_BLOOM))
+        if (HasSkill(SkillTree_Manager.SkillName.FREEZE_BLOOM))
         {
             info.SpecialName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.FREEZE_BLOOM);
             info.SpecialText =
                 $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds, inversely based on distance. Frozen enemies continues to " +
                 $"create an extra freeze ring around their position (trigger once per enemy)";
         }
-        else if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_HOLD))
+        else if (HasSkill(SkillTree_Manager.SkillName.FREEZE_HOLD))
         {
             info.SpecialName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.FREEZE_HOLD);
             info.SpecialText =
@@ -1055,14 +1078,14 @@ public class PlayerRanged : PlayerBase
                 $"inversely based on distance. The freeze can be maintained by holding the skill's key for up to an additional " +
                 $"{FreezeHoldMax} seconds (can not act while maintaining, release the key to end its effect)";
         }
-        else if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_CHARGE))
+        else if (HasSkill(SkillTree_Manager.SkillName.FREEZE_CHARGE))
         {
             info.SpecialName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.FREEZE_CHARGE);
             info.SpecialText =
                 $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds, inversely based on distance. Every enemy hit " +
                 $"shortens the cool-down of the next usage by {FreezeChargeCDRefund * 100}%";
         }
-        else if (Skills.Contains(SkillTree_Manager.SkillName.FREEZE_SUPERCONDUCT))
+        else if (HasSkill(SkillTree_Manager.SkillName.FREEZE_SUPERCONDUCT))
         {
             info.SpecialName += CharacterPrefabsStorage.GetSkillName(SkillTree_Manager.SkillName.FREEZE_SUPERCONDUCT);
             info.SpecialText =
@@ -1076,11 +1099,11 @@ public class PlayerRanged : PlayerBase
                 $"After a short delay, inflicts freeze to all enemies within attack range for {FreezeDurationMin} - {FreezeDurationMax} seconds (closer enemies are frozen for longer)";
         }
 
-        if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_NORTH))
+        if (HasSkill(SkillTree_Manager.SkillName.WINDBLOW_NORTH))
         {
             info.SpecialText += " and pushes them away from self";
         }
-        else if (Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_SOUTH))
+        else if (HasSkill(SkillTree_Manager.SkillName.WINDBLOW_SOUTH))
         {
             info.SpecialText += " and pulls them towards self";
         }

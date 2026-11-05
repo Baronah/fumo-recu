@@ -17,11 +17,11 @@ public class DarkTile : EnvironmentalTileBase
     public override void OnStageStart()
     {
         tilemap = GetComponent<Tilemap>();
-        if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.TERRAIN))
+        if (CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.TERRAIN))
         {
-            bool hasGeologist = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.GEOLOGIST_OBSERVE)
-                || CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.GEOLOGIST_EXPLORE)
-                || CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.GEOLOGIST_STUDY);
+            bool hasGeologist = CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.GEOLOGIST_OBSERVE)
+                || CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.GEOLOGIST_EXPLORE)
+                || CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.GEOLOGIST_STUDY);
             float multiplier = hasGeologist ? 1.75f : 1.5f;
             P_VisionReductionPercent *= multiplier;
             E_VisionReductionPercent *= multiplier;

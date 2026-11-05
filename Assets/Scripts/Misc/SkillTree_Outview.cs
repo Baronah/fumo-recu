@@ -54,8 +54,8 @@ public class SkillTree_Outview : MonoBehaviour
             else
             {
                 SkillImages[i].gameObject.SetActive(true);
-                var data = CharacterPrefabsStorage.Skills.ElementAt(i).Value;
-                SkillImages[i].sprite = data.skillIcon;
+                var data = UpgradesManager._instance.GetUpgradeData(CharacterPrefabsStorage.Skills.ElementAt(i));
+                SkillImages[i].sprite = data.icon;
                 frame.color = GetColorBaseOnType(data.skillType);
             }
         }
@@ -70,8 +70,8 @@ public class SkillTree_Outview : MonoBehaviour
             else
             {
                 gradient.UpdateColors(
-                    GetColorBaseOnType(CharacterPrefabsStorage.Skills.ElementAt(i).Value.skillType),
-                    GetColorBaseOnType(CharacterPrefabsStorage.Skills.ElementAt(i + 1).Value.skillType)
+                    GetColorBaseOnType(UpgradesManager._instance.GetUpgradeData(CharacterPrefabsStorage.Skills.ElementAt(i)).skillType),
+                    GetColorBaseOnType(UpgradesManager._instance.GetUpgradeData(CharacterPrefabsStorage.Skills.ElementAt(i + 1)).skillType)
                     );
             }
 
@@ -86,8 +86,8 @@ public class SkillTree_Outview : MonoBehaviour
         else
         {
             StartGradient.UpdateColors(
-                GetColorBaseOnType(CharacterPrefabsStorage.Skills.ElementAt(0).Value.skillType),
-                GetColorBaseOnType(CharacterPrefabsStorage.Skills.ElementAt(CharacterPrefabsStorage.Skills.Count - 1).Value.skillType)
+                GetColorBaseOnType(UpgradesManager._instance.GetUpgradeData(CharacterPrefabsStorage.Skills.ElementAt(0)).skillType),
+                GetColorBaseOnType(UpgradesManager._instance.GetUpgradeData(CharacterPrefabsStorage.Skills.ElementAt(CharacterPrefabsStorage.Skills.Count - 1)).skillType)
             );
         }
     }

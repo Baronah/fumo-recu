@@ -823,9 +823,9 @@ MonoBehaviour:
     they have</color>. Heavier units continuously <color=#2985FF>pull lighter units</color>
     toward self, pull radius scales with their weight, pull force on other units
     is proportional to weight difference.
-  favorText: 
   skillDescriptionInShort: All units have reduced MSPD based on weight. Heavier units
     continuously pull lighter units toward self.
+  favorText: 
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &50429474
@@ -1810,9 +1810,9 @@ MonoBehaviour:
   skillNameText: Geologist - Study
   skillDescription: Gains <color=#ff4545>+50% ATK</color> while standing on an environmental
     tile.
-  favorText: Curiosity is her greatest weapon.
   skillDescriptionInShort: Gains increased ATK while standing on an environmental
     tile.
+  favorText: Curiosity is her greatest weapon.
   mutuallyExclusiveSkills: 0600000004000000
   Overlay: {fileID: 0}
 --- !u!114 &93957425
@@ -2415,13 +2415,13 @@ MonoBehaviour:
     forms a vow with it. Afterwards, that skill has <color=#ff9717>reduced cool-down</color>,
     <color=#00ff00>enhanced effects</color> and grants you bonus attributes, <color=#5b7ccf>but
     the remaining skill can no longer be used</color>.
+  skillDescriptionInShort: Casting a special or ultimate skill for the first time
+    forms a vow with it, enhancing its effect but prevents the other skill from being
+    used.
   favorText: '"What are these threads for, you ask? They are just leftovers, but
     I know a fun thing you can do with them. Pick any color you like, then, let''s
     both tie them around our finger, just like this... Cute, isn''t it? We just made
     a symbol of promise, so don''t forget it! Hehe..."'
-  skillDescriptionInShort: Casting a special or ultimate skill for the first time
-    forms a vow with it, enhancing its effect but prevents the other skill from being
-    used.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &121560696
@@ -2618,6 +2618,51 @@ RectTransform:
   m_AnchoredPosition: {x: -91.24991, y: 112.50014}
   m_SizeDelta: {x: 455, y: 95}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &140087124
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 140087125}
+  - component: {fileID: 140087126}
+  m_Layer: 0
+  m_Name: UpgradeManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &140087125
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 140087124}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &140087126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 140087124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f921edf7428adf7439bec2de4cbcfffb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  upgradeData: {fileID: 11400000, guid: 19e3cad0e10c1b6428b2dff0dd954788, type: 2}
 --- !u!1 &147257529
 GameObject:
   m_ObjectHideFlags: 0
@@ -3018,9 +3063,9 @@ MonoBehaviour:
   skillDescription: <color=#ffd61f>ASPD +20</color>. Landing an attack grants <color=#00ffbf>25%
     decaying MSPD</color> over 2.5 seconds. While in effect, trigger it again increases
     it strength by <color=#00ffbf>20%</color>.
-  favorText: '''Sometimes I like to imagine...'''
   skillDescriptionInShort: ASPD +20. Landing an attack grants a stackable decaying
     MSPD over 2.5 seconds.
+  favorText: '''Sometimes I like to imagine...'''
   mutuallyExclusiveSkills: 0200000003000000
   Overlay: {fileID: 0}
 --- !u!114 &161036919
@@ -3942,10 +3987,10 @@ MonoBehaviour:
   skillDescription: After defeating an enemy, your special's current CD is shortened
     by <color=#ff9717>30%</color>. Every enemy defeated increases the amount by <color=yellow>7%</color>,
     stacks up to <color=#5b7ccf>10 times</color>.
-  favorText: ... that's a lot to watch in a sitting so she brought them here to gradually
-    finish it all.
   skillDescriptionInShort: Refunds a portion of current special's CD after defeating
     an enemy, increases for every enemy defeated.
+  favorText: ... that's a lot to watch in a sitting so she brought them here to gradually
+    finish it all.
   mutuallyExclusiveSkills: 19000000
   Overlay: {fileID: 0}
 --- !u!114 &216322061
@@ -6535,11 +6580,11 @@ MonoBehaviour:
     If the character is melee, <color=#ff9717>special's CD -10%</color> and gains
     <color=green>+15% max HP</color>. If the character is ranged, <color=#ff9717>ultimate's
     CD -10%</color> and gains <color=#00ffbf>+20% MSPD</color>.
-  favorText: Just a regular pair of hair ribbons she made, nothing special about
-    it, but if you insist...
   skillDescriptionInShort: Starting character gains increased ATK. If the character
     is melee, reduces special's CD and gains additional HP. If the character is ranged,
     reduces ultimate's CD and gains additional MSPD.
+  favorText: Just a regular pair of hair ribbons she made, nothing special about
+    it, but if you insist...
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &306148696
@@ -6966,9 +7011,9 @@ MonoBehaviour:
   skillDescription: <color=#ff00ff>Attack range +20%</color>, attacks deal increase
     damage based on how far you are from the target (maximum bonus reaches at <color=red>+50%
     damage</color>).
-  favorText: Of couse, catching a falling Zalak friend requires good precision, too!
   skillDescriptionInShort: Range increases, deal increase damage based on how far
     you are from the target.
+  favorText: Of couse, catching a falling Zalak friend requires good precision, too!
   mutuallyExclusiveSkills: 07000000090000000a000000
   Overlay: {fileID: 0}
 --- !u!114 &313414961
@@ -7377,10 +7422,10 @@ MonoBehaviour:
   skillDescription: Upon entering the field, your unit immediately casts their special
     skill once with no cool-down. In the next 5 seconds, your special skill recharges
     <color=#ff9717>200% faster</color>.
-  favorText: Hey!! Don't light it in here!
   skillDescriptionInShort: Upon entering the field, your unit immediately casts their
     special skill once with no cool-down. In the next 5 seconds, your special skill
     recharges way faster.
+  favorText: Hey!! Don't light it in here!
   mutuallyExclusiveSkills: 4100000025000000
   Overlay: {fileID: 0}
 --- !u!114 &328159939
@@ -8340,9 +8385,9 @@ MonoBehaviour:
   skillDescription: After using 'Evasion', leaves behind an afterimage that lasts
     <color=#5b7ccf>3 seconds</color>. During this period, 'Evasion' can be recast
     once to <color=yellow>teleport</color> you back to the afterimage's location.
-  favorText: Have you ever asked yourself, "just how did you get so attached?"
   skillDescriptionInShort: Using 'Evasion' leaves behind an afterimage. While it
     persists, recast will teleport you to the afterimage's location.
+  favorText: Have you ever asked yourself, "just how did you get so attached?"
   mutuallyExclusiveSkills: 0b0000000c0000000d000000
   Overlay: {fileID: 0}
 --- !u!114 &368324335
@@ -9479,9 +9524,9 @@ MonoBehaviour:
   skillNameText: Geologist - Observe
   skillDescription: Your ultimate skill <color=yellow>charges 40% faster</color>
     while standing on an environmental tile.
-  favorText: She seeks recognition as a scholar far more than as a caster.
   skillDescriptionInShort: Your ultimate skill chargesfaster while standing on an
     environmental tile.
+  favorText: She seeks recognition as a scholar far more than as a caster.
   mutuallyExclusiveSkills: 0500000006000000
   Overlay: {fileID: 0}
 --- !u!114 &428760886
@@ -9745,11 +9790,11 @@ MonoBehaviour:
   skillDescription: When HP is above 85%, gains <color=#ff4545>+30% ATK</color> and
     <color=#ffd61f>+20 ASPD</color>. At max HP, reduces physical and magical damage
     taken by <color=#b1b1b1>80%</color>.
+  skillDescriptionInShort: When HP is above 85%, gains bonus ATK and ASPD. At max
+    HP, greatly reduce damage taken.
   favorText: '"Ah, sorry, please don''t go touching my book. It might bite your hand
     if you do. No, really, I''m not joking, I''m serious. Look! I even have to tie
     it shut like this."'
-  skillDescriptionInShort: When HP is above 85%, gains bonus ATK and ASPD. At max
-    HP, greatly reduce damage taken.
   mutuallyExclusiveSkills: 22000000
   Overlay: {fileID: 0}
 --- !u!114 &445796800
@@ -9892,10 +9937,10 @@ MonoBehaviour:
   skillDescription: Swapping releases a smoke zone that lasts 5 seconds, causing
     <color=yellow>blindness</color> to all enemies inside while presents. 'Blinded'
     enemies become unable to attack and detect.
-  favorText: Also bring this protection glasses, you wouldn't like it getting into
-    your eyes.
   skillDescriptionInShort: Swapping releases a smoke zone that blinds all enemies
     inside while presents.
+  favorText: Also bring this protection glasses, you wouldn't like it getting into
+    your eyes.
   mutuallyExclusiveSkills: 3f000000
   Overlay: {fileID: 0}
 --- !u!114 &449525861
@@ -12429,10 +12474,10 @@ MonoBehaviour:
     ends or upon swapping it's active, deals <color=#ff4545>physical damage</color>
     equal to <color=#b1b1b1>20% max HP + 80% stored damage</color> to all nearby
     enemies and <color=#5b7ccf>'slows'</color> them briefly.
-  favorText: This is gonna hurt a little.
   skillDescriptionInShort: '''Juggernaut'' stores a portion of damage taken during
     the duration, and releases it as physical damage to nearby enemies when skill
     ends or upon swapping.'
+  favorText: This is gonna hurt a little.
   mutuallyExclusiveSkills: 150000001600000017000000290000002e000000
   Overlay: {fileID: 0}
 --- !u!114 &537051726
@@ -13237,9 +13282,9 @@ MonoBehaviour:
   skillNameText: Mint-flavor Gum
   skillDescription: Upon entering the field, restores <color=green>30% missing HP</color>
     and gains <color=#ff4545>+75% ATK</color> over 5 seconds.
-  favorText: She also has sugar-free variety, if you prefer that.
   skillDescriptionInShort: Upon entering the field, restores 30% missing HP and gains
     greatly increased ATK over 5 seconds.
+  favorText: She also has sugar-free variety, if you prefer that.
   mutuallyExclusiveSkills: 4100000023000000
   Overlay: {fileID: 0}
 --- !u!114 &598140781
@@ -14401,10 +14446,10 @@ MonoBehaviour:
     Any movement made breaks this state.\n\n<i>If <color=#ff00ff>''Attention-holding
     Device''</color> is selected, required time on you is reduced to <color=#ff9717>3
     seconds</color>.</i>'
-  favorText: 
   skillDescriptionInShort: 'All units that haven''t moved for a while enters ''statis'':
     Has reduced ATK, but regenerates HP and HP can not fall below 1. Any movement
     made breaks this state.'
+  favorText: 
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &653876650
@@ -14683,9 +14728,9 @@ MonoBehaviour:
     <color=red>physical damage</color>, they gain <color=red>+5 DEF</color>. Upon
     receiving <color=#ff00ff>magical damage</color>, they gain <color=#ff00ff>+3
     RES</color>. Both can stack up to 30 times.
-  favorText: 
   skillDescriptionInShort: Enemies have 0 DEF and RES, but gain increased DEF/RES
     upon taking physical/magical damage.
+  favorText: 
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &669801507
@@ -15763,11 +15808,11 @@ MonoBehaviour:
   skillNameText: Amulet
   skillDescription: The first time HP reaches 0, immediately <color=green>restores
     52% max HP</color>, refreshes all special and skill's CDs and stores a swap charge.
+  skillDescriptionInShort: The first time HP reaches 0, revives with 52% max HP,
+    refreshes all skills and swap CD.
   favorText: '"Here, this thing is said to protect you from dangers, I tied a scachet
     bag to it so it can have a plesant smell too. Just wear it around your neck,
     there... Stay safe out there, okay?"'
-  skillDescriptionInShort: The first time HP reaches 0, revives with 52% max HP,
-    refreshes all skills and swap CD.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &713090671
@@ -15984,9 +16029,9 @@ MonoBehaviour:
   skillNameText: Equipment - Provisions
   skillDescription: <color=green>Healing effectiveness +25%</color>, recovers 1%
     max HP plus 2% missing HP every second.
-  favorText: No one can work with an empty stomach!
   skillDescriptionInShort: Healing effectiveness increases and regenerates missing
     HP overtime.
+  favorText: No one can work with an empty stomach!
   mutuallyExclusiveSkills: 070000000800000009000000
   Overlay: {fileID: 0}
 --- !u!114 &730178025
@@ -16513,11 +16558,11 @@ MonoBehaviour:
     and <color=#00ffbf>MSPD</color>. Upon entering the field, grants your character
     <color=#ff00ff>a random INVENTIO upgrade</color>. Upgrades granted this way are
     not affected by mutual exclusives, but will not overlap with chosen ones.
+  skillDescriptionInShort: Gains increased HP, ATK and MSPD. Upon entering the field,
+    grants your character a random upgrade.
   favorText: Even if it is an unassuming piece of ore that is covered in dirt, if
     she gives you a present, please accept it. It must be something she likes a lot
     and wants to share with you anyway.
-  skillDescriptionInShort: Gains increased HP, ATK and MSPD. Upon entering the field,
-    grants your character a random upgrade.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &744608037
@@ -16658,11 +16703,11 @@ MonoBehaviour:
   skillName: 27
   skillNameText: Der Ring des Nibelungen
   skillDescription: '''Der Tag Neight Sich'' fires 2 extra waves of projectiles.'
+  skillDescriptionInShort: 
   favorText: She suggested adding another projectiles wave that would rotate in opposite
     direction to form a flower. And while this would reduce the firepower of individual
     bullet, the overall result is still a net positive, and more importantly, it's
     indeed beautiful.
-  skillDescriptionInShort: 
   mutuallyExclusiveSkills: 1c0000001d0000002700000033000000
   Overlay: {fileID: 0}
 --- !u!114 &745442578
@@ -18293,10 +18338,10 @@ MonoBehaviour:
   skillNameText: Opera Glasses
   skillDescription: Swapping for the first time during the duration of 'Juggernaut'
     <color=yellow>retains its effect</color>, and <color=yellow>resets its duration</color>.
-  favorText: The wheel that weaves eternity and infinity, spins the bond between
-    you and I.
   skillDescriptionInShort: '''Juggernaut'' can be transferred to the swap in character,
     resetting its duration and effect.'
+  favorText: The wheel that weaves eternity and infinity, spins the bond between
+    you and I.
   mutuallyExclusiveSkills: 150000001600000017000000180000002e000000
   Overlay: {fileID: 0}
 --- !u!114 &807891799
@@ -20110,10 +20155,10 @@ MonoBehaviour:
   skillNameText: Mint-fragrance Extract
   skillDescription: Upon entering the field, gains <color=#00ffbf>+50% MSPD</color>.
     Effect is removed upon taking damage.
-  favorText: Looks mint, and every bit as pure. Just one drop, and the pleasing scent
-    will follow to you 'til the end of the world.
   skillDescriptionInShort: Upon entering the field, gains bonus MSPD until damage
     is taken.
+  favorText: Looks mint, and every bit as pure. Just one drop, and the pleasing scent
+    will follow to you 'til the end of the world.
   mutuallyExclusiveSkills: 2500000023000000
   Overlay: {fileID: 0}
 --- !u!114 &850433568
@@ -21075,10 +21120,10 @@ MonoBehaviour:
   skillDescription: Swapping releases a smoke zone that lasts 5 seconds, dealing
     <color=#ff00ff>20 + 2% max health magical damage</color> every second to all
     enemies inside while presents. Damage ramps down over the duration.
-  favorText: "\"Nnh... mmmmnnh... there! Ah!! Sorry! Did I wake you up? There was
-    a bug on your head, so I just, um\u2014did it hurt? I can shush it better!\""
   skillDescriptionInShort: Swapping releases a smoke zone that damages all enemies
     inside while presents.
+  favorText: "\"Nnh... mmmmnnh... there! Ah!! Sorry! Did I wake you up? There was
+    a bug on your head, so I just, um\u2014did it hurt? I can shush it better!\""
   mutuallyExclusiveSkills: 40000000
   Overlay: {fileID: 0}
 --- !u!114 &864876458
@@ -21311,9 +21356,9 @@ MonoBehaviour:
   skillDescription: While 'Der Tag Neight Sich' is active, swapping or cancelling
     it will leave behind a phantom that <color=yellow>maintains the skill</color>
     for the remaining duration. The phantom inherits <color=#ff4545>50% of self ATK</color>.
-  favorText: '"Amazing... this is really amazing!"'
   skillDescriptionInShort: While 'Der Tag Neight Sich' is active, swap or cancel
     it will leave behind a phantom that maintains the skill for the remaining duration.
+  favorText: '"Amazing... this is really amazing!"'
   mutuallyExclusiveSkills: 1b0000001c0000002700000033000000
   Overlay: {fileID: 0}
 --- !u!114 &873688061
@@ -24385,10 +24430,10 @@ MonoBehaviour:
     enemies around you away and inflicts <color=yellow>a decaying slow</color>. Afterwards,
     gains +25% <color=#ff4545>ATK</color>, <color=#ffd61f>ASPD</color> and <color=#00ffbf>MSPD</color>
     that decay over 5 seconds.
-  favorText: Underneath it lies a mechanism, wonderful, complex, and masterfully
-    crafted. But for us, just pull it, and watch magic happens.
   skillDescriptionInShort: Using the ultimate ability releases a shockwave that pushes
     and slows enemies. Afterwards, gains bonus ATK, ASPD and MSPD over 5 seconds.
+  favorText: Underneath it lies a mechanism, wonderful, complex, and masterfully
+    crafted. But for us, just pull it, and watch magic happens.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &999419978
@@ -24607,10 +24652,10 @@ MonoBehaviour:
     amount</color> every second. While moving, recharges your ultimate's CD by <color=#ff9717>2%
     amount</color> every second. Continuously trigger the same effect enhances it
     by 50% amount, stacks up to 3 times.
-  favorText: '''An idea becomes loose, a sentence to be engraved. There''s meaning
-    to it, but only partly...'''
   skillDescriptionInShort: While standing still, your special recharges faster. While
     moving, your ultimate recharges faster.
+  favorText: '''An idea becomes loose, a sentence to be engraved. There''s meaning
+    to it, but only partly...'''
   mutuallyExclusiveSkills: 0100000002000000
   Overlay: {fileID: 0}
 --- !u!114 &1007480274
@@ -25403,11 +25448,11 @@ MonoBehaviour:
   skillNameText: Superconduct
   skillDescription: Enemies frozen by 'Zeropoint Burst' also have <color=#5b7ccf>-50%
     DEF and RES</color> for equivalent duration.
+  skillDescriptionInShort: '''Zeropoint Burst'' now reduces the DEF and RES of frozen
+    targets.'
   favorText: Modified version of the defroster, now weakens the structure of the
     frozen object while leaving all the ice and moisture intact. The problem is,
     how is it called a defroster if it can't defrost anything...
-  skillDescriptionInShort: '''Zeropoint Burst'' now reduces the DEF and RES of frozen
-    targets.'
   mutuallyExclusiveSkills: 100000001100000035000000
   Overlay: {fileID: 0}
 --- !u!114 &1024717792
@@ -25552,9 +25597,9 @@ MonoBehaviour:
     around them, whose maximum freeze duration equals to the current freeze duration
     of the enemy starting it. Marks <color=yellow>persist across swaps</color>, but
     can not appear on the same enemy twice per usage.'
-  favorText: '"Please calm down a little!"'
   skillDescriptionInShort: '''Zeropoint Burst'' now spreads the freeze to enemies
     around the targets.'
+  favorText: '"Please calm down a little!"'
   mutuallyExclusiveSkills: 110000001200000035000000
   Overlay: {fileID: 0}
 --- !u!114 &1032146874
@@ -25700,10 +25745,10 @@ MonoBehaviour:
     range.\n- Ranged units gains <color=#ffd61f>15% base attack range as ASPD</color>,
     attack range <color=red>becomes global</color>, and their projectiles deals <color=#ff00ff>50%
     more damage</color> per second traveled.'
-  favorText: 
   skillDescriptionInShort: Melee units have increased HP, MSPD, weights and take
     less damage outside of their range. Ranged units have their attack range expanded
     to the entire field.
+  favorText: 
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1033819579
@@ -27866,11 +27911,11 @@ MonoBehaviour:
     incoming attacks</color> toward self to nearby enemies. Reflected projectiles
     instead will be sent back to the attacker. The first successful reflection also
     heals self for <color=green>20% max HP</color>.
+  skillDescriptionInShort: '''Evasion'' now deflects all incoming attacks. First
+    deflection also heals self.'
   favorText: ... Now, instead of letting it all out, try to keep the compressed air
     around you, and it will form a layer of protection that can deflect any incoming
     attacks. Want to try?
-  skillDescriptionInShort: '''Evasion'' now deflects all incoming attacks. First
-    deflection also heals self.'
   mutuallyExclusiveSkills: 0b0000000c00000024000000
   Overlay: {fileID: 0}
 --- !u!114 &1076999606
@@ -28240,8 +28285,8 @@ MonoBehaviour:
   skillDescription: Environmental effects have <color=yellow>+100% effectiveness</color>.\n\n<i>If
     any <color=#ff00ff>'Geogolist'</color> upgrade is selected, effect becomes <color=yellow>+200%</color>
     instead.</i>
-  favorText: '"In seeking the truth, I willingly brave all hazard."'
   skillDescriptionInShort: Environmental effects have +100% effectiveness.
+  favorText: '"In seeking the truth, I willingly brave all hazard."'
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1087317480
@@ -28587,13 +28632,13 @@ MonoBehaviour:
     from enemies to self. While 'Juggernaut' is active, <color=#5b7ccf>ATK becomes
     0</color>, but renders self to become <color=#b1b1b1>'Invisible'</color> throughout
     the duration and grants <color=#00ffbf>increased MSPD</color>.
+  skillDescriptionInShort: '''Juggernaut'' now grants stealth and increased MSPD,
+    but sets your ATK to 0.'
   favorText: "Deep inside her base, in the left corner, is a ladder leads up to the
     roof. Up there, the air is fresh and the sun feels nice, and when night falls,
     as the stars shine bright, it reveals a breathtaking scenery. Beautiful, calm,
     and soothing...\\nAstronomy might not be her field of study, but you don\u2019t
     need to be an expert to lose yourself among the stars."
-  skillDescriptionInShort: '''Juggernaut'' now grants stealth and increased MSPD,
-    but sets your ATK to 0.'
   mutuallyExclusiveSkills: 1500000016000000170000001800000029000000
   Overlay: {fileID: 0}
 --- !u!114 &1110783328
@@ -28737,10 +28782,10 @@ MonoBehaviour:
     they deal <color=#b1b1b1>200 + 10% HP true damage</color> to all presenting enemies.
     If all enemies are defeated this way, <color=yellow>the battle concludes in your
     victory</color>.
-  favorText: 
   skillDescriptionInShort: Your units have reduced max HP. Upon death, they deal
     true damage to all presenting enemies. If all enemies are defeated this way,
     the battle concludes in your victory.
+  favorText: 
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1131664740
@@ -29455,6 +29500,7 @@ MonoBehaviour:
   - Even the malice someone held,\nEven the nights of a nameless town,\nEven you,
     shut tightly away in yourself like this,\nI know I'll still remain connected.\nYeah,
     let's paint it white.
+  - Passing through today, and before long it is tomorrow.
   - Even so, I still want to talk about the future,\nKeep shining faintly, until
     the day I burn out.
   - Close my eyes, I try to escape to a world with you.\nBut even in that imaginary
@@ -29475,6 +29521,7 @@ MonoBehaviour:
   - '<color=#00FFD0>Mint Fumo: Grants [INVENTIO] ''Victory Rewind - Spirit'' and
     ''Victory Rewind - Excitement'' (ignores mutually exclusive).</color>\n\n<color=yellow>Swap
     cool-down reduces. And your units have greatly increased attributes.</color>'
+  - 
   - 
   - 
   - 
@@ -29506,6 +29553,7 @@ MonoBehaviour:
   - Some 'Candles' will be placed beforehand. 'Knight Territory Hibernators' need
     to stay inside shrouded zones for longer to fall asleep, and have increased ATK
     and MSPD upon waking up.
+  - Different starting position.
   - '''Candle''''s illumination range is reduced. ''Sentinent Toys'' have greatly
     increased DEF and RES.'
   - All 'Gloompincers' will be replaced by 'Sentinent Toys'.
@@ -29541,7 +29589,8 @@ MonoBehaviour:
   - 
   - 
   - 
-  CompleteCondition: 01000000010000000100000000000000010000000100000000000000010000000000000003000000000000000100000000000000000000000100000003000000
+  - 
+  CompleteCondition: 0100000001000000010000000000000001000000010000000000000001000000000000000300000000000000010000000000000001000000000000000100000003000000
   Environments:
   - Environments: 
   - Environments: 00000000
@@ -29556,6 +29605,7 @@ MonoBehaviour:
   - Environments: 0100000004000000
   - Environments: 050000000000000002000000
   - Environments: 0500000001000000
+  - Environments: 05000000
   - Environments: 05000000
   - Environments: 05000000010000000400000000000000
   - Environments: 05000000030000000100000004000000
@@ -29573,6 +29623,7 @@ MonoBehaviour:
   - Enemies: 0c0000000d000000
   - Enemies: 01000000020000000c0000000e0000000f000000
   - Enemies: 0c0000000e0000000f00000010000000
+  - Enemies: 02000000100000000e0000000c000000
   - Enemies: 0e0000001000000012000000
   - Enemies: 020000000a0000000c000000130000000f0000001000000012000000
   - Enemies: 010000000a0000000e0000000f0000001200000013000000
@@ -29587,6 +29638,7 @@ MonoBehaviour:
   - Skills: 
   - Skills: 
   - Skills: 1a00000019000000
+  - Skills: 
   - Skills: 
   - Skills: 
   - Skills: 
@@ -29610,6 +29662,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 4585c0adc4394134abb842e8db88afda, type: 3}
   - {fileID: 21300000, guid: b1f48597c01544848a2d31d4e901d372, type: 3}
   - {fileID: 21300000, guid: 1840e7b2ed14ee443b04515f932bd888, type: 3}
+  - {fileID: 21300000, guid: 014bc40ee1967e749a1164d6c8e30ac5, type: 3}
   - {fileID: 21300000, guid: 7db4ca48c12c6bd46adc278b65b768f6, type: 3}
   - {fileID: 21300000, guid: 22c65ddea5594d34e88a2ad6fb3365c9, type: 3}
   - {fileID: 21300000, guid: 5d1c48f62ecb909409d22fdb7d48f454, type: 3}
@@ -31163,11 +31216,11 @@ MonoBehaviour:
   skillDescription: After using the special ability, gains <color=#00ffbf>+100% MSPD</color>
     for 1 seconds. Every time this effect is activated, its duration extends by <color=yellow>0.5
     seconds</color> (maximum duration is 3 seconds).
-  favorText: The harder you wind it up, the more lively it becomes. As simple as
-    that!
   skillDescriptionInShort: After using the special ability, gains greatly increased
     MSPD for 1 seconds. Every time this effect is activated, its duration extends
     (has a limit).
+  favorText: The harder you wind it up, the more lively it becomes. As simple as
+    that!
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1175370156
@@ -32811,11 +32864,11 @@ MonoBehaviour:
     with self takes physical damage equal to <color=#ff4545>120% ATK + 30% MSPD</color>,
     stunned for 1 second and are <color=#2985FF>pushed</color> alongside with the
     dash.
+  skillDescriptionInShort: '''Evasion'' damages collided enemies, stunning and pushing
+    them away slightly.'
   favorText: At sufficient speed, the air pressure is large enough to cause an impact.
     And if you compress it to minimize the contact surface, just like a wind blade...
     scary, isn't it?
-  skillDescriptionInShort: '''Evasion'' damages collided enemies, stunning and pushing
-    them away slightly.'
   mutuallyExclusiveSkills: 0b0000000d00000024000000
   Overlay: {fileID: 0}
 --- !u!114 &1247638172
@@ -33470,10 +33523,10 @@ MonoBehaviour:
     direction will <color=yellow>remove the MSPD buff</color> and inflicts <color=#5b7ccf>a
     decaying 'Slow'</color> based on the removed acceleration.\n\n<i>If any <color=#ff00ff>'Arts
     Unit'</color> is selected, you accelerate <color=yellow>50% faster</color>.</i>
-  favorText: 
   skillDescriptionInShort: All units gain increased MSPD when continuously moving
     toward a direction, up to +200% MSPD. Changing direction will remove the buff
     and inflicts a decaying 'Slow' based on the previous acceleration.
+  favorText: 
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1274865714
@@ -35924,10 +35977,10 @@ MonoBehaviour:
   skillDescription: The first attack against an enemy deals additional <color=#ff00ff>10%
     ATK as magical damage</color> and <color=#2962ff>levitates</color> them for 2.5
     seconds (can not act, and weight becomes 0).
-  favorText: A gift from her friend. The bubbles it creates have excellent plasticity
-    and will not pop easily. Very useful for cleaning things up. Beautiful too.
   skillDescriptionInShort: The first attack against an enemy deals bonus magical
     damage and levitates them for 2.5 seconds.
+  favorText: A gift from her friend. The bubbles it creates have excellent plasticity
+    and will not pop easily. Very useful for cleaning things up. Beautiful too.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1341870173
@@ -36347,10 +36400,10 @@ MonoBehaviour:
     HP is halved and they are frozen for <color=#ff9717>40 seconds</color>, but have
     <color=yellow>+70 DEF</color>, <color=#00ffff>+25 RES</color> and <color=green>recovers
     2% max HP every second</color> throughout the duration.
-  favorText: 
   skillDescriptionInShort: Enemies have increased HP, but spawned with 50% HP and
     frozen for 40 seconds, during which they have increased DEF and RES, and regenerates
     HP until the freeze is lost.
+  favorText: 
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1356330839
@@ -36568,10 +36621,10 @@ MonoBehaviour:
   skillDescription: When HP is below 60%, gains <color=yellow>+30 DEF</color> and
     <color=#00ffff>+20 RES</color>. At below 30%, additional gains <color=red>35%
     life-steal</color>.
-  favorText: Hand-crafted device, consists of a metronome, sound bath, attention
-    span training cards, bandages for when a book bites, pebble, and... a fire extinguisher?
   skillDescriptionInShort: When HP is below 60%, gains bonus DEF and RES. At below
     30%, additional gains life-steal.
+  favorText: Hand-crafted device, consists of a metronome, sound bath, attention
+    span training cards, bandages for when a book bites, pebble, and... a fire extinguisher?
   mutuallyExclusiveSkills: 21000000
   Overlay: {fileID: 0}
 --- !u!114 &1372772120
@@ -37214,10 +37267,10 @@ MonoBehaviour:
   skillNameText: Windblows down South
   skillDescription: '''Zeropoint Burst'' now <color=#2985FF>pulls</color> faraway
     enemies close to self.'
+  skillDescriptionInShort: 
   favorText: Alternatively, tweaking the direction of the air a bit allowing it to
     pull objects closer to you. Very useful to help her grabbing things on the highest
     shelf, just remember to deforst it afterward.
-  skillDescriptionInShort: 
   mutuallyExclusiveSkills: 0e000000
   Overlay: {fileID: 0}
 --- !u!114 &1383354778
@@ -37436,12 +37489,12 @@ MonoBehaviour:
     usage grants <color=#ffd61f>+12 ASPD</color>, <color=#5b7ccf>lasts 15 seconds</color>
     and stacks up to <color=yellow>6 times</color>. At max stacks, gains an additional
     <color=#00ffbf>+36% MSPD</color> and all effects are <color=yellow>doubled</color>.'
-  favorText: Her book alone can only carry words, her arts unit alone is just a staff,
-    her originium arts alone does not excel. But, combined them together, with a
-    little more work, and even the wind will bow to her.
   skillDescriptionInShort: 'Melee player: Attack shortens ''Evasion'' CD, ''Evasion''
     shortens ''Juggernaut'' CD, ''Juggernaut'' grants a stacking ASPD. At max stacks,
     doubles the effect and has increased MSPD.'
+  favorText: Her book alone can only carry words, her arts unit alone is just a staff,
+    her originium arts alone does not excel. But, combined them together, with a
+    little more work, and even the wind will bow to her.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1387309836
@@ -39118,10 +39171,10 @@ MonoBehaviour:
   skillNameText: Thermodynamic
   skillDescription: Every enemy hit by 'Zeropoint Burst' <color=yellow>refunds</color>
     its cool-down by <color=#ff9717>15%</color>.
-  favorText: Oh I get it, the name is 'cool-down' because the cold will speed up
-    its downtime, am I correct?
   skillDescriptionInShort: Every enemy hit by 'Zeropoint Burst' shortens its current
     cool-down.
+  favorText: Oh I get it, the name is 'cool-down' because the cold will speed up
+    its downtime, am I correct?
   mutuallyExclusiveSkills: 100000001200000035000000
   Overlay: {fileID: 0}
 --- !u!114 &1438007905
@@ -41549,9 +41602,9 @@ MonoBehaviour:
   skillNameText: Arts Unit - Wind Beneath Blade
   skillDescription: <color=#00ffbf>MSPD +10%</color>, gains <color=#ffd61f>+7 ASPD</color>
     for every <color=#00ffbf>10% bonus MSPD</color>.
+  skillDescriptionInShort: MSPD +10%, gains bonus ASPD based on bonus MSPD.
   favorText: '''With a knife-sharp heart, I shave off these long and thin, meaningless
     days...'''
-  skillDescriptionInShort: MSPD +5, gains bonus ASPD based on bonus MSPD.
   mutuallyExclusiveSkills: 0100000003000000
   Overlay: {fileID: 0}
 --- !u!114 &1553408582
@@ -42055,11 +42108,11 @@ MonoBehaviour:
     upon hitting the target (triggers up to <color=#5b7ccf>5 times</color>). When
     a projectile comes into contact with an environmental tile, it <color=yellow>carries
     the respective effect</color> and apply them upon hitting the target.'
+  skillDescriptionInShort: Ranged player's projectiles can ricochet and absorb the
+    effects of environmental tiles it comes into contact with.
   favorText: She always wanted to participate in more research projects, and if possible,
     prefers to do it by herself. But you can't be in all the places in the world,
     not when you're doing it alone.
-  skillDescriptionInShort: Ranged player's projectiles can ricochet and absorb the
-    effects of environmental tiles it comes into contact with.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1568703610
@@ -42346,10 +42399,10 @@ MonoBehaviour:
   skillDescription: <color=#2985FF>Weight level +1</color>. Enemies that are being
     shifted by self will also take <color=#ff00ff>magical damage</color> proportional
     to distance travel.
-  favorText: A massive pachinko ball. Legend says when the stars align, a single
-    strike from this thing can completely alter one's fate, for the better or worse.
   skillDescriptionInShort: Weight level +1. Enemies that are being shifted by self
     will also take magical damage proportional to distance travel.
+  favorText: A massive pachinko ball. Legend says when the stars align, a single
+    strike from this thing can completely alter one's fate, for the better or worse.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1581416829
@@ -42492,8 +42545,8 @@ MonoBehaviour:
   skillDescription: While 'Juggernaut' is active, receiving damage <color=green>recovers
     2% max HP</color> and extends its duration by <color=yellow>0.75 seconds</color>,
     up to a total bonus of <color=#5b7ccf>100% base duration</color>.
-  favorText: It takes a little beating to get good at the game.
   skillDescriptionInShort: '''Juggernaut''''s duration extends upon receiving damage.'
+  favorText: It takes a little beating to get good at the game.
   mutuallyExclusiveSkills: 160000001700000018000000290000002e000000
   Overlay: {fileID: 0}
 --- !u!114 &1587115040
@@ -42637,11 +42690,11 @@ MonoBehaviour:
     to deal bonus true damage equals to <color=#b1b1b1>10% of the target max HP</color>.
     Damage increases by <color=red>50% ATK</color> for every freeze remaining second
     (cap at <color=red>400% base ATK</color>).
+  skillDescriptionInShort: Damaging frozen targets instantly ends its effect to deal
+    bonus true damage, increasing by the freeze's remaining duration.
   favorText: '''Device that can remove any moisture and ice in an instant, especially
     useful on frozen equipments.''\n- Despite that oddly specific use cases, she
     has put it in good uses a decent amount of times.'
-  skillDescriptionInShort: Damaging frozen targets instantly ends its effect to deal
-    bonus true damage, increasing by the freeze's remaining duration.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1587829237
@@ -43023,9 +43076,9 @@ MonoBehaviour:
   skillNameText: Geologist - Explore
   skillDescription: Gains <color=#00ffbf>+50% MSPD</color> while standing on an environmental
     tile.
-  favorText: Don't wander off too far this time...
   skillDescriptionInShort: Gains increased MSPD while standing on an environmental
     tile.
+  favorText: Don't wander off too far this time...
   mutuallyExclusiveSkills: 0500000004000000
   Overlay: {fileID: 0}
 --- !u!114 &1605181632
@@ -43170,9 +43223,9 @@ MonoBehaviour:
     and restores HP equal to <color=green>30% damage dealt</color>. Your units continuously
     lose HP while moving, enemies continuously lose HP while in combat.\n\n<i>If
     <color=#ff00ff>'Equipment - Provision'</color> is selected, you become unaffected.</i>
-  favorText: 
   skillDescriptionInShort: Units have increased ATK, ASPD and life-steal, but continuously
     lose HP.
+  favorText: 
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1605621095
@@ -43734,6 +43787,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca2576f9f1cf09b468e7b39bf397c26d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SkillUpgradesData: {fileID: 11400000, guid: 19e3cad0e10c1b6428b2dff0dd954788, type: 2}
   TechViewBtn: {fileID: 2063730769}
   Block: {fileID: 30443328}
   SkillHighlight: {fileID: 1737429976}
@@ -44751,10 +44805,10 @@ MonoBehaviour:
     enemy <color=#00ffe1>extends the dash</color> and slows the collided enemies
     for <color=yellow>3 seconds</color>. If the dash is extended at least once, the
     next cool-down is reduced by 35%.
-  favorText: She looks quiet and proper at first glance, but in truth she bursts
-    with a curious spirit and a lively step.
   skillDescriptionInShort: '''Evasion'' extends upon coming into contact with an
     enemy and slows them.'
+  favorText: She looks quiet and proper at first glance, but in truth she bursts
+    with a curious spirit and a lively step.
   mutuallyExclusiveSkills: 0c0000000d00000024000000
   Overlay: {fileID: 0}
 --- !u!114 &1669243630
@@ -46101,9 +46155,9 @@ MonoBehaviour:
   skillDescription: 'While you are 1000 radius around the Mint Fumo: Every <color=yellow>5.2
     seconds</color>, Mint casts arts on all enemies within said area, dealing <color=#ff00ff>30
     magical damage</color> and <color=#2985FF>pushing</color> them away from her.'
-  favorText: '"Please don''t get in our way!"'
   skillDescriptionInShort: Mint Fumo periodically pushes nearby enemies away from
     her.
+  favorText: '"Please don''t get in our way!"'
   mutuallyExclusiveSkills: 1f000000
   Overlay: {fileID: 0}
 --- !u!114 &1723544906
@@ -47473,9 +47527,9 @@ MonoBehaviour:
   skillNameText: Equipment - Radio
   skillDescription: <color=#ff9717>Swap cool-down -15%</color>, every available swap
     further reduces the cool-down by <color=#ff9717>20%</color>.
-  favorText: '"Mmmm... Whuh? What? Yes, I''m listening!"'
   skillDescriptionInShort: Swap cool-down reduces, further reduces for every available
     charge.
+  favorText: '"Mmmm... Whuh? What? Yes, I''m listening!"'
   mutuallyExclusiveSkills: 07000000080000000a000000
   Overlay: {fileID: 0}
 --- !u!114 &1755008031
@@ -47618,9 +47672,9 @@ MonoBehaviour:
   skillDescription: While 'Juggernaut' is active, a fire ring is created around you,
     dealing <color=#ff4545>34% ATK</color> as physical damage every second and inflicts
     a stacking <color=#5b7ccf>-15% DEF</color> to nearby enemy every second.
-  favorText: Good thing she has a fire extinguisher here.
   skillDescriptionInShort: '''Juggernaut'' continuously deals physical damage to
     nearby enemies and reduces their DEF.'
+  favorText: Good thing she has a fire extinguisher here.
   mutuallyExclusiveSkills: 150000001700000018000000290000002e000000
   Overlay: {fileID: 0}
 --- !u!114 &1758226555
@@ -47981,9 +48035,9 @@ MonoBehaviour:
   skillNameText: Windblows up North
   skillDescription: '''Zeropoint Burst'' now <color=#2985FF>pushes</color> nearby
     enemies to the rear of self attack range.'
+  skillDescriptionInShort: 
   favorText: Integrating her wind arts in your freeze, you can now produce a burst
     of cold air that is strong enough to blow away dangers.
-  skillDescriptionInShort: 
   mutuallyExclusiveSkills: 0f000000
   Overlay: {fileID: 0}
 --- !u!114 &1765772169
@@ -48126,12 +48180,12 @@ MonoBehaviour:
   skillDescription: Cancelling 'Der Tag Neight Sich' <color=yellow>refunds</color>
     a portion of its cool-down based on the remaining duration, up to <color=yellow>80%</color>
     within <color=#5b7ccf>the first 1 seconds</color>.
+  skillDescriptionInShort: Cancelling 'Der Tag Neight Sich' refunds a portion of
+    its cool-down based on the remaining duration.
   favorText: She is distractable, but this isn't to say she has no sense of priority.
     When a directly pressing matter is at hand, she focuses and spares no detail
     until it's done, but the moment the most critical part is finished, she loosens
     up, and it's then that something else can easily steal her attention.
-  skillDescriptionInShort: Cancelling 'Der Tag Neight Sich' refunds a portion of
-    its cool-down based on the remaining duration.
   mutuallyExclusiveSkills: 1b0000001c000000270000001d000000
   Overlay: {fileID: 0}
 --- !u!114 &1766304373
@@ -48794,9 +48848,9 @@ MonoBehaviour:
   skillNameText: '''Fumo Recu'' - Phalanx'
   skillDescription: While you are within 1000 radius around the Mint Fumo, gain <color=yellow>+215%
     DEF</color> and <color=#00ffff>+25 RES</color>.
-  favorText: "\"One, two\u2014whoopsie-daisy.\""
   skillDescriptionInShort: Gains increased DEF and RES while nearby the Mint Fumo
     (marked by green area).
+  favorText: "\"One, two\u2014whoopsie-daisy.\""
   mutuallyExclusiveSkills: 20000000
   Overlay: {fileID: 0}
 --- !u!114 &1814050446
@@ -49072,8 +49126,8 @@ MonoBehaviour:
     alter between the two effects: <color=#5b7ccf>-50% MSPD and ASPD</color> and
     <color=#ffd61f>+50% MSPD and ASPD</color>. This process happens indefinitely,
     but has a 2-second cooldown inbetween.'
-  favorText: 
   skillDescriptionInShort: 
+  favorText: 
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1818178359
@@ -49467,9 +49521,9 @@ MonoBehaviour:
     and <color=#00ffbf>+50% MSPD</color> that decay over 5 seconds. Every enemy defeated
     increases the amount by <color=yellow>5%</color>, stacks up to <color=#5b7ccf>10
     times</color>.
-  favorText: Tapes of combat logs given to her by a pharmaceutical company...
   skillDescriptionInShort: Gains a decaying ATK and MSPD buff after defeating an
     enemy, increases for every enemy defeated.
+  favorText: Tapes of combat logs given to her by a pharmaceutical company...
   mutuallyExclusiveSkills: 1a000000
   Overlay: {fileID: 0}
 --- !u!114 &1836088406
@@ -51311,10 +51365,10 @@ MonoBehaviour:
     ATK</color> that decays over 7 seconds. After the first activation, permanently
     gains <color=#ff4545>+20% ATK</color> and the damage now also <color=#ff4545>ignores
     60% DEF</color>.
-  favorText: The other day, you accidentally discovered this technique during battle.
-    You told her about this, and she noted it down immediately, seemingly very excited.
   skillDescriptionInShort: Successfully landing an attack while using 'Evasion' increases
     its damage and grants you decaying ATK buff.
+  favorText: The other day, you accidentally discovered this technique during battle.
+    You told her about this, and she noted it down immediately, seemingly very excited.
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &1908462277
@@ -52305,9 +52359,9 @@ MonoBehaviour:
   skillDescription: Attacks ignore <color=#ff4545>15% DEF</color> and deal increased
     damage based on the target's missing health (maximum bonus reaches at <color=red>+50%
     damage</color>).
-  favorText: It's actually cat paws.
   skillDescriptionInShort: Attacks ignore some DEF and deal increased damage based
     on the target's missing health.
+  favorText: It's actually cat paws.
   mutuallyExclusiveSkills: 08000000090000000a000000
   Overlay: {fileID: 0}
 --- !u!114 &1932199425
@@ -53650,10 +53704,10 @@ MonoBehaviour:
     <color=yellow>creates another wave of projectiles</color> starting at their position.
     These extra waves can trigger up to <color=#5b7ccf>3 times</color>, and last
     up to <color=#5b7ccf>2 seconds</color>.
-  favorText: Nothing lasts forever, everyone will die someday. Nevertheless, I want
-    to connect to their souls.
   skillDescriptionInShort: When 'Der Tag Neight Sich' defeats an enemy, it creates
     another wave of projectiles starting at their position.
+  favorText: Nothing lasts forever, everyone will die someday. Nevertheless, I want
+    to connect to their souls.
   mutuallyExclusiveSkills: 1b0000001c0000001d00000033000000
   Overlay: {fileID: 0}
 --- !u!114 &2001172645
@@ -54139,9 +54193,9 @@ MonoBehaviour:
   skillDescription: <color=#5b7ccf>ASPD -25</color>, <color=#ff4545>ATK +40%</color>.
     While not attacking, the next attack gains gradually increased damage, up to
     <color=#ff4545>+250%</color> after 10 seconds (resets upon attacking).
-  favorText: Why does she have it?
   skillDescriptionInShort: Gradually charges up for a much stronger attack when not
     attacking (resets upon attacking).
+  favorText: Why does she have it?
   mutuallyExclusiveSkills: 
   Overlay: {fileID: 0}
 --- !u!114 &2017298146
@@ -54509,9 +54563,9 @@ MonoBehaviour:
   skillDescription: '''Zeropoint Burst'' can be <color=yellow>maintained</color>
     by holding down the cast key for up to <color=#5b7ccf>5 more seconds</color>.
     Self can not act while maintaining the skill.'
-  favorText: '"Yep! Leave it to me."'
   skillDescriptionInShort: '''Zeropoint Burst'' can be maintained by holding down
     the cast key. Self can not act while maintaining the skill.'
+  favorText: '"Yep! Leave it to me."'
   mutuallyExclusiveSkills: 110000001200000010000000
   Overlay: {fileID: 0}
 --- !u!114 &2030034560
@@ -54728,9 +54782,9 @@ MonoBehaviour:
   skillNameText: Swirling Vortex
   skillDescription: While 'Juggernaut' is active, nearby enemies have <color=#5b7ccf>-33%
     MSPD and ASPD</color>, and are continuously <color=#2985FF>pulled toward self</color>.
-  favorText: '"Would you like to see some of my magic?"'
   skillDescriptionInShort: '''Juggernaut'' pulls nearby enemies toward self, reducing
     their MSPD and ASPD.'
+  favorText: '"Would you like to see some of my magic?"'
   mutuallyExclusiveSkills: 150000001600000018000000290000002e000000
   Overlay: {fileID: 0}
 --- !u!114 &2037127173
@@ -57159,10 +57213,10 @@ MonoBehaviour:
     nearest enemy within attack range. While locking on to a target, all bullets
     will <color=yellow>home toward them</color>, but its damage ramps down overtime
     (to a minium of <color=#5b7ccf>30% of the base damage</color>).'
-  favorText: Her attention device didn't quite work for her. The good news is that,
-    for some reasons, it worked wonder on projectiles!
   skillDescriptionInShort: '''Der Tag Neight Sich'' homes all its bullets toward
     the nearest enemy within range.'
+  favorText: Her attention device didn't quite work for her. The good news is that,
+    for some reasons, it worked wonder on projectiles!
   mutuallyExclusiveSkills: 1b0000001d0000002700000033000000
   Overlay: {fileID: 0}
 --- !u!114 &2139595025
@@ -57252,6 +57306,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1143179407}
+  - {fileID: 140087125}
   - {fileID: 643355487}
   - {fileID: 287254778}
   - {fileID: 698380464}

@@ -7,10 +7,10 @@ public class FM_06 : StageManager
 {
     [SerializeField] private GameObject hiddenOriginiumTiles;
 
-    public override void EnableChallengeMode()
+    public override void CheckForChallengeMode()
     {
         if (!CharacterPrefabsStorage.EnableChallengeMode) return;
-        base.EnableChallengeMode();
+        base.CheckForChallengeMode();
         if (hiddenOriginiumTiles != null)
         {
             hiddenOriginiumTiles.SetActive(true);

@@ -15,11 +15,11 @@ public class OriginiumPollution : EnvironmentalTileBase
 
     public override void OnStageStart()
     {
-        if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.TERRAIN))
+        if (CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.TERRAIN))
         {
-            bool hasGeologist = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.GEOLOGIST_OBSERVE)
-                || CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.GEOLOGIST_EXPLORE)
-                || CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.GEOLOGIST_STUDY);
+            bool hasGeologist = CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.GEOLOGIST_OBSERVE)
+                || CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.GEOLOGIST_EXPLORE)
+                || CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.GEOLOGIST_STUDY);
             float multiplier = hasGeologist ? 3f : 2f;
 
             TrueDamagePerTick *= multiplier;

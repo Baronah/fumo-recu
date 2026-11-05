@@ -27,11 +27,13 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    public Upgrades upgradesData => UpgradesManager._instance.upgradeData;
+
     private CameraMovement mainCamera;
     [SerializeField] private CinemachineVirtualCamera virtualCamera;
 
     public enum PlayerType { MELEE, RANGED }
-    [SerializeField] private PlayerType playerStartType;
+    private PlayerType playerStartType;
     public PlayerType PlayerStartType => playerStartType;
 
     [SerializeField] private Transform PlayerSpawnpoint;
@@ -110,7 +112,7 @@ public class PlayerManager : MonoBehaviour
         UpdateKeybindTexts();
 
         EnableHitStop = SaveDataManager.EnableHitStop;
-        RadioActive = CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.EQUIPMENT_RADIO);
+        RadioActive = CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_RADIO);
     }
 
     public void UpdateKeybindTexts()
@@ -293,12 +295,12 @@ public class PlayerManager : MonoBehaviour
             SwapOverflowTimer = 0;
         }
 
-        if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.EQUIPMENT_RADIO))
+        if (CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_RADIO))
         {
             SwapCooldown *= 0.85f;
         }
 
-        if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.AMULET))
+        if (CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.AMULET))
         {
             MintBlessing = true;
         }
@@ -405,9 +407,9 @@ public class PlayerManager : MonoBehaviour
         StartCoroutine(FadeOut(Effect, IsStageStarted ? 1f : 2f));
 
         BUG_SPRAY_TYPE type = BUG_SPRAY_TYPE.NONE;
-        if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.SMOKE_TOXIC))
+        if (CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.SMOKE_TOXIC))
             type = BUG_SPRAY_TYPE.POISON;
-        else if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.SMOKE_BLIND))
+        else if (CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.SMOKE_BLIND))
             type = BUG_SPRAY_TYPE.SMOKE;
 
         if (type == BUG_SPRAY_TYPE.NONE) return;
@@ -637,7 +639,7 @@ public class PlayerManager : MonoBehaviour
 
     public void OnPlayerDeath()
     {
-        if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.HEAT_DEATH))
+        if (CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.HEAT_DEATH))
         {
             var enemies = EntityManager.Enemies;
             foreach (var enemy in enemies)
@@ -770,11 +772,14 @@ public class PlayerManager : MonoBehaviour
         SkillView_SpecialText.text = info.SpecialText;
 
         // techs
-        int techCount = CharacterPrefabsStorage.Skills.Count;
+        int techCount = player.Skills.Count;
         bool hasTech = techCount > 0;
 
         EmptyTechViewsText.text = hasTech ? "FINDINGS:" : "Look like you didn't bring any finding :(";
-        
+
+        TechViews[0].transform.parent.localScale
+            = techCount <= 4 ? new Vector3(0.9f, 0.9f) : new Vector3(0.8f, 0.8f);
+
         for (int i = 0; i < TechViews.Length; i++)
         {
             GameObject techView = TechViews[i];
@@ -785,15 +790,16 @@ public class PlayerManager : MonoBehaviour
             }
 
             bool hasTechThisLoop = (i + 1) <= techCount;
+            techView.SetActive(hasTechThisLoop);
             if (!hasTechThisLoop) continue;
             
-            SkillDataSet skillDataSet = CharacterPrefabsStorage.Skills.ElementAt(i).Value;
+            UpgradeData skillDataSet = player.Skills.ElementAt(i);
             Image skillIcon = techView.GetComponentInChildren<Image>();
             TMP_Text[] txts = techView.GetComponentsInChildren<TMP_Text>();
 
-            skillIcon.sprite = skillDataSet.skillIcon;
-            txts[0].text = skillDataSet.nameInString;
-            txts[1].text = skillDataSet.skillDescription;
+            skillIcon.sprite = skillDataSet.icon;
+            txts[0].text = skillDataSet.name;
+            txts[1].text = skillDataSet.shortDescription;
         }
     }
 
@@ -804,7 +810,7 @@ public class PlayerManager : MonoBehaviour
 
     private IEnumerator UnleashFreezeMarks(Dictionary<EntityBase, float> InitialHitDictionary, float FreezeRange, float FreezeDurationMin, float FreezeDurationMax, float MinDistanceForFreezeDuration)
     {
-        if (!CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.FREEZE_BLOOM)) yield break;
+        if (!CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.FREEZE_BLOOM)) yield break;
 
         Dictionary<EntityBase, float> HitDictionary = new Dictionary<EntityBase, float>(InitialHitDictionary);
         Dictionary<EntityBase, GameObject> Marks = new();
@@ -852,7 +858,7 @@ public class PlayerManager : MonoBehaviour
 
                     if (nearby != SourceEntity)
                     {
-                        if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.WINDBLOW_NORTH))
+                        if (CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_NORTH))
                         {
                             float pushDuration = distance >= FreezeRange * 0.8f
                                 ?
@@ -862,7 +868,7 @@ public class PlayerManager : MonoBehaviour
 
                             enemy.PushEntityFrom(enemy, SourceEntity.transform, 1.8f, pushDuration);
                         }
-                        else if (CharacterPrefabsStorage.Skills.ContainsKey(SkillTree_Manager.SkillName.WINDBLOW_SOUTH))
+                        else if (CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.WINDBLOW_SOUTH))
                             enemy.PullEntityTowards(enemy, SourceEntity.transform, 2.1f, 0.2f);
                     }
 

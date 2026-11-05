@@ -477,11 +477,11 @@ MonoBehaviour:
   Description: Church statue that has been abandoned for a very long time. Though
     can no longer distinguish good from evil, it never forgets its duty, continuing
     to bestow blessings upon those who seek for them.
-  Skillset: "\u2022 Does not move and attack, immunes to crowd-controls, and does
-    not count toward battle progress.\n\u2022 Increases the DEF and RES of all enemies
-    while present.\n\u2022 While standing on a <color=green>Medical Tile</color>,
-    transfers its healing effect to all presenting enemies on the map.\n\u2022 Upon
-    defeat, heals your units once and grants them a permanent DEF buff."
+  Skillset: "\u2022 Does not move and attack, and does not count toward battle progress.\n\u2022
+    Increases the DEF and RES of all enemies while present.\n\u2022 While standing
+    on a <color=green>Medical Tile</color>, transfers its healing effect to all presenting
+    enemies on the map.\n\u2022 Upon defeat, heals your units once and grants them
+    a permanent DEF buff."
   detectionRange: 0
   b_detectionRange: 0
   DangerRange_RatioOfAttackRange: 0
