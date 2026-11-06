@@ -272,7 +272,7 @@ public class EntityBase : MonoBehaviour
 
         environmentalTilesStandingOn ??= new HashSet<EnvironmentType>();
 
-        GravityTimerCount = UnityEngine.Random.Range(0f, PullTick);
+        GravityTimerCount = UnityEngine.Random.Range(0f, GravityPullTick);
 
         Transform circleFind = transform.Find("GravityCircle/Radius");
         if (circleFind)
@@ -331,8 +331,44 @@ public class EntityBase : MonoBehaviour
         CalculateBuffsAndDebuffs();
     }
 
+    protected float HungerDamageFlatPerSec;
+    protected float HungerDamageCurrentHealthPercentagePerSec;
+
+    protected float AccelerationBuffPerSec, AccelerationBuffMax;
+    protected float AccelerationDebuffMax, AccelerationDebuffDuration;
+    
+    protected float StatisAtkDebuffPercentage, StatisMhpRegenPercentage;
+    protected float StatisRequiredTimer;
+    private float StatisTimer = 0f;
+
+    private float GravityBaseRange;
+    private float GravityGrowthRange;
+    private float GravityPullForce_Base;
+    private float GravityPullForce_Growth;
+    private readonly float GravityPullTick = 0.3f;
+
     protected virtual void OnInitialize_GetSkillTreeAttributes()
     {
+        float[] hungerValues = UpgradesManager._instance.GetUpgradeValues(SkillTree_Manager.SkillName.HUNGER);
+        HungerDamageCurrentHealthPercentagePerSec = hungerValues[3];
+        HungerDamageFlatPerSec = hungerValues[4];
+
+        float[] accelerationValues = UpgradesManager._instance.GetUpgradeValues(SkillTree_Manager.SkillName.ACCELERATION);
+        AccelerationBuffPerSec = accelerationValues[0];
+        AccelerationBuffMax = accelerationValues[1];
+        AccelerationDebuffMax = accelerationValues[2];
+        AccelerationDebuffDuration = accelerationValues[3];
+
+        float[] statisValues = UpgradesManager._instance.GetUpgradeValues(SkillTree_Manager.SkillName.STATIS);
+        StatisRequiredTimer = statisValues[0];
+        StatisAtkDebuffPercentage = statisValues[1];
+        StatisMhpRegenPercentage = statisValues[2];
+
+        float[] gravityValues = UpgradesManager._instance.GetUpgradeValues(SkillTree_Manager.SkillName.GRAVITY);
+        GravityBaseRange = gravityValues[1];
+        GravityGrowthRange = gravityValues[2];
+        GravityPullForce_Base = gravityValues[3];
+        GravityPullForce_Growth = gravityValues[4];
     }
 
     [SerializeField] protected bool HasOnStartCoroutine = true;
@@ -1260,30 +1296,26 @@ public class EntityBase : MonoBehaviour
     }
 
     private float GravityTimerCount = 0f;
-    private readonly float PullTick = 0.3f;
-    private readonly float BaseRange = 150f;
-    private readonly float GrowthRange = 80f;
-    private readonly float PullForce_Base = 0.8f, PullForce_Growth = 0.5f;
     protected virtual void ProcessGravity()
     {
         if (!StageManager.Gravity || weight <= 0) return;
         GravityTimerCount += Time.fixedDeltaTime;
-        if (GravityTimerCount < PullTick) return;
+        if (GravityTimerCount < GravityPullTick) return;
 
         GravityTimerCount = 0f;
 
-        float searchRange = BaseRange + GrowthRange * (weight - 1);
+        float searchRange = GravityBaseRange + GravityGrowthRange * (weight - 1);
         var hits = SearchForEntitiesAroundCertainPoint(typeof(EntityBase), transform.position, searchRange, true)
             .Where(e => e.weight < weight);
         foreach (var hit in hits)
         { 
-            float force = PullForce_Base + PullForce_Growth * (weight - hit.weight - 1);
+            float force = GravityPullForce_Base + GravityPullForce_Growth * (weight - hit.weight - 1);
             PullEntityTowards(hit, transform.position, force, 0.09f, true, false);
         }
 
         ApplyEffect(AffectedStat.MSPD, "GRAVITY_WEIGHT_PENALTY",
             Mathf.Min(50f, GetMultiplicativeValue(100f, 0.1f, weight)) * -1f,
-            PullTick,
+            GravityPullTick,
             true);
 
         if (GravityCircle && GravityCircle.gameObject.activeSelf) 
@@ -1305,7 +1337,6 @@ public class EntityBase : MonoBehaviour
     private readonly float minDirection = 0.15f;
     private bool prevSpriteFlipX = false;
     private float AcceTimerCount = 0f;
-    protected float AccelerationBuffPerSec = 25f, AccelerationBuffMax = 200f;
     private readonly float AcceTick = 0.25f;
     protected virtual void ProcessAccelaration()
     {
@@ -1347,8 +1378,8 @@ public class EntityBase : MonoBehaviour
                 ApplyEffect(
                     AffectedStat.MSPD,
                     "ACCELERATE_DIR_CHANGE_PUNISH",
-                    Mathf.Lerp(0, 90f, currentBuff / AccelerationBuffMax) * -1,
-                    1.5f,
+                    Mathf.Lerp(0, AccelerationDebuffMax,currentBuff / AccelerationBuffMax) * -1,
+                    AccelerationDebuffDuration,
                     true,
                     EffectPersistType.DECAY);
 
@@ -1359,9 +1390,6 @@ public class EntityBase : MonoBehaviour
         prevSpriteFlipX = spriteRenderer.flipX;
     }
 
-    protected float AtkDebuffPercentage = 50f, RegenBuffPercentage = 0.04f;
-    protected float StatisRequiredTimer = 5f;
-    private float StatisTimer = 0f;
     private bool enteredStatis = false;
     private GameObject StatisObj;
     public virtual bool IsMoving()
@@ -1380,26 +1408,24 @@ public class EntityBase : MonoBehaviour
             if (StatisTimer >= StatisRequiredTimer && !enteredStatis)
             {
                 enteredStatis = true;
-                hpRegenPercentage += RegenBuffPercentage;
-                ApplyEffect(AffectedStat.ATK, keyAtk, AtkDebuffPercentage * -1f, 9999f, true);
+                hpRegenPercentage += StatisMhpRegenPercentage;
+                ApplyEffect(AffectedStat.ATK, keyAtk, StatisAtkDebuffPercentage * -1f, 9999f, true);
             }
         }
         else
         {
             if (enteredStatis)
             {
-                hpRegenPercentage -= RegenBuffPercentage;
+                hpRegenPercentage -= StatisMhpRegenPercentage;
                 RemoveEffect(keyAtk);
             }
             enteredStatis = false;
             StatisTimer = 0f;
         }
 
-        StatisObj.SetActive(enteredStatis);
+        if (StatisObj) StatisObj.SetActive(enteredStatis);
     }
 
-    protected float HungerDamageFlatPerSec = 5f;
-    protected float HungerDamageCurrentHealthPercentagePerSec = 0.02f;
     private float HungerTimerCount = 0f;
     private readonly float HungerTick = 1f;
 

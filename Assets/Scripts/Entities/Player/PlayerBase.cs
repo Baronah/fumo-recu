@@ -70,7 +70,7 @@ public class PlayerBase : EntityBase
 
         playerManager.Register(this);
 
-        GetSkillTreeValues();
+        PreInitialize_GetSkillTreeAttributes();
         GetSkillTreeEffects();
         StageManager.ProcessPlayerSkillTree(this);
 
@@ -86,19 +86,57 @@ public class PlayerBase : EntityBase
         IsComponentsInitialized = true;
     }
 
-    protected virtual void GetSkillTreeValues() { }
+    protected virtual void PreInitialize_GetSkillTreeAttributes() { }
 
+    public float blade_LowHpThreshold, blade_MaxDamageUp;
+    public float scope_MaxRangeThreshold, scope_MaxDamageUp;
+    float idea_UltimateRefundBase, idea_SpecialRefundBase;
+    float idea_ContinuousBuff, idea_ContinuousBuffCap;
+    short book_AttentionMaxReduction;
+    float book_effectThreshold, book_atkBuff, book_aspdBuff;
+    float device_effectThreshold,
+          device_attentionMinThreshold,
+          device_attentionMinLifesteal,
+          device_defBuff,
+          device_resBuff;
     protected override void OnInitialize_GetSkillTreeAttributes()
     {
         base.OnInitialize_GetSkillTreeAttributes();
 
-        if (CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.WINGED_STEPS_A)
-        || CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.WINGED_STEPS_B)
-        || CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.WINGED_STEPS_C))
-            AccelerationBuffPerSec *= 1.5f;
+        float[] bladeValues = GetSkillValues(SkillTree_Manager.SkillName.EQUIPMENT_BLADE);
+        blade_MaxDamageUp = bladeValues[1];
+        blade_LowHpThreshold = bladeValues[2];
 
-        if (CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.ATTENTION_DEVICE))
-            StatisRequiredTimer = 3f;
+        float[] scopeValues = GetSkillValues(SkillTree_Manager.SkillName.EQUIPMENT_SCOPE);
+        scope_MaxRangeThreshold = scopeValues[1];
+        scope_MaxDamageUp = scopeValues[2];
+
+        float[] ideasValues = GetSkillValues(SkillTree_Manager.SkillName.WINGED_STEPS_C);
+        idea_SpecialRefundBase = ideasValues[0];
+        idea_UltimateRefundBase = ideasValues[1];
+        idea_ContinuousBuff = ideasValues[2];
+        idea_ContinuousBuffCap = ideasValues[3];
+
+        float[] bookValues = GetSkillValues(SkillTree_Manager.SkillName.ATTENTION_BOOK);
+        book_effectThreshold = bookValues[0];
+        book_atkBuff = bookValues[1];
+        book_aspdBuff = bookValues[2];
+        book_AttentionMaxReduction = (short)bookValues[3];
+
+        float[] deviceValues = GetSkillValues(SkillTree_Manager.SkillName.ATTENTION_DEVICE);
+        device_effectThreshold = deviceValues[0];
+        device_defBuff = deviceValues[1];
+        device_resBuff = deviceValues[2];
+        device_attentionMinThreshold = deviceValues[3];
+        device_attentionMinLifesteal = deviceValues[4];
+
+        if (HasSkill(SkillTree_Manager.SkillName.WINGED_STEPS_A)
+        || HasSkill(SkillTree_Manager.SkillName.WINGED_STEPS_B)
+        || HasSkill(SkillTree_Manager.SkillName.WINGED_STEPS_C))
+            AccelerationBuffPerSec *= GetSkillValues(SkillTree_Manager.SkillName.ACCELERATION)[4];
+
+        if (HasSkill(SkillTree_Manager.SkillName.ATTENTION_DEVICE))
+            StatisRequiredTimer = GetSkillValues(SkillTree_Manager.SkillName.STATIS)[2];
 
         HungerDamageFlatPerSec /= 2;
     }
@@ -153,17 +191,17 @@ public class PlayerBase : EntityBase
 
         if (HasSkill(SkillTree_Manager.SkillName.GEOLOGIST_OBSERVE))
         {
-            ReduceUltimateCooldown(geologistCountUp * 0.4f, PlayerBase.CooldownReductionType.FLAT);
+            ReduceUltimateCooldown(geologistCountUp * GetSkillValues(SkillTree_Manager.SkillName.GEOLOGIST_OBSERVE)[0], PlayerBase.CooldownReductionType.FLAT);
         }
 
         if (HasSkill(SkillTree_Manager.SkillName.GEOLOGIST_STUDY))
         {
-            ApplyEffect(Effect.AffectedStat.ATK, "GEOLOGIST_ATK_BUFF", 50f, 0.5f, true);
+            ApplyEffect(Effect.AffectedStat.ATK, "GEOLOGIST_ATK_BUFF", GetSkillValues(SkillTree_Manager.SkillName.GEOLOGIST_STUDY)[0], 0.5f, true);
         }
 
         if (HasSkill(SkillTree_Manager.SkillName.GEOLOGIST_EXPLORE))
         {
-            ApplyEffect(Effect.AffectedStat.MSPD, "GEOLOGIST_MSPD_BUFF", 50f, 0.5f, true);
+            ApplyEffect(Effect.AffectedStat.MSPD, "GEOLOGIST_MSPD_BUFF", GetSkillValues(SkillTree_Manager.SkillName.GEOLOGIST_EXPLORE)[0], 0.5f, true);
         }
 
         geologistCountUp = 0;
@@ -201,7 +239,6 @@ public class PlayerBase : EntityBase
     }
 
     float i_countUp = 0;
-    readonly float i_UltimateRefundBase = 0.03f, i_SpecialRefundBase = 0.05f;
     bool previouslyMoving = true;
     short i_ContiuousCounter = 0;
     void IdeasBuff()
@@ -214,17 +251,17 @@ public class PlayerBase : EntityBase
         if (!HasSkill(SkillTree_Manager.SkillName.WINGED_STEPS_C)) return;
         
         bool isMoving = rb2d.velocity.magnitude > 0.1f;
-        if (isMoving == previouslyMoving) i_ContiuousCounter = (short) Mathf.Min(i_ContiuousCounter + 1, 3);
+        if (isMoving == previouslyMoving) i_ContiuousCounter = (short) Mathf.Min(i_ContiuousCounter + 1, idea_ContinuousBuffCap);
         else i_ContiuousCounter = 0;
 
         if (isMoving)
         {
-            float reduceAmount = interval * (i_UltimateRefundBase * (1f + 0.5f * i_ContiuousCounter));
+            float reduceAmount = interval * (idea_UltimateRefundBase * (1f + idea_ContinuousBuff * i_ContiuousCounter));
             ReduceUltimateCooldown(reduceAmount, CooldownReductionType.PERCENTAGE_CURRENT);
         }
         else
         {
-            float reduceAmount = interval * (i_SpecialRefundBase * (1f + 0.5f * i_ContiuousCounter));
+            float reduceAmount = interval * (idea_SpecialRefundBase * (1f + idea_ContinuousBuff * i_ContiuousCounter));
             ReduceSpecialCooldown(reduceAmount, CooldownReductionType.PERCENTAGE_CURRENT);
         }
 
@@ -232,49 +269,34 @@ public class PlayerBase : EntityBase
     }
 
     float a_countUp = 0;
-    short attentionMaxReduction = 80;
-    float attentionMinLifesteal = 0.35f;
-    bool hasDamageReductionBuffFromAttentionMaxed = false,
-         hasLifestealBuffFromAttentionMin = false;
+    bool hasLifestealBuffFromAttentionMin = false;
     void AttentionBuff()
     {
         a_countUp += Time.fixedDeltaTime;
         if (a_countUp < 0.2f) return;
         a_countUp = 0;
 
-        if (health < mHealth && hasDamageReductionBuffFromAttentionMaxed)
-        {
-            hasDamageReductionBuffFromAttentionMaxed = false;
-            damageReduction -= attentionMaxReduction;
-        }
-
-        if (health > mHealth * 0.3f && hasLifestealBuffFromAttentionMin)
+        if (health > mHealth * device_attentionMinThreshold && hasLifestealBuffFromAttentionMin)
         {
             hasLifestealBuffFromAttentionMin = false;
-            lifeSteal -= attentionMinLifesteal;
+            lifeSteal -= device_attentionMinLifesteal;
         }
 
-        if (health >= mHealth * 0.85f && HasSkill(SkillTree_Manager.SkillName.ATTENTION_BOOK))
+        if (health >= mHealth * book_effectThreshold && HasSkill(SkillTree_Manager.SkillName.ATTENTION_BOOK))
         {
-            ApplyEffect(Effect.AffectedStat.ATK, "ATTENTION_BUFF", 30, 0.22f, true);
-            ApplyEffect(Effect.AffectedStat.ASPD, "ATTENTION_BUFF", 20, 0.22f, true);
-
-            if (health >= mHealth && !hasDamageReductionBuffFromAttentionMaxed)
-            {
-                hasDamageReductionBuffFromAttentionMaxed = true;
-                damageReduction += attentionMaxReduction;
-            }
+            ApplyEffect(Effect.AffectedStat.ATK, "ATTENTION_BUFF", book_atkBuff, 0.22f, true);
+            ApplyEffect(Effect.AffectedStat.ASPD, "ATTENTION_BUFF", book_aspdBuff, 0.22f, true);
         }
         
-        if (health <= mHealth * 0.6f && HasSkill(SkillTree_Manager.SkillName.ATTENTION_DEVICE))
+        if (health <= mHealth * device_effectThreshold && HasSkill(SkillTree_Manager.SkillName.ATTENTION_DEVICE))
         {
-            ApplyEffect(Effect.AffectedStat.DEF, "ATTENTION_BUFF", 30, 0.22f, false);
-            ApplyEffect(Effect.AffectedStat.RES, "ATTENTION_BUFF", 20, 0.22f, false);
+            ApplyEffect(Effect.AffectedStat.DEF, "ATTENTION_BUFF", device_defBuff, 0.22f, false);
+            ApplyEffect(Effect.AffectedStat.RES, "ATTENTION_BUFF", device_resBuff, 0.22f, false);
 
-            if (health <= mHealth * 0.3f && !hasLifestealBuffFromAttentionMin)
+            if (health <= mHealth * device_attentionMinThreshold && !hasLifestealBuffFromAttentionMin)
             {
                 hasLifestealBuffFromAttentionMin = true;
-                lifeSteal += attentionMinLifesteal;
+                lifeSteal += device_attentionMinLifesteal;
             }
         }
     }
@@ -445,7 +467,6 @@ public class PlayerBase : EntityBase
             }
         }
 
-        SelectedSkills = SelectedSkills.OrderBy(s => s).ToList();
         float[] values;
         foreach (var skillName in SelectedSkills)
         {
@@ -793,36 +814,6 @@ public class PlayerBase : EntityBase
         isInvisible = false;
     }
 
-    public virtual PlayerTooltipsInfo GetPlayerTooltipsInfo()
-    {
-        return new PlayerTooltipsInfo
-        {
-            Icon = Icon,
-            AttackSprite = AttackSprite,
-            SkillSprite = SkillSprite,
-            SpecialSprite = SpecialSprite,
-            attackRange = attackRange,
-            attackSpeed = GetWindupTime(),
-            attackInterval = attackInterval,
-            atk = atk,
-            bAtk = bAtk,
-            bDef = bDef,
-            def = def,
-            bRes = bRes,
-            res = res,
-            attackPattern = attackPattern,
-            damageType = damageType,
-            mHealth = Mathf.FloorToInt(mHealth),
-            health = Mathf.FloorToInt(health),
-            moveSpeed = moveSpeed,
-            SkillName = SkillName,
-            SkillText = SkillDes,
-            SpecialName = SpecialName,
-            SpecialText = SpecialDes,
-            AttackText = "Perform an attack that deals",
-        };
-    }
-
     public override void TakeDamage(DamageInstance damage, EntityBase source, ProjectileScript projectileInfo = null, bool IgnoreInvulnerability = false, bool CalculateDamage = false)
     {
         base.TakeDamage(damage, source, projectileInfo, IgnoreInvulnerability, CalculateDamage);
@@ -897,6 +888,12 @@ public class PlayerBase : EntityBase
             tDmg += bonusDmg;
         }
 
+        if (HasSkill(SkillTree_Manager.SkillName.ATTENTION_BOOK) && health >= mHealth)
+        {
+            float convertRatio = GetSkillValues(SkillTree_Manager.SkillName.ATTENTION_BOOK)[3];
+            tDmg += (int)((pDmg + mDmg + tDmg) * convertRatio);
+        }
+
         base.DealDamage(target, pDmg, mDmg, tDmg, allowWhenDisabled);
         if (!target.IsAlive())
         {
@@ -963,6 +960,36 @@ public class PlayerBase : EntityBase
         SetInvulnerable(values[1]);
 
         Instantiate(RockEffect, transform.position, Quaternion.identity);
+    }
+
+    public virtual PlayerTooltipsInfo GetPlayerTooltipsInfo()
+    {
+        return new PlayerTooltipsInfo
+        {
+            Icon = Icon,
+            AttackSprite = AttackSprite,
+            SkillSprite = SkillSprite,
+            SpecialSprite = SpecialSprite,
+            attackRange = attackRange,
+            attackSpeed = GetWindupTime(),
+            attackInterval = attackInterval,
+            atk = atk,
+            bAtk = bAtk,
+            bDef = bDef,
+            def = def,
+            bRes = bRes,
+            res = res,
+            attackPattern = attackPattern,
+            damageType = damageType,
+            mHealth = Mathf.FloorToInt(mHealth),
+            health = Mathf.FloorToInt(health),
+            moveSpeed = moveSpeed,
+            SkillName = SkillName,
+            SkillText = SkillDes,
+            SpecialName = SpecialName,
+            SpecialText = SpecialDes,
+            AttackText = "Perform an attack that deals",
+        };
     }
 
     public void ResumeStageBGM()

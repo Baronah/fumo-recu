@@ -96,8 +96,8 @@ MonoBehaviour:
       damage</color>).
     values:
     - 15
-    - 50
-    - 0.3
+    - 0.5
+    - 30
     shortDescription: Attacks ignore some DEF and deal increased damage based on
       the target's missing health.
   - skillName: 8
@@ -109,7 +109,8 @@ MonoBehaviour:
       damage</color>).
     values:
     - 0.2
-    - 50
+    - 0.5
+    - 1.2
     shortDescription: Range increases, deal increase damage based on how far you
       are from the target.
   - skillName: 10
@@ -168,40 +169,41 @@ MonoBehaviour:
     name: Book that can Bite
     icon: {fileID: 21300000, guid: ebd7e4312140c2b4a9019cc81c2da936, type: 3}
     description: When HP is above 85%, gains <color=#ff4545>+30% ATK</color> and
-      <color=#ffd61f>+20 ASPD</color>. At max HP, reduces physical and magical damage
-      taken by <color=#b1b1b1>80%</color>.
+      <color=#ffd61f>+20 ASPD</color>. At max HP, when dealing damage, deals an extra
+      <color=#b1b1b1>10% true damage</color>.
     values:
     - 0.85
     - 30
     - 20
-    - 0.8
+    - 0.1
     shortDescription: When HP is above 85%, gains bonus ATK and ASPD. At max HP,
-      greatly reduce damage taken.
+      deals bonus true damage on hit.
   - skillName: 34
     skillType: 0
     name: Attention-holding Device
     icon: {fileID: 21300000, guid: 021f9f5df15e7374497bf5bd40ce4082, type: 3}
     description: When HP is below 60%, gains <color=yellow>+30 DEF</color> and <color=#00ffff>+20
-      RES</color>. At below 30%, additional gains <color=red>35% life-steal</color>.
+      RES</color>. At below 30%, additional gains <color=red>50% life-steal</color>.
     values:
     - 0.6
     - 30
     - 20
     - 0.3
-    - 35
+    - 0.5
     shortDescription: When HP is below 60%, gains bonus DEF and RES. At below 30%,
       additional gains life-steal.
   - skillName: 63
     skillType: 0
     name: Bug Spray
     icon: {fileID: 21300000, guid: 10976b2fd93644d439e79fcc9eb4f6ee, type: 3}
-    description: Swapping releases a smoke zone that lasts 5 seconds, dealing <color=#ff00ff>20
+    description: Swapping releases a smoke zone that lasts 5 seconds, dealing <color=#ff00ff>15
       + 2% max health magical damage</color> every second to all enemies inside while
       presents. Damage ramps down over the duration.
     values:
     - 5
-    - 20
+    - 15
     - 0.02
+    - 5
     shortDescription: Swapping releases a smoke zone that damages all enemies inside
       while presents.
   - skillName: 64
@@ -703,6 +705,8 @@ MonoBehaviour:
     - 0.5
     - 30
     - 0.3
+    - 0.02
+    - 8
     shortDescription: Units have increased ATK, ASPD and life-steal, but continuously
       lose HP.
   - skillName: 44
@@ -723,7 +727,9 @@ MonoBehaviour:
       alter between the two effects: <color=#5b7ccf>-50% MSPD and ASPD</color> and
       <color=#ffd61f>+50% MSPD and ASPD</color>. This process happens indefinitely,
       but has a 2-second cooldown inbetween.'
-    values: []
+    values:
+    - 50
+    - 60
     shortDescription: 'Every 10 seconds, all presenting enemies alter between the
       two effects: Reduced MSPD and ASPD and increased MSPD and ASPD. This process
       happens indefinitely.'
@@ -756,6 +762,9 @@ MonoBehaviour:
       RES</color>. Both can stack up to 30 times.
     values:
     - 0.5
+    - 5
+    - 3
+    - 30
     shortDescription: Enemies have 0 DEF and RES, but gain increased DEF/RES upon
       taking physical/magical damage.
   - skillName: 54
@@ -767,7 +776,12 @@ MonoBehaviour:
       direction will <color=yellow>remove the MSPD buff</color> and inflicts <color=#5b7ccf>a
       decaying 'Slow'</color> based on the removed acceleration.\n\n<i>If any <color=#ff00ff>'Arts
       Unit'</color> is selected, you accelerate <color=yellow>50% faster</color>.</i>
-    values: []
+    values:
+    - 25
+    - 200
+    - 90
+    - 2
+    - 1.5
     shortDescription: All units gain increased MSPD when continuously moving toward
       a direction, up to +200% MSPD. Changing direction will remove the buff and
       inflicts a decaying 'Slow' based on the previous acceleration.
@@ -781,7 +795,11 @@ MonoBehaviour:
       Any movement made breaks this state.\n\n<i>If <color=#ff00ff>''Attention-holding
       Device''</color> is selected, required time on you is reduced to <color=#ff9717>3
       seconds</color>.</i>'
-    values: []
+    values:
+    - 5
+    - 50
+    - 0.04
+    - 3
     shortDescription: 'All units that haven''t moved for a while enters ''statis'':
       Has reduced ATK, but regenerates HP and HP can not fall below 1. Any movement
       made breaks this state.'
@@ -795,6 +813,10 @@ MonoBehaviour:
       is proportional to weight difference.
     values:
     - 0.1
+    - 150
+    - 80
+    - 0.8
+    - 0.5
     shortDescription: All units have reduced MSPD based on weight. Heavier units
       continuously pull lighter units toward self.
   - skillName: 55

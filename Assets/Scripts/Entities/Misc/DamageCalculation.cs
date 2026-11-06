@@ -35,10 +35,10 @@ namespace DamageCalculation
             {
                 if (playerBase.HasSkill(SkillTree_Manager.SkillName.EQUIPMENT_BLADE))
                 {
-                    float maxiumDamageThreshold = 80f;
+                    float maxiumDamageThreshold = playerBase.blade_LowHpThreshold;
                     float targetMissingHealth = target.GetMissinghealthPercentage();
 
-                    float damageMultiply = Mathf.Lerp(1.0f, 1.5f, targetMissingHealth / maxiumDamageThreshold);
+                    float damageMultiply = Mathf.Lerp(1.0f, 1.0f + playerBase.blade_MaxDamageUp, targetMissingHealth / maxiumDamageThreshold);
 
                     instance.Multiply(damageMultiply);
                 }
@@ -47,10 +47,10 @@ namespace DamageCalculation
                 {
                     distance = Vector3.Distance(attacker.transform.position, target.transform.position);
                     calculatedDistance = true;
-                    float maxDistance = Mathf.Min(Mathf.Max(350, attacker.attackRange * 1.2f), 1000);
+                    float maxDistance = Mathf.Min(Mathf.Max(350, attacker.attackRange * playerBase.scope_MaxRangeThreshold), 1000);
                     if (distance <= 100) distance = 0;
 
-                    float damageMultiply = Mathf.Lerp(1.0f, 1.5f, distance * 1.0f / maxDistance);
+                    float damageMultiply = Mathf.Lerp(1.0f, 1.0f + playerBase.scope_MaxDamageUp, distance * 1.0f / maxDistance);
                     instance.Multiply(damageMultiply);
                 }
             }

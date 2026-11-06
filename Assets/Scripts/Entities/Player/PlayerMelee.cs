@@ -86,7 +86,7 @@ public class PlayerMelee : PlayerBase
         base.InitializeComponents();
     }
 
-    protected override void GetSkillTreeValues()
+    protected override void PreInitialize_GetSkillTreeAttributes()
     {
         float[] dashTouchValues = GetSkillValues(SkillTree_Manager.SkillName.DASH_TOUCH);
         Up_DashSlowPercentage = dashTouchValues[0];

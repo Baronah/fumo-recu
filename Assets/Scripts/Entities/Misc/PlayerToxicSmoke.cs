@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class PlayerToxicSmoke : MonoBehaviour
 {
-    public float Duration = 5f;
+    private float Duration = 5f;
     private float Tick = 0.5f;
-    public float MaxDamagePerTick = 6f, MinDamagePerTick = 1f, PercentageHealthDamage = 0.02f;
+    private float MaxDamagePerTick = 6f, MinDamagePerTick = 1f, PercentageHealthDamage = 0.02f;
     private float timer = 0f;
 
     HashSet<EntityBase> entitiesWithin = new();
@@ -45,7 +45,26 @@ public class PlayerToxicSmoke : MonoBehaviour
 
         originalColor = spriteRenderer.color;
 
+        GetValues();
+
         StartCoroutine(HandleTicks());
+    }
+
+    void GetValues()
+    {
+        if (TYPE == BUG_SPRAY_TYPE.SMOKE)
+        {
+            float[] values = UpgradesManager._instance.GetUpgradeValues(SkillTree_Manager.SkillName.SMOKE_BLIND);
+            Duration = values[0];
+        }
+        else if (TYPE == BUG_SPRAY_TYPE.POISON)
+        {
+            float[] values = UpgradesManager._instance.GetUpgradeValues(SkillTree_Manager.SkillName.SMOKE_TOXIC);
+            Duration = values[0];
+            MaxDamagePerTick = values[1] * Tick;
+            PercentageHealthDamage = values[2] * Tick;
+            MinDamagePerTick = values[3] * Tick;
+        }
     }
 
     IEnumerator HandleTicks()

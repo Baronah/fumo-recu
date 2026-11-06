@@ -54,7 +54,7 @@ public class PlayerRanged : PlayerBase
           SP_MinWinForRefundMax,
           MaxRefund,
           MinWindowForMaxRefund;
-    protected override void GetSkillTreeValues()
+    protected override void PreInitialize_GetSkillTreeAttributes()
     {
         float[] freezeChargeValues = GetSkillValues(SkillTree_Manager.SkillName.FREEZE_CHARGE);
         FreezeChargeCDRefund = freezeChargeValues[0];

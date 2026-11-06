@@ -5218,7 +5218,7 @@ MonoBehaviour:
   def: 25
   res: 30
   ASPD: 100
-  moveSpeed: 250
+  moveSpeed: 275
   attackRange: 475
   attackWindupTime: 0.25
   attackInterval: 2.4
@@ -5272,10 +5272,10 @@ MonoBehaviour:
     been described since antiquity, these kind of wind-up toys were very popular.
     It gets more lively the harder you wind it up, or when it thinks no one else
     is watching...
-  Skillset: "\u2022 Normally does not act, can not be attacked and does not count
-    toward battle progress.\n\u2022 Comes into life when inside shrouded areas, performs
-    long-ranged magical attack that lauches several projectiles.\n\u2022 Will not
-    chase the player if they are outside shrouded zones."
+  Skillset: "\u2022 Normally does not act and counts as defeated, but can not be
+    attacked.\n\u2022 Comes into life when inside shrouded areas, performs long-ranged
+    magical attack that lauches several projectiles.\n\u2022 Will not chase the player
+    if they are outside shrouded zones."
   detectionRange: 475
   b_detectionRange: 475
   DangerRange_RatioOfAttackRange: 0.8
