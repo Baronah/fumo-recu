@@ -884,8 +884,13 @@ public class PlayerBase : EntityBase
             float freezeDuration = target.FreezeTimer;
             target.EndFreeze();
 
-            int bonusDmg = (int)(target.mHealth * values[0] + Mathf.Min(atk * values[1] * freezeDuration, bAtk * values[2]));
+            int bonusDmg = (int)(target.mHealth * values[0]);
             tDmg += bonusDmg;
+
+            int bonusAdaptiveDmg = (int)Mathf.Min(atk * values[1] * freezeDuration, bAtk * values[2]);
+            if (damageType == DamageType.PHYSICAL) pDmg += bonusAdaptiveDmg;
+            else if (damageType == DamageType.MAGICAL) mDmg += bonusAdaptiveDmg;
+            else tDmg += bonusAdaptiveDmg;
         }
 
         if (HasSkill(SkillTree_Manager.SkillName.ATTENTION_BOOK) && health >= mHealth)

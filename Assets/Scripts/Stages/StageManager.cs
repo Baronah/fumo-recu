@@ -810,6 +810,7 @@ public class StageManager : MonoBehaviour
                     : "<color=green>Fumo Protected!</color>",
             ResultType.PLAYER_DEFEATED => "<color=red>Defeated!</color>",
             ResultType.FUMO_LOST => "<color=red>Fumo Stolen!</color>",
+            _ => "<color=yellow>How did you get here?</color>",
         };
 
         if (IsResultVictory) ProceedAsVictory(text, resultType);
@@ -1009,7 +1010,6 @@ public class StageManager : MonoBehaviour
         mainCamera.enabled = false;
         yield return new WaitForSecondsRealtime(1.5f);
 
-        Transform fumoSpriteTransform = fumo.transform;
         Vector3
             fumoInitScale = fumo.transform.localScale,
             fumoTargetScale = new(5.5f, 5.5f);
@@ -1018,21 +1018,12 @@ public class StageManager : MonoBehaviour
                 fumoGlowImgTargetScale = fumoGlowImgScale * 50f;
 
         float c = 0, d = 4.2f, cJump = 0.01f;
-        float rotateTimer = d * 0.75f;
-        float rotateDegreePerLoop = 360 * 3 / rotateTimer * cJump;
 
         // Get screen center for lerping to center
         Vector3 screenCenter = new Vector3(Screen.width / 2f, Screen.height / 2f, 0);
 
         while (c < d)
         {
-            /*
-            if (c < rotateTimer)
-                fumoSpriteTransform.Rotate(0, rotateDegreePerLoop, 0);
-            else
-                fumoSpriteTransform.rotation = Quaternion.Euler(Vector3.zero);
-            */
-
             // Lerp from current screen position to screen center
             Vector3 currentScreenPos = Vector3.Lerp(fumoCurrentPostition, screenCenter, c * 1.0f / d);
             fumoGlowImg.transform.position = fumo.transform.position = currentScreenPos;

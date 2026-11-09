@@ -20,7 +20,8 @@ public static class EnemyStatsLookup
         float finalMul = 0;
         for (int i = 1; i <= Diff; i++)
         {
-            if (i == 1 || i == 15) finalMul += 0.2f;
+            if (i == 1) finalMul = 0.3f - DifficultyHpMultiplierBase;
+            else if (i == 15) finalMul += 0.2f;
             
             finalMul += DifficultyHpMultiplierBase;
         }
@@ -37,7 +38,8 @@ public static class EnemyStatsLookup
         float finalMul = 0;
         for (int i = 1; i <= Diff; i++)
         {
-            if (i == 1 || i == 15) finalMul += 0.1f;
+            if (i == 1) finalMul = 0.2f - DifficultyAtkMultiplierBase;
+            else if (i == 15) finalMul += 0.1f;
              
             finalMul += DifficultyAtkMultiplierBase;
         }

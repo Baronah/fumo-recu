@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
 public class Candleknight : EnemyBase
@@ -39,6 +38,27 @@ public class Candleknight : EnemyBase
         ShowCandles();
     }
 
+    void DrawCandles()
+    {
+        if (ViewOnlyMode) return;
+
+        float width = CandlesIndicator.GetComponent<RectTransform>().sizeDelta.x;
+        float space = 2f;
+
+        float candleWidth = (width - (space * (MaxCandles - 1))) / MaxCandles;
+        float currentX = 0;
+
+        for (int i = 0; i < MaxCandles; i++)
+        {
+            GameObject image = Instantiate(CandleAmmoPrefab, CandlesIndicator.transform);
+            RectTransform imageTransform = image.GetComponent<RectTransform>();
+            imageTransform.sizeDelta = new Vector2(candleWidth, imageTransform.sizeDelta.y);
+            image.transform.localPosition = new Vector3(currentX, 0);
+
+            currentX += candleWidth + space;
+        }
+    }
+
     short ShowCandlesCnt = 0;
     void ShowCandles()
     {
@@ -70,6 +90,8 @@ public class Candleknight : EnemyBase
     public override void InitializeComponents()
     {
         base.InitializeComponents();
+
+        DrawCandles();
         CandleImages = CandlesIndicator.GetComponentsInChildren<Image>().OrderBy(i => i.transform.position.x).ToList();
     }
 
@@ -85,6 +107,12 @@ public class Candleknight : EnemyBase
         yield return StartCoroutine(base.Attack());
     }
 
+    public override IEnumerator OnAttackComplete()
+    {
+        if (sfxs[1]) sfxs[1].Play();
+        return base.OnAttackComplete();
+    }
+
     void StartPlacingCandle()
     {
         if (!CanPlaceCandle()) return;
@@ -95,6 +123,8 @@ public class Candleknight : EnemyBase
     IEnumerator IPlaceCandle()
     {
         if (!CanPlaceCandle()) yield break;
+
+        if (sfxs[0]) sfxs[0].Play();
 
         StopMovement();
         CancelAttack();
@@ -107,6 +137,7 @@ public class Candleknight : EnemyBase
             if (IsFrozen || IsStunned)
             {
                 animator.SetBool("skill", false);
+                if (sfxs[0]) sfxs[0].Stop();
                 yield break;
             }
             yield return null;
@@ -121,11 +152,13 @@ public class Candleknight : EnemyBase
             if (IsFrozen || IsStunned)
             {
                 animator.SetBool("skill", false);
+                if (sfxs[0]) sfxs[0].Stop();
                 yield break;
             }
             yield return null;
         }
 
+        if (sfxs[0]) sfxs[0].Stop();
         PlaceCandle();
 
         yield return new WaitForSeconds(0.15f);
@@ -153,7 +186,7 @@ public class Candleknight : EnemyBase
         Skillset =
             $"• Holds {MaxCandles} candles. While in shrouded area, stops moving to channel for several seconds " +
             $"and places a candle on the spot when completed.\n" +
-            "• Candle lightens the area around itself, removing the effect of shrouded zones.\n" +
+            "• Candle lightens the area around itself, disabling shrouded zones.\n" +
             "• Candle can be frozen to temporarily disable its lighting effect throughout the duration.\n" +
             "• Drops all remaining candles upon death.";
         TooltipsDescription =

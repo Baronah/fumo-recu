@@ -29553,7 +29553,7 @@ MonoBehaviour:
   - Some 'Candles' will be placed beforehand. 'Knight Territory Hibernators' need
     to stay inside shrouded zones for longer to fall asleep, and have increased ATK
     and MSPD upon waking up.
-  - Different starting position.
+  - Different starting position. 'Candleknights' hold more candles.
   - '''Candle''''s illumination range is reduced. ''Sentinent Toys'' have greatly
     increased DEF and RES.'
   - All 'Gloompincers' will be replaced by 'Sentinent Toys'.

@@ -34,6 +34,8 @@ public class FumoScript : MonoBehaviour
     public GameObject Fumo => sprite;
 
     private bool isPickedUp = false, isSquishing = false;
+    float plxDefBuff, plxResBuff;
+    float artCastCd, artCastDmg;
     void Start()
     {
         rectTransform = rangeIndicator.GetComponent<RectTransform>();
@@ -46,6 +48,14 @@ public class FumoScript : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
 
         originalScale = sprite.transform.localScale;
+
+        float[] plxValues = UpgradesManager._instance.GetUpgradeValues(SkillTree_Manager.SkillName.MINT_PHALANX);
+        plxDefBuff = plxValues[1];
+        plxResBuff = plxValues[2];
+
+        float[] artValues = UpgradesManager._instance.GetUpgradeValues(SkillTree_Manager.SkillName.MINT_WINDRUSH);
+        artCastCd = artValues[1];
+        artCastDmg = artValues[2];
 
         StartCoroutine(SkillEffect());
         StartCoroutine(SquishCoroutine());
@@ -77,7 +87,7 @@ public class FumoScript : MonoBehaviour
                 SkillRange * 2f
             );
 
-        float waitInterval = Phalanx ? 0.5f : 5.2f, jump = 0.25f;
+        float waitInterval = Phalanx ? 0.5f : artCastCd, jump = 0.25f;
         float counter = 0f;
 
         while (true)
@@ -97,8 +107,8 @@ public class FumoScript : MonoBehaviour
             if (Phalanx)
             {
                 string Key = "FUMO_SKILL_PHALANX";
-                player.ApplyEffect(Effect.AffectedStat.DEF, Key, 215, waitInterval + 0.05f, true);
-                player.ApplyEffect(Effect.AffectedStat.RES, Key, 25, waitInterval + 0.05f, false);
+                player.ApplyEffect(Effect.AffectedStat.DEF, Key, plxDefBuff, waitInterval + 0.05f, true);
+                player.ApplyEffect(Effect.AffectedStat.RES, Key, plxResBuff, waitInterval + 0.05f, false);
             }
             else if (WindRush)
             {
@@ -109,7 +119,7 @@ public class FumoScript : MonoBehaviour
                 var enemies = EntityBase.Base_SearchForEntitiesAroundCertainPoint(typeof(EnemyBase), transform.position, SkillRange, true);
                 foreach (var enemy in enemies)
                 {
-                    player.DealDamage(enemy, new DamageInstance(0, 30, 0));
+                    player.DealDamage(enemy, new DamageInstance(0, artCastDmg, 0));
                     enemy.PushEntityFrom(enemy, transform.position, 3.7f, 0.25f, true);
                 }
             }

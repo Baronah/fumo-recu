@@ -234,12 +234,12 @@ MonoBehaviour:
     name: '''Fumo Recu'' - Wind''s Whisper'
     icon: {fileID: 21300000, guid: 7162d5676d9660e42857cfff3159370a, type: 3}
     description: 'While you are 1000 radius around the Mint Fumo: Every <color=yellow>5.2
-      seconds</color>, Mint casts arts on all enemies within said area, dealing <color=#ff00ff>30
+      seconds</color>, Mint casts arts on all enemies within said area, dealing <color=#ff00ff>50
       magical damage</color> and <color=#2985FF>pushing</color> them away from her.'
     values:
     - 1000
     - 5.2
-    - 30
+    - 50
     shortDescription: Mint Fumo periodically pushes nearby enemies away from her.
   - skillName: 4
     skillType: 0
@@ -319,11 +319,11 @@ MonoBehaviour:
     icon: {fileID: 21300000, guid: c565ffcdb93483f48b3183134ce5ce2a, type: 3}
     description: Damaging frozen targets instantly <color=#5b7ccf>ends its effect</color>
       to deal bonus true damage equals to <color=#b1b1b1>10% of the target max HP</color>.
-      Damage increases by <color=red>50% ATK</color> for every freeze remaining second
-      (cap at <color=red>400% base ATK</color>).
+      Deals additional <color=red>80% ATK adaptive damage</color> for every freeze
+      remaining second (cap at <color=red>400% base ATK</color>).
     values:
     - 0.1
-    - 0.5
+    - 0.8
     - 4
     shortDescription: Damaging frozen targets instantly ends its effect to deal bonus
       true damage, increasing by the freeze's remaining duration.
