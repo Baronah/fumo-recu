@@ -58,10 +58,10 @@ MonoBehaviour:
     name: Mint-flavor Gum
     icon: {fileID: 21300000, guid: 2c281a77db05ec54e8b0933b20ebfde7, type: 3}
     description: Upon entering the field, restores <color=green>30% missing HP</color>
-      and gains <color=#ff4545>+75% ATK</color> over 5 seconds.
+      and gains <color=#ff4545>+100% ATK</color> over 5 seconds.
     values:
     - 0.3
-    - 75
+    - 100
     - 5
     shortDescription: Upon entering the field, restores 30% missing HP and gains
       greatly increased ATK over 5 seconds.
@@ -739,13 +739,13 @@ MonoBehaviour:
     icon: {fileID: 21300000, guid: 740358b693e3e4f4da74a619b29cea22, type: 3}
     description: Enemies have <color=red>+50% max HP</color>. Upon spawning, their
       HP is halved and they are frozen for <color=#ff9717>40 seconds</color>, but
-      have <color=yellow>+70 DEF</color>, <color=#00ffff>+25 RES</color> and <color=green>recovers
+      have <color=yellow>+50 DEF</color>, <color=#00ffff>+25 RES</color> and <color=green>recovers
       2% max HP every second</color> throughout the duration.
     values:
     - 40
     - 0.5
     - 0.02
-    - 70
+    - 50
     - 25
     - 0.5
     shortDescription: Enemies have increased HP, but spawned with 50% HP and frozen

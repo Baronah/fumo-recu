@@ -9,13 +9,17 @@ public class LevelDifficultyModifier : MonoBehaviour
     [SerializeField] TMP_Text ModifierText, ModifierDetail;
     [SerializeField] TMP_Text RecordText;
     [SerializeField] RectTransform Content, Background;
-    
-    private short MinDiff = 0, MaxDiff = 16;
 
+    private short MinDiff = 0;
+    private short MaxDiff;
+
+    public static int GetMaxDiff() => Enum.GetNames(typeof(DiffType)).Length;
     private short CurrentDifficultyLevel => CharacterPrefabsStorage.DifficultyLevel;
 
     bool IsObserver => CurrentDifficultyLevel <= 0;
     bool IsNormal => CurrentDifficultyLevel == 1;
+
+    LevelDifficultyDataManager difficultyManager => LevelDifficultyDataManager._instance;
 
     private void Start()
     {
@@ -26,7 +30,7 @@ public class LevelDifficultyModifier : MonoBehaviour
 
     public void GetDifficulties()
     {
-        MaxDiff = (short)(SaveDataManager.AllResearchesUnlocked ? 16 : 1);
+        MaxDiff = (short)(SaveDataManager.AllResearchesUnlocked ? GetMaxDiff() : 1);
         SetDifficultyDescription();
     }
 
@@ -56,7 +60,8 @@ public class LevelDifficultyModifier : MonoBehaviour
     {
         MinDiff = (short)(IsCM ? 1 : 0);
 
-        CharacterPrefabsStorage.DifficultyLevel = (short) Mathf.Max(MinDiff, CurrentDifficultyLevel);
+        CharacterPrefabsStorage.DifficultyLevel = (short) Mathf.Max(MinDiff,
+            CurrentDifficultyLevel);
         SetDifficultyDescription();
     }
 
@@ -64,20 +69,21 @@ public class LevelDifficultyModifier : MonoBehaviour
     {
         Observer = 0,
         Normal = 1,
-        EnemiesMissionTypesBuffs_1 = 2,
-        EnemiesMissionTypesBuffs_2 = 3,
-        EnemiesUncombatDRBuff_1 = 4,
-        EnemiesUncombatDRBuff_2 = 5,
-        ExtraEnemies = 6,
-        EnemiesAlertBuff = 7,
-        EnemiesStatusResistant = 8,
-        PlayerCD_1 = 9, 
-        PlayerCD_2 = 10,
-        PlayerSwap_1 = 11,
-        PlayerSwap_2 = 12,
-        PlayerFieldDebuff_1 = 13, 
-        PlayerFieldDebuff_2 = 14,
-        Player1HP = 15
+        EnemiesUncombatDRBuff_1 = 2,
+        EnemiesUncombatDRBuff_2 = 3,
+        ExtraEnemies = 4,
+        EnemiesLevelSpecificBuff = 5,
+        EnemiesAlertBuff = 6,
+        EnemiesDefCCBuff_1 = 7,
+        EnemiesDefCCBuff_2 = 8,
+        EnemiesStatusResistant = 9,
+        EnemiesCombatBuff_1 = 10,
+        EnemiesCombatBuff_2 = 11,
+        PlayerCD_1 = 12, 
+        PlayerCD_2 = 13,
+        PlayerFieldDebuff_1 = 14, 
+        PlayerFieldDebuff_2 = 15,
+        Player1HP = 16,
     };
 
     public void SetDifficultyDescription()
@@ -106,62 +112,156 @@ public class LevelDifficultyModifier : MonoBehaviour
             ModifierDetail.text =
                 $"<i>The battle receives these following changes:</i>\n\n" +
                 $"All enemies have their <color=green>HP</color> and <color=#ff4545>ATK</color> increased by " +
-                $"<color=green>{Mathf.CeilToInt(EnemyStatsLookup.GetEnemiesHpMultiplier() * 100)}%</color> and " +
-                $"<color=#ff4545>{Mathf.CeilToInt(EnemyStatsLookup.GetEnemiesAtkMultiplier() * 100)}%</color>, respectively.";
-
-            if (ConvertedDiffLevel == (int)DiffType.EnemiesMissionTypesBuffs_1)
-            { 
-                ModifierDetail.text +=
-                "\n\nIn <color=yellow>survival and defense</color> mission, all enemies have <color=yellow>+20 DEF</color> and <color=#00ffbf>+10% MSPD</color>."
-                +
-                "\n\nIn <color=#00ffbf>rescue</color> mission, enemies have <color=#00ffff>+20 RES</color> and <color=#ffd61f>+10 ASPD</color>."
-                +
-                $"\n\nIn <color=red>annihilation</color> mission, enemies have <color=green>+15% HP</color> and <color=#ff4545>+10% ATK</color>.";
-            }
-            else if (ConvertedDiffLevel >= (int)DiffType.EnemiesMissionTypesBuffs_2)
-            {
-                ModifierDetail.text +=
-                "\n\nIn <color=yellow>survival and defense</color> mission, all enemies have <color=yellow>+40 DEF</color> and <color=#00ffbf>+25% MSPD</color>."
-                +
-                "\n\nIn <color=#00ffbf>rescue</color> mission, enemies have <color=#00ffff>+40 RES</color> and <color=#ffd61f>+25 ASPD</color>."
-                +
-                $"\n\nIn <color=red>annihilation</color> mission, enemies have <color=green>+25% HP</color> and <color=#ff4545>+20% ATK</color>.";
-            }
+                $"<color=green>{Mathf.CeilToInt(difficultyManager.GetEnemiesHpMultiplier() * 100)}%</color> and " +
+                $"<color=#ff4545>{Mathf.CeilToInt(difficultyManager.GetEnemiesAtkMultiplier() * 100)}%</color>, respectively.";
 
             if (ConvertedDiffLevel == (int)DiffType.EnemiesUncombatDRBuff_1)
-                ModifierDetail.text += $"\n\nEnemies who are not in combat mode takes <color=yellow>30% less</color> physical and magical damage.";
+                ModifierDetail.text += $"\n\nEnemies who are not in combat mode takes <color=yellow>{difficultyManager.UncombatDR_1 * 100}% less</color> physical and magical damage.";
             else if (ConvertedDiffLevel >= (int)DiffType.EnemiesUncombatDRBuff_2)
-                ModifierDetail.text += $"\n\nEnemies who are not in combat mode takes <color=yellow>60% less</color> physical and magical damage.";
+                ModifierDetail.text += $"\n\nEnemies who are not in combat mode takes <color=yellow>{difficultyManager.UncombatDR_2 * 100}% less</color> physical and magical damage.";
 
             if (ConvertedDiffLevel >= (int)DiffType.ExtraEnemies)
                 ModifierDetail.text += "\n\nMore enemies will appear.";
 
-            if (ConvertedDiffLevel >= (int)DiffType.EnemiesAlertBuff)
-                ModifierDetail.text += "\n\nWhen patrolling enemies are attacked, they gain <color=yellow>+30% MSPD</color> when moving toward the source of the attack.";
+            if (ConvertedDiffLevel >= (int)DiffType.EnemiesLevelSpecificBuff)
+            {
+                LevelDifficultyData data = difficultyManager.GetLevelDifficultyData(LevelSelectionScript._instance.SelectingLevel);
+                if (data.StatModifiers.Length > 0)
+                {
+                    ModifierDetail.text += $"\n\n<color=yellow>[Varies]</color> All enemies have ";
 
-            if (ConvertedDiffLevel >= (int) DiffType.EnemiesStatusResistant)
+                    string[] statsStr = new string[data.StatModifiers.Length];
+                    for (int i = 0; i < data.StatModifiers.Length; i++)
+                    {
+                        statsStr[i] = PhraseStatToText(data.StatModifiers[i]);
+                    }
+                    ModifierDetail.text += string.Join(", ", statsStr) + ".";
+                }
+            }
+
+            if (ConvertedDiffLevel >= (int)DiffType.EnemiesAlertBuff)
+                ModifierDetail.text += $"\n\nWhen patrolling enemies are attacked, " +
+                    $"they gain <color=yellow>+{difficultyManager.AlertMspdBonus * 100}% MSPD</color> when moving toward the source of the attack.";
+
+            if (ConvertedDiffLevel == (int)DiffType.EnemiesDefCCBuff_1)
+                ModifierDetail.text += 
+                    $"\n\nEnemies gains <color=#ff9717>+{difficultyManager.CCDefenseFlatBuff_1}</color> <color=yellow>DEF</color> and <color=#00ffff>RES</color>. " +
+                    $"This bonus falls off by <color=#ff9717>-{difficultyManager.CCDefenseFlatFallOff_1}</color> every time " +
+                    $"they are inflicted by negative statuses, up to {difficultyManager.CCDefenseFlatBuff_1 / difficultyManager.CCDefenseFlatFallOff_1} times.";
+            else if (ConvertedDiffLevel >= (int)DiffType.EnemiesDefCCBuff_2)
+                ModifierDetail.text +=
+                    $"\n\nEnemies gains <color=#ff9717>+{difficultyManager.CCDefenseFlatBuff_2}</color> <color=yellow>DEF</color> and <color=#00ffff>RES</color>. " +
+                    $"This bonus falls off by <color=#ff9717>-{difficultyManager.CCDefenseFlatFallOff_2}</color> every time " +
+                    $"they are inflicted by negative statuses, up to {difficultyManager.CCDefenseFlatBuff_2 / difficultyManager.CCDefenseFlatFallOff_2} times.";
+
+            if (ConvertedDiffLevel >= (int)DiffType.EnemiesStatusResistant)
                 ModifierDetail.text += $"\n\nMelee enemies gains <color=#ff00ff>status resistance</color>, which halves the durations of negative statuses on them.";
 
-            if (ConvertedDiffLevel == (int) DiffType.PlayerCD_1)
-                ModifierDetail.text += "\n\nYour units special's CD <color=#ff9717>+50%</color>, ultimate's CD <color=#ff9717>+25%</color>.";
-            else if (ConvertedDiffLevel >= (int) DiffType.PlayerCD_2)
-                ModifierDetail.text += "\n\nYour units special's CD <color=#ff9717>+100%</color>, ultimate's CD <color=#ff9717>+50%.</color>";
+            if (ConvertedDiffLevel == (int)DiffType.EnemiesCombatBuff_1)
+            {
+                ModifierDetail.text += $"\n\nWhen enemy enters combat for the first time, " +
+                    $"they gains <color=red>+{difficultyManager.CombatEnterAtk_1}% ATK</color> " +
+                    $"and <color=#ffd61f>+{difficultyManager.CombatEnterAspd_1} ASPD</color>. " +
+                    $"Effect lasts {difficultyManager.CombatEnterDuration_1} seconds.";
+            }
+            else if (ConvertedDiffLevel >= (int)DiffType.EnemiesCombatBuff_2)
+                ModifierDetail.text += $"\n\nWhen enemy enters combat for the first time, " +
+                    $"they gains <color=red>+{difficultyManager.CombatEnterAtk_2}% ATK</color>, " +
+                    $"<color=#ffd61f>+{difficultyManager.CombatEnterAspd_2} ASPD</color> " +
+                    $"and <color=#00ffbf>+{difficultyManager.CombatEnterMspd_2}% MSPD</color>. " +
+                    $"Effect lasts {difficultyManager.CombatEnterDuration_2} seconds.";
 
-            if (ConvertedDiffLevel == (int) DiffType.PlayerSwap_1)
-                ModifierDetail.text += "\n\nSwap cool-down increased by <color=#ff9717>50%</color>.";
-            else if (CurrentDifficultyLevel >= (int) DiffType.PlayerSwap_2)
-                ModifierDetail.text += "\n\nSwap cool-down increased by <color=#ff9717>100%</color>.";
+            if (ConvertedDiffLevel == (int) DiffType.PlayerCD_1)
+                ModifierDetail.text += $"\n\nYour units " +
+                    $"special's CD <color=#ff9717>+{difficultyManager.PlayerCD_Sp_Extra_1 * 100}%</color>, " +
+                    $"ultimate's CD <color=#ff9717>+{difficultyManager.PlayerCD_Ult_Extra_1 * 100}%</color>.";
+            else if (ConvertedDiffLevel >= (int) DiffType.PlayerCD_2)
+                ModifierDetail.text += $"\n\nYour units " +
+                    $"special's CD <color=#ff9717>+{difficultyManager.PlayerCD_Sp_Extra_2 * 100}%</color>, " +
+                    $"ultimate's CD <color=#ff9717>+{difficultyManager.PlayerCD_Ult_Extra_2 * 100}%.</color>";
 
             if (ConvertedDiffLevel == (int) DiffType.PlayerFieldDebuff_1)
-                ModifierDetail.text += "\n\nAfter staying on the field for 10 seconds, your character gradually has <color=#5b7ccf>reduced ATK</color>, up to 80% after 40 seconds (resets on swap).";
+                ModifierDetail.text += 
+                    $"\n\nAfter staying on the field for {difficultyManager.PlayerFieldStayTriggerWaitTime_1} seconds, " +
+                    $"your character gradually has <color=#5b7ccf>reduced ASPD</color>, " +
+                    $"up to {difficultyManager.PlayerFieldStay_MaxAspdPenalty_1} " +
+                    $"after {difficultyManager.PlayerFieldStay_MaxRampupTime_1} seconds (resets on swap).";
             else if (ConvertedDiffLevel >= (int) DiffType.PlayerFieldDebuff_2)
-                ModifierDetail.text += "\n\nAfter staying on the field for 5 seconds, your character gradually has reduced <color=#5b7ccf>ATK and MSPD</color>, up to 80% and 50%, respectively, after 40 seconds (resets on swap).";
+                ModifierDetail.text += 
+                    $"\n\nAfter staying on the field for {difficultyManager.PlayerFieldStayTriggerWaitTime_2} seconds, " +
+                    $"your character gradually has reduced <color=#5b7ccf>ASPD and MSPD</color>, " +
+                    $"up to {difficultyManager.PlayerFieldStay_MaxAspdPenalty_2} " +
+                    $"and {difficultyManager.PlayerFieldStay_MaxMspdPenalty_2}%, respectively, " +
+                    $"after {difficultyManager.PlayerFieldStay_MaxRampupTime_2} seconds (resets on swap).";
 
             if (ConvertedDiffLevel >= (int) DiffType.Player1HP)
-                ModifierDetail.text += "\n\nUpon entering the stage, <color=red>your HP becomes 1</color>. Afterward, healing effectiveness -90%, effect gradually expires over 40 seconds.";
+                ModifierDetail.text += 
+                    $"\n\nUpon entering the stage, <color=red>your HP becomes 1</color>. " +
+                    $"Afterward, healing effectiveness -{difficultyManager.Player_HealingEffectPenalty_Max * 100}%, " +
+                    $"effect gradually expires over {difficultyManager.Player_HealingEffect_DecayAfter} seconds.";
         
-            if (ConvertedDiffLevel >= (int) DiffType.ExtraEnemies)
+            if (ConvertedDiffLevel >= (int) difficultyManager.MedalAwardMilestone)
                 ModifierDetail.text += "\n\n<color=#00FFD5><i>Unveils something interesting when completed in Challenge Mode ;)</i></color>";
+        }
+    }
+
+    string PhraseStatToText(StatModifier stat)
+    {
+        switch (stat.affectedStat)
+        {
+            case Effect.AffectedStat.HP:
+                if (stat.valueType == Effect.ValueType.PERCENTAGE)
+                    return $"<color=green>+{stat.Value}% HP</color>";
+                else
+                    return $"<color=green>+{stat.Value} HP</color>";
+            
+            case Effect.AffectedStat.ATK:
+                if (stat.valueType == Effect.ValueType.PERCENTAGE)
+                    return $"<color=red>+{stat.Value}% ATK</color>";
+                else
+                    return $"<color=red>+{stat.Value} ATK</color>";
+            
+            case Effect.AffectedStat.DEF:
+                if (stat.valueType == Effect.ValueType.PERCENTAGE)
+                    return $"<color=yellow>+{stat.Value}% DEF</color>";
+                else
+                    return $"<color=yellow>+{stat.Value} DEF</color>";
+
+            case Effect.AffectedStat.RES:
+                if (stat.valueType == Effect.ValueType.PERCENTAGE)
+                    return $"<color=#00ffff>+{stat.Value}% RES</color>";
+                else
+                    return $"<color=#00ffff>+{stat.Value} RES</color>";
+
+            case Effect.AffectedStat.ASPD:
+                if (stat.valueType == Effect.ValueType.PERCENTAGE)
+                    return $"<color=#ffd61f>+{stat.Value}% ASPD</color>";
+                else
+                    return $"<color=#ffd61f>+{stat.Value} ASPD</color>";
+
+            case Effect.AffectedStat.MSPD:
+                if (stat.valueType == Effect.ValueType.PERCENTAGE)
+                    return $"<color=#00ffbf>+{stat.Value}% MSPD</color>";
+                else
+                    return $"<color=#00ffbf>+{stat.Value} MSPD</color>";
+
+            case Effect.AffectedStat.ARNG:
+                if (stat.valueType == Effect.ValueType.PERCENTAGE)
+                    return $"<color=#ff00ff>+{stat.Value}% ARNG</color>";
+                else
+                    return $"<color=#ff00ff>+{stat.Value} ARNG</color>";
+
+            case Effect.AffectedStat.WEIGHT:
+                if (stat.valueType == Effect.ValueType.PERCENTAGE)
+                    return $"<color=#ff00ff>+{stat.Value}% weight</color>";
+                else
+                    return $"<color=#ff00ff>+{stat.Value} weight</color>";
+
+            default:
+                if (stat.valueType == Effect.ValueType.PERCENTAGE)
+                    return $"<color=#ff00ff>+{stat.Value}% {stat.affectedStat.ToString()}</color>";
+                else
+                    return $"<color=#ff00ff>+{stat.Value} {stat.affectedStat.ToString()}</color>";
         }
     }
 

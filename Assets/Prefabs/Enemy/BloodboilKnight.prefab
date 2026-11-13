@@ -331,7 +331,7 @@ MonoBehaviour:
   def: 30
   res: 25
   ASPD: 100
-  moveSpeed: 110
+  moveSpeed: 140
   attackRange: 105
   attackWindupTime: 0.6
   attackInterval: 3
@@ -358,7 +358,7 @@ MonoBehaviour:
   ProjectileSpeed: 1000
   ccBar: {fileID: 3699022713693373004}
   AttackAnimation: {fileID: 7400000, guid: 38cef02e111cc2741872318b17372723, type: 2}
-  FeetCollider: {fileID: 0}
+  FeetCollider: {fileID: 5280546810146987242}
   sfxs: []
   BeingShiftState: 0
   FreezeTimer: 0
@@ -407,6 +407,11 @@ GameObject:
 --- !u!212 &3776788205384234200 stripped
 SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+  m_PrefabInstance: {fileID: 4174396688852057174}
+  m_PrefabAsset: {fileID: 0}
+--- !u!58 &5280546810146987242 stripped
+CircleCollider2D:
+  m_CorrespondingSourceObject: {fileID: 8117222602758807740, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
   m_PrefabInstance: {fileID: 4174396688852057174}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &7211870446209438570 stripped

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using static Effect;
 using static ProjectileScript;
@@ -451,8 +452,8 @@ public class EntityBase : MonoBehaviour
     };
 
     #region Buffs & Debuffs
-    public void ApplyEffect(AffectedStat affectedStat, string Key, float Value, float Duration, bool IsPercentageBased, EffectPersistType persistType = EffectPersistType.PERSIST, bool transferOnSwap = true)
-    {
+    public void ApplyEffect(AffectedStat affectedStat, string Key, float Value, float Duration, Effect.ValueType valueType, EffectPersistType persistType = EffectPersistType.PERSIST, bool transferOnSwap = true)
+    { 
         bool IsDebuff = Value < 0;
         bool DecayOverDuration = persistType == EffectPersistType.DECAY;
 
@@ -464,51 +465,51 @@ public class EntityBase : MonoBehaviour
             {
                 case AffectedStat.ATK:
                     if (AtkDebuffs.ContainsKey(Key))
-                        AtkDebuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
+                        AtkDebuffs[Key].Instantiate(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap);
                     else
-                        AtkDebuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap)); 
+                        AtkDebuffs.Add(Key, new(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap));
                     break;
 
                 case AffectedStat.DEF:
                     if (DefDebuffs.ContainsKey(Key))
-                        DefDebuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
+                        DefDebuffs[Key].Instantiate(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap);
                     else
-                        DefDebuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
+                        DefDebuffs.Add(Key, new(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap));
                     break;
 
                 case AffectedStat.RES:
                     if (ResDebuffs.ContainsKey(Key))
-                        ResDebuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
+                        ResDebuffs[Key].Instantiate(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap);
                     else
-                        ResDebuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
+                        ResDebuffs.Add(Key, new(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap));
                     break;
 
                 case AffectedStat.MSPD:
                     if (MspdDebuffs.ContainsKey(Key))
-                        MspdDebuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
+                        MspdDebuffs[Key].Instantiate(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap);
                     else
-                        MspdDebuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
+                        MspdDebuffs.Add(Key, new(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap));
                     break;
 
                 case AffectedStat.ASPD:
                     if (AspdDebuffs.ContainsKey(Key))
-                        AspdDebuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
+                        AspdDebuffs[Key].Instantiate(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap);
                     else
-                        AspdDebuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
+                        AspdDebuffs.Add(Key, new(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap));
                     break;
 
                 case AffectedStat.ARNG:
                     if (ArngDebuffs.ContainsKey(Key))
-                        ArngDebuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
+                        ArngDebuffs[Key].Instantiate(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap);
                     else
-                        ArngDebuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
+                        ArngDebuffs.Add(Key, new(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap));
                     break;
 
                 case AffectedStat.WEIGHT:
                     if (WeightDebuffs.ContainsKey(Key))
-                        WeightDebuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
+                        WeightDebuffs[Key].Instantiate(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap);
                     else
-                        WeightDebuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
+                        WeightDebuffs.Add(Key, new(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap));
                     break;
             }
         }
@@ -518,56 +519,56 @@ public class EntityBase : MonoBehaviour
             {
                 case AffectedStat.ATK:
                     if (AtkBuffs.ContainsKey(Key))
-                        AtkBuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
+                        AtkBuffs[Key].Instantiate(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap);
                     else
-                        AtkBuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
+                        AtkBuffs.Add(Key, new(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap));
                     break;
 
                 case AffectedStat.DEF:
                     if (DefBuffs.ContainsKey(Key))
-                        DefBuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
+                        DefBuffs[Key].Instantiate(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap);
                     else
-                        DefBuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
+                        DefBuffs.Add(Key, new(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap));
                     break;
 
                 case AffectedStat.RES:
                     if (ResBuffs.ContainsKey(Key))
-                        ResBuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
+                        ResBuffs[Key].Instantiate(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap);
                     else
-                        ResBuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
+                        ResBuffs.Add(Key, new(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap));
                     break;
 
                 case AffectedStat.MSPD:
                     if (MspdBuffs.ContainsKey(Key))
-                        MspdBuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
+                        MspdBuffs[Key].Instantiate(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap);
                     else
-                        MspdBuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
+                        MspdBuffs.Add(Key, new(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap));
                     break;
 
                 case AffectedStat.ASPD:
                     if (AspdBuffs.ContainsKey(Key))
-                        AspdBuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
+                        AspdBuffs[Key].Instantiate(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap);
                     else
-                        AspdBuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
+                        AspdBuffs.Add(Key, new(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap));
                     break;
 
                 case AffectedStat.ARNG:
                     if (ArngBuffs.ContainsKey(Key))
-                        ArngBuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
+                        ArngBuffs[Key].Instantiate(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap);
                     else
-                        ArngBuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
+                        ArngBuffs.Add(Key, new(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap));
                     break;
 
                 case AffectedStat.WEIGHT:
                     if (WeightBuffs.ContainsKey(Key))
-                        WeightBuffs[Key].Instantiate(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap);
+                        WeightBuffs[Key].Instantiate(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap);
                     else
-                        WeightBuffs.Add(Key, new(this, affectedStat, Value, Duration, IsPercentageBased, DecayOverDuration, transferOnSwap));
+                        WeightBuffs.Add(Key, new(this, affectedStat, Value, Duration, valueType, DecayOverDuration, transferOnSwap));
                     break;
             }
         }
 
-        if (IsComponentsInitialized) CalculateBuffsAndDebuffs();
+        CalculateBuffsAndDebuffs();
     }
 
     public void RemoveEffect(params string[] Keys)
@@ -698,6 +699,7 @@ public class EntityBase : MonoBehaviour
     float prevMspdAdd = 0, prevAspdAdd = 0, prevArngAdd = 0, prevDrngAdd = 0;
     public void CalculateBuffsAndDebuffs()
     {
+        if (!IsComponentsInitialized) return;
         BDB_Cnt = 0;
         
         EnemyBase enemyBaseCheck = this as EnemyBase;
@@ -721,7 +723,7 @@ public class EntityBase : MonoBehaviour
         List<Effect> atkBuffsList = new(AtkBuffs.Values.Where(a => a.IsInEffect).ToList());
         atkBuffsList.ForEach(a =>
         {
-            if (a.IsPercentage)
+            if (a.valueType == Effect.ValueType.PERCENTAGE)
             {
                 prevAtkAdd += (bAtk * a.Value / 100);
             }
@@ -734,7 +736,7 @@ public class EntityBase : MonoBehaviour
         List<Effect> defBuffsList = new(DefBuffs.Values.Where(a => a.IsInEffect).ToList());
         defBuffsList.ForEach(a =>
         {
-            if (a.IsPercentage)
+            if (a.valueType == Effect.ValueType.PERCENTAGE)
             {
                 prevDefAdd += (bDef * a.Value / 100);
             }
@@ -747,7 +749,7 @@ public class EntityBase : MonoBehaviour
         List<Effect> resBuffsList = new(ResBuffs.Values.Where(a => a.IsInEffect).ToList());
         resBuffsList.ForEach(a =>
         {
-            if (a.IsPercentage)
+            if (a.valueType == Effect.ValueType.PERCENTAGE)
             {
                 prevResAdd += (bRes * a.Value / 100);
             }
@@ -760,7 +762,7 @@ public class EntityBase : MonoBehaviour
         List<Effect> mspdBuffsList = new(MspdBuffs.Values.Where(a => a.IsInEffect).ToList());
         mspdBuffsList.ForEach(a =>
         {
-            if (a.IsPercentage)
+            if (a.valueType == Effect.ValueType.PERCENTAGE)
             {
                 prevMspdAdd += b_moveSpeed * a.Value / 100;
             }
@@ -779,7 +781,7 @@ public class EntityBase : MonoBehaviour
         List<Effect> arngBuffsList = new(ArngBuffs.Values.Where(a => a.IsInEffect).ToList());
         arngBuffsList.ForEach(a =>
         {
-            if (a.IsPercentage)
+            if (a.valueType == Effect.ValueType.PERCENTAGE)
             {
                 prevArngAdd += b_attackRange * a.Value / 100f;
                 if (enemyBaseCheck)
@@ -815,7 +817,7 @@ public class EntityBase : MonoBehaviour
         sortedAtkDebuffs.Sort((a1, a2) => (int) (a2.Value - a1.Value));
         sortedAtkDebuffs.ForEach(a =>
         {
-            if (a.IsPercentage)
+            if (a.valueType == Effect.ValueType.PERCENTAGE)
             {
                 prevAtkAdd -= (simAtk * a.Value / 100);
 
@@ -833,7 +835,7 @@ public class EntityBase : MonoBehaviour
         sortedDefDebuffs.Sort((a1, a2) => (int)(a2.Value - a1.Value));
         sortedDefDebuffs.ForEach(a =>
         {
-            if (a.IsPercentage)
+            if (a.valueType == Effect.ValueType.PERCENTAGE)
             {
                 prevDefAdd -= (simDef * a.Value / 100);
 
@@ -850,7 +852,7 @@ public class EntityBase : MonoBehaviour
         sortedResDebuffs.Sort((a1, a2) => (int)(a2.Value - a1.Value));
         sortedResDebuffs.ForEach(a =>
         {
-            if (a.IsPercentage)
+            if (a.valueType == Effect.ValueType.PERCENTAGE)
             {
                 prevResAdd -= (simRes * a.Value / 100);
                 simRes -= (simRes * a.Value / 100);
@@ -866,7 +868,7 @@ public class EntityBase : MonoBehaviour
         sortedMspdDebuffs.Sort((a1, a2) => (int)(a2.Value - a1.Value));
         sortedMspdDebuffs.ForEach(a =>
         {
-            if (a.IsPercentage)
+            if (a.valueType == Effect.ValueType.PERCENTAGE)
             {
                 prevMspdAdd -= (simMspd * a.Value / 100);
                 simMspd -= (simMspd * a.Value / 100);
@@ -881,7 +883,7 @@ public class EntityBase : MonoBehaviour
         List<Effect> sortedAspdDebuffs = new(AspdDebuffs.Values.Where(a => a.IsInEffect).ToList());
         sortedAspdDebuffs.ForEach(a =>
         {
-            if (a.IsPercentage)
+            if (a.valueType == Effect.ValueType.PERCENTAGE)
             {
                 prevAspdAdd -= (simAspd * a.Value / 100);
                 simAspd -= (simAspd * a.Value / 100);
@@ -898,7 +900,7 @@ public class EntityBase : MonoBehaviour
 
         sortedArngDebuffs.ForEach(a =>
         {
-            if (a.IsPercentage)
+            if (a.valueType == Effect.ValueType.PERCENTAGE)
             {
                 float reduction = simArng * a.Value / 100f;
                 prevArngAdd -= reduction;
@@ -927,7 +929,7 @@ public class EntityBase : MonoBehaviour
         sortedWeightDebuffs.Sort((a1, a2) => (int)(a2.Value - a1.Value));
         sortedWeightDebuffs.ForEach(a =>
         {
-            if (a.IsPercentage)
+            if (a.valueType == Effect.ValueType.PERCENTAGE)
             {
                 float reduction = simWeight * a.Value / 100f;
                 prevWeightAdd -= (short) reduction;
@@ -1316,7 +1318,7 @@ public class EntityBase : MonoBehaviour
         ApplyEffect(AffectedStat.MSPD, "GRAVITY_WEIGHT_PENALTY",
             Mathf.Min(50f, GetMultiplicativeValue(100f, 0.1f, weight)) * -1f,
             GravityPullTick,
-            true);
+            Effect.ValueType.PERCENTAGE);
 
         if (GravityCircle && GravityCircle.gameObject.activeSelf) 
             GravityCircle.sizeDelta = new Vector2(searchRange * 2.05f, searchRange * 2.05f);
@@ -1359,7 +1361,7 @@ public class EntityBase : MonoBehaviour
                     effectKey,
                     Mathf.Min(AccelerationBuffMax, MspdBuffs[effectKey].Value + AccelerationBuffPerTick),
                     9999f,
-                    true);
+                    Effect.ValueType.PERCENTAGE);
             }
             else
             {
@@ -1368,7 +1370,7 @@ public class EntityBase : MonoBehaviour
                     effectKey,
                     AccelerationBuffPerTick,
                     9999f,
-                    true);
+                    Effect.ValueType.PERCENTAGE);
             }
         }
         else
@@ -1380,7 +1382,7 @@ public class EntityBase : MonoBehaviour
                     "ACCELERATE_DIR_CHANGE_PUNISH",
                     Mathf.Lerp(0, AccelerationDebuffMax,currentBuff / AccelerationBuffMax) * -1,
                     AccelerationDebuffDuration,
-                    true,
+                    Effect.ValueType.PERCENTAGE,
                     EffectPersistType.DECAY);
 
             RemoveEffect(effectKey);
@@ -1409,7 +1411,7 @@ public class EntityBase : MonoBehaviour
             {
                 enteredStatis = true;
                 hpRegenPercentage += StatisMhpRegenPercentage;
-                ApplyEffect(AffectedStat.ATK, keyAtk, StatisAtkDebuffPercentage * -1f, 9999f, true);
+                ApplyEffect(AffectedStat.ATK, keyAtk, StatisAtkDebuffPercentage * -1f, 9999f, Effect.ValueType.PERCENTAGE);
             }
         }
         else
@@ -1535,7 +1537,7 @@ public class EntityBase : MonoBehaviour
         yield return null; // ensure this runs after stun is applied
         if (!IsStunned) yield break;
 
-        ApplyEffect(AffectedStat.WEIGHT, "LEVITATE_WEIGHT_DBUFF", -100f, duration, true);
+        ApplyEffect(AffectedStat.WEIGHT, "LEVITATE_WEIGHT_DBUFF", -100f, duration, Effect.ValueType.FLAT);
         spriteInitPos = spriteRenderer.transform.localPosition;
         LevitationEffect.color = new Color(1, 1, 1, 0.3f);
         IsBeingLevitated = true;

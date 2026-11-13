@@ -107,8 +107,8 @@ public class FumoScript : MonoBehaviour
             if (Phalanx)
             {
                 string Key = "FUMO_SKILL_PHALANX";
-                player.ApplyEffect(Effect.AffectedStat.DEF, Key, plxDefBuff, waitInterval + 0.05f, true);
-                player.ApplyEffect(Effect.AffectedStat.RES, Key, plxResBuff, waitInterval + 0.05f, false);
+                player.ApplyEffect(Effect.AffectedStat.DEF, Key, plxDefBuff, waitInterval + 0.05f, Effect.ValueType.PERCENTAGE);
+                player.ApplyEffect(Effect.AffectedStat.RES, Key, plxResBuff, waitInterval + 0.05f, Effect.ValueType.FLAT);
             }
             else if (WindRush)
             {

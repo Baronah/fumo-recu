@@ -56,8 +56,8 @@ public class Sentinel : EnemyBase
         {
             if (enemy != this && enemy.IsAlive())
             {
-                enemy.ApplyEffect(Effect.AffectedStat.MSPD, "SENTINEL_ALARM_MSPD_" + instanceID, SpeedBuffOnAlert * 100f, 9999f, true);
-                enemy.ApplyEffect(Effect.AffectedStat.ATK, "SENTINEL_ALARM_ATK_" + instanceID, AtkBuffOnAlert * 100f, 9999f, true);
+                enemy.ApplyEffect(Effect.AffectedStat.MSPD, "SENTINEL_ALARM_MSPD_" + instanceID, SpeedBuffOnAlert * 100f, 9999f, Effect.ValueType.PERCENTAGE);
+                enemy.ApplyEffect(Effect.AffectedStat.ATK, "SENTINEL_ALARM_ATK_" + instanceID, AtkBuffOnAlert * 100f, 9999f, Effect.ValueType.PERCENTAGE);
             }
         });
 
@@ -82,7 +82,7 @@ public class Sentinel : EnemyBase
 
         DetectCircle.transform.localScale = finalScale * 5f;
 
-        ApplyEffect(Effect.AffectedStat.ARNG, "ALARM_DETECTION", 15000f, 9999f, false);
+        ApplyEffect(Effect.AffectedStat.ARNG, "ALARM_DETECTION", 15000f, 9999f, Effect.ValueType.FLAT);
         CanDetectThroughWalls = true;
     }
 

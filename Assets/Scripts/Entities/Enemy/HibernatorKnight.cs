@@ -51,8 +51,8 @@ public class HibernatorKnight : EnemyBase
 
     void Sleep()
     {
-        ApplyEffect(Effect.AffectedStat.DEF, "HIBERNATOR_NATURAL_DEF_DEBUFF", -100f, 9999f, true);
-        ApplyEffect(Effect.AffectedStat.RES, "HIBERNATOR_NATURAL_RES_DEBUFF", -100f, 9999f, true);
+        ApplyEffect(Effect.AffectedStat.DEF, "HIBERNATOR_NATURAL_DEF_DEBUFF", -100f, 9999f, Effect.ValueType.PERCENTAGE);
+        ApplyEffect(Effect.AffectedStat.RES, "HIBERNATOR_NATURAL_RES_DEBUFF", -100f, 9999f, Effect.ValueType.PERCENTAGE);
 
         CancelAttack();
         StopMovement();
@@ -90,8 +90,8 @@ public class HibernatorKnight : EnemyBase
         
         if (IsSleeping)
         {
-            ApplyEffect(Effect.AffectedStat.ATK, "HIBERNATOR_WAKE_ATK_BUFF", Wake_AtkBuff * 100f, Wake_Buff_Duration, true);
-            ApplyEffect(Effect.AffectedStat.MSPD, "HIBERNATOR_WAKE_MSPD_BUFF", Wake_MspdBuff * 100f, Wake_Buff_Duration, true);
+            ApplyEffect(Effect.AffectedStat.ATK, "HIBERNATOR_WAKE_ATK_BUFF", Wake_AtkBuff * 100f, Wake_Buff_Duration, Effect.ValueType.PERCENTAGE);
+            ApplyEffect(Effect.AffectedStat.MSPD, "HIBERNATOR_WAKE_MSPD_BUFF", Wake_MspdBuff * 100f, Wake_Buff_Duration, Effect.ValueType.PERCENTAGE);
             StageManager.OnEnemySpecialAbilityActivate(this);
         }
 

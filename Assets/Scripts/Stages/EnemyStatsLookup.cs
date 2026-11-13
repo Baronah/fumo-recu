@@ -2,51 +2,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using static EnemyBase;
 using static LevelDifficultyModifier;
-using static StageManager;
 
 public static class EnemyStatsLookup
 {
-    public static float DifficultyHpMultiplierBase => 0.06f;
-    public static float DifficultyAtkMultiplierBase => 0.03f;
-
-    static int GetDiff => Mathf.Min(CharacterPrefabsStorage.DifficultyLevel - 1, 15);
-
-    public static float GetEnemiesHpMultiplier()
-    {
-        if (CharacterPrefabsStorage.DifficultyLevel <= 1) return 0;
-
-        int Diff = GetDiff;
-
-        float finalMul = 0;
-        for (int i = 1; i <= Diff; i++)
-        {
-            if (i == 1) finalMul = 0.3f - DifficultyHpMultiplierBase;
-            else if (i == 15) finalMul += 0.2f;
-            
-            finalMul += DifficultyHpMultiplierBase;
-        }
-
-        return finalMul;
-    }
-
-    public static float GetEnemiesAtkMultiplier()
-    {
-        if (CharacterPrefabsStorage.DifficultyLevel <= 1) return 0;
-
-        int Diff = GetDiff;
-
-        float finalMul = 0;
-        for (int i = 1; i <= Diff; i++)
-        {
-            if (i == 1) finalMul = 0.2f - DifficultyAtkMultiplierBase;
-            else if (i == 15) finalMul += 0.1f;
-             
-            finalMul += DifficultyAtkMultiplierBase;
-        }
-
-        return finalMul;
-    }
-
     public static bool HasStatsChange(EnemyCode code, int levelIndex)
     {
         HashSet<EnemyCode> codeWithStatsChange = null;
@@ -308,78 +266,4 @@ public static class EnemyStatsLookup
         }
     }
 
-    public static void ProcessEnemyDifficultyScaling(EnemyBase enemy, StageManager.StageCompleteCondition StageCompleteConditionType)
-    {
-        short diffLevel = (short)(CharacterPrefabsStorage.DifficultyLevel - 1);
-        if (diffLevel <= 0) return;
-
-        enemy.bAtk = (short)(enemy.bAtk * (1f + GetEnemiesAtkMultiplier()));
-        enemy.mHealth *= 1f + GetEnemiesHpMultiplier();
-
-        if (diffLevel == (int)DiffType.EnemiesMissionTypesBuffs_1)
-        {
-            if (StageCompleteConditionType == StageCompleteCondition.PROTECT_FUMO || StageCompleteConditionType == StageCompleteCondition.SURVIVE_FOR_GIVEN_TIME)
-            {
-                short defAdd = 20;
-                float mspdAdd = enemy.b_moveSpeed * 0.1f;
-                enemy.bDef += defAdd;
-                enemy.b_moveSpeed += mspdAdd;
-            }
-            else if (StageCompleteConditionType == StageCompleteCondition.RETRIEVE_FUMO)
-            {
-                short resAdd = 20;
-                float aspdAdd = 10;
-                enemy.bRes += resAdd;
-                enemy.ASPD += aspdAdd;
-            }
-            else if (StageCompleteConditionType == StageCompleteCondition.ELIMINATE_ALL_ENEMIES)
-            {
-                float hpAdd = enemy.mHealth * 0.1f, atkAdd = enemy.bAtk * 0.1f;
-                enemy.mHealth += hpAdd;
-                enemy.bAtk += (short)atkAdd;
-            }
-        }
-        else if (diffLevel >= (int) DiffType.EnemiesMissionTypesBuffs_2)
-        {
-            if (StageCompleteConditionType == StageCompleteCondition.PROTECT_FUMO || StageCompleteConditionType == StageCompleteCondition.SURVIVE_FOR_GIVEN_TIME)
-            {
-                short defAdd = 40;
-                float mspdAdd = enemy.b_moveSpeed * 0.25f;
-                enemy.bDef += defAdd;
-                enemy.b_moveSpeed += mspdAdd;
-            }
-            else if (StageCompleteConditionType == StageCompleteCondition.RETRIEVE_FUMO)
-            {
-                short resAdd = 40;
-                float aspdAdd = 25;
-                enemy.bRes += resAdd;
-                enemy.ASPD += aspdAdd;
-            }
-            else if (StageCompleteConditionType == StageCompleteCondition.ELIMINATE_ALL_ENEMIES)
-            {
-                float hpAdd = enemy.mHealth * 0.25f, atkAdd = enemy.bAtk * 0.2f;
-                enemy.mHealth += hpAdd;
-                enemy.bAtk += (short)atkAdd;
-            }
-        }
-
-        if (diffLevel >= (int)DiffType.EnemiesAlertBuff)
-        {
-            enemy.MoveToOverridePositionSpeedMultiplier += 0.3f;
-            enemy.MoveToOverridePositionSpeedMultiplierJump += 0.1f;
-        }
-
-        if (diffLevel == (int)DiffType.EnemiesUncombatDRBuff_1)
-        {
-            enemy.DamageReductionOutsideCombat += 0.3f;
-        }
-        else if (diffLevel >= (int)DiffType.EnemiesUncombatDRBuff_2)
-        {
-            enemy.DamageReductionOutsideCombat += 0.6f;
-        }
-
-        if (diffLevel >= (int)DiffType.EnemiesStatusResistant
-            && (enemy.attackPattern == EntityBase.AttackPattern.MELEE || enemy.attackPattern == EntityBase.AttackPattern.NONE))
-            enemy.StatusResistTimer += 9999f;
-    }
 }

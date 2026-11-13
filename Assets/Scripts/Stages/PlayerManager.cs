@@ -100,6 +100,7 @@ public class PlayerManager : MonoBehaviour
     public bool FirstBlackFlash = true;
     #endregion
 
+    float[] radioValues;
     private void Awake()
     {
         GetSingleton();
@@ -213,7 +214,10 @@ public class PlayerManager : MonoBehaviour
         swapCooldownTimer += add;
         if (CanSwapPlayer && SwapStacks < SwapMaxStacks)
         {
-            if (RadioActive) add += add * 0.2f * (SwapStacks + 1);
+            if (RadioActive)
+            {
+                add += add * radioValues[1] * (SwapStacks + 1);
+            }
             SwapOverflowTimer += add;
             if (SwapOverflowTimer >= SwapCooldown)
             {
@@ -286,18 +290,10 @@ public class PlayerManager : MonoBehaviour
     public bool MintBlessing = false;
     public void GetPlayerSkills()
     {
-        short diff = (short)(CharacterPrefabsStorage.DifficultyLevel - 1);
-        if (diff >= (int) DiffType.PlayerSwap_1)
-        {
-            float mul = diff == (int)DiffType.PlayerSwap_1 ? 1.5f : 2f;
-            SwapCooldown *= mul;
-            swapCooldownTimer *= mul;
-            SwapOverflowTimer = 0;
-        }
-
+        radioValues = UpgradesManager._instance.GetUpgradeValues(SkillTree_Manager.SkillName.EQUIPMENT_RADIO);
         if (CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_RADIO))
         {
-            SwapCooldown *= 0.85f;
+            SwapCooldown -= SwapCooldown * radioValues[0];
         }
 
         if (CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.AMULET))

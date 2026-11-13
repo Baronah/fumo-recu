@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
@@ -14,12 +15,13 @@ using static PlayerManager;
 using static SaveDataManager;
 using static StageManager;
 
+[Singleton]
 public class LevelSelectionScript : MonoBehaviour
 {
-    public static LevelSelectionScript Instance;
+    public static LevelSelectionScript _instance;
     private void Awake()
     {
-        if (!Instance) Instance = this;
+        if (!_instance) _instance = this;
         else Destroy(gameObject);
     }
 
@@ -32,12 +34,14 @@ public class LevelSelectionScript : MonoBehaviour
     [SerializeField] private Button CMToggleButton;
     private Image CMToggleImg => CMToggleButton.GetComponent<Image>();
 
+    private AssetReference[] LevelAssets => LevelManager._instance.GetLevelAssets;
+
     [SerializeField] private TMP_Text SelectedLvlName, SelectedLvlDescription;
-    [SerializeField] private string[] Descriptions, AddsOn, ChallengeModes, SecretDescriptions;
-    [SerializeField] private StageCompleteCondition[] CompleteCondition;
-    [SerializeField] private StageEnvironment[] Environments;
-    [SerializeField] private AppearingEnemies[] AppearingEnemies;
-    [SerializeField] private BanSkills[] BanSkills;
+    private string[] Titles, Descriptions, AddsOn, ChallengeModes, SecretDescriptions;
+    private StageCompleteCondition[] CompleteCondition;
+    private StageEnvironment[] Environments;
+    private AppearingEnemies[] AppearingEnemies;
+    private BanSkills[] BanSkills;
 
     public SkillTree_Manager.SkillName[] GetBanSkills
         => BanSkills[selectedIndex].Skills;
@@ -71,11 +75,13 @@ public class LevelSelectionScript : MonoBehaviour
     private List<GameObject> LevelPrefabs = new();
     private int CurrentPageIndex = 0;
     private int MaxPageSize => Containers.Length;
-    private int TotalLevels => characterPrefabsStorage.SceneAssetReferences.Length;
+    private int TotalLevels => LevelAssets.Length;
     private int TotalPages => Mathf.CeilToInt((float)TotalLevels / MaxPageSize);    
 
     private string selectedKey = null;
     private int selectedIndex = -1;
+    public int SelectingLevel => selectedIndex;
+
     private bool enableCM = false, isViewingMap = false;
 
     private List<bool> IsMapCleared = new();
@@ -109,12 +115,42 @@ public class LevelSelectionScript : MonoBehaviour
         }
     }
 
+    void FetchData()
+    {
+        LevelData[] levelDatas = LevelManager._instance.GetLevelDatas();
+        int length = levelDatas.Length;
+
+        Titles = new string[length];
+        Descriptions = new string[length];
+        AddsOn = new string[length];
+        ChallengeModes = new string[length];
+        AppearingEnemies = new AppearingEnemies[length];
+        CompleteCondition = new StageCompleteCondition[length];
+        SecretDescriptions = new string[length];
+        Environments = new StageEnvironment[length];
+        BanSkills = new BanSkills[length];
+
+        for (int i = 0; i < length; ++i)
+        {
+            Titles[i] = levelDatas[i].Title;
+            Descriptions[i] = levelDatas[i].Description;
+            AddsOn[i] = levelDatas[i].AddOn;
+            ChallengeModes[i] = levelDatas[i].ChallengeModeModifier;
+            AppearingEnemies[i].Enemies = levelDatas[i].AppearingEnemies;
+            CompleteCondition[i] = levelDatas[i].StageCompleteCondition;
+            SecretDescriptions[i] = levelDatas[i].SecretDes;
+            Environments[i].Environments = levelDatas[i].EnvironmentTypes;
+            BanSkills[i].Skills = levelDatas[i].BanSkills;
+        }
+    }
+
     private void Start()
     {
+        FetchData();
+
         GlobalStageManager.ResumeNormalVariables();
         SaveDataManager.GetAllCompletedLevels();
-
-        FindAnyObjectByType<SkillTree_Manager>(FindObjectsInactive.Include).GetPlayerProgress();
+        FindFirstObjectByType<SkillTree_Manager>(FindObjectsInactive.Include).GetPlayerProgress();
 
         SetSfxs();
 
@@ -179,7 +215,7 @@ public class LevelSelectionScript : MonoBehaviour
             int levelIndex = startLevelIndex + i;
             if (levelIndex >= TotalLevels) break;
             bool levelUnlocked = levelIndex < highestLevelCompleted + 1;
-            var targetLevel = characterPrefabsStorage.SceneAssetReferences[levelIndex];
+            var targetLevel = LevelAssets[levelIndex];
             var runtimeKey = targetLevel.RuntimeKey.ToString();
             GameObject level = Instantiate(LevelPrefabTemplate, Containers[i].position, Quaternion.identity, LevelsPoint.transform);
             TMP_Text nameText = level.GetComponentInChildren<TMP_Text>();
@@ -188,7 +224,6 @@ public class LevelSelectionScript : MonoBehaviour
 
             nameText.text = displayName;
 
-            // Use GetLevelCompletionType instead of raw string matching
             CompletionType completion = SaveDataManager.GetLevelCompletionType(displayName);
 
             completionStatus.sprite = completion switch
@@ -244,10 +279,10 @@ public class LevelSelectionScript : MonoBehaviour
 
         selectedIndex = index;
         selectedKey = runtimeKey;
-        SelectedLvlName.text = GetLevelNameByIndex(selectedIndex) + ": " + characterPrefabsStorage.LevelTitles[selectedIndex];
+        SelectedLvlName.text = GetLevelNameByIndex(selectedIndex) + ": " + Titles[selectedIndex];
         SelectedLvlDescription.text = GetLevelDescription(selectedIndex);
         
-        if (SkillTree_Manager.Instance) SkillTree_Manager.Instance.RemoveBannedSkills();
+        if (SkillTree_Manager._instance) SkillTree_Manager._instance.RemoveBannedSkills();
 
         bool unlockCM = CanUnlockCM(index);
         if (!unlockCM) CMToggleImg.sprite = LockedSprite;
@@ -888,7 +923,7 @@ public class LevelSelectionScript : MonoBehaviour
     [ContextMenu("Unlock all progresses")]
     public void UnlockAllProgresses()
     {
-        SaveDataManager.UnlockAllLevels(characterPrefabsStorage.SceneAssetReferences.Length, 1);
+        SaveDataManager.UnlockAllLevels(LevelAssets.Length, 1);
     }
 
     public void Confirm() => StartCoroutine(ConfirmLevelSelection());
@@ -900,17 +935,17 @@ public class LevelSelectionScript : MonoBehaviour
     }
 }
 
-[Serializable] public class StageEnvironment 
+[Serializable] public struct StageEnvironment 
 { 
     public EnvironmentType[] Environments;
 }
 
-[Serializable] public class AppearingEnemies
+[Serializable] public struct AppearingEnemies
 {
     public EnemyBase.EnemyCode[] Enemies;
 }
 
-[Serializable] public class BanSkills
+[Serializable] public struct BanSkills
 {
     public SkillTree_Manager.SkillName[] Skills;
 }

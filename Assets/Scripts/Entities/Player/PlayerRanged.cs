@@ -249,9 +249,9 @@ public class PlayerRanged : PlayerBase
             FreezeRange += 150f;
             MinDistanceForFreezeDuration += 75f;
 
-            ApplyEffect(Effect.AffectedStat.ATK, "VOW_ATK_BUFF", 15f, 9999f, true, EffectPersistType.PERSIST, false);
-            ApplyEffect(Effect.AffectedStat.ASPD, "VOW_ASPD_BUFF", 15f, 9999f, false, EffectPersistType.PERSIST, false);
-            ApplyEffect(Effect.AffectedStat.ARNG, "VOW_ARNG_BUFF", 50f, 9999f, false, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.ATK, "VOW_ATK_BUFF", 15f, 9999f, Effect.ValueType.PERCENTAGE, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.ASPD, "VOW_ASPD_BUFF", 15f, 9999f, Effect.ValueType.FLAT, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.ARNG, "VOW_ARNG_BUFF", 50f, 9999f, Effect.ValueType.FLAT, EffectPersistType.PERSIST, false);
 
             FreezeChargeCDRefund += 0.03f;
             FreezeConductDebuff += 20f;
@@ -265,9 +265,9 @@ public class PlayerRanged : PlayerBase
             Skill_DamageMulitplier *= 1.2f;
             Skill_ProjLifeSpan += 0.5f;
 
-            ApplyEffect(Effect.AffectedStat.MSPD, "VOW_MSPD_BUFF", 12f, 9999f, true, EffectPersistType.PERSIST, false);
-            ApplyEffect(Effect.AffectedStat.RES, "VOW_RES_BUFF", 15f, 9999f, false, EffectPersistType.PERSIST, false);
-            ApplyEffect(Effect.AffectedStat.DEF, "VOW_DEF_BUFF", 10f, 9999f, false, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.MSPD, "VOW_MSPD_BUFF", 12f, 9999f, Effect.ValueType.PERCENTAGE, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.RES, "VOW_RES_BUFF", 15f, 9999f, Effect.ValueType.FLAT, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.DEF, "VOW_DEF_BUFF", 10f, 9999f, Effect.ValueType.FLAT, EffectPersistType.PERSIST, false);
 
             SP_SkillMaxRefund = 0.98f;
             MaxRefund = 0.9f;
@@ -586,8 +586,8 @@ public class PlayerRanged : PlayerBase
 
         float bonusDuration = Mathf.Min(enemy.FreezeTimer * 0.5f, 2f);
         float debuffDuration = enemy.FreezeTimer + bonusDuration;
-        enemy.ApplyEffect(Effect.AffectedStat.DEF, "FREEZE_SUPERCONDUCT_DEF_DEBUFF", -FreezeConductDebuff, debuffDuration, true);
-        enemy.ApplyEffect(Effect.AffectedStat.RES, "FREEZE_SUPERCONDUCT_RES_DEBUFF", -FreezeConductDebuff, debuffDuration, true);
+        enemy.ApplyEffect(Effect.AffectedStat.DEF, "FREEZE_SUPERCONDUCT_DEF_DEBUFF", -FreezeConductDebuff, debuffDuration, Effect.ValueType.PERCENTAGE);
+        enemy.ApplyEffect(Effect.AffectedStat.RES, "FREEZE_SUPERCONDUCT_RES_DEBUFF", -FreezeConductDebuff, debuffDuration, Effect.ValueType.PERCENTAGE);
 
         if (enemy.IsFrozen)
         {
@@ -935,10 +935,10 @@ public class PlayerRanged : PlayerBase
 
         Heal(mHealth * BurstHeal_HpPercentage);
 
-        ApplyEffect(Effect.AffectedStat.ATK, "JUGGERNAUNT_SKILL_ATK_BUFF", AtkBoost * 100, 999f, true, EffectPersistType.PERSIST, false);
-        ApplyEffect(Effect.AffectedStat.DEF, "JUGGERNAUNT_SKILL_DEF_BUFF", DefBoost * 100, 999f, true, EffectPersistType.PERSIST, false);
-        ApplyEffect(Effect.AffectedStat.RES, "JUGGERNAUNT_SKILL_RES_BUFF", ResBoost, 999f, false, EffectPersistType.PERSIST, false);
-        ApplyEffect(Effect.AffectedStat.MSPD, "JUGGERNAUNT_SKILL_MSPD_BUFF", SpeedBoost * 100, 999f, true, EffectPersistType.PERSIST, false);
+        ApplyEffect(Effect.AffectedStat.ATK, "JUGGERNAUNT_SKILL_ATK_BUFF", AtkBoost * 100, 999f, Effect.ValueType.PERCENTAGE, EffectPersistType.PERSIST, false);
+        ApplyEffect(Effect.AffectedStat.DEF, "JUGGERNAUNT_SKILL_DEF_BUFF", DefBoost * 100, 999f, Effect.ValueType.PERCENTAGE, EffectPersistType.PERSIST, false);
+        ApplyEffect(Effect.AffectedStat.RES, "JUGGERNAUNT_SKILL_RES_BUFF", ResBoost, 999f, Effect.ValueType.FLAT, EffectPersistType.PERSIST, false);
+        ApplyEffect(Effect.AffectedStat.MSPD, "JUGGERNAUNT_SKILL_MSPD_BUFF", SpeedBoost * 100, 999f, Effect.ValueType.PERCENTAGE, EffectPersistType.PERSIST, false);
 
         float t = 1.0f, d = duration;
 

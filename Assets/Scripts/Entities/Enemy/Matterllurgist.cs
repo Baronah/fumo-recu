@@ -17,7 +17,7 @@ public class Matterllurgist : EnemyBase
         base.OnFirsttimePlayerSpot(viaAlert);
         if (viaAlert && !gainedASPD)
         {
-            ApplyEffect(Effect.AffectedStat.ASPD, "ALERT_SELF_ASPD_BUFF", 200f, 9999f, false);
+            ApplyEffect(Effect.AffectedStat.ASPD, "ALERT_SELF_ASPD_BUFF", 200f, 9999f, Effect.ValueType.FLAT);
             StageManager.OnEnemySpecialAbilityActivate(this);
             gainedASPD = true;
         }

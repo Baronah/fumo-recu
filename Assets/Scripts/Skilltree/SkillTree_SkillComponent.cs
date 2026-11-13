@@ -40,7 +40,7 @@ public class SkillTree_SkillComponent : MonoBehaviour
 
     private void Start()
     {
-        UpgradeData upgradeData = SkillTree_Manager.Instance.GetUpgradeData(skillName);
+        UpgradeData upgradeData = SkillTree_Manager._instance.GetUpgradeData(skillName);
         skillType = upgradeData.skillType;
         skillNameText = upgradeData.name;
         skillDescription = upgradeData.description;
@@ -58,7 +58,7 @@ public class SkillTree_SkillComponent : MonoBehaviour
 
     public void OnSkillButtonClicked()
     {
-        SkillTree_Manager.Instance.OnSkillSelected(this);
+        SkillTree_Manager._instance.OnSkillSelected(this);
     }
 
     public SkillName[] SetMutuallyExclusive()
@@ -66,7 +66,7 @@ public class SkillTree_SkillComponent : MonoBehaviour
         skillIconImage.color = Color.white;
         foreach (var skill in mutuallyExclusiveSkills)
         {
-            var skillComponent = SkillTree_Manager.Instance.allSkills.Find(s => s.skillName == skill);
+            var skillComponent = SkillTree_Manager._instance.allSkills.Find(s => s.skillName == skill);
             if (skillComponent != null)
             {
                 skillComponent.skillIconImage.color = new(0.5f, 0.5f, 0.5f);
@@ -81,7 +81,7 @@ public class SkillTree_SkillComponent : MonoBehaviour
         skillIconImage.color = Color.white;
         foreach (var skill in mutuallyExclusiveSkills)
         {
-            SkillTree_SkillComponent skillComponent = SkillTree_Manager.Instance.allSkills.Find(s => s.skillName == skill);
+            SkillTree_SkillComponent skillComponent = SkillTree_Manager._instance.allSkills.Find(s => s.skillName == skill);
             if (!skillComponent) continue;
 
             skillComponent.SetInteractableState();
@@ -101,7 +101,7 @@ public class SkillTree_SkillComponent : MonoBehaviour
     bool GetInteractableState()
     {
         if (CharacterPrefabsStorage.Skills.Contains(skillName)) return false;
-        if (LevelSelectionScript.Instance.GetBanSkills.Contains(skillName)) return false;
+        if (LevelSelectionScript._instance.GetBanSkills.Contains(skillName)) return false;
         foreach (var skill in mutuallyExclusiveSkills)
         {
             if (CharacterPrefabsStorage.Skills.Contains(skill)) return false;
@@ -128,7 +128,7 @@ public class SkillTree_SkillComponent : MonoBehaviour
         selfButton.interactable = false;
         foreach (var skill in mutuallyExclusiveSkills)
         {
-            var skillComponent = SkillTree_Manager.Instance.allSkills.Find(s => s.skillName == skill);
+            var skillComponent = SkillTree_Manager._instance.allSkills.Find(s => s.skillName == skill);
             if (skillComponent == null) continue;
             skillComponent.selfButton.interactable = false;
         }

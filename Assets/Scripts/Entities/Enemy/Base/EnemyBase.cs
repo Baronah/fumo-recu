@@ -199,6 +199,18 @@ public class EnemyBase : EntityBase
         {
             IsComponentsInitialized = true;
         }
+
+        int diffLevel = (CharacterPrefabsStorage.DifficultyLevel - 1);
+        if (diffLevel == (int)DiffType.EnemiesDefCCBuff_1)
+        {
+            ApplyEffect(Effect.AffectedStat.DEF, LevelDifficultyDataManager._instance.CC_DEF_KEY, LevelDifficultyDataManager._instance.CCDefenseFlatBuff_1, 99999f, Effect.ValueType.FLAT);
+            ApplyEffect(Effect.AffectedStat.RES, LevelDifficultyDataManager._instance.CC_RES_KEY, LevelDifficultyDataManager._instance.CCDefenseFlatBuff_1, 99999f, Effect.ValueType.FLAT);
+        }
+        else if (diffLevel >= (int)DiffType.EnemiesDefCCBuff_2)
+        {
+            ApplyEffect(Effect.AffectedStat.DEF, LevelDifficultyDataManager._instance.CC_DEF_KEY, LevelDifficultyDataManager._instance.CCDefenseFlatBuff_2, 99999f, Effect.ValueType.FLAT);
+            ApplyEffect(Effect.AffectedStat.RES, LevelDifficultyDataManager._instance.CC_RES_KEY, LevelDifficultyDataManager._instance.CCDefenseFlatBuff_2, 99999f, Effect.ValueType.FLAT);
+        }
     }
 
     public void StartDeforst(float duration) => StartCoroutine(Deforst(duration));
@@ -212,8 +224,8 @@ public class EnemyBase : EntityBase
                 resAdd = values[4], 
                 phps = values[2];
 
-        ApplyEffect(Effect.AffectedStat.DEF, "ICEAGE_DEF_BUFF", defAdd, duration, false);
-        ApplyEffect(Effect.AffectedStat.RES, "ICEAGE_RES_BUFF", resAdd, duration, false);
+        ApplyEffect(Effect.AffectedStat.DEF, "ICEAGE_DEF_BUFF", defAdd, duration, Effect.ValueType.FLAT);
+        ApplyEffect(Effect.AffectedStat.RES, "ICEAGE_RES_BUFF", resAdd, duration, Effect.ValueType.FLAT);
         SetHealth(mHealth * values[5]);
 
         yield return null;
@@ -697,6 +709,60 @@ public class EnemyBase : EntityBase
                 item.OnFirsttimePlayerSpot(true);
             }
         }
+
+        ProcessEnterCombatDifficulty();
+    }
+
+    void ProcessEnterCombatDifficulty()
+    {
+        string combatDiffKey = LevelDifficultyDataManager._instance.COMBAT_ENTER_KEY;
+        int diff = CharacterPrefabsStorage.DifficultyLevel - 1;
+        if (diff < (int)DiffType.EnemiesCombatBuff_1) return;
+
+        if (diff == (int) DiffType.EnemiesCombatBuff_1)
+        {
+            ApplyEffect(
+                Effect.AffectedStat.ATK, 
+                combatDiffKey, 
+                LevelDifficultyDataManager._instance.CombatEnterAtk_1, 
+                LevelDifficultyDataManager._instance.CombatEnterDuration_1, 
+                Effect.ValueType.PERCENTAGE, 
+                EffectPersistType.PERSIST);
+
+            ApplyEffect(
+                Effect.AffectedStat.ASPD, 
+                combatDiffKey, 
+                LevelDifficultyDataManager._instance.CombatEnterAspd_1, 
+                LevelDifficultyDataManager._instance.CombatEnterDuration_1, 
+                Effect.ValueType.FLAT, 
+                EffectPersistType.PERSIST);
+        }
+        else
+        {
+            ApplyEffect(
+                Effect.AffectedStat.ATK,
+                combatDiffKey,
+                LevelDifficultyDataManager._instance.CombatEnterAtk_2,
+                LevelDifficultyDataManager._instance.CombatEnterDuration_2,
+                Effect.ValueType.PERCENTAGE,
+                EffectPersistType.PERSIST);
+
+            ApplyEffect(
+                Effect.AffectedStat.ASPD,
+                combatDiffKey,
+                LevelDifficultyDataManager._instance.CombatEnterAspd_2,
+                LevelDifficultyDataManager._instance.CombatEnterDuration_2,
+                Effect.ValueType.FLAT,
+                EffectPersistType.PERSIST);
+
+            ApplyEffect(
+                Effect.AffectedStat.MSPD,
+                combatDiffKey,
+                LevelDifficultyDataManager._instance.CombatEnterMspd_2,
+                LevelDifficultyDataManager._instance.CombatEnterDuration_2,
+                Effect.ValueType.PERCENTAGE,
+                EffectPersistType.PERSIST);
+        }
     }
 
     protected Vector3 SpottedPlayerPositionBeforeAttack;
@@ -817,7 +883,7 @@ public class EnemyBase : EntityBase
             string key = "ADAPTION_DEF_BUFF";
             float cur = DefBuffs.ContainsKey(key) ? DefBuffs[key].Value : 0;
             float str = Mathf.Min(cur + Adaption_DefJump, Adaption_DefJump * Adaption_MaxCount);
-            ApplyEffect(Effect.AffectedStat.DEF, key, str, 9999f, false);
+            ApplyEffect(Effect.AffectedStat.DEF, key, str, 9999f, Effect.ValueType.FLAT);
         }
 
         if (damage.MagicalDamage > 0)
@@ -825,7 +891,7 @@ public class EnemyBase : EntityBase
             string key = "ADAPTION_RES_BUFF";
             float cur = ResBuffs.ContainsKey(key) ? ResBuffs[key].Value : 0;
             float str = Mathf.Min(cur + Adaption_ResJump, Adaption_ResJump * Adaption_MaxCount);
-            ApplyEffect(Effect.AffectedStat.RES, key, str, 9999f, false);
+            ApplyEffect(Effect.AffectedStat.RES, key, str, 9999f, Effect.ValueType.FLAT);
         }
     }
 
@@ -858,6 +924,43 @@ public class EnemyBase : EntityBase
         if (MovelockoutCoroutine != null) StopCoroutine(MovelockoutCoroutine);
         MoveToOverridePosition = true;
         OverridePosition = source.transform.position;
+    }
+
+    public override void OnStunEnter()
+    {
+        DefenseWearoffOnCC();
+        base.OnStunEnter();
+    }
+
+    public override void OnFreezeEnter()
+    {
+        DefenseWearoffOnCC();
+        base.OnFreezeEnter();
+    }
+
+    void DefenseWearoffOnCC()
+    {
+        int diff = CharacterPrefabsStorage.DifficultyLevel;
+        if (diff < (int) DiffType.EnemiesDefCCBuff_1) return;
+
+        float deductValue = 
+            diff <= (int) DiffType.EnemiesDefCCBuff_1 
+            ? LevelDifficultyDataManager._instance.CCDefenseFlatFallOff_1 
+            : LevelDifficultyDataManager._instance.CCDefenseFlatFallOff_2; 
+    
+        if (DefBuffs.ContainsKey(LevelDifficultyDataManager._instance.CC_DEF_KEY))
+        {
+            DefBuffs[LevelDifficultyDataManager._instance.CC_DEF_KEY].Value -= deductValue;
+            if (DefBuffs[LevelDifficultyDataManager._instance.CC_DEF_KEY].Value <= 0) 
+                RemoveEffect(LevelDifficultyDataManager._instance.CC_DEF_KEY);
+        }
+
+        if (ResBuffs.ContainsKey(LevelDifficultyDataManager._instance.CC_RES_KEY))
+        {
+            ResBuffs[LevelDifficultyDataManager._instance.CC_RES_KEY].Value -= deductValue;
+            if (ResBuffs[LevelDifficultyDataManager._instance.CC_RES_KEY].Value <= 0) 
+                RemoveEffect(LevelDifficultyDataManager._instance.CC_RES_KEY);
+        }
     }
 
     public override void OnDeath()

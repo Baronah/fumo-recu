@@ -232,6 +232,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6772246562461740860, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
   m_PrefabInstance: {fileID: 6097371254401184919}
   m_PrefabAsset: {fileID: 0}
+--- !u!58 &2609866953098482731 stripped
+CircleCollider2D:
+  m_CorrespondingSourceObject: {fileID: 8117222602758807740, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
+  m_PrefabInstance: {fileID: 6097371254401184919}
+  m_PrefabAsset: {fileID: 0}
 --- !u!212 &6420305331894271001 stripped
 SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 974949566670964878, guid: f3221dbae6b487b49907a796747ecac4, type: 3}
@@ -276,7 +281,7 @@ MonoBehaviour:
   def: 0
   res: 10
   ASPD: 100
-  moveSpeed: 270
+  moveSpeed: 310
   attackRange: 65
   attackWindupTime: 0.4
   attackInterval: 2
@@ -303,7 +308,7 @@ MonoBehaviour:
   ProjectileSpeed: 1000
   ccBar: {fileID: 6784049404754971277}
   AttackAnimation: {fileID: 7400000, guid: ef78f774e1b926f4c9e8d58a5c5dfa3c, type: 2}
-  FeetCollider: {fileID: 0}
+  FeetCollider: {fileID: 2609866953098482731}
   sfxs: []
   BeingShiftState: 0
   FreezeTimer: 0

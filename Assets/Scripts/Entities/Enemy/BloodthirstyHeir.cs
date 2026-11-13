@@ -19,7 +19,11 @@ public class BloodthirstyHeir : EnemyBase
         if (IsAlive() && !mspdIncreased)
         {
             mspdIncreased = true;
-            ApplyEffect(Effect.AffectedStat.MSPD, "BLOODTHIRSTY_HEIR_SPOT_MSPD", speedMultiplierOnPlayerSpot * 100f, 9999f, true);
+            ApplyEffect(Effect.AffectedStat.MSPD, 
+                "BLOODTHIRSTY_HEIR_SPOT_MSPD",
+                speedMultiplierOnPlayerSpot * 100f, 
+                9999f, 
+                Effect.ValueType.PERCENTAGE);
         }
     }
 
@@ -34,7 +38,10 @@ public class BloodthirstyHeir : EnemyBase
         if (IsAlive() && !mspdIncreased)
         {
             mspdIncreased = true;
-            ApplyEffect(Effect.AffectedStat.MSPD, "BLOODTHIRSTY_HEIR_SPOT_MSPD", speedMultiplierOnPlayerSpot * 100f, 9999f, true);
+            ApplyEffect(Effect.AffectedStat.MSPD, "BLOODTHIRSTY_HEIR_SPOT_MSPD", 
+                speedMultiplierOnPlayerSpot * 100f, 
+                9999f, 
+                Effect.ValueType.PERCENTAGE);
         }
         base.OnFirsttimePlayerSpot(viaAlert);
     }

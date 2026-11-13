@@ -108,8 +108,8 @@ public class FM_16 : StageManager
             EntityManager.Enemies.ForEach(enemy =>
             {
                 if (!enemy || !enemy.IsAlive()) return;
-                enemy.ApplyEffect(Effect.AffectedStat.ASPD, ASPDBuffKey, CM_StatueASPDBuff, 9999f, false);
-                enemy.ApplyEffect(Effect.AffectedStat.MSPD, MSPDBuffKey, CM_StatueMSPDBuff, 9999f, true);
+                enemy.ApplyEffect(Effect.AffectedStat.ASPD, ASPDBuffKey, CM_StatueASPDBuff, 9999f, Effect.ValueType.FLAT);
+                enemy.ApplyEffect(Effect.AffectedStat.MSPD, MSPDBuffKey, CM_StatueMSPDBuff, 9999f, Effect.ValueType.PERCENTAGE);
             });
         }
     }

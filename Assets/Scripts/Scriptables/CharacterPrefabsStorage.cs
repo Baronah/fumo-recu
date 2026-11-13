@@ -12,8 +12,6 @@ public class CharacterPrefabsStorage : ScriptableObject
 
     public AssetReference[] PlayerAssetReferences;
 	public AssetReference[] EnemyAssetReferences;
-	public AssetReference[] SceneAssetReferences;
-	public string[] LevelTitles;
 
     public static PlayerType startingPlayer = PlayerType.MELEE;
 	public static bool EnableChallengeMode = false;

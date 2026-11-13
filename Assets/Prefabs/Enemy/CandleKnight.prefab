@@ -334,8 +334,8 @@ MonoBehaviour:
   MIN_MAGICAL_DMG: 0.1
   health: 230
   atk: 50
-  def: 15
-  res: 60
+  def: 63
+  res: 108
   ASPD: 100
   moveSpeed: 120
   attackRange: 420

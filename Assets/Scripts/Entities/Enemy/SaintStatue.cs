@@ -63,8 +63,8 @@ public class SaintStatue : EnemyBase
             EntityManager.Enemies.ForEach(enemy =>
             {
                 if (!enemy || !enemy.IsAlive()) return;
-                enemy.ApplyEffect(Effect.AffectedStat.DEF, DefBuffID, DefBuffFlat, 9999f, false);
-                enemy.ApplyEffect(Effect.AffectedStat.RES, ResBuffID, ResBuffFlat, 9999f, false);
+                enemy.ApplyEffect(Effect.AffectedStat.DEF, DefBuffID, DefBuffFlat, 9999f, Effect.ValueType.FLAT);
+                enemy.ApplyEffect(Effect.AffectedStat.RES, ResBuffID, ResBuffFlat, 9999f, Effect.ValueType.FLAT);
             });
 
             StageManager.OnEnemySpecialAbilityActivate(this);
@@ -99,7 +99,7 @@ public class SaintStatue : EnemyBase
         {
             if (!player || !player.IsAlive()) return;
             Heal(player.mHealth * 0.35f, player);
-            player.ApplyEffect(Effect.AffectedStat.DEF, "STATUE_DESTROY_DEF_BUFF", 15f, 9999f, false);
+            player.ApplyEffect(Effect.AffectedStat.DEF, "STATUE_DESTROY_DEF_BUFF", 15f, 9999f, Effect.ValueType.FLAT);
         });
 
         EntityManager.Enemies.ForEach(enemy =>

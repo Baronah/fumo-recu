@@ -124,9 +124,9 @@ public class ShroudedAssassin : EnemyBase
 
         if (FeudLevel >= MaxFeudLevel)
         {
-            ApplyEffect(Effect.AffectedStat.MSPD, "ASSASSIN_MARK_MSPD_BUFF", MaxMspdBuff * 100, 0.2f, true);
+            ApplyEffect(Effect.AffectedStat.MSPD, "ASSASSIN_MARK_MSPD_BUFF", MaxMspdBuff * 100, 0.2f, Effect.ValueType.PERCENTAGE);
             if (CurrentPhase > 1) 
-                SpottedPlayer.ApplyEffect(Effect.AffectedStat.MSPD, "ASSASSIN_MARKED_DEBUFF", -20f, 0.2f, true); 
+                SpottedPlayer.ApplyEffect(Effect.AffectedStat.MSPD, "ASSASSIN_MARKED_DEBUFF", -20f, 0.2f, Effect.ValueType.PERCENTAGE); 
         }
     }
 
@@ -157,9 +157,9 @@ public class ShroudedAssassin : EnemyBase
         if (damage.TotalDamage > 0)
         {
             if (AtkBuffs.ContainsKey(SilencerAtkBuffKey))
-                ApplyEffect(Effect.AffectedStat.ATK, SilencerAtkBuffKey, Mathf.Min(AtkBuffs[SilencerAtkBuffKey].Value + AtkBuff_Jump * 100f, MaxAtkBuff * 100f), 9999f, true);
+                ApplyEffect(Effect.AffectedStat.ATK, SilencerAtkBuffKey, Mathf.Min(AtkBuffs[SilencerAtkBuffKey].Value + AtkBuff_Jump * 100f, MaxAtkBuff * 100f), 9999f, Effect.ValueType.PERCENTAGE);
             else
-                ApplyEffect(Effect.AffectedStat.ATK, SilencerAtkBuffKey, AtkBuff_Jump * 100f, 9999f, true);
+                ApplyEffect(Effect.AffectedStat.ATK, SilencerAtkBuffKey, AtkBuff_Jump * 100f, 9999f, Effect.ValueType.PERCENTAGE);
 
             dashCooldownTimerCountdown--;
         }
@@ -647,7 +647,7 @@ public class ShroudedAssassin : EnemyBase
         float ReappearTime = 0.5f, minReappearTime = 0.35f;
         while (true)
         {
-            ApplyEffect(Effect.AffectedStat.ATK, SilencerAtkBuffKey, MaxAtkBuff * 100f, 9999f, true);
+            ApplyEffect(Effect.AffectedStat.ATK, SilencerAtkBuffKey, MaxAtkBuff * 100f, 9999f, Effect.ValueType.PERCENTAGE);
             yield return new WaitUntil(() => dashCooldownTimerCountdown <= 0 && SpottedPlayer);
 
             float minOffset = Random.Range(100f, 400f);

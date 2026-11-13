@@ -126,7 +126,7 @@ public class StageManager : MonoBehaviour
         Adaption = CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.ADAPTION);
 
         LevelName = SceneManager.GetActiveScene().name;
-        Title.text = $"<b><size=120>{LevelName}</size></b>\n{prefabStorage.LevelTitles[LevelIndex]}";
+        Title.text = $"<b><size=120>{LevelName}</size></b>\n{LevelManager._instance.GetTitle(LevelIndex)}";
 
         o_QuitBtn.onClick.AddListener(QuitStage);
         o_RetryBtn.onClick.AddListener(RetryStage);
@@ -341,8 +341,8 @@ public class StageManager : MonoBehaviour
             EntityManager.Enemies.ForEach(e =>
             {
                 if (!e || !e.IsAlive()) return;
-                e.ApplyEffect(Effect.AffectedStat.MSPD, "TIME_DILATION_MSPD_DEBUFF", -timeDilationScript.speedDebuff, timeDilationScript.cycleSwap, true);
-                e.ApplyEffect(Effect.AffectedStat.ASPD, "TIME_DILATION_ASPD_DEBUFF", -timeDilationScript.speedDebuff, timeDilationScript.cycleSwap, true);
+                e.ApplyEffect(Effect.AffectedStat.MSPD, "TIME_DILATION_MSPD_DEBUFF", -timeDilationScript.speedDebuff, timeDilationScript.cycleSwap, Effect.ValueType.PERCENTAGE);
+                e.ApplyEffect(Effect.AffectedStat.ASPD, "TIME_DILATION_ASPD_DEBUFF", -timeDilationScript.speedDebuff, timeDilationScript.cycleSwap, Effect.ValueType.PERCENTAGE);
             });
             float count = 0;
             while (count < timeDilationScript.cycleSwap)
@@ -370,8 +370,8 @@ public class StageManager : MonoBehaviour
             EntityManager.Enemies.ForEach(e =>
             {
                 if (!e || !e.IsAlive()) return;
-                e.ApplyEffect(Effect.AffectedStat.MSPD, "TIME_DILATION_MSPD_BUFF", timeDilationScript.speedBuff, timeDilationScript.cycleSwap, true);
-                e.ApplyEffect(Effect.AffectedStat.ASPD, "TIME_DILATION_ASPD_BUFF", timeDilationScript.speedBuff, timeDilationScript.cycleSwap, true);
+                e.ApplyEffect(Effect.AffectedStat.MSPD, "TIME_DILATION_MSPD_BUFF", timeDilationScript.speedBuff, timeDilationScript.cycleSwap, Effect.ValueType.PERCENTAGE);
+                e.ApplyEffect(Effect.AffectedStat.ASPD, "TIME_DILATION_ASPD_BUFF", timeDilationScript.speedBuff, timeDilationScript.cycleSwap, Effect.ValueType.PERCENTAGE);
             });
 
             count = 0f;
@@ -405,7 +405,7 @@ public class StageManager : MonoBehaviour
         enemy.b_moveSpeed += GlobalFlatSpeedAdd;
 
         EnemyStatsLookup.GetStats(enemy, LevelIndex, out bool hasChanged);
-        EnemyStatsLookup.ProcessEnemyDifficultyScaling(enemy, StageCompleteConditionType);
+        LevelDifficultyDataManager._instance.ProcessEnemyDifficultyScaling(enemy, LevelIndex);
 
         if (CharacterPrefabsStorage.EnableChallengeMode)
         {

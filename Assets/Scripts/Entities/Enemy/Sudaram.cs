@@ -45,8 +45,8 @@ public class Sudaram : EnemyBase
         originiumPollutionEffect.Play();
         b_detectionRange = detectionRange;
         Enhanced = true;
-        ApplyEffect(Effect.AffectedStat.ARNG, "SUDARAM_POLLUTION_BUFF", 9999f, 9999f, false);
-        ApplyEffect(Effect.AffectedStat.ASPD, "SUDARAM_POLLUTION_ABUFF", originiumPollutionBonusASPD, 9999f, false);
+        ApplyEffect(Effect.AffectedStat.ARNG, "SUDARAM_POLLUTION_BUFF", 9999f, 9999f, Effect.ValueType.FLAT);
+        ApplyEffect(Effect.AffectedStat.ASPD, "SUDARAM_POLLUTION_ABUFF", originiumPollutionBonusASPD, 9999f, Effect.ValueType.FLAT);
         StopMovement();
         attackPattern = AttackPattern.RANGED;
     }

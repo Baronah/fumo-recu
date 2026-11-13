@@ -178,13 +178,13 @@ public class PlayerMelee : PlayerBase
         }
         else if (diff == (int)DiffType.PlayerCD_1)
         {
-            DashCooldown *= 1.5f;
-            UltCooldown *= 1.25f;
+            DashCooldown += DashCooldown * LevelDifficultyDataManager._instance.PlayerCD_Sp_Extra_1;
+            UltCooldown += UltCooldown * LevelDifficultyDataManager._instance.PlayerCD_Ult_Extra_1;
         }
         else if (diff >= (int)DiffType.PlayerCD_2)
         {
-            DashCooldown *= 2f;
-            UltCooldown *= 1.5f;
+            DashCooldown += DashCooldown * LevelDifficultyDataManager._instance.PlayerCD_Sp_Extra_2;
+            UltCooldown += UltCooldown * LevelDifficultyDataManager._instance.PlayerCD_Ult_Extra_2;
         }
 
         base.GetSkillTreeEffects();
@@ -231,9 +231,9 @@ public class PlayerMelee : PlayerBase
             DashCooldown *= 0.55f;
             DashDuration *= 1.5f;
 
-            ApplyEffect(Effect.AffectedStat.ATK, "VOW_ATK_BUFF", 15f, 9999f, true, EffectPersistType.PERSIST, false);
-            ApplyEffect(Effect.AffectedStat.MSPD, "VOW_MSPD_BUFF", 10f, 9999f, true, EffectPersistType.PERSIST, false);
-            ApplyEffect(Effect.AffectedStat.DEF, "VOW_DEF_BUFF", 10f, 9999f, false, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.ATK, "VOW_ATK_BUFF", 15f, 9999f, Effect.ValueType.PERCENTAGE, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.MSPD, "VOW_MSPD_BUFF", 10f, 9999f, Effect.ValueType.PERCENTAGE, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.DEF, "VOW_DEF_BUFF", 10f, 9999f, Effect.ValueType.FLAT, EffectPersistType.PERSIST, false);
 
             Up_DashSlowPercentage += 20f;
 
@@ -254,9 +254,9 @@ public class PlayerMelee : PlayerBase
             ResBoost += 10;
             SpeedBoost += 0.15f;
 
-            ApplyEffect(Effect.AffectedStat.DEF, "VOW_DEF_BUFF", 10f, 9999f, false, EffectPersistType.PERSIST, false);
-            ApplyEffect(Effect.AffectedStat.RES, "VOW_RES_BUFF", 10f, 9999f, false, EffectPersistType.PERSIST, false);
-            ApplyEffect(Effect.AffectedStat.ASPD, "VOW_ASPD_BUFF", 15f, 9999f, false, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.DEF, "VOW_DEF_BUFF", 10f, 9999f, Effect.ValueType.FLAT, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.RES, "VOW_RES_BUFF", 10f, 9999f, Effect.ValueType.FLAT, EffectPersistType.PERSIST, false);
+            ApplyEffect(Effect.AffectedStat.ASPD, "VOW_ASPD_BUFF", 15f, 9999f, Effect.ValueType.FLAT, EffectPersistType.PERSIST, false);
 
             PullRadius += 100f;
             DoTRadius += 100f;
@@ -437,7 +437,13 @@ public class PlayerMelee : PlayerBase
                         {
                             if (enemy == null || !enemy.IsAlive()) continue;
 
-                            enemy.ApplyEffect(Effect.AffectedStat.MSPD, "DASH_TOUCH_SLOW", -Up_DashSlowPercentage, Up_DashSlowDuration, true, EffectPersistType.DECAY);
+                            enemy.ApplyEffect(
+                                Effect.AffectedStat.MSPD, 
+                                "DASH_TOUCH_SLOW", 
+                                -Up_DashSlowPercentage, 
+                                Up_DashSlowDuration, 
+                                Effect.ValueType.PERCENTAGE, 
+                                EffectPersistType.DECAY);
                         }
 
                         var enemyForDashExtend = enemies.FirstOrDefault(e => !EnemyHitByDash.Contains(e));
@@ -568,7 +574,13 @@ public class PlayerMelee : PlayerBase
         if (BlackFlash)
         {
             if (BlackflashSfx) BlackflashSfx.Play();
-            ApplyEffect(Effect.AffectedStat.ATK, "BLACKFLASH_ATK_BUFF", BL_AtkBuff, BL_BuffDur, true, EffectPersistType.DECAY);
+            ApplyEffect(
+                Effect.AffectedStat.ATK, 
+                "BLACKFLASH_ATK_BUFF", 
+                BL_AtkBuff, 
+                BL_BuffDur, 
+                Effect.ValueType.PERCENTAGE, 
+                EffectPersistType.DECAY);
             DisplayDamage("<color=black><size=60>BLACKFLASH!</size></color>", new(0, 55));
             playerManager.MakeCameraShake(0.6f, 0.4f);
             if (upgradeBL) defPen += BL_DefPen;
@@ -601,7 +613,13 @@ public class PlayerMelee : PlayerBase
 
     void UpgradeBlackflash()
     {
-        ApplyEffect(Effect.AffectedStat.ATK, "BLACKFLASH_PERMA_BUFF", BL_UpgradeAtkBuff, 9999f, true, EffectPersistType.PERSIST);
+        ApplyEffect(
+            Effect.AffectedStat.ATK, 
+            "BLACKFLASH_PERMA_BUFF", 
+            BL_UpgradeAtkBuff, 
+            9999f, 
+            Effect.ValueType.PERCENTAGE, 
+            EffectPersistType.PERSIST);
         BL_BuffDur *= 1.2f;
     }
 
@@ -641,28 +659,33 @@ public class PlayerMelee : PlayerBase
         {
             if (AspdBuffs.ContainsKey(WindAnthemKey))
             {
-                ApplyEffect(Effect.AffectedStat.ASPD, WindAnthemKey, Mathf.Min(WindAnthemAspdBuffCap, AspdBuffs[WindAnthemKey].Value + WindAnthemAspdBuffAmount), WindAnthemAspdBuffDuration, false);
+                ApplyEffect(
+                    Effect.AffectedStat.ASPD, 
+                    WindAnthemKey, 
+                    Mathf.Min(WindAnthemAspdBuffCap, AspdBuffs[WindAnthemKey].Value + WindAnthemAspdBuffAmount), 
+                    WindAnthemAspdBuffDuration, 
+                    Effect.ValueType.FLAT);
                 if (IsWindAnthemMaxed)
                 {
-                    ApplyEffect(Effect.AffectedStat.ASPD, "WIND_ANTHEM_MAXED_ASPD_BUFF", WindAnthemAspdBuffCap, WindAnthemAspdBuffDuration, false);
-                    ApplyEffect(Effect.AffectedStat.MSPD, "WIND_ANTHEM_MAXED_MSPD_BUFF", WindAnthemAspdBuffCap / 2, WindAnthemAspdBuffDuration, true);
+                    ApplyEffect(Effect.AffectedStat.ASPD, "WIND_ANTHEM_MAXED_ASPD_BUFF", WindAnthemAspdBuffCap, WindAnthemAspdBuffDuration, Effect.ValueType.FLAT);
+                    ApplyEffect(Effect.AffectedStat.MSPD, "WIND_ANTHEM_MAXED_MSPD_BUFF", WindAnthemAspdBuffCap / 2, WindAnthemAspdBuffDuration, Effect.ValueType.PERCENTAGE);
                 }
             }
             else
-                ApplyEffect(Effect.AffectedStat.ASPD, WindAnthemKey, WindAnthemAspdBuffAmount, WindAnthemAspdBuffDuration, false);
+                ApplyEffect(Effect.AffectedStat.ASPD, WindAnthemKey, WindAnthemAspdBuffAmount, WindAnthemAspdBuffDuration, Effect.ValueType.FLAT);
         }
         
-        ApplyEffect(Effect.AffectedStat.ATK, "JUGGERNAUNT_SKILL_ATK_BUFF", AtkBoost * 100, 999f, true, EffectPersistType.PERSIST, false);
-        ApplyEffect(Effect.AffectedStat.DEF, "JUGGERNAUNT_SKILL_DEF_BUFF", DefBoost * 100, 999f, true, EffectPersistType.PERSIST, false);
-        ApplyEffect(Effect.AffectedStat.RES, "JUGGERNAUNT_SKILL_RES_BUFF", ResBoost, 999f, false, EffectPersistType.PERSIST, false);
-        ApplyEffect(Effect.AffectedStat.MSPD, "JUGGERNAUNT_SKILL_MSPD_BUFF", SpeedBoost * 100, 999f, true, EffectPersistType.PERSIST, false);
+        ApplyEffect(Effect.AffectedStat.ATK, "JUGGERNAUNT_SKILL_ATK_BUFF", AtkBoost * 100, 999f, Effect.ValueType.PERCENTAGE, EffectPersistType.PERSIST, false);
+        ApplyEffect(Effect.AffectedStat.DEF, "JUGGERNAUNT_SKILL_DEF_BUFF", DefBoost * 100, 999f, Effect.ValueType.PERCENTAGE, EffectPersistType.PERSIST, false);
+        ApplyEffect(Effect.AffectedStat.RES, "JUGGERNAUNT_SKILL_RES_BUFF", ResBoost, 999f, Effect.ValueType.FLAT, EffectPersistType.PERSIST, false);
+        ApplyEffect(Effect.AffectedStat.MSPD, "JUGGERNAUNT_SKILL_MSPD_BUFF", SpeedBoost * 100, 999f, Effect.ValueType.PERCENTAGE, EffectPersistType.PERSIST, false);
 
         if (BeyondNight)
         {
             playerManager.ClearStageBGM(duration);
             Ambient.Play();
             SetInvisible(duration);
-            ApplyEffect(Effect.AffectedStat.ATK, "BEYOND_THE_NIGHT", -200f, 9999f, true, EffectPersistType.PERSIST);
+            ApplyEffect(Effect.AffectedStat.ATK, "BEYOND_THE_NIGHT", -200f, 9999f, Effect.ValueType.PERCENTAGE, EffectPersistType.PERSIST);
         }
 
         SkillBar.value = SkillBar.maxValue = duration;
@@ -753,8 +776,8 @@ public class PlayerMelee : PlayerBase
         foreach (EntityBase enemy in enemies)
         {
             PullEntityTowards(enemy, transform, 3.6f, 0.13f);
-            enemy.ApplyEffect(Effect.AffectedStat.MSPD, "JUGGERNAUNT_PULL_DEBUFF_MSPD", -PullDebuffValue, 1.25f, true);
-            enemy.ApplyEffect(Effect.AffectedStat.ASPD, "JUGGERNAUNT_PULL_DEBUFF_ASPD", -PullDebuffValue, 1.25f, false);
+            enemy.ApplyEffect(Effect.AffectedStat.MSPD, "JUGGERNAUNT_PULL_DEBUFF_MSPD", -PullDebuffValue, 1.25f, Effect.ValueType.PERCENTAGE);
+            enemy.ApplyEffect(Effect.AffectedStat.ASPD, "JUGGERNAUNT_PULL_DEBUFF_ASPD", -PullDebuffValue, 1.25f, Effect.ValueType.FLAT);
         }
     }
 
@@ -767,9 +790,9 @@ public class PlayerMelee : PlayerBase
         {
             DealDamage(enemy, (int)(atk * RimDoTAtkScale), 0, 0);
             if (enemy.DefDebuffs.ContainsKey(Key))
-                enemy.ApplyEffect(Effect.AffectedStat.DEF, Key, -(RimDefShredValue + enemy.DefDebuffs[Key].Value * (100f - RimDefShredValue) / 100f), 2f, true);
+                enemy.ApplyEffect(Effect.AffectedStat.DEF, Key, -(RimDefShredValue + enemy.DefDebuffs[Key].Value * (100f - RimDefShredValue) / 100f), 2f, Effect.ValueType.PERCENTAGE);
             else
-                enemy.ApplyEffect(Effect.AffectedStat.DEF, Key, -RimDefShredValue, 2f, true);
+                enemy.ApplyEffect(Effect.AffectedStat.DEF, Key, -RimDefShredValue, 2f, Effect.ValueType.PERCENTAGE);
         }
     }
 
@@ -815,7 +838,7 @@ public class PlayerMelee : PlayerBase
             foreach (EntityBase enemy in enemies)
             {
                 DealDamage(enemy, (int)(mHealth * AfterShockMhpScale + damageTakenDuringSkill), 0, 0);
-                enemy.ApplyEffect(Effect.AffectedStat.MSPD, "AFTERSHOCK_MSPD_DEBUFF", -99f, AfterShockExplodeSlowTime, true, EffectPersistType.DECAY);
+                enemy.ApplyEffect(Effect.AffectedStat.MSPD, "AFTERSHOCK_MSPD_DEBUFF", -99f, AfterShockExplodeSlowTime, Effect.ValueType.PERCENTAGE, EffectPersistType.DECAY);
             }
             defPen -= 50;
         }

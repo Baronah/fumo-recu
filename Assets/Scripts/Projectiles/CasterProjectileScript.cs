@@ -130,7 +130,7 @@ public class CasterProjectileScript : ProjectileScript
                     value = 1.25f;
                     if (ragingTerrain) value *= 2;
 
-                    target.ApplyEffect(Effect.AffectedStat.ARNG, "BLINDNESS", -200f, value, true);
+                    target.ApplyEffect(Effect.AffectedStat.ARNG, "BLINDNESS", -200f, value, Effect.ValueType.PERCENTAGE);
                     break;
             }
         }

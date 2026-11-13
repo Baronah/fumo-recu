@@ -9,6 +9,8 @@ using Image = UnityEngine.UI.Image;
 
 public class SkillTree_Manager : MonoBehaviour
 {
+    public static SkillTree_Manager _instance;
+
     [SerializeField] Upgrades SkillUpgradesData;
     public UpgradeData GetUpgradeData(SkillType skillType, SkillName name) 
         => SkillUpgradesData.GetUpgradeData(skillType, name);
@@ -31,7 +33,7 @@ public class SkillTree_Manager : MonoBehaviour
     [SerializeField] string[] FlavourTxts;
 
     private AudioSource[] audioSources;
-    LevelSelectionScript LevelSelectionScript => LevelSelectionScript.Instance;
+    LevelSelectionScript LevelSelectionScript => LevelSelectionScript._instance;
 
     SkillTree_Outview Outview;
     [SerializeField] ScrollRect skillViewScroll;
@@ -117,7 +119,6 @@ public class SkillTree_Manager : MonoBehaviour
         ULTIMATE_BUFF,
     }
 
-    public static SkillTree_Manager Instance;
     [SerializeField] private GameObject TickOverlay;
 
     [SerializeField] private Image skillIconImage;
@@ -593,9 +594,9 @@ public class SkillTree_Manager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
+        if (_instance == null)
         {
-            Instance = this;
+            _instance = this;
 
             Outview = FindObjectOfType<SkillTree_Outview>(true);
 

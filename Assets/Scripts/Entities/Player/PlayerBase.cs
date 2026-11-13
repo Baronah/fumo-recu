@@ -196,12 +196,12 @@ public class PlayerBase : EntityBase
 
         if (HasSkill(SkillTree_Manager.SkillName.GEOLOGIST_STUDY))
         {
-            ApplyEffect(Effect.AffectedStat.ATK, "GEOLOGIST_ATK_BUFF", GetSkillValues(SkillTree_Manager.SkillName.GEOLOGIST_STUDY)[0], 0.5f, true);
+            ApplyEffect(Effect.AffectedStat.ATK, "GEOLOGIST_ATK_BUFF", GetSkillValues(SkillTree_Manager.SkillName.GEOLOGIST_STUDY)[0], 0.5f, Effect.ValueType.PERCENTAGE);
         }
 
         if (HasSkill(SkillTree_Manager.SkillName.GEOLOGIST_EXPLORE))
         {
-            ApplyEffect(Effect.AffectedStat.MSPD, "GEOLOGIST_MSPD_BUFF", GetSkillValues(SkillTree_Manager.SkillName.GEOLOGIST_EXPLORE)[0], 0.5f, true);
+            ApplyEffect(Effect.AffectedStat.MSPD, "GEOLOGIST_MSPD_BUFF", GetSkillValues(SkillTree_Manager.SkillName.GEOLOGIST_EXPLORE)[0], 0.5f, Effect.ValueType.PERCENTAGE);
         }
 
         geologistCountUp = 0;
@@ -235,7 +235,7 @@ public class PlayerBase : EntityBase
             ? 0 
             : (moveSpeed - b_moveSpeed) / (b_moveSpeed * 0.01f);
 
-        if (amount > 0) ApplyEffect(Effect.AffectedStat.ASPD, "WIND_BLADE_BUFF", amount * 0.7f, 0.15f, false);
+        if (amount > 0) ApplyEffect(Effect.AffectedStat.ASPD, "WIND_BLADE_BUFF", amount * 0.7f, 0.15f, Effect.ValueType.PERCENTAGE);
     }
 
     float i_countUp = 0;
@@ -284,14 +284,14 @@ public class PlayerBase : EntityBase
 
         if (health >= mHealth * book_effectThreshold && HasSkill(SkillTree_Manager.SkillName.ATTENTION_BOOK))
         {
-            ApplyEffect(Effect.AffectedStat.ATK, "ATTENTION_BUFF", book_atkBuff, 0.22f, true);
-            ApplyEffect(Effect.AffectedStat.ASPD, "ATTENTION_BUFF", book_aspdBuff, 0.22f, true);
+            ApplyEffect(Effect.AffectedStat.ATK, "ATTENTION_BUFF", book_atkBuff, 0.22f, Effect.ValueType.PERCENTAGE);
+            ApplyEffect(Effect.AffectedStat.ASPD, "ATTENTION_BUFF", book_aspdBuff, 0.22f, Effect.ValueType.FLAT);
         }
         
         if (health <= mHealth * device_effectThreshold && HasSkill(SkillTree_Manager.SkillName.ATTENTION_DEVICE))
         {
-            ApplyEffect(Effect.AffectedStat.DEF, "ATTENTION_BUFF", device_defBuff, 0.22f, false);
-            ApplyEffect(Effect.AffectedStat.RES, "ATTENTION_BUFF", device_resBuff, 0.22f, false);
+            ApplyEffect(Effect.AffectedStat.DEF, "ATTENTION_BUFF", device_defBuff, 0.22f, Effect.ValueType.FLAT);
+            ApplyEffect(Effect.AffectedStat.RES, "ATTENTION_BUFF", device_resBuff, 0.22f, Effect.ValueType.FLAT);
 
             if (health <= mHealth * device_attentionMinThreshold && !hasLifestealBuffFromAttentionMin)
             {
@@ -331,13 +331,15 @@ public class PlayerBase : EntityBase
         GetVow();
         if (HasSkill(SkillTree_Manager.SkillName.SWAP_START_ATK))
         {
-            Heal((mHealth - health) * 0.3f);
-            ApplyEffect(Effect.AffectedStat.ATK, "SWAP_START_ATKBUFF", 75f, 5f, true, EffectPersistType.PERSIST);
+            float[] values = GetSkillValues(SkillTree_Manager.SkillName.SWAP_START_ATK);
+            Heal((mHealth - health) * values[0]);
+            ApplyEffect(Effect.AffectedStat.ATK, "SWAP_START_ATKBUFF", values[1], values[2], Effect.ValueType.PERCENTAGE, EffectPersistType.PERSIST);
         }
 
         if (HasSkill(SkillTree_Manager.SkillName.SWAP_START_MSPD))
         {
-            ApplyEffect(Effect.AffectedStat.MSPD, StartMspdBuffKey, 50f, 9999f, true, EffectPersistType.PERSIST, false);
+            float[] values = GetSkillValues(SkillTree_Manager.SkillName.SWAP_START_MSPD);
+            ApplyEffect(Effect.AffectedStat.MSPD, StartMspdBuffKey, values[0], 9999f, Effect.ValueType.PERCENTAGE, EffectPersistType.PERSIST);
         }
     }
 
@@ -359,21 +361,55 @@ public class PlayerBase : EntityBase
     {
         if (diff < (int)DiffType.PlayerFieldDebuff_1) yield break;
 
-        if (diff == (int)DiffType.PlayerFieldDebuff_1) yield return new WaitForSeconds(10f);
-        else yield return new WaitForSeconds(5f);
-
-        float c = 0, d = 40f;
-        while (c < d)
+        if (diff == (int)DiffType.PlayerFieldDebuff_1)
         {
-            float Strength_Scale80To0 = Mathf.Lerp(0, 80f, c * 1.0f / d),
-                  Strength_Scale50To0 = Mathf.Lerp(0, 50f, c * 1.0f / d);
+            yield return new WaitForSeconds(LevelDifficultyDataManager._instance.PlayerFieldStayTriggerWaitTime_1);
+        }
+        else
+        {
+            yield return new WaitForSeconds(LevelDifficultyDataManager._instance.PlayerFieldStayTriggerWaitTime_2);
+        }
 
-            ApplyEffect(Effect.AffectedStat.ATK, "DIFFICULT_HANDICAP_ATK", Strength_Scale80To0 * -1, 9999f, true);
+        float count = 0;
+        
+        float duration =
+            diff == (int)DiffType.PlayerFieldDebuff_1
+            ? LevelDifficultyDataManager._instance.PlayerFieldStay_MaxRampupTime_1
+            : LevelDifficultyDataManager._instance.PlayerFieldStay_MaxRampupTime_2;
 
-            if (diff >= (int) DiffType.PlayerFieldDebuff_2)
-                ApplyEffect(Effect.AffectedStat.MSPD, "DIFFICULT_HANDICAP_MSPD", Strength_Scale50To0 * -1, 9999f, true);
+        float aspdTargetScale = 
+            diff == (int)DiffType.PlayerFieldDebuff_1
+            ? LevelDifficultyDataManager._instance.PlayerFieldStay_MaxAspdPenalty_1
+            : LevelDifficultyDataManager._instance.PlayerFieldStay_MaxAspdPenalty_2;
 
-            c += 1;
+        float mspdTargetScale =
+            diff == (int)DiffType.PlayerFieldDebuff_1
+            ? 0
+            : LevelDifficultyDataManager._instance.PlayerFieldStay_MaxMspdPenalty_2;
+
+        while (count < duration)
+        {
+            float aspdScale = Mathf.Lerp(0, aspdTargetScale, count * 1.0f / duration);
+
+            ApplyEffect(
+                Effect.AffectedStat.ASPD, 
+                LevelDifficultyDataManager._instance.FIELD_PENALTY_KEY,
+                aspdScale * -1, 
+                9999f, 
+                Effect.ValueType.PERCENTAGE);
+
+            if (mspdTargetScale > 0)
+            {
+                float mspdScale = Mathf.Lerp(0, mspdTargetScale, count * 1.0f / duration);
+                ApplyEffect(
+                    Effect.AffectedStat.MSPD,
+                    LevelDifficultyDataManager._instance.FIELD_PENALTY_KEY,
+                    mspdScale * -1,
+                    9999f,
+                    Effect.ValueType.PERCENTAGE);
+            }
+
+            count += 1;
             yield return _waitForSeconds1;
         }
     }
@@ -481,7 +517,7 @@ public class PlayerBase : EntityBase
 
                 case SkillTree_Manager.SkillName.WINGED_STEPS_B:
                     values = GetSkillValues(SkillTree_Manager.SkillName.WINGED_STEPS_B);
-                    ApplyEffect(Effect.AffectedStat.MSPD, "WINGED_STEPS_B_BUFF", values[0], 9999f, true, EffectPersistType.PERSIST);
+                    ApplyEffect(Effect.AffectedStat.MSPD, "WINGED_STEPS_B_BUFF", values[0], 9999f, Effect.ValueType.PERCENTAGE, EffectPersistType.PERSIST);
                     break;
 
                 case SkillTree_Manager.SkillName.EQUIPMENT_BLADE:
@@ -562,7 +598,7 @@ public class PlayerBase : EntityBase
             {
                 Effect buff = kvp.Value;
                 if (!buff.TransferOnSwap) continue;
-                swapInPlayer.ApplyEffect(buff.affectedStat, kvp.Key, buff.Value, buff.Duration, buff.IsPercentage, buff.DecayOverDuration ? EffectPersistType.DECAY : EffectPersistType.PERSIST);
+                swapInPlayer.ApplyEffect(buff.affectedStat, kvp.Key, buff.Value, buff.Duration, buff.valueType, buff.DecayOverDuration ? EffectPersistType.DECAY : EffectPersistType.PERSIST);
             }
         }
 
@@ -700,7 +736,7 @@ public class PlayerBase : EntityBase
         {
             float[] values = GetSkillValues(SkillTree_Manager.SkillName.SPECIAL_MSPD);
             float duration = Mathf.Min(values[3], values[1] + specialCastCount * values[2]);
-            ApplyEffect(Effect.AffectedStat.MSPD, "SPECIAL_MSPD_BUFF", values[0], duration, true, EffectPersistType.PERSIST);
+            ApplyEffect(Effect.AffectedStat.MSPD, "SPECIAL_MSPD_BUFF", values[0], duration, Effect.ValueType.PERCENTAGE, EffectPersistType.PERSIST);
             specialCastCount++;
         }
     }
@@ -719,9 +755,9 @@ public class PlayerBase : EntityBase
     void ActivateLever()
     {
         float[] values = GetSkillValues(SkillTree_Manager.SkillName.ULTIMATE_BUFF);
-        ApplyEffect(Effect.AffectedStat.ATK, "ULTIMATE_ATK_BUFF", values[0], values[1], true, EffectPersistType.DECAY);
-        ApplyEffect(Effect.AffectedStat.ASPD, "ULTIMATE_ASPD_BUFF", values[0], values[1], true, EffectPersistType.DECAY);
-        ApplyEffect(Effect.AffectedStat.MSPD, "ULTIMATE_MSPD_BUFF", values[0], values[1], true, EffectPersistType.DECAY);
+        ApplyEffect(Effect.AffectedStat.ATK, "ULTIMATE_ATK_BUFF", values[0], values[1], Effect.ValueType.PERCENTAGE, EffectPersistType.DECAY);
+        ApplyEffect(Effect.AffectedStat.ASPD, "ULTIMATE_ASPD_BUFF", values[0], values[1], Effect.ValueType.PERCENTAGE, EffectPersistType.DECAY);
+        ApplyEffect(Effect.AffectedStat.MSPD, "ULTIMATE_MSPD_BUFF", values[0], values[1], Effect.ValueType.PERCENTAGE, EffectPersistType.DECAY);
 
         if (leverCDTimer < leverCD) return;
 
@@ -731,7 +767,7 @@ public class PlayerBase : EntityBase
         foreach (var enemy in enemies)
         {
             if (!enemy || !enemy.IsAlive()) continue;
-            enemy.ApplyEffect(Effect.AffectedStat.MSPD, "ULTIMATE_ENEMY_DEBUFF", values[2] * -1, values[3], true, EffectPersistType.DECAY);
+            enemy.ApplyEffect(Effect.AffectedStat.MSPD, "ULTIMATE_ENEMY_DEBUFF", values[2] * -1, values[3], Effect.ValueType.PERCENTAGE, EffectPersistType.DECAY);
             PushEntityFrom(enemy, transform.position, 3.6f, 0.15f, true);
         }
 
@@ -851,12 +887,12 @@ public class PlayerBase : EntityBase
                 key,
                 Mathf.Max(baseValue, newValue),
                 values[2], 
-                true, 
+                Effect.ValueType.PERCENTAGE, 
                 EffectPersistType.PERSIST);
         }
         else
         {
-            ApplyEffect(Effect.AffectedStat.MSPD, key, baseValue, values[2], true, EffectPersistType.PERSIST);
+            ApplyEffect(Effect.AffectedStat.MSPD, key, baseValue, values[2], Effect.ValueType.PERCENTAGE, EffectPersistType.PERSIST);
         }
     }
 
@@ -913,8 +949,8 @@ public class PlayerBase : EntityBase
         {
             float[] values = GetSkillValues(SkillTree_Manager.SkillName.VICTORY_ATK);
             float strength = Mathf.Min(values[3], values[0] + values[1] * enemyDefeatCount), duration = values[2];
-            ApplyEffect(Effect.AffectedStat.ATK, "VICTORY_ATK_BUFF", strength, duration, true, EffectPersistType.DECAY);
-            ApplyEffect(Effect.AffectedStat.MSPD, "VICTORY_MSPD_BUFF", strength, duration, true, EffectPersistType.DECAY);
+            ApplyEffect(Effect.AffectedStat.ATK, "VICTORY_ATK_BUFF", strength, duration, Effect.ValueType.PERCENTAGE, EffectPersistType.DECAY);
+            ApplyEffect(Effect.AffectedStat.MSPD, "VICTORY_MSPD_BUFF", strength, duration, Effect.ValueType.PERCENTAGE, EffectPersistType.DECAY);
         }
 
         if (HasSkill(SkillTree_Manager.SkillName.VICTORY_REFRESH))

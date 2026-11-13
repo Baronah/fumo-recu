@@ -103,7 +103,7 @@ public class DarkTile : EnvironmentalTileBase
             percentage = 1.0f - minRange / entity.b_attackRange;
         }
 
-        entity.ApplyEffect(Effect.AffectedStat.ARNG, "DARK_TILE_VISION_REDUCTION", -percentage * 100f, 9999f, true);
+        entity.ApplyEffect(Effect.AffectedStat.ARNG, "DARK_TILE_VISION_REDUCTION", -percentage * 100f, 9999f, Effect.ValueType.PERCENTAGE);
     }
 
     public override void OnEntityExit(EntityBase entity)

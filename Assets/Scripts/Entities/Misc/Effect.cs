@@ -14,11 +14,17 @@ public class Effect
         WEIGHT,
     }
 
+    public enum ValueType
+    {
+        FLAT,
+        PERCENTAGE,
+    }
+
     public AffectedStat affectedStat;
     
     protected EntityBase Helder;
     public float Value, Duration;
-    public bool IsPercentage;
+    public ValueType valueType;
     public bool DecayOverDuration;
     public bool TransferOnSwap = true;
 
@@ -26,12 +32,12 @@ public class Effect
 
     public bool IsInEffect => Helder != null && Value > 0f && Duration > 0f;
 
-    public Effect(EntityBase helder, AffectedStat affectedStat, float value, float duration, bool isPercentage, bool decayOverDuration, bool transferOnSwap)
+    public Effect(EntityBase helder, AffectedStat affectedStat, float value, float duration, ValueType valueType, bool decayOverDuration, bool transferOnSwap)
     {
         Helder = helder;
         InitValue = Value = value;
         InitDuration = Duration = duration;
-        IsPercentage = isPercentage;
+        this.valueType = valueType;
         DecayOverDuration = decayOverDuration;
         TransferOnSwap = transferOnSwap;
         this.affectedStat = affectedStat;
@@ -43,9 +49,9 @@ public class Effect
         Value = Mathf.Lerp(0, InitValue, Duration * 1.0f / InitDuration);
     }
 
-    public void Instantiate(EntityBase helder, AffectedStat affectedStat, float value, float duration, bool isPercentage, bool decayOverDuration = false, bool transferOnSwap = true)
+    public void Instantiate(EntityBase helder, AffectedStat affectedStat, float value, float duration, ValueType valueType, bool decayOverDuration = false, bool transferOnSwap = true)
     {
-        Instantiate(new(helder, affectedStat, value, duration, isPercentage, decayOverDuration, transferOnSwap));
+        Instantiate(new(helder, affectedStat, value, duration, valueType, decayOverDuration, transferOnSwap));
     }
 
     public void Instantiate(Effect effect)
@@ -56,7 +62,7 @@ public class Effect
         Helder = effect.Helder;
         InitValue = Value = effect.Value;
         InitDuration = Duration = effect.Duration;
-        IsPercentage = effect.IsPercentage;
+        valueType = effect.valueType;
         DecayOverDuration = effect.DecayOverDuration;
         TransferOnSwap = effect.TransferOnSwap;
         affectedStat = effect.affectedStat;
@@ -66,11 +72,11 @@ public class Effect
     {
         if (!IsInEffect) return false;
         if (!other.IsInEffect) return true;
-        if (Value > other.Value && IsPercentage == other.IsPercentage) return true;
-        if (Value == other.Value && IsPercentage == other.IsPercentage) return Duration > other.Duration;
+        if (Value > other.Value && valueType == other.valueType) return true;
+        if (Value == other.Value && valueType == other.valueType) return Duration > other.Duration;
 
-        float selfValue = IsPercentage ? Value * GetAffectAttributeValue() : Value, 
-              otherValue = other.IsPercentage ? other.Value * other.GetAffectAttributeValue() : other.Value;
+        float selfValue = valueType == ValueType.PERCENTAGE ? Value * GetAffectAttributeValue() : Value, 
+              otherValue = other.valueType == ValueType.PERCENTAGE ? other.Value * other.GetAffectAttributeValue() : other.Value;
 
         return selfValue > otherValue;
     }

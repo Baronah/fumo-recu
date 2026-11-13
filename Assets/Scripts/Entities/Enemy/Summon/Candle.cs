@@ -66,7 +66,7 @@ public class Candle : EnemyBase
     public override void OnFreezeEnter()
     {
         base.OnFreezeEnter();
-        ApplyEffect(Effect.AffectedStat.ARNG, "CANDLE_FREEZE_DEBUFF", -100f, 9999f, true);
+        ApplyEffect(Effect.AffectedStat.ARNG, "CANDLE_FREEZE_DEBUFF", -100f, 9999f, Effect.ValueType.PERCENTAGE);
     }
 
     public override void OnFreezeExit()
