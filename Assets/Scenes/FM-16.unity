@@ -494209,6 +494209,18 @@ PrefabInstance:
       propertyPath: ZoomStep
       value: 70
       objectReference: {fileID: 0}
+    - target: {fileID: 8085004257367168874, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
+      propertyPath: SwapStacks
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8085004257367168874, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
+      propertyPath: SwapCooldown
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 8085004257367168874, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
+      propertyPath: swapCooldownTimer
+      value: 18
+      objectReference: {fileID: 0}
     - target: {fileID: 8508723797104569970, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
       propertyPath: m_Lens.OrthographicSize
       value: 3500

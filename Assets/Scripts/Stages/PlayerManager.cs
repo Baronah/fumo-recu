@@ -8,7 +8,6 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using static EntityBase;
-using static LevelDifficultyModifier;
 using static PlayerToxicSmoke;
 
 [Singleton]
@@ -59,7 +58,9 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private short SwapStacks = 0;
     [SerializeField] private short SwapMaxStacks = 2;
     [SerializeField] GameObject SwapReadyEffect;
+    [SerializeField] private GameObject[] SwapStacksObjs;
     [SerializeField] private Image[] SwapStacksImg;
+
     [SerializeField] private Sprite SwapStackAvailable, SwapStackUnavailable;
 
     [Header("Skill View")]
@@ -75,7 +76,7 @@ public class PlayerManager : MonoBehaviour
     public bool IsReadingSkillView => skillViewCoroutine != null && SkillView_Overlay.activeSelf;
     private bool CanSwapPlayer => swapCooldownTimer >= SwapCooldown && player && player.IsAlive();
 
-    public bool IsPlayerAlive = true;
+    [HideInInspector] public bool IsPlayerAlive = true;
 
     [SerializeField] private GameObject[] Disables;
 
@@ -85,11 +86,10 @@ public class PlayerManager : MonoBehaviour
     Coroutine AttackCooldownCoroutine, SkillCooldownCoroutine, SpecialCooldownCoroutine;
 
     private bool IsStageStarted = false;
-    private List<AudioSource> sfxs;
     
-    private AudioSource swapSfx => sfxs[0];
-    private AudioSource hit_01_sfx => sfxs[1];
-    private AudioSource hit_02_sfx => sfxs[2];
+    [SerializeField] private AudioSource swapSfx;
+    [SerializeField] private AudioSource hit_01_sfx;
+    [SerializeField] private AudioSource hit_02_sfx;
 
     public StageManager stageManager => StageManager._instance;
 
@@ -97,7 +97,7 @@ public class PlayerManager : MonoBehaviour
     private bool RadioActive = false;
 
     #region PlayerBattleData
-    public bool FirstBlackFlash = true;
+    [HideInInspector] public bool FirstBlackFlash = true;
     #endregion
 
     float[] radioValues;
@@ -110,7 +110,6 @@ public class PlayerManager : MonoBehaviour
         PlayerInfoSect.SetActive(true);
 
         GetPlayerStartType();
-        UpdateKeybindTexts();
 
         EnableHitStop = SaveDataManager.EnableHitStop;
         RadioActive = CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_RADIO);
@@ -142,13 +141,12 @@ public class PlayerManager : MonoBehaviour
 
     private void Start()
     {
-        sfxs = GetComponents<AudioSource>().ToList();
-        sfxs.Remove(sfxs.ElementAt(0)); // Remove the music audio source
-
         GetPlayerSkills();
+        InitSwapUI();
         SwapPlayer();
 
         mainCamera = FindObjectOfType<CameraMovement>();
+        UpdateKeybindTexts();
     }
 
     private void GetPlayerStartType()
@@ -178,6 +176,7 @@ public class PlayerManager : MonoBehaviour
             mainCamera.UpdatePlayerMovement(player.transform);
         }
 
+        UpdateSwapCooldown();
         UpdateSwapUI();
         UpdateUpgradeBar();
 
@@ -195,12 +194,76 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    void InitSwapUI()
+    {
+        for (int i = 0; i < SwapStacksObjs.Length; ++i)
+        {
+            SwapStacksObjs[i].SetActive(SwapMaxStacks >= (i + 1));
+        }
+
+        int countActive = SwapStacksObjs.Count(s => s.activeSelf);
+        if (countActive == 1)
+            SwapStacksObjs[0].transform.localPosition = Vector2.zero;
+        else if (countActive == 2)
+        {
+            SwapStacksObjs[0].transform.localPosition = new(-20, 0);
+            SwapStacksObjs[1].transform.localPosition = new(20, 0);
+        }    
+        else if (countActive == 3)
+        {
+            SwapStacksObjs[0].transform.localPosition = new(-30, -5);
+            SwapStacksObjs[1].transform.localPosition = new(0, 8);
+            SwapStacksObjs[2].transform.localPosition = new(30, -5);
+        }
+        else if (countActive == 4)
+        {
+            SwapStacksObjs[0].transform.localPosition = new(-45, -10);
+            SwapStacksObjs[1].transform.localPosition = new(-18, 5);
+            SwapStacksObjs[2].transform.localPosition = new(18, 5);
+            SwapStacksObjs[3].transform.localPosition = new(45, -10);
+        }
+        else
+        {
+            SwapStacksObjs[0].transform.localPosition = new(-60, -25);
+            SwapStacksObjs[1].transform.localPosition = new(-30, -8);
+            SwapStacksObjs[2].transform.localPosition = new(0, 5);
+            SwapStacksObjs[3].transform.localPosition = new(30, -8);
+            SwapStacksObjs[4].transform.localPosition = new(60, -25);
+        }
+    }
+
+    void UpdateSwapCooldown()
+    {
+        if (SwapStacks >= SwapMaxStacks) return;
+
+        float add = Time.deltaTime;
+        if (swapCooldownTimer < SwapCooldown)
+        {
+            swapCooldownTimer += add;
+            return;
+        }
+
+        // overflows into charges
+        if (RadioActive)
+        {
+            add += add * radioValues[1] * (SwapStacks + 1);
+        }
+
+        SwapOverflowTimer += add;
+        if (SwapOverflowTimer >= SwapCooldown)
+        {
+            SwapOverflowTimer = 0;
+            SwapStacks = (short)Mathf.Min(SwapStacks + 1, SwapMaxStacks);
+        }
+    }
+
     void UpdateSwapUI()
     {
         for (int i = 0; i < SwapStacksImg.Length; ++i)
         {
             Image image = SwapStacksImg[i];
-            bool countForCharge = CanSwapPlayer && SwapStacks >= i;
+
+            bool countForCharge = SwapStacks >= i;
             float amount;
             if (!countForCharge) amount = 0;
             else if (SwapStacks > i) amount = 1;
@@ -209,23 +272,6 @@ public class PlayerManager : MonoBehaviour
             image.fillAmount = amount;
             image.sprite = countForCharge && image.fillAmount >= 1 ? SwapStackAvailable : SwapStackUnavailable;
         }
-
-        float add = Time.deltaTime;
-        swapCooldownTimer += add;
-        if (CanSwapPlayer && SwapStacks < SwapMaxStacks)
-        {
-            if (RadioActive)
-            {
-                add += add * radioValues[1] * (SwapStacks + 1);
-            }
-            SwapOverflowTimer += add;
-            if (SwapOverflowTimer >= SwapCooldown)
-            {
-                SwapOverflowTimer = 0;
-                SwapStacks = (short)Mathf.Min(SwapStacks + 1, SwapMaxStacks);
-            }
-        }
-        else SwapOverflowTimer = 0;
 
         SwapReadyEffect.SetActive(CanSwapPlayer);
     }
@@ -286,14 +332,14 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    public bool IsFirstTimeStageEnter = true;
-    public bool MintBlessing = false;
+    [HideInInspector] public bool IsFirstTimeStageEnter = true;
+    [HideInInspector] public bool MintBlessing = false;
     public void GetPlayerSkills()
     {
         radioValues = UpgradesManager._instance.GetUpgradeValues(SkillTree_Manager.SkillName.EQUIPMENT_RADIO);
         if (CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_RADIO))
         {
-            SwapCooldown -= SwapCooldown * radioValues[0];
+            SwapMaxStacks += (short) radioValues[0];
         }
 
         if (CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.AMULET))
@@ -303,7 +349,9 @@ public class PlayerManager : MonoBehaviour
     }
 
     public enum SkillType { NONE, SPECIAL, ULTIMATE }
-    public SkillType RangedSealSkill = SkillType.NONE, MeleeSealSkill = SkillType.NONE;
+    [HideInInspector] public SkillType 
+        RangedSealSkill = SkillType.NONE, 
+        MeleeSealSkill = SkillType.NONE;
 
     public bool hasVowed => RangedSealSkill != SkillType.NONE || MeleeSealSkill != SkillType.NONE;
 
@@ -332,18 +380,8 @@ public class PlayerManager : MonoBehaviour
     public void SwapPlayer()
     {
         if (IsStageStarted && (!CanSwapPlayer || !activePlayer || !activePlayer.IsAlive())) return;
-        if (IsStageStarted)
-        {
-            if (SwapStacks > 0)
-            {
-                swapCooldownTimer = SwapCooldown - 0.2f;
-                SwapStacks--;
-            }
-            else
-            {
-                SwapOverflowTimer = swapCooldownTimer = 0f;
-            }
-        }
+
+        ProcessSwapCooldown();
 
         PlayerType swapToPlayertype = GetSwapInPlayerType();
         Vector3 spawnPosition = IsStageStarted ? activePlayer.transform.position : PlayerSpawnpoint.position;
@@ -351,6 +389,21 @@ public class PlayerManager : MonoBehaviour
         SpawnSwapInPlayer(swapToPlayertype, spawnPosition);
         OnPlayerSwapIn_SetSwapUISprite(swapToPlayertype);
         SpawnEntranceSmoke(spawnPosition);
+    }
+
+    void ProcessSwapCooldown()
+    {
+        if (!IsStageStarted) return;
+
+        if (SwapStacks > 0)
+        {
+            swapCooldownTimer = SwapCooldown - 0.2f;
+            SwapStacks--;
+        }
+        else
+        {
+            SwapOverflowTimer = swapCooldownTimer = 0f;
+        }
     }
 
     void SpawnSwapInPlayer(PlayerType playerType, Vector3 position)

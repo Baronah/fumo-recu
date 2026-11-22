@@ -1,0 +1,34 @@
+using System;
+using Unity.VisualScripting;
+using UnityEngine;
+
+[Singleton]
+public class GlobalEffectManager : MonoBehaviour
+{
+	public static GlobalEffectManager _instance;
+    private void Awake()
+    {
+        if (!_instance) _instance = this;
+        else Destroy(gameObject);
+    }
+
+    [SerializeField] EffectData[] EffectDatas;
+
+    public GameObject GetEffect(string Name)
+    {
+        foreach (var data in EffectDatas)
+        {
+            if (data.Name.Equals(Name))
+                return data.EffectPrefab;
+        }
+
+        return null;
+    }
+}
+
+[Serializable]
+public class EffectData
+{
+    public string Name;
+    public GameObject EffectPrefab;
+}

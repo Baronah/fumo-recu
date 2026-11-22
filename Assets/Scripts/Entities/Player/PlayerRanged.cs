@@ -132,6 +132,7 @@ public class PlayerRanged : PlayerBase
 
     public override void InitializeComponents()
     {
+        SuperConnductUI = GlobalEffectManager._instance.GetEffect("Superconduct");
         SkillBar = SkillBarObj.GetComponentInChildren<Slider>();
         base.InitializeComponents();
     }
@@ -466,7 +467,7 @@ public class PlayerRanged : PlayerBase
 
     bool IsFreezeActive = false;
     GameObject freezeMaintRing = null;
-    [SerializeField] GameObject SuperConnductUI;
+    GameObject SuperConnductUI;
     public IEnumerator CastFreeze()
     {
         if (!IsAlive() || !CanUseFreeze || IsFrozen || IsStunned) yield break;
@@ -592,7 +593,10 @@ public class PlayerRanged : PlayerBase
         if (enemy.IsFrozen)
         {
             GameObject sp = Instantiate(SuperConnductUI, enemy.transform.position + new Vector3(50, 70), Quaternion.identity, enemy.transform);
-            sp.GetComponent<UI_SuperConduct>().Inititialize(enemy, "FREEZE_SUPERCONDUCT_DEF_DEBUFF");
+            sp.GetComponent<UI_TiedWithEffect>().Inititialize(
+                enemy, 
+                "FREEZE_SUPERCONDUCT_DEF_DEBUFF",
+                enemy.DefDebuffs);
         }
     }
 

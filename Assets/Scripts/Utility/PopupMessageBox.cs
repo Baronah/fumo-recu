@@ -11,7 +11,7 @@ public class PopupMessageBox : MonoBehaviour
     private void Start()
     {
         CloseBtn = GetComponentInChildren<Button>();
-        CloseBtn.onClick.AddListener(Close);
+        if (CloseBtn) CloseBtn.onClick.AddListener(Close);
     }
 
     public void SetMessage(string message) => MessageTxt.text = message.Replace(@"\n", "\n");

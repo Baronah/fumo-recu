@@ -141,7 +141,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2297324188542933895, guid: 677b10a779982cb4ca974f8ec47f17f5, type: 3}
       propertyPath: m_Name
-      value: Knights
+      value: Gate_Knights
       objectReference: {fileID: 0}
     - target: {fileID: 2463992724884893651, guid: 677b10a779982cb4ca974f8ec47f17f5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -185,7 +185,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2759397622582439361, guid: 677b10a779982cb4ca974f8ec47f17f5, type: 3}
       propertyPath: TargetObjectsToInteract.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2759397622582439361, guid: 677b10a779982cb4ca974f8ec47f17f5, type: 3}
       propertyPath: TargetObjectsToInteract.Array.data[0]
@@ -296,6 +296,17 @@ PrefabInstance:
       addedObject: {fileID: 1921414077}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 677b10a779982cb4ca974f8ec47f17f5, type: 3}
+--- !u!114 &40464713 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2759397622582439361, guid: 677b10a779982cb4ca974f8ec47f17f5, type: 3}
+  m_PrefabInstance: {fileID: 40464712}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 985f379f24559a7468cb908f135fdcb6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &52078589
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -332,8 +343,8 @@ MonoBehaviour:
   PausedSprite: {fileID: 21300000, guid: b1919bdb48d44784697497e2fd68e898, type: 3}
   UnpausedSprite: {fileID: 21300000, guid: 96af0636a2e0062489482ce82248fbab, type: 3}
   GlobalFlatSpeedAdd: 0
-  ChallengeModeStatsModifier: 1.3
-  DoNotShowSpawnsGraphic: 0
+  ChallengeModeStatsModifier: 1.2
+  DoNotShowSpawnsGraphic: 1
   EnableLowDetail: 0
   MaxEnemies: 200
   StageCompleteConditionType: 1
@@ -3932,6 +3943,7 @@ GameObject:
   - component: {fileID: 2046844418}
   - component: {fileID: 2046844417}
   - component: {fileID: 2046844416}
+  - component: {fileID: 2046844421}
   m_Layer: 8
   m_Name: FumoGate
   m_TagString: Untagged
@@ -4369,6 +4381,21 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!114 &2046844421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2046844414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c01f4cdab47e1e429e8dfa5e73dc991, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  KillgateEnemies:
+  - {fileID: 40464713}
+  MessagePrefab: {fileID: 859200677158689519, guid: 83809a5602c5d1b429556647a0fc6c11, type: 3}
 --- !u!1 &2096188858
 GameObject:
   m_ObjectHideFlags: 0

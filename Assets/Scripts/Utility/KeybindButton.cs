@@ -88,20 +88,16 @@ public class KeybindButton : MonoBehaviour
     {
         while (isListening)
         {
-            // Check for any key press
             if (Input.inputString.Length > 0)
             {
-                // Get the first character pressed
                 char keyPressed = Input.inputString[0];
 
-                // Skip control characters and newlines
                 if (keyPressed == '\b' || keyPressed == '\n' || keyPressed == '\r')
                 {
                     yield return null;
                     continue;
                 }
 
-                // Try to convert to KeyCode
                 KeyCode detectedKey = GetKeyCodeFromChar(keyPressed);
                 if (detectedKey != KeyCode.None)
                 {
@@ -110,12 +106,10 @@ public class KeybindButton : MonoBehaviour
                 }
             }
 
-            // Check for special keys that don't appear in inputString
             foreach (KeyCode key in System.Enum.GetValues(typeof(KeyCode)))
             {
                 if (Input.GetKeyDown(key))
                 {
-                    // Skip mouse buttons for keyboard binding
                     if (IsMouseButton(key))
                         continue;
 
@@ -124,7 +118,6 @@ public class KeybindButton : MonoBehaviour
                 }
             }
 
-            // Allow escape to cancel
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 StopListeningForKey();
@@ -208,22 +201,21 @@ public class KeybindButton : MonoBehaviour
             return (KeyCode)System.Enum.Parse(typeof(KeyCode), "Alpha" + c);
         }
 
-        // Handle special characters
-        switch (c)
+        return c switch
         {
-            case ' ': return KeyCode.Space;
-            case '.': return KeyCode.Period;
-            case ',': return KeyCode.Comma;
-            case ';': return KeyCode.Semicolon;
-            case '\'': return KeyCode.Quote;
-            case '[': return KeyCode.LeftBracket;
-            case ']': return KeyCode.RightBracket;
-            case '-': return KeyCode.Minus;
-            case '=': return KeyCode.Equals;
-            case '\\': return KeyCode.Backslash;
-            case '/': return KeyCode.Slash;
-            default: return KeyCode.None;
-        }
+            ' ' => KeyCode.Space,
+            '.' => KeyCode.Period,
+            ',' => KeyCode.Comma,
+            ';' => KeyCode.Semicolon,
+            '\'' => KeyCode.Quote,
+            '[' => KeyCode.LeftBracket,
+            ']' => KeyCode.RightBracket,
+            '-' => KeyCode.Minus,
+            '=' => KeyCode.Equals,
+            '\\' => KeyCode.Backslash,
+            '/' => KeyCode.Slash,
+            _ => KeyCode.None,
+        };
     }
 
     /// <summary>
@@ -237,25 +229,28 @@ public class KeybindButton : MonoBehaviour
             case KeyCode.RightArrow: return "Right Arrow";
             case KeyCode.UpArrow: return "Up Arrow";
             case KeyCode.DownArrow: return "Down Arrow";
-            case KeyCode.LeftShift: return "Left Shift";
-            case KeyCode.RightShift: return "Right Shift";
-            case KeyCode.LeftControl: return "Left Ctrl";
-            case KeyCode.RightControl: return "Right Ctrl";
-            case KeyCode.LeftAlt: return "Left Alt";
-            case KeyCode.RightAlt: return "Right Alt";
+            case KeyCode.LeftShift: return "L.Shift";
+            case KeyCode.RightShift: return "R.Shift";
+            case KeyCode.LeftControl: return "L.Ctrl";
+            case KeyCode.RightControl: return "R.Ctrl";
+            case KeyCode.LeftAlt: return "L.Alt";
+            case KeyCode.RightAlt: return "R.Alt";
             case KeyCode.Return: return "Enter";
             case KeyCode.Backspace: return "Backspace";
-            case KeyCode.Delete: return "Delete";
-            case KeyCode.Insert: return "Insert";
+            case KeyCode.Delete: return "DEL";
+            case KeyCode.Insert: return "INS";
             case KeyCode.Home: return "Home";
-            case KeyCode.End: return "End";
-            case KeyCode.PageUp: return "Page Up";
-            case KeyCode.PageDown: return "Page Down";
-            case KeyCode.CapsLock: return "Caps Lock";
+            case KeyCode.End: return "END";
+            case KeyCode.PageUp: return "PG UP";
+            case KeyCode.PageDown: return "PG DN";
+            case KeyCode.CapsLock: return "Caps";
             case KeyCode.Tab: return "Tab";
             case KeyCode.Space: return "Space";
+            case KeyCode.Semicolon: return ";";
+            case KeyCode.LeftBracket: return "[";
+            case KeyCode.RightBracket: return "]";
+            case KeyCode.Quote: return "'";
             default:
-                // For regular keys, just return the name
                 string keyName = key.ToString();
                 if (keyName.StartsWith("Alpha"))
                     return keyName.Replace("Alpha", "");

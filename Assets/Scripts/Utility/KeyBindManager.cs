@@ -39,10 +39,8 @@ public class KeybindManager : MonoBehaviour
     /// </summary>
     private void SetupKeybindButtons()
     {
-        // Initialize the list
         allKeybindButtons = new List<KeybindButton>();
 
-        // Set up each button with its corresponding action
         if (attackButton != null)
         {
             attackButton.SetKeyAction(InputManager.KeyAction.Attack);

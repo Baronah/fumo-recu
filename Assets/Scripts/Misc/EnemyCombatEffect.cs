@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UI_SuperConduct : MonoBehaviour
+public class EnemyCombatEffect : MonoBehaviour
 {
     [SerializeField] Image GlowPart;
     EntityBase Target;

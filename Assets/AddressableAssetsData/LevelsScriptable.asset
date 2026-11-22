@@ -167,7 +167,8 @@ MonoBehaviour:
     AppearingEnemies: 050000000a000000090000000b0000000c000000
     EnvironmentTypes: 01000000
     BanSkills: 
-    ChallengeModeModifier: utants' will be replaced by 'Bloodboil Knightclub Elites'.
+    ChallengeModeModifier: Some 'Originutants' will be replaced by 'Bloodboil Knightclub
+      Elites'.
     SecretDes: 
   - SceneAssetReferences:
       m_AssetGUID: 25d55073365bba546bf074bc5649ea87

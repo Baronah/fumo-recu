@@ -91,11 +91,11 @@ MonoBehaviour:
     skillType: 0
     name: Equipment - Claw
     icon: {fileID: 21300000, guid: 435d461e4ddf2ad479a85456745037aa, type: 3}
-    description: Attacks ignore <color=#ff4545>15% DEF</color> and deal increased
+    description: Attacks ignore <color=#ff4545>20% DEF</color> and deal increased
       damage based on the target's missing health (maximum bonus reaches at <color=red>+50%
       damage</color>).
     values:
-    - 15
+    - 20
     - 0.5
     - 30
     shortDescription: Attacks ignore some DEF and deal increased damage based on
@@ -117,10 +117,10 @@ MonoBehaviour:
     skillType: 0
     name: Equipment - Provisions
     icon: {fileID: 21300000, guid: 711b8036db6ed0441be5fb2501ba4ea1, type: 3}
-    description: <color=green>Healing effectiveness +25%</color>, recovers 1% max
-      HP plus 2% missing HP every second.
+    description: <color=green>Max HP +50</color>, recovers 1% max HP plus 2% missing
+      HP every second.
     values:
-    - 0.25
+    - 50
     - 0.01
     - 0.02
     shortDescription: Healing effectiveness increases and regenerates missing HP
@@ -129,13 +129,11 @@ MonoBehaviour:
     skillType: 0
     name: Equipment - Radio
     icon: {fileID: 21300000, guid: 8870bac2f99088b40ad1157ffc765c25, type: 3}
-    description: <color=#ff9717>Swap cool-down -15%</color>, every available swap
-      further reduces the cool-down by <color=#ff9717>20%</color>.
+    description: Swap max charge +1. For every charged swap, swap charge speed <color=#ff9717>+15%r</color>.
     values:
+    - 1
     - 0.15
-    - 0.2
-    shortDescription: Swap cool-down reduces, further reduces for every available
-      charge.
+    shortDescription: Swap charges faster for every charged swap.
   - skillName: 25
     skillType: 0
     name: Victory Rewind - Spirit

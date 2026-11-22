@@ -122,7 +122,7 @@ public class EnemyBase : EntityBase
     protected PlayerBase SpottedPlayer, RecentlyScannedPlayer;
     public bool HasSpottedPlayer => SpottedPlayer;
 
-    protected bool IsGuarding = true;
+    protected bool HasPlayerSpotted = false;
     public bool CanDetectThroughWalls = false;
     private short CurrentCheckpointIndex = 0;
 
@@ -251,6 +251,8 @@ public class EnemyBase : EntityBase
             SpottedPlayer = EntityManager.Players.FirstOrDefault(p => p && p.IsAlive());
             count++;
         }
+
+        if (SpottedPlayer) OnFirsttimePlayerSpot();
     }
 
     public override void FixedUpdate()
@@ -670,7 +672,6 @@ public class EnemyBase : EntityBase
             }
 
             SpottedPlayer = RecentlyScannedPlayer;
-            IsGuarding = false;
             OnFirsttimePlayerSpot();
         }
         else
@@ -690,12 +691,15 @@ public class EnemyBase : EntityBase
 
     public virtual void OnFirsttimePlayerSpot(bool viaAlert = false)
     {
-        detectionRange = 99999f;
-        CanDetectThroughWalls = true;
+        if (!HasPlayerSpotted)
+        {
+            detectionRange = 99999f;
+            CanDetectThroughWalls = true;
+        }
+
         MoveToOverridePosition = false;
         MoveToOverridePositionJumpCnt = 0;
         FaceToward(SpottedPlayer.transform.position);
-        IsGuarding = false;
         MovementLockout = 0;
 
         ForceChangePath();
@@ -711,10 +715,12 @@ public class EnemyBase : EntityBase
         }
 
         ProcessEnterCombatDifficulty();
+        HasPlayerSpotted = true;
     }
 
     void ProcessEnterCombatDifficulty()
     {
+        if (HasPlayerSpotted) return;
         string combatDiffKey = LevelDifficultyDataManager._instance.COMBAT_ENTER_KEY;
         int diff = CharacterPrefabsStorage.DifficultyLevel - 1;
         if (diff < (int)DiffType.EnemiesCombatBuff_1) return;
@@ -763,6 +769,11 @@ public class EnemyBase : EntityBase
                 Effect.ValueType.PERCENTAGE,
                 EffectPersistType.PERSIST);
         }
+
+        GameObject effectPrefab = GlobalEffectManager._instance.GetEffect("EnemyCombat");
+        GameObject effect = Instantiate(effectPrefab, transform.position + new Vector3(-50, 60), Quaternion.identity, transform);
+        effect.GetComponent<UI_TiedWithEffect>()
+            .Inititialize(this, combatDiffKey, AtkBuffs);
     }
 
     protected Vector3 SpottedPlayerPositionBeforeAttack;

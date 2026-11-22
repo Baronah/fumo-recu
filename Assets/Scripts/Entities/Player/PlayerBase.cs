@@ -532,7 +532,7 @@ public class PlayerBase : EntityBase
 
                 case SkillTree_Manager.SkillName.EQUIPMENT_PROVISIONS:
                     values = GetSkillValues(SkillTree_Manager.SkillName.EQUIPMENT_PROVISIONS);
-                    HealingEffectiveness += values[0];
+                    mHealth += values[0];
                     break;
 
                 case SkillTree_Manager.SkillName.HEAVY_HITTER:

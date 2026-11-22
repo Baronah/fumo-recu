@@ -203,6 +203,8 @@ public class EnemySpawnpointScript : MonoBehaviour
     }
 
     bool onDeathTriggered = false;
+    public bool spawnedEnemiesAreDead => onDeathTriggered;
+
     public virtual void OnSpawnedEnemyDeath()
     {
         if (onDeathTriggered) return;
