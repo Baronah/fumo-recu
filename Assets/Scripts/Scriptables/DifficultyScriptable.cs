@@ -25,8 +25,8 @@ public class DifficultyScriptable : ScriptableObject
     public float CombatEnterDuration_2 = 6f;
 
     public readonly string CC_DEF_KEY = "DEF_CC_WEAROFF", CC_RES_KEY = "RES_CC_WEAROFF";
-    public float CCDefenseFlatBuff_1 = 30, CCDefenseFlatBuff_2 = 48;
-    public float CCDefenseFlatFallOff_1 = 10, CCDefenseFlatFallOff_2 = 12;
+    public int CCDefenseFlatBuff_1 = 30, CCDefenseFlatBuff_2 = 48;
+    public int CCDefenseFlatFallOff_1 = 10, CCDefenseFlatFallOff_2 = 12;
 
     public readonly string FIELD_PENALTY_KEY = "PLAYER_FIELD_PENALTY";
     public float PlayerFieldStayTriggerWaitTime_1 = 10f;

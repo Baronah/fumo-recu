@@ -200,6 +200,11 @@ public class EnemyBase : EntityBase
             IsComponentsInitialized = true;
         }
 
+        EnemyDefenseBuff();
+    }
+
+    void EnemyDefenseBuff()
+    {
         int diffLevel = (CharacterPrefabsStorage.DifficultyLevel - 1);
         if (diffLevel == (int)DiffType.EnemiesDefCCBuff_1)
         {
@@ -211,6 +216,21 @@ public class EnemyBase : EntityBase
             ApplyEffect(Effect.AffectedStat.DEF, LevelDifficultyDataManager._instance.CC_DEF_KEY, LevelDifficultyDataManager._instance.CCDefenseFlatBuff_2, 99999f, Effect.ValueType.FLAT);
             ApplyEffect(Effect.AffectedStat.RES, LevelDifficultyDataManager._instance.CC_RES_KEY, LevelDifficultyDataManager._instance.CCDefenseFlatBuff_2, 99999f, Effect.ValueType.FLAT);
         }
+
+        float deductValue =
+            diffLevel <= (int)DiffType.EnemiesDefCCBuff_1
+            ? LevelDifficultyDataManager._instance.CCDefenseFlatFallOff_1
+            : LevelDifficultyDataManager._instance.CCDefenseFlatFallOff_2;
+
+        GameObject defenseEffectPrefab = GlobalEffectManager._instance.GetEffect("EnemyDefense");
+        GameObject defenseEffect = Instantiate(defenseEffectPrefab, transform.position + new Vector3(-60, 20), Quaternion.identity, transform);
+        defenseEffect.GetComponent<UI_EnemyDefense>()
+                    .Inititialize(
+                        this, 
+                        LevelDifficultyDataManager._instance.CC_DEF_KEY,
+                        DefBuffs,
+                        deductValue
+                    );
     }
 
     public void StartDeforst(float duration) => StartCoroutine(Deforst(duration));

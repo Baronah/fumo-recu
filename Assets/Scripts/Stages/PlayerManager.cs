@@ -43,7 +43,7 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private Sprite MeleeIcon, RangedIcon;
 
     [Header("Input guide")]
-    [SerializeField] private TMP_Text txtSwapKey; 
+    [SerializeField] private TMP_Text txtSwapKey;
     [SerializeField] private TMP_Text txtViewKey, txtSViewKey, txtAttackKey, txtSpecialKey, txtSkillKey, txtSlowKey, txtMapKey;
     [SerializeField] private TMP_Text txtMapOffInstruction, txtSkillViewOffInstruction;
 
@@ -86,7 +86,7 @@ public class PlayerManager : MonoBehaviour
     Coroutine AttackCooldownCoroutine, SkillCooldownCoroutine, SpecialCooldownCoroutine;
 
     private bool IsStageStarted = false;
-    
+
     [SerializeField] private AudioSource swapSfx;
     [SerializeField] private AudioSource hit_01_sfx;
     [SerializeField] private AudioSource hit_02_sfx;
@@ -113,6 +113,14 @@ public class PlayerManager : MonoBehaviour
 
         EnableHitStop = SaveDataManager.EnableHitStop;
         RadioActive = CharacterPrefabsStorage.Skills.Contains(SkillTree_Manager.SkillName.EQUIPMENT_RADIO);
+
+        StartCoroutine(WaitForKeyBinds());
+    }
+
+    IEnumerator WaitForKeyBinds()
+    {
+        yield return new WaitUntil(() => InputManager.Instance);
+        UpdateKeybindTexts();
     }
 
     public void UpdateKeybindTexts()
@@ -146,7 +154,6 @@ public class PlayerManager : MonoBehaviour
         SwapPlayer();
 
         mainCamera = FindObjectOfType<CameraMovement>();
-        UpdateKeybindTexts();
     }
 
     private void GetPlayerStartType()

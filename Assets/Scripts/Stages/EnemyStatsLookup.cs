@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using UnityEngine;
 using static EnemyBase;
-using static LevelDifficultyModifier;
 
 public static class EnemyStatsLookup
 {

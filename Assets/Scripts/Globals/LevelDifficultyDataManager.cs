@@ -98,10 +98,10 @@ public class LevelDifficultyDataManager : MonoBehaviour
 
     public string CC_DEF_KEY => difficultyScriptable.CC_DEF_KEY;
     public string CC_RES_KEY => difficultyScriptable.CC_RES_KEY;
-    public float CCDefenseFlatBuff_1 => difficultyScriptable.CCDefenseFlatBuff_1;
-    public float CCDefenseFlatBuff_2 => difficultyScriptable.CCDefenseFlatBuff_2;
-    public float CCDefenseFlatFallOff_1 => difficultyScriptable.CCDefenseFlatFallOff_1;
-    public float CCDefenseFlatFallOff_2 => difficultyScriptable.CCDefenseFlatFallOff_2;
+    public int CCDefenseFlatBuff_1 => difficultyScriptable.CCDefenseFlatBuff_1;
+    public int CCDefenseFlatBuff_2 => difficultyScriptable.CCDefenseFlatBuff_2;
+    public int CCDefenseFlatFallOff_1 => difficultyScriptable.CCDefenseFlatFallOff_1;
+    public int CCDefenseFlatFallOff_2 => difficultyScriptable.CCDefenseFlatFallOff_2;
 
     public string FIELD_PENALTY_KEY => difficultyScriptable.FIELD_PENALTY_KEY;
     public float PlayerFieldStayTriggerWaitTime_1 => difficultyScriptable.PlayerFieldStayTriggerWaitTime_1;

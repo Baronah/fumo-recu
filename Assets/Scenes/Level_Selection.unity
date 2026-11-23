@@ -9497,6 +9497,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   difficultyScriptable: {fileID: 11400000, guid: 566073811d5ceea49aa573ebb406228d, type: 2}
+  DifficultyHpMultiplierBase: 0.04
+  DifficultyAtkMultiplierBase: 0.025
 --- !u!4 &423856225
 Transform:
   m_ObjectHideFlags: 0
