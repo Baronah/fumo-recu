@@ -6,7 +6,13 @@ public class SaintStatue : EnemyBase
     [SerializeField] GameObject ManagerPrefab;
     [SerializeField] GameObject HealEffect;
     public float DefBuffFlat = 15f, ResBuffFlat = 20f, SelfHpHealingBonus_PerSecond = 0.005f;
-    public float HealOnDeathPercentage = 0.35f, DefFlatBuffOnDeathPercentage = 15f;
+    public float HealOnDeathPercentage = 0.35f, DefFlatBuffOnDeath = 15f, ResFlatBuffOnDeath = 10f;
+
+    public bool CanHeal =>
+        IsAlive() &&
+        !IsFrozen &&
+        !IsStunned &&
+        environmentalTilesStandingOn.Contains(StageManager.EnvironmentType.MEDICAL_TILE);
 
     public override void InitializeComponents()
     {
@@ -47,7 +53,7 @@ public class SaintStatue : EnemyBase
 
     public override void FixedUpdate()
     {
-        HealEffect.SetActive(environmentalTilesStandingOn.Contains(StageManager.EnvironmentType.MEDICAL_TILE) && IsAlive());
+        HealEffect.SetActive(CanHeal);
         base.FixedUpdate();
     }
 
@@ -98,8 +104,9 @@ public class SaintStatue : EnemyBase
         EntityManager.Players.ForEach(player =>
         {
             if (!player || !player.IsAlive()) return;
-            Heal(player.mHealth * 0.35f, player);
-            player.ApplyEffect(Effect.AffectedStat.DEF, "STATUE_DESTROY_DEF_BUFF", 15f, 9999f, Effect.ValueType.FLAT);
+            Heal(player.mHealth * HealOnDeathPercentage, player);
+            player.ApplyEffect(Effect.AffectedStat.DEF, "STATUE_DESTROY_DEF_BUFF", DefFlatBuffOnDeath, 9999f, Effect.ValueType.FLAT);
+            player.ApplyEffect(Effect.AffectedStat.RES, "STATUE_DESTROY_RES_BUFF", ResFlatBuffOnDeath, 9999f, Effect.ValueType.FLAT);
         });
 
         EntityManager.Enemies.ForEach(enemy =>
@@ -122,7 +129,7 @@ public class SaintStatue : EnemyBase
             "• Does not move and attack, and does not count toward battle progress.\n" +
             "• Increases the DEF and RES of all enemies while present.\n" +
             "• While standing on a <color=green>Medical Tile</color>, transfers its healing effect to all presenting enemies on the map.\n" +
-            "• Upon defeat, heals your units once and grants them a permanent DEF buff.";
+            "• Upon defeat, heals your units once and grants them a permanent DEF and RES buff.";
         TooltipsDescription = "<color=yellow>Increases the DEF and RES of enemies on the map</color>. " +
             "While standing on a <color=green>Medical Tile</color>, continuously heals all presenting enemies.";
 

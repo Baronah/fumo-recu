@@ -14,9 +14,9 @@ public class CasterProjectileScript : ProjectileScript
     {
         base.ResetProperties();
 
-        if (InitColor == null) InitColor = renderer.color;
+        if (InitColor == null) InitColor = spriteRenderer.color;
 
-        renderer.color = (Color)InitColor;
+        spriteRenderer.color = (Color)InitColor;
         contactedEnvironmentType.Clear();
         bounceCount = 0;
         appliedDamage = false;
@@ -187,7 +187,7 @@ public class CasterProjectileScript : ProjectileScript
         if (!fieldExpertEnabled) return;
         if (contactedEnvironmentType.Contains(environmentType)) return;
         
-        if (!renderer) renderer = GetComponent<SpriteRenderer>();
+        if (!spriteRenderer) spriteRenderer = GetComponent<SpriteRenderer>();
 
         contactedEnvironmentType.Add(environmentType);
 
@@ -206,7 +206,7 @@ public class CasterProjectileScript : ProjectileScript
         }
 
         finalColor /= contactedEnvironmentType.Count;
-        renderer.color = finalColor;
+        spriteRenderer.color = finalColor;
 
         Color finalTrailColor = Color.black;
 

@@ -144,15 +144,15 @@ public class LevelDifficultyModifier : MonoBehaviour
                     $"they gain <color=yellow>+{difficultyManager.AlertMspdBonus * 100}% MSPD</color> when moving toward the source of the attack.";
 
             if (ConvertedDiffLevel == (int)DiffType.EnemiesDefCCBuff_1)
-                ModifierDetail.text += 
-                    $"\n\nEnemies gains <color=#ff9717>+{difficultyManager.CCDefenseFlatBuff_1}</color> <color=yellow>DEF</color> and <color=#00ffff>RES</color>. " +
-                    $"This bonus falls off by <color=#ff9717>-{difficultyManager.CCDefenseFlatFallOff_1}</color> every time " +
-                    $"they are inflicted by negative statuses, up to {difficultyManager.CCDefenseFlatBuff_1 / difficultyManager.CCDefenseFlatFallOff_1} times.";
+                ModifierDetail.text +=
+                    $"\n\nEnemies gains <color=yellow>{difficultyManager.CCDefenseFlatBuff_1 / difficultyManager.CCDefenseFlatFallOff_1} stacks</color> " +
+                    $"of <color=#ff9717>+{difficultyManager.CCDefenseFlatFallOff_1}</color> <color=yellow>DEF</color> and <color=#00ffff>RES</color>. " +
+                    $"One stack is removed each time they are inflicted by negative status, down to 0.";
             else if (ConvertedDiffLevel >= (int)DiffType.EnemiesDefCCBuff_2)
                 ModifierDetail.text +=
-                    $"\n\nEnemies gains <color=#ff9717>+{difficultyManager.CCDefenseFlatBuff_2}</color> <color=yellow>DEF</color> and <color=#00ffff>RES</color>. " +
-                    $"This bonus falls off by <color=#ff9717>-{difficultyManager.CCDefenseFlatFallOff_2}</color> every time " +
-                    $"they are inflicted by negative statuses, up to {difficultyManager.CCDefenseFlatBuff_2 / difficultyManager.CCDefenseFlatFallOff_2} times.";
+                    $"\n\nEnemies gains <color=yellow>{difficultyManager.CCDefenseFlatBuff_2 / difficultyManager.CCDefenseFlatFallOff_2} stacks</color> " +
+                    $"of <color=#ff9717>+{difficultyManager.CCDefenseFlatFallOff_2}</color> <color=yellow>DEF</color> and <color=#00ffff>RES</color>. " +
+                    $"One stack is removed each time they are inflicted by negative status, down to 0.";
 
             if (ConvertedDiffLevel >= (int)DiffType.EnemiesStatusResistant)
                 ModifierDetail.text += $"\n\nMelee enemies gains <color=#ff00ff>status resistance</color>, which halves the durations of negative statuses on them.";

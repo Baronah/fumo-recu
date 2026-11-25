@@ -75,12 +75,18 @@ MonoBehaviour:
     StatModifiers:
     - affectedStat: 0
       valueType: 1
-      Value: 40
+      Value: 25
+    - affectedStat: 6
+      valueType: 0
+      Value: 15
   - LevelIndex: 9
     StatModifiers:
     - affectedStat: 2
       valueType: 0
-      Value: 40
+      Value: 25
+    - affectedStat: 5
+      valueType: 1
+      Value: 15
   - LevelIndex: 10
     StatModifiers:
     - affectedStat: 3
@@ -104,17 +110,23 @@ MonoBehaviour:
       Value: 20
     - affectedStat: 5
       valueType: 1
-      Value: 15
+      Value: 20
   - LevelIndex: 13
     StatModifiers:
     - affectedStat: 1
       valueType: 0
-      Value: 40
+      Value: 25
+    - affectedStat: 0
+      valueType: 1
+      Value: 15
   - LevelIndex: 14
     StatModifiers:
     - affectedStat: 7
       valueType: 0
       Value: 2
+    - affectedStat: 0
+      valueType: 1
+      Value: 10
   - LevelIndex: 15
     StatModifiers:
     - affectedStat: 0
@@ -142,12 +154,12 @@ MonoBehaviour:
   CombatEnterDuration_1: 6
   CombatEnterAtk_2: 100
   CombatEnterAspd_2: 100
-  CombatEnterMspd_2: 60
+  CombatEnterMspd_2: 40
   CombatEnterDuration_2: 6
   CCDefenseFlatBuff_1: 30
   CCDefenseFlatBuff_2: 48
   CCDefenseFlatFallOff_1: 10
-  CCDefenseFlatFallOff_2: 12
+  CCDefenseFlatFallOff_2: 16
   PlayerFieldStayTriggerWaitTime_1: 10
   PlayerFieldStay_MaxRampupTime_1: 20
   PlayerFieldStay_MaxAspdPenalty_1: 50

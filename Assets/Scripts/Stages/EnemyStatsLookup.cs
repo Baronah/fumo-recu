@@ -247,7 +247,7 @@ public static class EnemyStatsLookup
                     ss15.mHealth = 400;
                     ss15.DefBuffFlat = 10f;
                     ss15.ResBuffFlat = 10f;
-                    ss15.DefFlatBuffOnDeathPercentage = 20f;
+                    ss15.DefFlatBuffOnDeath = 20f;
                     hasChanged = true;
                 }
                 else if (enemy as HibernatorKnight)

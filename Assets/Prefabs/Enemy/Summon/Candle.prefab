@@ -339,9 +339,9 @@ MonoBehaviour:
   ProjectilePrefab: {fileID: 0}
   ProjectileType: 1
   ProjectileSpeed: 1000
-  DamagePopup: {fileID: 7498904281893358320, guid: b09dfacba160b6d47938cf47f8dea3c9, type: 3}
   ccBar: {fileID: 468123535657762149}
   AttackAnimation: {fileID: 7400000, guid: a09a6a5b301f7034a95e77b2c60a63a9, type: 2}
+  FeetCollider: {fileID: 0}
   sfxs: []
   BeingShiftState: 0
   FreezeTimer: 0
@@ -361,6 +361,7 @@ MonoBehaviour:
   enemyCode: 17
   size: 1
   CanDetectPlayer: 0
+  IsDevice: 1
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
   TooltipsHoldtime: 6
   Description: Enemy lore or description
@@ -369,12 +370,11 @@ MonoBehaviour:
   b_detectionRange: 0
   DangerRange_RatioOfAttackRange: 0.75
   MinimumDistanceFromPlayer: 20
-  WaitTimes: []
   MoveToOverridePositionSpeedMultiplier: 1.5
   MoveToOverridePositionSpeedMultiplierJump: 0.35
   CanDetectThroughWalls: 0
   IsInsignificant: 1
-  hasDRWhenNotCombat: 0
+  DamageReductionOutsideCombat: 0
   Manager: {fileID: 9087003249395919761, guid: 992a657673c99b5488fc1ad97a0c7931, type: 3}
   movementThreshold: 30
   attackRangeIndicator: {fileID: 0}

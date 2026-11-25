@@ -53,6 +53,8 @@ public class EnemyBase : EntityBase
 
     public bool CanDetectPlayer = true;
 
+    public bool IsDevice = false;
+
     private bool SpotPlayerUponSpawn = false;
     [SerializeField] private GameObject TooltipsPrefab;
     private int TooltipsPriority = 0;
@@ -192,20 +194,21 @@ public class EnemyBase : EntityBase
         if (!ViewOnlyMode)
         {
             if (SpotPlayerUponSpawn) ForceSpotPlayer();
-
+            EnemyDefenseBuff();
             IsComponentsInitialized = true;
         }
         else
         {
             IsComponentsInitialized = true;
         }
-
-        EnemyDefenseBuff();
     }
 
     void EnemyDefenseBuff()
     {
+        if (IsDevice) return;
         int diffLevel = (CharacterPrefabsStorage.DifficultyLevel - 1);
+        if (diffLevel < (int) DiffType.EnemiesDefCCBuff_1) return;
+
         if (diffLevel == (int)DiffType.EnemiesDefCCBuff_1)
         {
             ApplyEffect(Effect.AffectedStat.DEF, LevelDifficultyDataManager._instance.CC_DEF_KEY, LevelDifficultyDataManager._instance.CCDefenseFlatBuff_1, 99999f, Effect.ValueType.FLAT);

@@ -404,7 +404,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name: Saint Statue
-  Icon: {fileID: 21300000, guid: dcf4c32ddb922f149b55f7452c21d6b1, type: 3}
+  Icon: {fileID: 21300000, guid: fa5eabd8266400f4d8329ae3c88507cc, type: 3}
   mHealth: 500
   bAtk: 0
   bDef: 50
@@ -422,8 +422,8 @@ MonoBehaviour:
   MIN_MAGICAL_DMG: 0.1
   health: 500
   atk: 0
-  def: 98
-  res: 138
+  def: 50
+  res: 90
   ASPD: 100
   moveSpeed: 0
   attackRange: 0
@@ -436,8 +436,8 @@ MonoBehaviour:
   damageAmplify: 0
   IsShiftImmune: 0
   BoundTimer: 9999
-  IsFreezeImmune: 1
-  IsStunImmune: 1
+  IsFreezeImmune: 0
+  IsStunImmune: 0
   IsPhysicalImmune: 0
   IsMagicalImmune: 0
   canRevive: 0
@@ -472,6 +472,7 @@ MonoBehaviour:
   enemyCode: 19
   size: 1
   CanDetectPlayer: 0
+  IsDevice: 0
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
   TooltipsHoldtime: 7
   Description: Church statue that has been abandoned for a very long time. Though
@@ -481,7 +482,7 @@ MonoBehaviour:
     Increases the DEF and RES of all enemies while present.\n\u2022 While standing
     on a <color=green>Medical Tile</color>, transfers its healing effect to all presenting
     enemies on the map.\n\u2022 Upon defeat, heals your units once and grants them
-    a permanent DEF buff."
+    a permanent DEF and RES buff."
   detectionRange: 0
   b_detectionRange: 0
   DangerRange_RatioOfAttackRange: 0
@@ -497,7 +498,8 @@ MonoBehaviour:
   ResBuffFlat: 20
   SelfHpHealingBonus_PerSecond: 0.005
   HealOnDeathPercentage: 0.35
-  DefFlatBuffOnDeathPercentage: 15
+  DefFlatBuffOnDeath: 15
+  ResFlatBuffOnDeath: 10
 --- !u!1 &6547622674933118992 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 773491194806959642, guid: f3221dbae6b487b49907a796747ecac4, type: 3}

@@ -20,7 +20,7 @@ public class ProjectileScript : MonoBehaviour
 	public float TravelSpeed = 25f;
     public float Acceleration = 0f;
 
-    protected SpriteRenderer renderer;
+    protected SpriteRenderer spriteRenderer;
     protected TrailRenderer trail;
     protected Vector3 targetDirection;
     protected Collider2D Target = null;
@@ -40,7 +40,7 @@ public class ProjectileScript : MonoBehaviour
 
     protected virtual void ResetProperties()
     {
-        if (!renderer) renderer = GetComponent<SpriteRenderer>();
+        if (!spriteRenderer) spriteRenderer = GetComponent<SpriteRenderer>();
         if (!trail) trail = GetComponent<TrailRenderer>();
         trail.Clear();
         TravelTimeCount = 0;

@@ -33,7 +33,7 @@ public class SaintStatueManager : MonoBehaviour
     IEnumerable<SaintStatue> applicableStatues;
     public void OnMedicalTileHealingReceive(float amount, float interval, bool usePercentageHealth)
     {
-        applicableStatues = statues.Where(s => s && s.IsAlive() && s.environmentalTilesStandingOn.Contains(StageManager.EnvironmentType.MEDICAL_TILE));
+        applicableStatues = statues.Where(s => s && s.CanHeal);
         int count = applicableStatues.Count();
         if (count <= 0) return;
         

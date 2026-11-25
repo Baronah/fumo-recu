@@ -27,6 +27,8 @@ public class InputManager : MonoBehaviour
     public KeyCode ViewInfoKey => KeyCodeConverter.ParseFromPlayerPrefs("ViewInfoKey", KeyCode.V);
     public KeyCode SwapInfoKey => KeyCodeConverter.ParseFromPlayerPrefs("SwapInfoKey", KeyCode.B);
     public KeyCode ViewMapKey => KeyCodeConverter.ParseFromPlayerPrefs("ViewMapKey", KeyCode.M);
+    public KeyCode RestartKey => KeyCodeConverter.ParseFromPlayerPrefs("RestartKey", KeyCode.R);
+    public KeyCode QuitKey => KeyCodeConverter.ParseFromPlayerPrefs("QuitKey", KeyCode.Q);
 
     // Input scheme enumeration
     public enum MovementScheme

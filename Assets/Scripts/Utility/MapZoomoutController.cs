@@ -14,7 +14,7 @@ public class MapZoomoutController : MonoBehaviour
 
     private float GetPerferredSpeed => MaxSpeed * (vcam.m_Lens.OrthographicSize / InitSize);
 
-    void Start()
+    void Awake()
     {
         vcam = GetComponent<CinemachineVirtualCamera>();
         InitPosition = transform.position;
@@ -48,9 +48,9 @@ public class MapZoomoutController : MonoBehaviour
         vcam.m_Lens.OrthographicSize = size;
     }
 
-    private void OnDisable()
+    private void OnEnable()
     {
-        vcam.m_Lens.OrthographicSize = InitSize;
-        transform.position = InitPosition;
+        vcam.m_Lens.OrthographicSize = MinSize + 100f;
+        transform.position = PlayerManager._instance.activePlayer.transform.position;
     }
 }

@@ -37,7 +37,7 @@ public class UI_EnemyDefense : UI_TiedWithEffect
         frmcnt++;
         if (frmcnt < 5) return;
         frmcnt = 0;
-        int count = (int)(TargetDictionary[Key].Value / amountPerCount);
+        int count = Mathf.CeilToInt(TargetDictionary[Key].Value / amountPerCount);
         StackCnt.text = count.ToString();
     }
 }

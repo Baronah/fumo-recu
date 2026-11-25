@@ -49,7 +49,7 @@ public class EntityBase : MonoBehaviour
 
     public virtual Type GetGenericType() => typeof(EntityBase);
 
-    public Transform FeetPosition;
+    [HideInInspector] public Transform FeetPosition;
 
     public void SetInvulnerable(float duration, bool stack = false)
     {
@@ -118,7 +118,7 @@ public class EntityBase : MonoBehaviour
 
     protected Collider2D[] colliders;
     public Collider2D[] selfColliders => colliders;
-    public Collider2D FeetCollider;
+    [HideInInspector] public Collider2D FeetCollider;
 
     public AudioSource[] sfxs;
 
@@ -160,7 +160,7 @@ public class EntityBase : MonoBehaviour
     protected Coroutine AttackCoroutine = null, LockoutMovementOnAttackCoroutine = null;
     protected Animation attackAnimation;
 
-    public bool IsComponentsInitialized = false;
+    [HideInInspector] public bool IsComponentsInitialized = false;
 
     public Dictionary<string, Effect>
                     AtkBuffs = new(),
