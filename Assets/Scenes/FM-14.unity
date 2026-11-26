@@ -9830,6 +9830,14 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 1900
       objectReference: {fileID: 0}
+    - target: {fileID: 8085004257367168874, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
+      propertyPath: SwapStacks
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8085004257367168874, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
+      propertyPath: swapCooldownTimer
+      value: 18
+      objectReference: {fileID: 0}
     - target: {fileID: 8891701975477234824, guid: 2a8093f30ec8bef4b95ae17e96a724ca, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1660

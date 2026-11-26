@@ -13,6 +13,7 @@ public class DarkTile : EnvironmentalTileBase
 
     [SerializeField] private float P_VisionReductionPercent = 0.4f;
     [SerializeField] private float E_VisionReductionPercent = 0.5f;
+    [SerializeField] private float MinRange = 200f;
 
     public override void OnStageStart()
     {
@@ -67,15 +68,15 @@ public class DarkTile : EnvironmentalTileBase
         }
         else
         {
-            UI_DarkZoneEffect effectInstance = Instantiate(DarkZoneEffectPrefab, entity.transform.position + Vector3.up * 100f, Quaternion.identity).GetComponent<UI_DarkZoneEffect>();
+            UI_DarkZoneEffect effectInstance = Instantiate(
+                    DarkZoneEffectPrefab,
+                    entity.transform)
+                .GetComponent<UI_DarkZoneEffect>();
             effectInstance.Initialize(entity);
             activeEffects.Add(entity, effectInstance);
         }
 
         base.OnEntityEnter(entity);
-
-        if (entity is Gloompincer g) g.OnShroudedZoneEnter();
-        else if (entity is Toy t) t.OnShroudedZoneEnter();
     }
 
     public override void OnEntityStay(EntityBase entity)
@@ -96,11 +97,11 @@ public class DarkTile : EnvironmentalTileBase
 
         float percentage = entity is PlayerBase ? P_VisionReductionPercent : E_VisionReductionPercent;
 
-        float minRange = entity.b_attackRange < 100 ? entity.b_attackRange : 100;
+        float minRange = entity.b_attackRange < MinRange ? entity.b_attackRange : MinRange;
 
-        if (entity.b_attackRange * percentage < minRange)
+        if (entity.b_attackRange * (1f - percentage) < minRange)
         {
-            percentage = 1.0f - minRange / entity.b_attackRange;
+            percentage = 1.0f - (minRange / entity.b_attackRange);
         }
 
         entity.ApplyEffect(Effect.AffectedStat.ARNG, "DARK_TILE_VISION_REDUCTION", -percentage * 100f, 9999f, Effect.ValueType.PERCENTAGE);
@@ -115,9 +116,5 @@ public class DarkTile : EnvironmentalTileBase
         {
             activeEffects[entity].DisableEffect();
         }
-
-        if (entity is HibernatorKnight h) h.OnShroudedZoneExit();
-        else if (entity is Gloompincer g) g.OnShroudedZoneExit();
-        else if (entity is Toy t) t.OnShroudedZoneExit(); 
     }
 }

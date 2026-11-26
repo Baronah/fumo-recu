@@ -101,7 +101,13 @@ public class Toy : EnemyBase
         return base.GetPathfindingTarget();
     }
 
-    public void OnShroudedZoneExit()
+    public override void OnEnvironmentalTileExit(StageManager.EnvironmentType environmentType)
+    {
+        base.OnEnvironmentalTileExit(environmentType);
+        if (environmentType == StageManager.EnvironmentType.DARK_ZONE) OnShroudedZoneExit();
+    }
+
+    void OnShroudedZoneExit()
     {
         WakenUp = false;
         CanBeHitByProjectiles = false;
@@ -114,7 +120,13 @@ public class Toy : EnemyBase
         animator.SetBool("sleep", true);
     }
 
-    public void OnShroudedZoneEnter()
+    public override void OnEnvironmentalTileEnter(StageManager.EnvironmentType environmentType)
+    {
+        base.OnEnvironmentalTileEnter(environmentType);
+        if (environmentType == StageManager.EnvironmentType.DARK_ZONE) OnShroudedZoneEnter();
+    }
+
+    void OnShroudedZoneEnter()
     {
         StartCoroutine(WakeUp());
     }

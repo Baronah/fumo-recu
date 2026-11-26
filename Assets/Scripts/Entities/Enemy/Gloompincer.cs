@@ -5,7 +5,13 @@ public class Gloompincer : EnemyBase
     [SerializeField] public float shroudedMspdBuff = 0.5f;
     [SerializeField] public float shroudedAspdBuff = 10f;
 
-    public void OnShroudedZoneEnter()
+    public override void OnEnvironmentalTileEnter(StageManager.EnvironmentType environmentType)
+    {
+        base.OnEnvironmentalTileEnter(environmentType);
+        if (environmentType == StageManager.EnvironmentType.DARK_ZONE) OnShroudedZoneEnter();
+    }
+
+    void OnShroudedZoneEnter()
     {
         damageType = DamageType.MAGICAL;
         ApplyEffect(Effect.AffectedStat.MSPD, "GLOOMPINCER_SHROUDED_MSPPD_BUFF", shroudedMspdBuff * 100, 9999f, Effect.ValueType.PERCENTAGE);
@@ -13,7 +19,13 @@ public class Gloompincer : EnemyBase
         StageManager.OnEnemySpecialAbilityActivate(this);
     }
 
-    public void OnShroudedZoneExit()
+    public override void OnEnvironmentalTileExit(StageManager.EnvironmentType environmentType)
+    {
+        base.OnEnvironmentalTileExit(environmentType);
+        if (environmentType == StageManager.EnvironmentType.DARK_ZONE) OnShroudedZoneExit();
+    }
+
+    void OnShroudedZoneExit()
     {
         damageType = DamageType.PHYSICAL;
         RemoveEffect("GLOOMPINCER_SHROUDED_MSPPD_BUFF");

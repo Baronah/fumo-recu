@@ -15,7 +15,7 @@ public class UI_DarkZoneEffect : MonoBehaviour
 
     Coroutine pulseCoroutine;
 
-    StageManager stageManager;
+    StageManager stageManager => StageManager._instance;
 
     public void Initialize(EntityBase targetEntity)
     {
@@ -23,7 +23,6 @@ public class UI_DarkZoneEffect : MonoBehaviour
 
         if (!isInitialized)
         {
-            stageManager = FindObjectOfType<StageManager>();
             glowColor = Glowpart.color;
             isInitialized = true;
         }
@@ -33,6 +32,7 @@ public class UI_DarkZoneEffect : MonoBehaviour
         gameObject.SetActive(true);
         Glowpart.color = new Color(glowColor.r, glowColor.g, glowColor.b, 0);
         pulseCoroutine = StartCoroutine(PulseGlow());
+        transform.localPosition = new Vector3(0, offsetY);
     }
 
     IEnumerator PulseGlow()
@@ -103,6 +103,5 @@ public class UI_DarkZoneEffect : MonoBehaviour
             DisableEffect();
             return;
         }
-        transform.position = entity.transform.position + Vector3.up * offsetY;
     }
 }

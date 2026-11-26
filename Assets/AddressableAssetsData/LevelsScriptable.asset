@@ -247,7 +247,7 @@ MonoBehaviour:
     AppearingEnemies: 020000000c0000000e00000010000000
     EnvironmentTypes: 0500000001000000
     BanSkills: 
-    ChallengeModeModifier: Different starting position. 'Candleknights' hold more
+    ChallengeModeModifier: Different starting position. 'Candleknights' hold additional
       candles.
     SecretDes: 
   - SceneAssetReferences:
@@ -263,8 +263,8 @@ MonoBehaviour:
     AppearingEnemies: 0e0000001000000012000000
     EnvironmentTypes: 05000000
     BanSkills: 
-    ChallengeModeModifier: '''Candle''''s illumination range is reduced. ''Sentinent
-      Toys'' have greatly increased DEF and RES.'
+    ChallengeModeModifier: '''Candleknights''''s candle count is greatly reduced.
+      ''Sentient Toys'' have increased HP, DEF and RES.'
     SecretDes: 
   - SceneAssetReferences:
       m_AssetGUID: 572cadc0e31134040b40992b315390ac

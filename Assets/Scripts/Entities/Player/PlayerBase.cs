@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
+
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -8,7 +8,6 @@ using UnityEngine.UI;
 using static LevelDifficultyModifier;
 using static PlayerManager;
 using static SkillTree_Manager;
-using static UnityEngine.EventSystems.EventTrigger;
 using SkillType = PlayerManager.SkillType;
 
 public class PlayerBase : EntityBase
@@ -185,6 +184,11 @@ public class PlayerBase : EntityBase
 
         if (environmentalTilesStandingOn.Count <= 0)
         {
+            playerManager.PlayerInvoke_RemoveSkillUI(
+                SkillTree_Manager.SkillName.GEOLOGIST_OBSERVE,
+                SkillTree_Manager.SkillName.GEOLOGIST_STUDY,
+                SkillTree_Manager.SkillName.GEOLOGIST_EXPLORE
+            );
             geologistCountUp = 0;
             return;
         }
@@ -192,16 +196,31 @@ public class PlayerBase : EntityBase
         if (HasSkill(SkillTree_Manager.SkillName.GEOLOGIST_OBSERVE))
         {
             ReduceUltimateCooldown(geologistCountUp * GetSkillValues(SkillTree_Manager.SkillName.GEOLOGIST_OBSERVE)[0], PlayerBase.CooldownReductionType.FLAT);
+            playerManager.PlayerInvoke_SetSkillUI(
+                    SkillTree_Manager.SkillName.GEOLOGIST_OBSERVE,
+                    GetSkillImage(SkillTree_Manager.SkillName.GEOLOGIST_OBSERVE),
+                    Color.yellow
+                );
         }
 
         if (HasSkill(SkillTree_Manager.SkillName.GEOLOGIST_STUDY))
         {
             ApplyEffect(Effect.AffectedStat.ATK, "GEOLOGIST_ATK_BUFF", GetSkillValues(SkillTree_Manager.SkillName.GEOLOGIST_STUDY)[0], 0.5f, Effect.ValueType.PERCENTAGE);
+            playerManager.PlayerInvoke_SetSkillUI(
+                SkillTree_Manager.SkillName.GEOLOGIST_STUDY,
+                GetSkillImage(SkillTree_Manager.SkillName.GEOLOGIST_STUDY),
+                Color.yellow
+            );
         }
 
         if (HasSkill(SkillTree_Manager.SkillName.GEOLOGIST_EXPLORE))
         {
             ApplyEffect(Effect.AffectedStat.MSPD, "GEOLOGIST_MSPD_BUFF", GetSkillValues(SkillTree_Manager.SkillName.GEOLOGIST_EXPLORE)[0], 0.5f, Effect.ValueType.PERCENTAGE);
+            playerManager.PlayerInvoke_SetSkillUI(
+                SkillTree_Manager.SkillName.GEOLOGIST_EXPLORE,
+                GetSkillImage(SkillTree_Manager.SkillName.GEOLOGIST_EXPLORE),
+                Color.yellow
+            );
         }
 
         geologistCountUp = 0;
@@ -284,20 +303,54 @@ public class PlayerBase : EntityBase
 
         if (health >= mHealth * book_effectThreshold && HasSkill(SkillTree_Manager.SkillName.ATTENTION_BOOK))
         {
-            ApplyEffect(Effect.AffectedStat.ATK, "ATTENTION_BUFF", book_atkBuff, 0.22f, Effect.ValueType.PERCENTAGE);
-            ApplyEffect(Effect.AffectedStat.ASPD, "ATTENTION_BUFF", book_aspdBuff, 0.22f, Effect.ValueType.FLAT);
+            ApplyEffect(Effect.AffectedStat.ATK, "ATTENTION_BUFF", book_atkBuff, 0.23f, Effect.ValueType.PERCENTAGE);
+            ApplyEffect(Effect.AffectedStat.ASPD, "ATTENTION_BUFF", book_aspdBuff, 0.23f, Effect.ValueType.FLAT);
+
+            if (health >= mHealth)
+            {
+                playerManager.PlayerInvoke_SetSkillUI(
+                    SkillTree_Manager.SkillName.ATTENTION_BOOK,
+                    GetSkillImage(SkillTree_Manager.SkillName.ATTENTION_BOOK),
+                    Color.red);
+            }
+            else
+            {
+                playerManager.PlayerInvoke_SetSkillUI(
+                    SkillTree_Manager.SkillName.ATTENTION_BOOK,
+                    GetSkillImage(SkillTree_Manager.SkillName.ATTENTION_BOOK),
+                    Color.yellow);
+            }
+        }
+        else
+        {
+            playerManager.PlayerInvoke_RemoveSkillUI(SkillTree_Manager.SkillName.ATTENTION_BOOK);
         }
         
         if (health <= mHealth * device_effectThreshold && HasSkill(SkillTree_Manager.SkillName.ATTENTION_DEVICE))
         {
-            ApplyEffect(Effect.AffectedStat.DEF, "ATTENTION_BUFF", device_defBuff, 0.22f, Effect.ValueType.FLAT);
-            ApplyEffect(Effect.AffectedStat.RES, "ATTENTION_BUFF", device_resBuff, 0.22f, Effect.ValueType.FLAT);
+            ApplyEffect(Effect.AffectedStat.DEF, "ATTENTION_BUFF", device_defBuff, 0.23f, Effect.ValueType.FLAT);
+            ApplyEffect(Effect.AffectedStat.RES, "ATTENTION_BUFF", device_resBuff, 0.23f, Effect.ValueType.FLAT);
 
             if (health <= mHealth * device_attentionMinThreshold && !hasLifestealBuffFromAttentionMin)
             {
                 hasLifestealBuffFromAttentionMin = true;
                 lifeSteal += device_attentionMinLifesteal;
+                playerManager.PlayerInvoke_SetSkillUI(
+                    SkillTree_Manager.SkillName.ATTENTION_DEVICE,
+                    GetSkillImage(SkillTree_Manager.SkillName.ATTENTION_DEVICE),
+                    Color.red);
             }
+            else if (!hasLifestealBuffFromAttentionMin)
+            {
+                playerManager.PlayerInvoke_SetSkillUI(
+                    SkillTree_Manager.SkillName.ATTENTION_DEVICE,
+                    GetSkillImage(SkillTree_Manager.SkillName.ATTENTION_DEVICE),
+                    Color.yellow);
+            }
+        }
+        else
+        {
+            playerManager.PlayerInvoke_RemoveSkillUI(SkillTree_Manager.SkillName.ATTENTION_DEVICE);
         }
     }
 
@@ -316,6 +369,7 @@ public class PlayerBase : EntityBase
     }
 
     readonly string StartMspdBuffKey = "SWAP_START_MSPDBUFF";
+    readonly string StartAtkBuffKey = "SWAP_START_ATKBUFF";
     public virtual void OnFieldEnter()
     {
         short diff = (short)(CharacterPrefabsStorage.DifficultyLevel - 1);
@@ -333,13 +387,29 @@ public class PlayerBase : EntityBase
         {
             float[] values = GetSkillValues(SkillTree_Manager.SkillName.SWAP_START_ATK);
             Heal((mHealth - health) * values[0]);
-            ApplyEffect(Effect.AffectedStat.ATK, "SWAP_START_ATKBUFF", values[1], values[2], Effect.ValueType.PERCENTAGE, EffectPersistType.PERSIST);
+            ApplyEffect(Effect.AffectedStat.ATK, StartAtkBuffKey, values[1], values[2], Effect.ValueType.PERCENTAGE, EffectPersistType.PERSIST);
+            playerManager.PlayerInvoke_SetSkillUI(
+                SkillTree_Manager.SkillName.SWAP_START_ATK,
+                GetSkillImage(SkillTree_Manager.SkillName.SWAP_START_ATK),
+                Color.green);
         }
 
         if (HasSkill(SkillTree_Manager.SkillName.SWAP_START_MSPD))
         {
             float[] values = GetSkillValues(SkillTree_Manager.SkillName.SWAP_START_MSPD);
             ApplyEffect(Effect.AffectedStat.MSPD, StartMspdBuffKey, values[0], 9999f, Effect.ValueType.PERCENTAGE, EffectPersistType.PERSIST);
+            playerManager.PlayerInvoke_SetSkillUI(
+                SkillTree_Manager.SkillName.SWAP_START_MSPD,
+                GetSkillImage(SkillTree_Manager.SkillName.SWAP_START_MSPD),
+                Color.green);
+        }
+
+        if (HasSkill(SkillTree_Manager.SkillName.SWAP_START_SPECIAL))
+        {
+            playerManager.PlayerInvoke_SetSkillUI(
+                SkillTree_Manager.SkillName.SWAP_START_SPECIAL,
+                GetSkillImage(SkillTree_Manager.SkillName.SWAP_START_SPECIAL),
+                Color.green);
         }
     }
 
@@ -417,14 +487,15 @@ public class PlayerBase : EntityBase
     protected bool FireWorkStarted = false;
     protected IEnumerator FireWork_Special()
     {
+        float[] values = GetSkillValues(SkillTree_Manager.SkillName.SWAP_START_SPECIAL);
         FireWorkStarted = true;
 
-        float duration = 5f, c = 0f, intervalCount = 0, interval = 0.5f;
+        float duration = values[0], c = 0f, intervalCount = 0, interval = 0.25f;
         while (c < duration)
         {
             if (intervalCount >= interval)
             {
-                ReduceSpecialCooldown(interval * 2f, CooldownReductionType.FLAT);
+                ReduceSpecialCooldown(interval * values[1], CooldownReductionType.FLAT);
                 intervalCount = 0;
             }
 
@@ -438,7 +509,10 @@ public class PlayerBase : EntityBase
     protected virtual IEnumerator SpecialLockout()
     {
         if (!Debut && !FireWorkStarted && HasSkill(SkillTree_Manager.SkillName.SWAP_START_SPECIAL))
+        {
+            playerManager.PlayerInvoke_RemoveSkillUI(SkillTree_Manager.SkillName.SWAP_START_SPECIAL);
             StartCoroutine(FireWork_Special());
+        }
         yield return null;
     }
 
@@ -472,6 +546,18 @@ public class PlayerBase : EntityBase
     };
 
     [SerializeField] private GameObject RockPickEffect;
+    private RockGachaSkill RockGachaSkill;
+    private Sprite GetSkillImage(SkillName name)
+    {
+        if (!RockGachaSkill) RockGachaSkill = RockPickEffect.GetComponent<RockGachaSkill>();
+        return RockGachaSkill.GetSkillImage(name);
+    }
+
+    readonly SkillName[] NotDisplayOnUI = { 
+        SkillTree_Manager.SkillName.SWAP_START_ATK,
+        SkillTree_Manager.SkillName.SWAP_START_SPECIAL,
+        SkillTree_Manager.SkillName.SWAP_START_MSPD, 
+    };
 
     public virtual void GetSkillTreeEffects()
     {
@@ -496,10 +582,13 @@ public class PlayerBase : EntityBase
                 RockGachaSkill thisRock = o.GetComponent<RockGachaSkill>();
                 thisRock.SetSkill(bonusSkill);
 
-                playerManager.PlayerInvoke_SetSkillUI(
-                    bonusSkill,
-                    thisRock.GetSkillImage(bonusSkill),
-                    new Color(0f, 1f, 0.67f));
+                if (!NotDisplayOnUI.Contains(bonusSkill))
+                {
+                    playerManager.PlayerInvoke_SetSkillUI(
+                        SkillTree_Manager.SkillName.A_NICE_LOOKING_ROCK,
+                        thisRock.GetSkillImage(bonusSkill),
+                        new Color(0f, 1f, 0.67f));
+                }
             }
         }
 
@@ -581,7 +670,7 @@ public class PlayerBase : EntityBase
         {
             playerManager.PlayerInvoke_SetSkillUI(
                 SkillTree_Manager.SkillName.AMULET, 
-                rockGacha.GetSkillImage(SkillTree_Manager.SkillName.AMULET),
+                GetSkillImage(SkillTree_Manager.SkillName.AMULET),
                 new Color(0, 0.8f, 1f));
         }
     }
@@ -610,6 +699,15 @@ public class PlayerBase : EntityBase
         foreach (var skill in Skills)
         {
             playerManager.PlayerInvoke_RemoveSkillUI(skill.skillName);
+        }
+    }
+
+    public override void OnEffectEnd(string key)
+    {
+        base.OnEffectEnd(key);
+        if (key.Equals(StartAtkBuffKey))
+        {
+            playerManager.PlayerInvoke_RemoveSkillUI(SkillTree_Manager.SkillName.SWAP_START_ATK);
         }
     }
 
@@ -854,7 +952,11 @@ public class PlayerBase : EntityBase
     {
         base.TakeDamage(damage, source, projectileInfo, IgnoreInvulnerability, CalculateDamage);
 
-        if (damage.TotalDamage > 0 && !isInvulnerable) RemoveEffect(StartMspdBuffKey);
+        if (damage.TotalDamage > 0 && !isInvulnerable)
+        {
+            playerManager.PlayerInvoke_RemoveSkillUI(SkillTree_Manager.SkillName.SWAP_START_MSPD);
+            RemoveEffect(StartMspdBuffKey);
+        }
 
         if (source && !isInvulnerable && !IgnoreInvulnerability)
         {

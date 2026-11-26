@@ -1,16 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
+[Singleton]
 public class CameraMovement : MonoBehaviour
 {
+    public static CameraMovement _instance;
+    private void Awake()
+    {
+        if (!_instance) _instance = this;
+        else Destroy(gameObject);
+    }
+
     public float moveTime, shakeDuration = 0.2f, shakeMagnitude = 1f;
     public Vector2 shakeValue;
     public Vector3 offset;
-    
+
+    public float showcaseSize;
     private float size;
-    private Camera camera;
+    private Camera mainCamera;
 
     private bool isShaking = false;
     public bool TriggerStopHit => isShaking && shakeStrength >= 0.5f;
@@ -19,8 +29,8 @@ public class CameraMovement : MonoBehaviour
 
     private void Start()
     {
-        camera = GetComponent<Camera>();
-        size = camera.orthographicSize;
+        mainCamera = GetComponent<Camera>();
+        size = mainCamera.orthographicSize;
     }
 
     private void Update()
@@ -34,12 +44,14 @@ public class CameraMovement : MonoBehaviour
 
         Vector3 finalPosition = targetTransform.position + offset;
         transform.position = Vector3.Lerp(transform.position, finalPosition, moveTime * Time.unscaledDeltaTime);
-        camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, size, moveTime * Time.unscaledDeltaTime);
+        mainCamera.orthographicSize = Mathf.Lerp(mainCamera.orthographicSize, size, moveTime * Time.unscaledDeltaTime);
     }
 
     public IEnumerator MoveShowcases(float showcaseSize, Transform[] points, float[] waittimes)
     {
         if (points.Length <= 0 || waittimes.Length <= 0) yield break;
+
+        this.showcaseSize = showcaseSize;
 
         yield return new WaitForSeconds(waittimes[0]);
 
@@ -52,7 +64,7 @@ public class CameraMovement : MonoBehaviour
             float elapsedTime = 0f;
             while (elapsedTime < moveTime)
             {
-                if (scaleToSize) camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, showcaseSize, elapsedTime / moveTime);
+                if (scaleToSize) mainCamera.orthographicSize = Mathf.Lerp(mainCamera.orthographicSize, showcaseSize, elapsedTime / moveTime);
                 transform.position = Vector3.Lerp(transform.position, targetPosition, elapsedTime / moveTime);
                 elapsedTime += Time.deltaTime;
                 yield return null;
@@ -60,7 +72,7 @@ public class CameraMovement : MonoBehaviour
 
             if (scaleToSize)
             {
-                camera.orthographicSize = showcaseSize;
+                mainCamera.orthographicSize = showcaseSize;
                 scaleToSize = false;
             }
             transform.position = targetPosition;

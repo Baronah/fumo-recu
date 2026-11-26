@@ -5196,7 +5196,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e328202e2e84ece45ae82ae4d049e342, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Name: Sentinent Toy
+  Name: Sentient Toy
   Icon: {fileID: 21300000, guid: e948b2d47d39687418ac01649bb1fba6, type: 3}
   mHealth: 200
   bAtk: 40

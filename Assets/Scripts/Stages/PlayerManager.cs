@@ -241,14 +241,14 @@ public class PlayerManager : MonoBehaviour
 
     void UpdateSwapCooldown()
     {
-        if (SwapStacks >= SwapMaxStacks) return;
-
         float add = Time.deltaTime;
         if (swapCooldownTimer < SwapCooldown)
         {
             swapCooldownTimer += add;
             return;
         }
+
+        if (SwapStacks >= SwapMaxStacks) return;
 
         // overflows into charges
         if (RadioActive)
@@ -285,35 +285,60 @@ public class PlayerManager : MonoBehaviour
 
     public void PlayerInvoke_SetSkillUI(SkillTree_Manager.SkillName name, Sprite sprite, Color color)
     {
-        if (StatusesUI.ContainsKey(name)) return;
+        PlayerInvoke_SetSkillUI(new UI_SkillSet() { SkillName = name, Color = color, Sprite = sprite });
+    }
 
-        GameObject upgradeUI = Instantiate(UpgradeUIPrefab, StatusBarUI.transform);
-        Image[] upgradeImages = upgradeUI.GetComponentsInChildren<Image>();
-        foreach (var img in upgradeImages)
+    public void PlayerInvoke_SetSkillUI(params UI_SkillSet[] skillSets)
+    {
+        foreach (var skillSet in skillSets)
         {
-            img.sprite = sprite;
-            img.color = color;
+            if (StatusesUI.ContainsKey(skillSet.SkillName))
+            {
+                var similar = StatusesUI[skillSet.SkillName];
+                similar.color = skillSet.Color;
+                similar.sprite = skillSet.Sprite;
+            }
+            else
+            {
+                GameObject upgradeUI = Instantiate(UpgradeUIPrefab, StatusBarUI.transform);
+                Image img = upgradeUI.GetComponent<Image>();
+                img.sprite = skillSet.Sprite;
+                img.color = skillSet.Color;
+
+                StatusesUI.Add(skillSet.SkillName, img);
+            }
         }
 
-        StatusesUI.Add(name, upgradeUI);
-
         barUpdateCounter = 999;
         UpdateUpgradeBar();
     }
 
-    public void PlayerInvoke_RemoveSkillUI(SkillTree_Manager.SkillName name)
+    public void PlayerInvoke_RemoveSkillUI(params SkillTree_Manager.SkillName[] names)
     {
-        if (!StatusesUI.ContainsKey(name) || name == SkillTree_Manager.SkillName.KNOTS) return;
-        Destroy(StatusesUI[name]);
-        StatusesUI.Remove(name);
+        bool needUpdate = false;
+
+        foreach (var name in names)
+        {
+            if (!StatusesUI.ContainsKey(name) || name == SkillTree_Manager.SkillName.KNOTS) continue;
+            Destroy(StatusesUI[name].gameObject);
+            StatusesUI.Remove(name);
+            needUpdate = true;
+        }
+
+        if (!needUpdate) return;
 
         barUpdateCounter = 999;
         UpdateUpgradeBar();
     }
+
 
     [SerializeField] GameObject StatusBarUI, UpgradeUIPrefab;
-    Dictionary<SkillTree_Manager.SkillName, GameObject> StatusesUI = new();
-    
+    Dictionary<SkillTree_Manager.SkillName, Image> StatusesUI = new();
+
+    short maxHold = 4;
+    Vector2 defaultScale = new(0.6f, 0.6f), 
+            smallScale = new(0.5f, 0.5f);
+
     short barUpdateCounter = 0;
     void UpdateUpgradeBar()
     {
@@ -321,16 +346,20 @@ public class PlayerManager : MonoBehaviour
         if (barUpdateCounter < 6) return;
         barUpdateCounter = 0;
 
-        List<GameObject> Statuses = StatusesUI.Values.ToList();
+        StatusesUI.OrderBy(su => su.Key);
+        List<Image> Statuses = StatusesUI.Values.ToList();
         if (Statuses.Count <= 0) return;
 
         Vector3 position = Vector3.zero;
         int mid = Statuses.Count / 2;
         float offset = 150f;
 
+        if (StatusesUI.Count > maxHold) StatusBarUI.transform.localScale = smallScale;
+        else StatusBarUI.transform.localScale = defaultScale;
+
         for (int i = 0; i < StatusesUI.Count; ++i)
         {
-            GameObject upgrade = Statuses[i];
+            Image upgrade = Statuses[i];
             
             position = new Vector3(offset * (i - mid), 0, 0);
             if (StatusesUI.Count % 2 == 0) position.x += offset / 2;
@@ -1010,4 +1039,11 @@ public class PlayerTooltipsInfo
             return "VERY FAST";
         }
     }
+}
+
+public class UI_SkillSet
+{
+    public SkillTree_Manager.SkillName SkillName;
+    public Sprite Sprite;
+    public Color Color;
 }

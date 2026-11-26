@@ -386,8 +386,9 @@ MonoBehaviour:
   enemyCode: 16
   size: 1
   CanDetectPlayer: 1
+  IsDevice: 0
   TooltipsPrefab: {fileID: 1652133031232168661, guid: 9194e1666b4b1db4b8a691a7e38af9ef, type: 3}
-  TooltipsHoldtime: 6
+  TooltipsHoldtime: 7.5
   Description: A knight of the Nova Knightclub. With the Candle Knight as its figurehead,
     this Knightclub with a beautiful name recruits elegant knights proficient in
     using Arts from far and wide.

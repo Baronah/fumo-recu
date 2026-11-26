@@ -70,11 +70,11 @@ MonoBehaviour:
     name: Mint-color Firework
     icon: {fileID: 21300000, guid: ff53dae341c668d4599a9547d8ee68bf, type: 3}
     description: Upon entering the field, your unit immediately casts their special
-      skill once with no cool-down. In the next 5 seconds, your special skill recharges
-      <color=#ff9717>200% faster</color>.
+      skill once with no cool-down. Within 5 seconds after your special skill goes
+      into cool-down for the first time, it recharges <color=#ff9717>300% faster</color>.
     values:
     - 5
-    - 200
+    - 3
     shortDescription: Upon entering the field, your unit immediately casts their
       special skill once with no cool-down. In the next 5 seconds, your special skill
       recharges way faster.

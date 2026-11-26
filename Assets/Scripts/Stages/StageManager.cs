@@ -767,8 +767,10 @@ public class StageManager : MonoBehaviour
     }
     public virtual void OnStageEnd(ResultType resultType)
     {
-        if (HDCoroutine == null && resultType == ResultType.ENEMIES_DEFEATED) 
-            HDCoroutine = StartCoroutine(ShowOverlayFadeInToColorThenFadeOut(new Color(0, 1f, 0.63f, 0.8f), 0.5f, 0.5f, 1f));
+        if (resultType == ResultType.ENEMIES_DEFEATED)
+        {
+            OnPlayerEliminateAllEnemies();
+        }
 
         Cursor.visible = true;
 
@@ -949,6 +951,13 @@ public class StageManager : MonoBehaviour
         // Addressables.LoadSceneAsync(CharacterPrefabsStorage.LevelSelectionKey, LoadSceneMode.Single, true);
 
         if (StageTransitionOverlay) Destroy(StageTransitionOverlay);
+    }
+
+    public void OnPlayerEliminateAllEnemies()
+    {
+        if (StageCompleteConditionType != StageCompleteCondition.ELIMINATE_ALL_ENEMIES) return;
+        EntityManager.Enemies.ForEach(e => { if (e) e.InstaKill(); });
+        if (HDCoroutine == null) HDCoroutine = StartCoroutine(ShowOverlayFadeInToColorThenFadeOut(new Color(0, 1f, 0.63f, 0.8f), 0.5f, 0.5f, 1f));
     }
 
     public void OnPlayerFumoPickup(PlayerBase player, Collider2D FumoObj)

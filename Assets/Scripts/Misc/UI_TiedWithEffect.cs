@@ -25,13 +25,13 @@ public class UI_TiedWithEffect : MonoBehaviour
         Initialized = true;
     }
 
-    protected bool DebuffInEffect => 
+    protected bool IsInEffect => 
         Target.IsAlive() 
         && TargetDictionary.ContainsKey(Key) 
         && TargetDictionary[Key].IsInEffect;
     protected virtual void Update()
     {
         if (!Initialized) return;
-        if (!DebuffInEffect) Destroy(gameObject);
+        if (!IsInEffect) Destroy(gameObject);
     }
 }

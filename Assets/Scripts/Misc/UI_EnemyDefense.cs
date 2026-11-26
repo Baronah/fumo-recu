@@ -28,7 +28,7 @@ public class UI_EnemyDefense : UI_TiedWithEffect
     protected override void Update()
     {
         if (!Initialized) return;
-        if (!DebuffInEffect)
+        if (!IsInEffect)
         {
             Destroy(gameObject);
             return;

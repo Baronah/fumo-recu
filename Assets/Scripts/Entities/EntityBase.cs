@@ -178,25 +178,6 @@ public class EntityBase : MonoBehaviour
                     WeightBuffs = new(),
                     WeightDebuffs = new();
 
-    protected List<Effect> AllEffects()
-    {
-        return AtkBuffs.Values
-            .Concat(AtkDebuffs.Values)
-            .Concat(DefBuffs.Values)
-            .Concat(DefDebuffs.Values)
-            .Concat(ResBuffs.Values)
-            .Concat(ResDebuffs.Values)
-            .Concat(MspdBuffs.Values)
-            .Concat(MspdDebuffs.Values)
-            .Concat(AspdBuffs.Values)
-            .Concat(AspdDebuffs.Values)
-            .Concat(ArngBuffs.Values)
-            .Concat(ArngDebuffs.Values)
-            .Concat(WeightBuffs.Values)
-            .Concat(WeightDebuffs.Values)
-            .ToList();
-    }
-
     protected List<Dictionary<string, Effect>> AllBuffs()
     {
         return new()
@@ -223,6 +204,13 @@ public class EntityBase : MonoBehaviour
             ArngDebuffs,
             WeightDebuffs,
         };
+    }
+
+    protected List<Dictionary<string, Effect>> AllEffects()
+    {
+        List<Dictionary<string, Effect>> effects = new(AllBuffs());
+        effects.AddRange(AllDebuffs());
+        return effects;
     }
 
     public virtual bool CanAttack =>
@@ -683,14 +671,22 @@ public class EntityBase : MonoBehaviour
 
     public void UpdateEffectDurations()
     {
-        var effects = AllEffects();
-        foreach (var effect in effects)
+        var EffectDictionaries = AllEffects();
+        foreach (var EffectDictionary in EffectDictionaries)
         {
-            if (!effect.IsInEffect) continue;
-            effect.Duration -= Time.deltaTime;
-            if (effect.DecayOverDuration) effect.Decay();
+            foreach (var effectKVP in EffectDictionary)
+            {
+                var effect = effectKVP.Value;
+                if (!effect.IsInEffect) continue;
+                effect.Duration -= Time.deltaTime;
+                if (effect.DecayOverDuration) effect.Decay();
 
-            if (!effect.IsInEffect) effect.EndEffect();
+                if (!effect.IsInEffect)
+                {
+                    effect.EndEffect();
+                    OnEffectEnd(effectKVP.Key);
+                }
+            }
         }
     }
 
@@ -971,6 +967,11 @@ public class EntityBase : MonoBehaviour
         if (enemyBaseCheck) enemyBaseCheck.detectionRange += prevDrngAdd;
 
         weight += prevWeightAdd;
+    }
+
+    public virtual void OnEffectEnd(string key)
+    {
+
     }
 
     #endregion
@@ -1340,6 +1341,7 @@ public class EntityBase : MonoBehaviour
     private bool prevSpriteFlipX = false;
     private float AcceTimerCount = 0f;
     private readonly float AcceTick = 0.25f;
+    UI_Acceleration Acceleration;
     protected virtual void ProcessAccelaration()
     {
         if (!StageManager.Acceleration) return;
@@ -1352,6 +1354,12 @@ public class EntityBase : MonoBehaviour
         string effectKey = "ACCELERATION_BUFF";
         float AccelerationBuffPerTick = AccelerationBuffPerSec * AcceTick;
 
+        if (!Acceleration)
+        {
+            GameObject accelerationPrefab = GlobalEffectManager._instance.Acceleration;
+            Acceleration = Instantiate(accelerationPrefab, transform.position + new Vector3(0, 80), Quaternion.identity, transform).GetComponent<UI_Acceleration>();
+        }
+
         if (compareDirection.x <= minDirection && compareDirection.y <= minDirection && direction != Vector3.zero && prevSpriteFlipX == spriteRenderer.flipX)
         {
             if (MspdBuffs.ContainsKey(effectKey))
@@ -1362,6 +1370,9 @@ public class EntityBase : MonoBehaviour
                     Mathf.Min(AccelerationBuffMax, MspdBuffs[effectKey].Value + AccelerationBuffPerTick),
                     9999f,
                     Effect.ValueType.PERCENTAGE);
+
+                Acceleration.Inititialize(this, effectKey, MspdBuffs, direction, AccelerationBuffMax);
+                Acceleration.gameObject.SetActive(true);
             }
             else
             {
@@ -1386,6 +1397,7 @@ public class EntityBase : MonoBehaviour
                     EffectPersistType.DECAY);
 
             RemoveEffect(effectKey);
+            Acceleration.gameObject.SetActive(false);
         }
 
         prevDirection = direction;

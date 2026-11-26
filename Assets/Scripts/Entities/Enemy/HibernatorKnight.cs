@@ -82,8 +82,14 @@ public class HibernatorKnight : EnemyBase
         base.OnAttackReceive(source);
     }
 
+    public override void OnEnvironmentalTileExit(StageManager.EnvironmentType environmentType)
+    {
+        base.OnEnvironmentalTileExit(environmentType);
+        if (environmentType == StageManager.EnvironmentType.DARK_ZONE) OnShroudedZoneExit();
+    }
+
     [SerializeField] public float Wake_AtkBuff = 0.5f, Wake_MspdBuff = 0.3f, Wake_Buff_Duration = 3f;
-    public void OnShroudedZoneExit()
+    void OnShroudedZoneExit()
     {
         RemoveEffect("HIBERNATOR_NATURAL_DEF_DEBUFF");
         RemoveEffect("HIBERNATOR_NATURAL_RES_DEBUFF");
