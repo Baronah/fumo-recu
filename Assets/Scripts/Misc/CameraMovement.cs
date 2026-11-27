@@ -47,11 +47,9 @@ public class CameraMovement : MonoBehaviour
         mainCamera.orthographicSize = Mathf.Lerp(mainCamera.orthographicSize, size, moveTime * Time.unscaledDeltaTime);
     }
 
-    public IEnumerator MoveShowcases(float showcaseSize, Transform[] points, float[] waittimes)
+    public IEnumerator MoveShowcases(Transform[] points, float[] waittimes)
     {
         if (points.Length <= 0 || waittimes.Length <= 0) yield break;
-
-        this.showcaseSize = showcaseSize;
 
         yield return new WaitForSeconds(waittimes[0]);
 

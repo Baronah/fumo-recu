@@ -1,6 +1,7 @@
 using Cinemachine;
 using UnityEngine;
 
+[RequireComponent(typeof(CinemachineVirtualCamera))]
 public class MapZoomoutController : MonoBehaviour
 {
     private CinemachineVirtualCamera vcam;
@@ -14,7 +15,7 @@ public class MapZoomoutController : MonoBehaviour
 
     void Awake()
     {
-        vcam = GetComponent<CinemachineVirtualCamera>();
+        if (!vcam) vcam = GetComponent<CinemachineVirtualCamera>();
     }
 
     void Update()
@@ -26,9 +27,11 @@ public class MapZoomoutController : MonoBehaviour
 
     void MoveCamera()
     {
+        if (!InputManager.Instance) return;
         Vector2 movement = InputManager.Instance.GetMovementInput();
         Vector3 direction = movement.normalized;
-        transform.position += direction * GetPerferredSpeed * Time.unscaledDeltaTime;
+        Vector3 shift = direction * GetPerferredSpeed;
+        transform.position += shift * Time.unscaledDeltaTime;
     }
 
     void ZoomCamera()

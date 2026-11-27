@@ -570,12 +570,16 @@ public class StageManager : MonoBehaviour
         Destroy(titleOverlay);
 
         Time.timeScale = 1f;
+        mainCamera.showcaseSize = ShowcaseSize;
         if (IsFirstTimeStageEnter)
         {
-            yield return StartCoroutine(mainCamera.MoveShowcases(ShowcaseSize, CameraShowcases, Waittimes));
+            yield return StartCoroutine(mainCamera.MoveShowcases(CameraShowcases, Waittimes));
             IsFirstTimeStageEnter = false;
         }
-        else if (extraPlayerWaittime > 0) extraPlayerWaittime = 0.5f;
+        else if (extraPlayerWaittime > 0)
+        {
+            extraPlayerWaittime = 0.5f;
+        }
 
         foreach (var item in enemySpawnpoints)
         {
